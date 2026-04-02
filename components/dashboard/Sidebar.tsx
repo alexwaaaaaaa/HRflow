@@ -10,9 +10,9 @@ import {
     BarChart2, MessageSquare, Landmark, PieChart, ShieldCheck, FolderOpen,
     Bell, Code2, AlertTriangle, Lock, Receipt, Layers, Scale,
     Users2, Globe, GitBranch, LayoutTemplate, Timer, Megaphone,
-    Building2, Zap
+    Building2, Zap, Search, PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 // ── Sub-Menu Link Data ────────────────────────────────────────────────────────
 
@@ -566,13 +566,41 @@ const NAV_GROUPS = [
             { name: "FnF & Exit", href: "/fnf/dashboard", icon: GitBranch, prefix: "/fnf", links: [] },
             { name: "Helpdesk", href: "/helpdesk/dashboard", icon: HelpCircle, prefix: "/helpdesk", links: [] },
             { name: "Help & Support", href: "/help", icon: LayoutTemplate, prefix: "/help", links: HELP_LINKS },
+        ]
+    },
+    {
+        label: "SUPER ADMIN",
+        items: [
             { name: "Super Admin", href: "/super-admin", icon: ShieldCheck, prefix: "/super-admin", links: SUPER_ADMIN_LINKS },
         ]
     },
 ];
 
+// ── Role → Permitted Group Labels ────────────────────────────────────────────
+const SIDEBAR_CONFIG: Record<'hr_admin' | 'manager' | 'employee', string[]> = {
+    hr_admin: ['MAIN', 'TALENT', 'FINANCE', 'COMPLIANCE & ADMIN', 'REPORTS & ANALYTICS', 'ENTERPRISE', 'SETTINGS'],
+    manager: ['MAIN', 'TALENT', 'REPORTS & ANALYTICS'],
+    employee: ['MAIN'],
+};
+
+// ── Highlight matched text ────────────────────────────────────────────────────
+function HighlightText({ text, query }: { text: string; query: string }) {
+    if (!query) return <>{text}</>;
+    const idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return <>{text}</>;
+    return (
+        <>
+            {text.slice(0, idx)}
+            <mark style={{ background: 'rgba(0,229,160,0.2)', color: '#00e5a0', borderRadius: 2 }}>
+                {text.slice(idx, idx + query.length)}
+            </mark>
+            {text.slice(idx + query.length)}
+        </>
+    );
+}
+
 // ── Sub-Link Item ─────────────────────────────────────────────────────────────
-function SubLink({ href, label, pathname }: { href: string; label: string; pathname: string }) {
+function SubLink({ href, label, pathname, searchQuery = '' }: { href: string; label: string; pathname: string; searchQuery?: string }) {
     const isActive = pathname === href || pathname.startsWith(href + "/");
     return (
         <Link
@@ -586,7 +614,7 @@ function SubLink({ href, label, pathname }: { href: string; label: string; pathn
                     : "text-[#3d5166] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#7a8fa6]"
             ].join(" ")}
         >
-            {label}
+            <HighlightText text={label} query={searchQuery} />
         </Link>
     );
 }
@@ -599,9 +627,12 @@ type NavItemProps = {
     prefix: string;
     links: { label: string; href: string }[];
     pathname: string;
+    searchQuery?: string;
+    isMini?: boolean;
+    forceOpen?: boolean;
 };
 
-function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemProps) {
+function NavItem({ name, href, icon: Icon, prefix, links, pathname, searchQuery = '', isMini = false, forceOpen = false }: NavItemProps) {
     const isActive = pathname === href || pathname.startsWith(prefix);
     const hasDropdown = links.length > 0;
     const submenuId = `submenu-${name.toLowerCase().replace(/\s+/g, "-")}`;
@@ -617,6 +648,8 @@ function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemPro
         if (hasDropdown) setOpen(o => !o);
     }, [hasDropdown]);
 
+    const isOpen = forceOpen ? true : open;
+
     const rowClasses = [
         "relative flex h-9 items-center gap-2.5 rounded-[9px] px-3 transition-all duration-150 select-none",
         isActive
@@ -631,16 +664,46 @@ function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemPro
                 <span className="absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-[3px] bg-[#00e5a0] shadow-[0_0_8px_rgba(0,229,160,0.5)]" aria-hidden="true" />
             )}
             <Icon size={15} aria-hidden="true" className="shrink-0" />
-            <span className="flex-1 truncate text-[13px] font-500">{name}</span>
-            {hasDropdown && (
+            {!isMini && <span className="flex-1 truncate text-[13px] font-500"><HighlightText text={name} query={searchQuery} /></span>}
+            {!isMini && hasDropdown && (
                 <ChevronDown
                     size={11}
-                    className={`shrink-0 transition-transform duration-200 ${open ? "rotate-0" : "-rotate-90"}`}
+                    className={`shrink-0 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`}
                     aria-hidden="true"
                 />
             )}
         </>
     );
+
+    if (isMini) {
+        return (
+            <li className="relative group">
+                <Link
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`${rowClasses} justify-center px-0 w-full`}
+                    title={name}
+                >
+                    {innerContent}
+                </Link>
+                {/* Tooltip */}
+                <div
+                    className="pointer-events-none absolute left-[52px] top-1/2 -translate-y-1/2 z-50 hidden group-hover:block"
+                    style={{
+                        background: '#0d1b2a',
+                        border: '1px solid #162030',
+                        borderRadius: 7,
+                        padding: '4px 10px',
+                        fontSize: 12,
+                        color: '#c8d8e8',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    {name}
+                </div>
+            </li>
+        );
+    }
 
     return (
         <li>
@@ -648,7 +711,7 @@ function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemPro
                 <button
                     type="button"
                     onClick={handleToggle}
-                    aria-expanded={open}
+                    aria-expanded={isOpen}
                     aria-controls={submenuId}
                     className={`w-full text-left ${rowClasses}`}
                 >
@@ -664,7 +727,7 @@ function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemPro
                 </Link>
             )}
 
-            {hasDropdown && open && (
+            {hasDropdown && isOpen && (
                 <ul
                     id={submenuId}
                     role="list"
@@ -672,7 +735,7 @@ function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemPro
                 >
                     {links.map(l => (
                         <li key={l.href}>
-                            <SubLink href={l.href} label={l.label} pathname={pathname} />
+                            <SubLink href={l.href} label={l.label} pathname={pathname} searchQuery={searchQuery} />
                         </li>
                     ))}
                 </ul>
@@ -682,21 +745,115 @@ function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemPro
 }
 
 // ── Main Sidebar ──────────────────────────────────────────────────────────────
-export default function Sidebar() {
+export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'manager' | 'employee' }) {
     const pathname = usePathname();
     const router = useRouter();
+
+    // ── Mini mode ──────────────────────────────────────────────────────────────
+    const [isMini, setIsMini] = useState(() => {
+        try {
+            return localStorage.getItem('sidebar_mini') === 'true';
+        } catch {
+            return false;
+        }
+    });
+
+    const toggleMini = useCallback(() => {
+        setIsMini(prev => {
+            const next = !prev;
+            try { localStorage.setItem('sidebar_mini', String(next)); } catch { /* ignore */ }
+            document.documentElement.style.setProperty('--sidebar-width', next ? '48px' : '240px');
+            return next;
+        });
+    }, []);
+
+    // Set CSS custom property on mount
+    useEffect(() => {
+        document.documentElement.style.setProperty('--sidebar-width', isMini ? '48px' : '240px');
+    }, [isMini]);
+
+    // ── Collapsed sections ─────────────────────────────────────────────────────
+    const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
+        try {
+            const stored = localStorage.getItem('sidebar_collapsed');
+            if (stored) return JSON.parse(stored);
+        } catch { /* ignore */ }
+        // Default: MAIN open, all others collapsed
+        const defaults: Record<string, boolean> = {};
+        NAV_GROUPS.forEach(g => { defaults[g.label] = g.label !== 'MAIN'; });
+        return defaults;
+    });
+
+    const toggleSection = useCallback((label: string) => {
+        setCollapsedSections(prev => {
+            const next = { ...prev, [label]: !prev[label] };
+            try { localStorage.setItem('sidebar_collapsed', JSON.stringify(next)); } catch { /* ignore */ }
+            return next;
+        });
+    }, []);
+
+    // Auto-expand section containing active route on pathname change
+    useEffect(() => {
+        const permittedGroups = NAV_GROUPS.filter(g => SIDEBAR_CONFIG[role].includes(g.label));
+        for (const group of permittedGroups) {
+            const hasActive = group.items.some(
+                item => pathname === item.href || pathname.startsWith(item.prefix)
+            );
+            if (hasActive) {
+                setCollapsedSections(prev => {
+                    if (!prev[group.label]) return prev;
+                    const next = { ...prev, [group.label]: false };
+                    try { localStorage.setItem('sidebar_collapsed', JSON.stringify(next)); } catch { /* ignore */ }
+                    return next;
+                });
+                break;
+            }
+        }
+    }, [pathname, role]);
+
+    // ── Search ─────────────────────────────────────────────────────────────────
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // ── Role-filtered groups ───────────────────────────────────────────────────
+    const permittedGroups = NAV_GROUPS.filter(g => SIDEBAR_CONFIG[role].includes(g.label));
+
+    // Apply search filter
+    const visibleGroups = searchQuery
+        ? permittedGroups
+            .map(group => {
+                const filteredItems = group.items
+                    .map(item => {
+                        const nameMatch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+                        const matchingLinks = item.links.filter(l =>
+                            l.label.toLowerCase().includes(searchQuery.toLowerCase())
+                        );
+                        if (nameMatch) return item;
+                        if (matchingLinks.length > 0) return { ...item, links: matchingLinks };
+                        return null;
+                    })
+                    .filter(Boolean) as typeof group.items;
+                return { ...group, items: filteredItems };
+            })
+            .filter(g => g.items.length > 0)
+        : permittedGroups;
+
+    const noResults = searchQuery.length > 0 && visibleGroups.length === 0;
+
+    const sidebarWidth = isMini ? 48 : 240;
 
     return (
         <nav
             aria-label="Main navigation"
-            className="fixed top-0 left-0 h-screen w-60 flex flex-col z-50"
+            className={`fixed top-0 left-0 h-screen flex flex-col z-50 ${isMini ? '' : 'w-60'}`}
             style={{
                 background: "#070d18",
                 borderRight: "1px solid #162030",
+                width: sidebarWidth,
+                transition: 'width 200ms ease',
             }}
         >
             {/* Logo */}
-            <div className="flex items-center gap-3 px-4 py-[17px] border-b border-[#162030] shrink-0">
+            <div className="flex items-center gap-3 px-4 py-[17px] border-b border-[#162030] shrink-0 overflow-hidden">
                 <Link href="/dashboard" className="flex items-center gap-3">
                     <div
                         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#00e5a0]"
@@ -706,43 +863,112 @@ export default function Sidebar() {
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#04080f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </div>
-                    <div>
-                        <div className="text-[17px] font-700 text-[#f0f4f8] leading-none tracking-[-0.02em]">HRFlow</div>
-                        <div className="mt-[3px] text-[10px] text-[#3d5166] font-500">TechCorp Solutions</div>
-                    </div>
+                    {!isMini && (
+                        <div>
+                            <div className="text-[17px] font-700 text-[#f0f4f8] leading-none tracking-[-0.02em]">HRFlow</div>
+                            <div className="mt-[3px] text-[10px] text-[#3d5166] font-500">TechCorp Solutions</div>
+                        </div>
+                    )}
                 </Link>
             </div>
 
+            {/* Search */}
+            {!isMini && (
+                <div className="px-3 pt-2 pb-1 shrink-0">
+                    <div className="relative flex items-center">
+                        <Search size={13} className="absolute left-2.5 text-[#3d5166] pointer-events-none" aria-hidden="true" />
+                        <input
+                            type="text"
+                            placeholder="Search menu..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full rounded-[8px] bg-[rgba(255,255,255,0.04)] border border-[#162030] pl-7 pr-3 py-1.5 text-[12px] text-[#c8d8e8] placeholder-[#3d5166] outline-none focus:border-[rgba(0,229,160,0.3)] transition-colors"
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* Nav Groups */}
             <div className="flex-1 overflow-y-auto px-2 py-2 pb-4" style={{ scrollbarWidth: "none" }}>
-                {NAV_GROUPS.map((group) => (
-                    <div key={group.label} className="mb-2">
-                        <p
-                            className="px-3 pb-1 pt-2.5 text-[10px] font-600 uppercase tracking-[0.07em] text-[#2a3a4a]"
-                            aria-label={group.label}
-                        >
-                            {group.label}
-                        </p>
-                        <ul role="list" className="flex flex-col gap-0.5">
-                            {group.items.map(item => (
-                                <NavItem
-                                    key={item.name}
-                                    name={item.name}
-                                    href={item.href}
-                                    icon={item.icon}
-                                    prefix={item.prefix}
-                                    links={item.links}
-                                    pathname={pathname}
-                                />
-                            ))}
-                        </ul>
-                    </div>
-                ))}
+                {noResults ? (
+                    <p className="px-3 py-4 text-[12px] text-[#3d5166] text-center">
+                        No results for &ldquo;{searchQuery}&rdquo;
+                    </p>
+                ) : (
+                    visibleGroups.map((group) => {
+                        const isCollapsed = !searchQuery && collapsedSections[group.label];
+                        const visibleItemCount = group.items.length;
+
+                        return (
+                            <div key={group.label} className="mb-2">
+                                {!isMini && (
+                                    <button
+                                        type="button"
+                                        onClick={() => toggleSection(group.label)}
+                                        aria-expanded={!isCollapsed}
+                                        className="w-full flex items-center justify-between px-3 pb-1 pt-2.5 text-[10px] font-600 uppercase tracking-[0.07em] text-[#2a3a4a] hover:text-[#3d5166] transition-colors"
+                                        aria-label={group.label}
+                                    >
+                                        <span>
+                                            {group.label}
+                                            {isCollapsed && (
+                                                <span className="ml-1 text-[#3d5166] normal-case tracking-normal">
+                                                    ({visibleItemCount})
+                                                </span>
+                                            )}
+                                        </span>
+                                        <ChevronDown
+                                            size={10}
+                                            className={`shrink-0 transition-transform duration-200 ${isCollapsed ? '-rotate-90' : 'rotate-0'}`}
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+                                )}
+                                <div
+                                    style={{
+                                        maxHeight: isCollapsed ? 0 : 9999,
+                                        overflow: 'hidden',
+                                        transition: 'max-height 300ms ease',
+                                    }}
+                                >
+                                    <ul role="list" className="flex flex-col gap-0.5">
+                                        {group.items.map(item => (
+                                            <NavItem
+                                                key={item.name}
+                                                name={item.name}
+                                                href={item.href}
+                                                icon={item.icon}
+                                                prefix={item.prefix}
+                                                links={item.links}
+                                                pathname={pathname}
+                                                searchQuery={searchQuery}
+                                                isMini={isMini}
+                                                forceOpen={!!searchQuery}
+                                            />
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
+            </div>
+
+            {/* Mini toggle */}
+            <div className="shrink-0 px-2 pb-1">
+                <button
+                    type="button"
+                    onClick={toggleMini}
+                    aria-label={isMini ? "Open panel" : "Collapse panel"}
+                    className="flex h-8 w-full items-center justify-center rounded-[9px] text-[#3d5166] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#7a8fa6] transition-colors"
+                >
+                    {isMini ? <PanelLeftOpen size={15} aria-hidden="true" /> : <PanelLeftClose size={15} aria-hidden="true" />}
+                </button>
             </div>
 
             {/* User Footer */}
             <div className="shrink-0 border-t border-[#162030] px-3 py-3">
-                <div className="flex items-center gap-2.5 px-1">
+                <div className={`flex items-center gap-2.5 ${isMini ? 'justify-center px-0' : 'px-1'}`}>
                     <button
                         onClick={() => router.push("/my-profile")}
                         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(0,229,160,0.12)] border border-[rgba(0,229,160,0.25)] text-[11px] font-700 text-[#00e5a0] hover:bg-[rgba(0,229,160,0.2)] transition-colors"
@@ -750,22 +976,26 @@ export default function Sidebar() {
                     >
                         PM
                     </button>
-                    <button
-                        onClick={() => router.push("/my-profile")}
-                        className="min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
-                    >
-                        <div className="truncate text-[12px] font-600 text-[#c8d8e8]">Priya Mehta</div>
-                        <div className="truncate text-[10px] text-[#3d5166]">HR Admin</div>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => router.push("/login")}
-                        className="rounded-[7px] p-1.5 text-[#3d5166] transition-all hover:bg-[rgba(239,68,68,0.1)] hover:text-[#ef4444]"
-                        aria-label="Sign out"
-                        title="Sign out"
-                    >
-                        <LogOut size={14} aria-hidden="true" />
-                    </button>
+                    {!isMini && (
+                        <>
+                            <button
+                                onClick={() => router.push("/my-profile")}
+                                className="min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
+                            >
+                                <div className="truncate text-[12px] font-600 text-[#c8d8e8]">Priya Mehta</div>
+                                <div className="truncate text-[10px] text-[#3d5166]">HR Admin</div>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => router.push("/login")}
+                                className="rounded-[7px] p-1.5 text-[#3d5166] transition-all hover:bg-[rgba(239,68,68,0.1)] hover:text-[#ef4444]"
+                                aria-label="Sign out"
+                                title="Sign out"
+                            >
+                                <LogOut size={14} aria-hidden="true" />
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>
