@@ -1,0 +1,1716 @@
+
+> hrflow-init@0.1.0 lint
+> eslint
+
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/anomalies/page.tsx
+  4:39  warning  'Upload' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/calendar/page.tsx
+  69:19  warning  'setMonth' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/employee/[empId]/log/page.tsx
+  37:49  warning  'params' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/insights/page.tsx
+  4:54  warning  'Clock' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/page.tsx
+    5:18  warning  'TrendingUp' is defined but never used                           @typescript-eslint/no-unused-vars
+    6:29  warning  'Users' is defined but never used                                @typescript-eslint/no-unused-vars
+   99:12  warning  'selectedDept' is assigned a value but never used                @typescript-eslint/no-unused-vars
+  293:38  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/qr/page.tsx
+   60:107  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/qr/page.tsx:60:107
+  58 |                                     <div className="grid grid-cols-10 gap-0.5 w-full h-full">
+  59 |                                         {Array.from({ length: 100 }, (_, i) => (
+> 60 |                                             <div key={i} className="rounded-sm" style={{ backgroundColor: Math.random() > 0.5 ? "#000" : "#fff" }} />
+     |                                                                                                           ^^^^^^^^^^^^^ Cannot call impure function
+  61 |                                         ))}
+  62 |                                     </div>
+  63 |                                 </div>  react-hooks/purity
+  123:73   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/requests/history/page.tsx
+  4:28  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  4:42  warning  'XCircle' is defined but never used       @typescript-eslint/no-unused-vars
+  4:51  warning  'Clock' is defined but never used         @typescript-eslint/no-unused-vars
+  4:58  warning  'Filter' is defined but never used        @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/automation/page.tsx
+  4:34  warning  'Users' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/biometric/page.tsx
+   4:27  warning  'CheckCircle2' is defined but never used         @typescript-eslint/no-unused-vars
+   4:41  warning  'XCircle' is defined but never used              @typescript-eslint/no-unused-vars
+  22:21  warning  'setDevices' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/general/page.tsx
+  4:23  warning  'Shield' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx
+  71:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:71:22
+  69 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  70 |                     <h3 className="font-semibold mb-2">Late Definition</h3>
+> 71 |                     <Row label="Grace period (minutes)" desc="Allowed buffer after shift start before marking late" field="lateGraceMins" />
+     |                      ^^^ This component is created during render
+  72 |                     <Row label="Late after (time)" desc="Fixed time threshold for late detection" field="lateAfterTime" type="time" />
+  73 |                 </div>
+  74 |
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                           react-hooks/static-components
+  72:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:72:22
+  70 |                     <h3 className="font-semibold mb-2">Late Definition</h3>
+  71 |                     <Row label="Grace period (minutes)" desc="Allowed buffer after shift start before marking late" field="lateGraceMins" />
+> 72 |                     <Row label="Late after (time)" desc="Fixed time threshold for late detection" field="lateAfterTime" type="time" />
+     |                      ^^^ This component is created during render
+  73 |                 </div>
+  74 |
+  75 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                           react-hooks/static-components
+  77:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:77:22
+  75 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  76 |                     <h3 className="font-semibold mb-2">Deduction Rules</h3>
+> 77 |                     <Row label="Half-day if late by (hours)" desc="Late by this many hours = half-day deduction" field="halfDayIfLateByHrs" />
+     |                      ^^^ This component is created during render
+  78 |                     <Row label="N lates = 1 half-day deduction" desc="Accumulated lates that count as a half-day" field="latesForHalfDay" />
+  79 |                     <Row label="N lates = 1 full-day deduction" desc="Accumulated lates that count as a full-day LOP" field="latesForFullDay" />
+  80 |                     <Row label="Enable half-day deduction rule" field="deductHalfDay" type="toggle" />
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">  react-hooks/static-components
+  78:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:78:22
+  76 |                     <h3 className="font-semibold mb-2">Deduction Rules</h3>
+  77 |                     <Row label="Half-day if late by (hours)" desc="Late by this many hours = half-day deduction" field="halfDayIfLateByHrs" />
+> 78 |                     <Row label="N lates = 1 half-day deduction" desc="Accumulated lates that count as a half-day" field="latesForHalfDay" />
+     |                      ^^^ This component is created during render
+  79 |                     <Row label="N lates = 1 full-day deduction" desc="Accumulated lates that count as a full-day LOP" field="latesForFullDay" />
+  80 |                     <Row label="Enable half-day deduction rule" field="deductHalfDay" type="toggle" />
+  81 |                 </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                  react-hooks/static-components
+  79:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:79:22
+  77 |                     <Row label="Half-day if late by (hours)" desc="Late by this many hours = half-day deduction" field="halfDayIfLateByHrs" />
+  78 |                     <Row label="N lates = 1 half-day deduction" desc="Accumulated lates that count as a half-day" field="latesForHalfDay" />
+> 79 |                     <Row label="N lates = 1 full-day deduction" desc="Accumulated lates that count as a full-day LOP" field="latesForFullDay" />
+     |                      ^^^ This component is created during render
+  80 |                     <Row label="Enable half-day deduction rule" field="deductHalfDay" type="toggle" />
+  81 |                 </div>
+  82 |
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                              react-hooks/static-components
+  80:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:80:22
+  78 |                     <Row label="N lates = 1 half-day deduction" desc="Accumulated lates that count as a half-day" field="latesForHalfDay" />
+  79 |                     <Row label="N lates = 1 full-day deduction" desc="Accumulated lates that count as a full-day LOP" field="latesForFullDay" />
+> 80 |                     <Row label="Enable half-day deduction rule" field="deductHalfDay" type="toggle" />
+     |                      ^^^ This component is created during render
+  81 |                 </div>
+  82 |
+  83 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                      react-hooks/static-components
+  85:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:85:22
+  83 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  84 |                     <h3 className="font-semibold mb-2">Warnings & Escalation</h3>
+> 85 |                     <Row label="Notify manager after N lates" field="notifyManagerAfter" />
+     |                      ^^^ This component is created during render
+  86 |                     <Row label="Habitual threshold (lates/month)" desc="Flagged as habitual late comer" field="habitualThreshold" />
+  87 |                     <Row label="Send warning email to employee" field="warningEmailEnabled" type="toggle" />
+  88 |                     <Row label="Escalate habitual cases to HR" field="escalateToHR" type="toggle" />
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                             react-hooks/static-components
+  86:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:86:22
+  84 |                     <h3 className="font-semibold mb-2">Warnings & Escalation</h3>
+  85 |                     <Row label="Notify manager after N lates" field="notifyManagerAfter" />
+> 86 |                     <Row label="Habitual threshold (lates/month)" desc="Flagged as habitual late comer" field="habitualThreshold" />
+     |                      ^^^ This component is created during render
+  87 |                     <Row label="Send warning email to employee" field="warningEmailEnabled" type="toggle" />
+  88 |                     <Row label="Escalate habitual cases to HR" field="escalateToHR" type="toggle" />
+  89 |                 </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                             react-hooks/static-components
+  87:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:87:22
+  85 |                     <Row label="Notify manager after N lates" field="notifyManagerAfter" />
+  86 |                     <Row label="Habitual threshold (lates/month)" desc="Flagged as habitual late comer" field="habitualThreshold" />
+> 87 |                     <Row label="Send warning email to employee" field="warningEmailEnabled" type="toggle" />
+     |                      ^^^ This component is created during render
+  88 |                     <Row label="Escalate habitual cases to HR" field="escalateToHR" type="toggle" />
+  89 |                 </div>
+  90 |
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                               react-hooks/static-components
+  88:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:88:22
+  86 |                     <Row label="Habitual threshold (lates/month)" desc="Flagged as habitual late comer" field="habitualThreshold" />
+  87 |                     <Row label="Send warning email to employee" field="warningEmailEnabled" type="toggle" />
+> 88 |                     <Row label="Escalate habitual cases to HR" field="escalateToHR" type="toggle" />
+     |                      ^^^ This component is created during render
+  89 |                 </div>
+  90 |
+  91 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                                    react-hooks/static-components
+  93:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:93:22
+  91 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  92 |                     <h3 className="font-semibold mb-2">Self-Correction</h3>
+> 93 |                     <Row label="Allow employee to regularize late" field="allowSelfCorrect" type="toggle" />
+     |                      ^^^ This component is created during render
+  94 |                     <Row label="Regularization window (days)" desc="Number of days employee can submit a regularization" field="selfCorrectWindow" />
+  95 |                 </div>
+  96 |             </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                         react-hooks/static-components
+  94:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:94:22
+  92 |                     <h3 className="font-semibold mb-2">Self-Correction</h3>
+  93 |                     <Row label="Allow employee to regularize late" field="allowSelfCorrect" type="toggle" />
+> 94 |                     <Row label="Regularization window (days)" desc="Number of days employee can submit a regularization" field="selfCorrectWindow" />
+     |                      ^^^ This component is created during render
+  95 |                 </div>
+  96 |             </div>
+  97 |         </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/late-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     );
+     | ^^^^^^ The component is created during render here
+  48 |
+  49 |     return (
+  50 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                                                                                                 react-hooks/static-components
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx
+   78:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:78:22
+  76 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  77 |                     <h3 className="font-semibold mb-2">OT Calculation</h3>
+> 78 |                     <Row label="OT starts after (hours worked)" desc="Hours of regular work before OT kicks in" field="otStartsAfterHrs" />
+     |                      ^^^ This component is created during render
+  79 |                     <Row label="Weekday OT multiplier" desc="e.g. 1.5 means 1.5× basic per OT hour" field="otRateMultiplier" />
+  80 |                     <Row label="Weekend OT multiplier" field="weekendOtRate" />
+  81 |                     <Row label="Holiday OT multiplier" field="holidayOtRate" />
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                               react-hooks/static-components
+   79:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:79:22
+  77 |                     <h3 className="font-semibold mb-2">OT Calculation</h3>
+  78 |                     <Row label="OT starts after (hours worked)" desc="Hours of regular work before OT kicks in" field="otStartsAfterHrs" />
+> 79 |                     <Row label="Weekday OT multiplier" desc="e.g. 1.5 means 1.5× basic per OT hour" field="otRateMultiplier" />
+     |                      ^^^ This component is created during render
+  80 |                     <Row label="Weekend OT multiplier" field="weekendOtRate" />
+  81 |                     <Row label="Holiday OT multiplier" field="holidayOtRate" />
+  82 |                     <Row label="Round OT to nearest (minutes)" desc="e.g. 30 = round to nearest 30 min" field="roundOtToNearest" />
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">  react-hooks/static-components
+   80:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:80:22
+  78 |                     <Row label="OT starts after (hours worked)" desc="Hours of regular work before OT kicks in" field="otStartsAfterHrs" />
+  79 |                     <Row label="Weekday OT multiplier" desc="e.g. 1.5 means 1.5× basic per OT hour" field="otRateMultiplier" />
+> 80 |                     <Row label="Weekend OT multiplier" field="weekendOtRate" />
+     |                      ^^^ This component is created during render
+  81 |                     <Row label="Holiday OT multiplier" field="holidayOtRate" />
+  82 |                     <Row label="Round OT to nearest (minutes)" desc="e.g. 30 = round to nearest 30 min" field="roundOtToNearest" />
+  83 |                 </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                      react-hooks/static-components
+   81:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:81:22
+  79 |                     <Row label="Weekday OT multiplier" desc="e.g. 1.5 means 1.5× basic per OT hour" field="otRateMultiplier" />
+  80 |                     <Row label="Weekend OT multiplier" field="weekendOtRate" />
+> 81 |                     <Row label="Holiday OT multiplier" field="holidayOtRate" />
+     |                      ^^^ This component is created during render
+  82 |                     <Row label="Round OT to nearest (minutes)" desc="e.g. 30 = round to nearest 30 min" field="roundOtToNearest" />
+  83 |                 </div>
+  84 |
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                  react-hooks/static-components
+   82:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:82:22
+  80 |                     <Row label="Weekend OT multiplier" field="weekendOtRate" />
+  81 |                     <Row label="Holiday OT multiplier" field="holidayOtRate" />
+> 82 |                     <Row label="Round OT to nearest (minutes)" desc="e.g. 30 = round to nearest 30 min" field="roundOtToNearest" />
+     |                      ^^^ This component is created during render
+  83 |                 </div>
+  84 |
+  85 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                           react-hooks/static-components
+   87:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:87:22
+  85 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  86 |                     <h3 className="font-semibold mb-2">Caps & Limits</h3>
+> 87 |                     <Row label="Max OT per day (hours)" field="maxOtPerDay" />
+     |                      ^^^ This component is created during render
+  88 |                     <Row label="Max OT per month (hours)" field="maxOtPerMonth" />
+  89 |                 </div>
+  90 |
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                                                                                   react-hooks/static-components
+   88:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:88:22
+  86 |                     <h3 className="font-semibold mb-2">Caps & Limits</h3>
+  87 |                     <Row label="Max OT per day (hours)" field="maxOtPerDay" />
+> 88 |                     <Row label="Max OT per month (hours)" field="maxOtPerMonth" />
+     |                      ^^^ This component is created during render
+  89 |                 </div>
+  90 |
+  91 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                                                                                   react-hooks/static-components
+   93:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:93:22
+  91 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+  92 |                     <h3 className="font-semibold mb-2">Comp-off & Payout</h3>
+> 93 |                     <Row label="Allow OT → Comp-off conversion" field="otToCompOff" type="toggle" />
+     |                      ^^^ This component is created during render
+  94 |                     <Row label="Comp-off validity (days)" desc="Comp-off expires after this many days" field="compOffExpiry" />
+  95 |                     <Row label="OT payout enabled" desc="Pay out unclaimed OT in payroll" field="otPayoutEnabled" type="toggle" />
+  96 |                 </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                         react-hooks/static-components
+   94:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:94:22
+  92 |                     <h3 className="font-semibold mb-2">Comp-off & Payout</h3>
+  93 |                     <Row label="Allow OT → Comp-off conversion" field="otToCompOff" type="toggle" />
+> 94 |                     <Row label="Comp-off validity (days)" desc="Comp-off expires after this many days" field="compOffExpiry" />
+     |                      ^^^ This component is created during render
+  95 |                     <Row label="OT payout enabled" desc="Pay out unclaimed OT in payroll" field="otPayoutEnabled" type="toggle" />
+  96 |                 </div>
+  97 |
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                react-hooks/static-components
+   95:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:95:22
+  93 |                     <Row label="Allow OT → Comp-off conversion" field="otToCompOff" type="toggle" />
+  94 |                     <Row label="Comp-off validity (days)" desc="Comp-off expires after this many days" field="compOffExpiry" />
+> 95 |                     <Row label="OT payout enabled" desc="Pay out unclaimed OT in payroll" field="otPayoutEnabled" type="toggle" />
+     |                      ^^^ This component is created during render
+  96 |                 </div>
+  97 |
+  98 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                       react-hooks/static-components
+  100:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:100:22
+   98 |                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+   99 |                     <h3 className="font-semibold mb-2">Approval</h3>
+> 100 |                     <Row label="Manager approval required for OT" field="managerApprovalRequired" type="toggle" />
+      |                      ^^^ This component is created during render
+  101 |                     <Row label="Pre-approval required before OT" desc="Employee must request OT before working it" field="preApprovalRequired" type="toggle" />
+  102 |                 </div>
+  103 |             </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                            react-hooks/static-components
+  101:22  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:101:22
+   99 |                     <h3 className="font-semibold mb-2">Approval</h3>
+  100 |                     <Row label="Manager approval required for OT" field="managerApprovalRequired" type="toggle" />
+> 101 |                     <Row label="Pre-approval required before OT" desc="Employee must request OT before working it" field="preApprovalRequired" type="toggle" />
+      |                      ^^^ This component is created during render
+  102 |                 </div>
+  103 |             </div>
+  104 |         </div>
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/settings/overtime-policy/page.tsx:35:17
+  33 |     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  34 |
+> 35 |     const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |         <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             <div>
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |     );
+     | ^^^^^^ The component is created during render here
+  47 |
+  48 |     return (
+  49 |         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">                                                                                                                                                                                                                                    react-hooks/static-components
+
+/Users/ajiit/Desktop/HRflow/app/(app)/attendance/shifts/config/page.tsx
+  29:20  warning  'setWorked' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/commission-setup/page.tsx
+  4:10  warning  'DollarSign' is defined but never used         @typescript-eslint/no-unused-vars
+  4:22  warning  'Layers' is defined but never used             @typescript-eslint/no-unused-vars
+  9:19  warning  'setTiers' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/ctc-letters/page.tsx
+    4:45   warning  'LayoutTemplate' is defined but never used                       @typescript-eslint/no-unused-vars
+    4:83   warning  'ImageIcon' is defined but never used                            @typescript-eslint/no-unused-vars
+  236:219  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/attendance/page.tsx
+  49:106  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/edit/page.tsx
+  44:196  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/id-card/page.tsx
+   5:37  warning  'RefreshCw' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  43:33  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/noc/page.tsx
+  5:20  warning  'Printer' is defined but never used      @typescript-eslint/no-unused-vars
+  5:35  warning  'FileText' is defined but never used     @typescript-eslint/no-unused-vars
+  5:45  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/rehire/page.tsx
+  99:37  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/salary-certificate/page.tsx
+    5:20  warning  'Printer' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+    5:43  warning  'FileText' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   84:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  133:82  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/salary-revision/page.tsx
+    5:45  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+  155:86  error    Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/show-cause/page.tsx
+  9:20  warning  'setStatus' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/suspend/page.tsx
+   5:10   warning  'AlertTriangle' is defined but never used                        @typescript-eslint/no-unused-vars
+  22:62   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  22:113  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  22:123  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/terminate/page.tsx
+   5:10  warning  'UserMinus' is defined but never used                            @typescript-eslint/no-unused-vars
+  78:37  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/[id]/warning-letter/page.tsx
+  5:10  warning  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+  5:20  warning  'Send' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/add/bank/page.tsx
+  107:92  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/add/review/page.tsx
+  4:21  warning  'Check' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/add/salary/page.tsx
+   4:28  warning  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+  82:35  warning  'i' is defined but never used            @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/add/statutory/page.tsx
+  104:109  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/contractor/[id]/page.tsx
+  4:8   warning  'Link' is defined but never used      @typescript-eslint/no-unused-vars
+  5:21  warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+  5:31  warning  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/import/page.tsx
+    4:84   warning  'Eye' is defined but never used                                  @typescript-eslint/no-unused-vars
+  128:102  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  128:108  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  158:91   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  158:104  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  158:110  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  158:124  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/page.tsx
+   6:21  warning  'Users' is defined but never used                     @typescript-eslint/no-unused-vars
+   8:5   warning  'ChevronLeft' is defined but never used               @typescript-eslint/no-unused-vars
+  90:26  warning  'setActiveFilter' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/salary-revisions/page.tsx
+  3:28  warning  'Filter' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/employees/search/page.tsx
+  4:50  warning  'CheckCircle2' is defined but never used         @typescript-eslint/no-unused-vars
+  4:64  warning  'ChevronRight' is defined but never used         @typescript-eslint/no-unused-vars
+  4:78  warning  'X' is defined but never used                    @typescript-eslint/no-unused-vars
+  6:8   warning  'ClientOnly' is defined but never used           @typescript-eslint/no-unused-vars
+  7:10  warning  'LineChart' is defined but never used            @typescript-eslint/no-unused-vars
+  7:21  warning  'Line' is defined but never used                 @typescript-eslint/no-unused-vars
+  7:27  warning  'XAxis' is defined but never used                @typescript-eslint/no-unused-vars
+  7:34  warning  'YAxis' is defined but never used                @typescript-eslint/no-unused-vars
+  7:41  warning  'Tooltip' is defined but never used              @typescript-eslint/no-unused-vars
+  7:50  warning  'ResponsiveContainer' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/gratuity-provision/page.tsx
+  4:62  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/incentive-payment/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/leave-encashment/page.tsx
+  3:17  warning  'useState' is defined but never used     @typescript-eslint/no-unused-vars
+  4:36  warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/multi-bank-disbursement/page.tsx
+  4:57  warning  'Briefcase' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/my-profile/page.tsx
+  4:27  warning  'Send' is defined but never used          @typescript-eslint/no-unused-vars
+  4:39  warning  'ExternalLink' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/my-profile/payroll/ytd/page.tsx
+  27:114  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/off-cycle-payroll/page.tsx
+  4:38  warning  'AlertCircle' is defined but never used                    @typescript-eslint/no-unused-vars
+  7:31  warning  'setSelectedEmployees' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-benchmarking/page.tsx
+  4:10  warning  'ArrowUpRight' is defined but never used    @typescript-eslint/no-unused-vars
+  4:24  warning  'ArrowDownRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-comparison/page.tsx
+    3:17  warning  'useState' is defined but never used         @typescript-eslint/no-unused-vars
+  127:43  warning  'absVal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-error-detail/page.tsx
+    4:64   warning  'X' is defined but never used                                    @typescript-eslint/no-unused-vars
+   83:118  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+   83:127  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  113:105  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  113:114  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-exception/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/arrears-logic/page.tsx
+   3:8    warning  'Link' is defined but never used                                 @typescript-eslint/no-unused-vars
+   4:10   warning  'ArrowLeft' is defined but never used                            @typescript-eslint/no-unused-vars
+   4:54   warning  'Settings' is defined but never used                             @typescript-eslint/no-unused-vars
+   5:10   warning  'useState' is defined but never used                             @typescript-eslint/no-unused-vars
+  40:168  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  40:183  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  93:99   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  93:112  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/bands/page.tsx
+  3:8   warning  'Link' is defined but never used                        @typescript-eslint/no-unused-vars
+  4:32  warning  'TrendingUp' is defined but never used                  @typescript-eslint/no-unused-vars
+  4:44  warning  'TrendingDown' is defined but never used                @typescript-eslint/no-unused-vars
+  4:58  warning  'AlignVerticalJustifyCenter' is defined but never used  @typescript-eslint/no-unused-vars
+  5:10  warning  'useState' is defined but never used                    @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/bank-verify/page.tsx
+  3:8   warning  'Link' is defined but never used           @typescript-eslint/no-unused-vars
+  4:10  warning  'CheckCircle2' is defined but never used   @typescript-eslint/no-unused-vars
+  4:24  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/commission/page.tsx
+  4:21  warning  'Target' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/components/formula/page.tsx
+   4:58   warning  'Settings' is defined but never used                             @typescript-eslint/no-unused-vars
+  37:126  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  37:132  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/components/map/page.tsx
+    4:41  warning  'ChevronRight' is defined but never used                         @typescript-eslint/no-unused-vars
+    4:67  warning  'AlignLeft' is defined but never used                            @typescript-eslint/no-unused-vars
+  131:31  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  131:41  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/components/page.tsx
+  4:24  warning  'Settings' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/cycle/page.tsx
+  3:10  warning  'CalendarDays' is defined but never used   @typescript-eslint/no-unused-vars
+  3:30  warning  'CheckCircle2' is defined but never used   @typescript-eslint/no-unused-vars
+  3:44  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+  3:59  warning  'HelpCircle' is defined but never used     @typescript-eslint/no-unused-vars
+  4:10  warning  'useState' is defined but never used       @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/freeze/page.tsx
+   3:16   warning  'Shield' is defined but never used                               @typescript-eslint/no-unused-vars
+   3:24   warning  'AlertTriangle' is defined but never used                        @typescript-eslint/no-unused-vars
+   4:10   warning  'useState' is defined but never used                             @typescript-eslint/no-unused-vars
+  22:104  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  22:116  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  22:121  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  22:136  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/lock/page.tsx
+   3:43   warning  'Calendar' is defined but never used                             @typescript-eslint/no-unused-vars
+  53:159  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/multi-bank/page.tsx
+  4:54  warning  'AlertCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/page.tsx
+  4:10  warning  'Settings' is defined but never used      @typescript-eslint/no-unused-vars
+  4:32  warning  'Briefcase' is defined but never used     @typescript-eslint/no-unused-vars
+  4:43  warning  'FileText' is defined but never used      @typescript-eslint/no-unused-vars
+  4:53  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  4:67  warning  'Building' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/payslip-template/page.tsx
+  4:60  warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/pro-rata/page.tsx
+   3:8    warning  'Link' is defined but never used                                 @typescript-eslint/no-unused-vars
+   4:10   warning  'Calculator' is defined but never used                           @typescript-eslint/no-unused-vars
+   4:43   warning  'ArrowRight' is defined but never used                           @typescript-eslint/no-unused-vars
+  72:103  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  72:116  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  84:77   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  84:91   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-settings/variable-pay/page.tsx
+  4:45  warning  'TrendingUp' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll-simulation/page.tsx
+  7:23  warning  'setScenarios' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/arrears/page.tsx
+  4:24  warning  'Calendar' is defined but never used       @typescript-eslint/no-unused-vars
+  4:34  warning  'ChevronRight' is defined but never used   @typescript-eslint/no-unused-vars
+  4:56  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/audit/page.tsx
+  3:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  4:57  warning  'FileText' is defined but never used      @typescript-eslint/no-unused-vars
+  4:67  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/bonus/page.tsx
+  3:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  4:57  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/commission/page.tsx
+  3:8   warning  'Link' is defined but never used         @typescript-eslint/no-unused-vars
+  4:10  warning  'UploadCloud' is defined but never used  @typescript-eslint/no-unused-vars
+  4:23  warning  'Plus' is defined but never used         @typescript-eslint/no-unused-vars
+  4:56  warning  'HandCoins' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/contractors/page.tsx
+  3:8   warning  'Link' is defined but never used        @typescript-eslint/no-unused-vars
+  4:10  warning  'Copy' is defined but never used        @typescript-eslint/no-unused-vars
+  4:34  warning  'CreditCard' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/ctc-letter/page.tsx
+    4:21   warning  'Save' is defined but never used                                 @typescript-eslint/no-unused-vars
+    4:43   warning  'CheckCircle2' is defined but never used                         @typescript-eslint/no-unused-vars
+    4:57   warning  'FileText' is defined but never used                             @typescript-eslint/no-unused-vars
+    4:67   warning  'Upload' is defined but never used                               @typescript-eslint/no-unused-vars
+    4:75   warning  'Printer' is defined but never used                              @typescript-eslint/no-unused-vars
+  208:154  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/ctc-revision/bulk/page.tsx
+   4:47   warning  'AlertTriangle' is defined but never used                        @typescript-eslint/no-unused-vars
+  57:131  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  57:142  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/ctc-revision/fitment/page.tsx
+  5:10  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/ctc-revision/page.tsx
+  4:19  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  4:41  warning  'Filter' is defined but never used        @typescript-eslint/no-unused-vars
+  4:63  warning  'Clock' is defined but never used         @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/dashboard/page.tsx
+  4:58  warning  'TrendingDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/fnf/page.tsx
+  4:33  warning  'FileText' is defined but never used         @typescript-eslint/no-unused-vars
+  4:77  warning  'CornerDownRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/gratuity/page.tsx
+    6:27  warning  'XAxis' is defined but never used         @typescript-eslint/no-unused-vars
+  195:30  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/history/page.tsx
+  4:28  warning  'Filter' is defined but never used      @typescript-eslint/no-unused-vars
+  4:85  warning  'PlayCircle' is defined but never used  @typescript-eslint/no-unused-vars
+  5:10  warning  'useState' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/history/revert/page.tsx
+   4:54   warning  'FileText' is defined but never used                             @typescript-eslint/no-unused-vars
+  50:113  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  50:119  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/negative-net/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+  4:63  warning  'XCircle' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/page.tsx
+  158:232  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/payslips/[id]/page.tsx
+  4:46  warning  'ExternalLink' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/reports/joiners/page.tsx
+  4:37  warning  'Info' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/reports/lop/page.tsx
+  3:8   warning  'Link' is defined but never used       @typescript-eslint/no-unused-vars
+  4:10  warning  'ArrowLeft' is defined but never used  @typescript-eslint/no-unused-vars
+  4:47  warning  'Calendar' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/reports/tax/page.tsx
+  3:8   warning  'Link' is defined but never used        @typescript-eslint/no-unused-vars
+  4:49  warning  'ArrowRight' is defined but never used  @typescript-eslint/no-unused-vars
+  4:71  warning  'Percent' is defined but never used     @typescript-eslint/no-unused-vars
+  5:10  warning  'useState' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/reports/variance/page.tsx
+  3:8   warning  'Link' is defined but never used       @typescript-eslint/no-unused-vars
+  4:10  warning  'ArrowLeft' is defined but never used  @typescript-eslint/no-unused-vars
+  4:57  warning  'FileText' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/approve/page.tsx
+    5:24   warning  'ChevronRight' is defined but never used                         @typescript-eslint/no-unused-vars
+    5:63   warning  'Download' is defined but never used                             @typescript-eslint/no-unused-vars
+    5:86   warning  'Mail' is defined but never used                                 @typescript-eslint/no-unused-vars
+  124:233  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  124:239  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/attendance-lock/page.tsx
+   65:137  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  171:128  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/bank-file/page.tsx
+   4:21  warning  'CheckCircle2' is defined but never used                         @typescript-eslint/no-unused-vars
+  75:26  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/disburse/page.tsx
+  5:24  warning  'ChevronRight' is defined but never used   @typescript-eslint/no-unused-vars
+  5:93  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/neft-confirm/page.tsx
+   4:21  warning  'CheckCircle2' is defined but never used                         @typescript-eslint/no-unused-vars
+  47:37  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  47:55  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/review-deductions/page.tsx
+  3:10  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/review-gross/page.tsx
+  3:10  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/run/review-net/page.tsx
+  3:10  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+  5:53  warning  'Filter' is defined but never used    @typescript-eslint/no-unused-vars
+  5:69  warning  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/statutory-bonus/page.tsx
+  3:17  warning  'useState' is defined but never used       @typescript-eslint/no-unused-vars
+  4:48  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payroll/variable-pay/page.tsx
+  3:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  4:10  warning  'ArrowLeft' is defined but never used     @typescript-eslint/no-unused-vars
+  4:21  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  4:35  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+  4:49  warning  'FileText' is defined but never used      @typescript-eslint/no-unused-vars
+  4:67  warning  'TrendingUp' is defined but never used    @typescript-eslint/no-unused-vars
+  5:10  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/payslip-customization/page.tsx
+   4:75  warning  'ImageIcon' is defined but never used                            @typescript-eslint/no-unused-vars
+  34:86  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/statutory-bonus/page.tsx
+  4:43  warning  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/26as/[empId]/page.tsx
+  5:34  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/80c/[empId]/page.tsx
+  5:29  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  5:43  warning  'TrendingUp' is defined but never used    @typescript-eslint/no-unused-vars
+  5:55  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/80d/[empId]/page.tsx
+   5:29  warning  'HelpCircle' is defined but never used                @typescript-eslint/no-unused-vars
+   5:41  warning  'FileText' is defined but never used                  @typescript-eslint/no-unused-vars
+   5:51  warning  'CheckCircle2' is defined but never used              @typescript-eslint/no-unused-vars
+  18:11  warning  'maxTotalCheckup' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/advance-tax/page.tsx
+   4:8    warning  'Link' is defined but never used                                 @typescript-eslint/no-unused-vars
+   5:10   warning  'ChevronLeft' is defined but never used                          @typescript-eslint/no-unused-vars
+   5:39   warning  'Bell' is defined but never used                                 @typescript-eslint/no-unused-vars
+  23:203  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  23:229  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/annual-summary/[empId]/page.tsx
+   5:33   warning  'FileText' is defined but never used                             @typescript-eslint/no-unused-vars
+   5:43   warning  'CheckCircle2' is defined but never used                         @typescript-eslint/no-unused-vars
+   5:57   warning  'ShieldCheck' is defined but never used                          @typescript-eslint/no-unused-vars
+   5:70   warning  'Mail' is defined but never used                                 @typescript-eslint/no-unused-vars
+  64:216  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  94:95   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  94:102  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/computation/[empId]/page.tsx
+    5:39   warning  'CheckCircle2' is defined but never used                         @typescript-eslint/no-unused-vars
+    5:53   warning  'TrendingUp' is defined but never used                           @typescript-eslint/no-unused-vars
+    5:65   warning  'AlertCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+    5:78   warning  'FileText' is defined but never used                             @typescript-eslint/no-unused-vars
+  108:123  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  108:132  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/dashboard/page.tsx
+    6:5   warning  'Download' is defined but never used        @typescript-eslint/no-unused-vars
+    7:13  warning  'Filter' is defined but never used          @typescript-eslint/no-unused-vars
+    7:21  warning  'ChevronDown' is defined but never used     @typescript-eslint/no-unused-vars
+   12:5   warning  'RadialBarChart' is defined but never used  @typescript-eslint/no-unused-vars
+   12:21  warning  'RadialBar' is defined but never used       @typescript-eslint/no-unused-vars
+   12:32  warning  'Legend' is defined but never used          @typescript-eslint/no-unused-vars
+  165:56  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declaration/[empId]/page.tsx
+  3:17  warning  'useState' is defined but never used     @typescript-eslint/no-unused-vars
+  5:24  warning  'FileText' is defined but never used     @typescript-eslint/no-unused-vars
+  5:65  warning  'ShieldAlert' is defined but never used  @typescript-eslint/no-unused-vars
+  5:78  warning  'BadgeCheck' is defined but never used   @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/80c/page.tsx
+  12:5   warning  'Info' is defined but never used                      @typescript-eslint/no-unused-vars
+  14:5   warning  'Upload' is defined but never used                    @typescript-eslint/no-unused-vars
+  23:26  warning  'setDeclarations' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/80d/page.tsx
+   31:11   warning  'totalLimit' is assigned a value but never used                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  181:85   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  248:41   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  294:104  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  318:46   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/home-loan/page.tsx
+  7:5  warning  'Info' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/hra/page.tsx
+  315:41   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  315:119  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/nps/page.tsx
+  12:5   warning  'AlertCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+  14:5   warning  'PieChart' is defined but never used                             @typescript-eslint/no-unused-vars
+  93:90  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/other-deductions/page.tsx
+   23:24  warning  'setLtaClaimed' is assigned a value but never used               @typescript-eslint/no-unused-vars
+   24:23  warning  'setDonations' is assigned a value but never used                @typescript-eslint/no-unused-vars
+  148:84  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  219:87  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/declarations/page.tsx
+    6:13  warning  'Info' is defined but never used                                 @typescript-eslint/no-unused-vars
+    6:34  warning  'FileText' is defined but never used                             @typescript-eslint/no-unused-vars
+    6:44  warning  'IndianRupee' is defined but never used                          @typescript-eslint/no-unused-vars
+    6:67  warning  'Shield' is defined but never used                               @typescript-eslint/no-unused-vars
+  540:98  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/form-12bb/[empId]/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/form-12bb/page.tsx
+  8:5  warning  'Save' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/form16-bulk/page.tsx
+  3:17  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  4:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  5:64  warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/form16-generator/page.tsx
+  4:8   warning  'Link' is defined but never used         @typescript-eslint/no-unused-vars
+  5:10  warning  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/form24q/[quarter]/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+  5:57  warning  'Settings' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/form24q/page.tsx
+  5:23  warning  'FileText' is defined but never used     @typescript-eslint/no-unused-vars
+  5:81  warning  'UploadCloud' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/home-loan/[empId]/page.tsx
+   5:23   warning  'Info' is defined but never used                                 @typescript-eslint/no-unused-vars
+   5:35   warning  'FileText' is defined but never used                             @typescript-eslint/no-unused-vars
+   5:45   warning  'CheckCircle2' is defined but never used                         @typescript-eslint/no-unused-vars
+  82:220  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  82:229  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/hra/[empId]/page.tsx
+  5:29  warning  'Trash2' is defined but never used  @typescript-eslint/no-unused-vars
+  5:37  warning  'MapPin' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/my-form16/page.tsx
+  4:8  warning  'Link' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/nps/[empId]/page.tsx
+  5:29  warning  'HelpCircle' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/ocr-preview/[proofId]/page.tsx
+  5:52  warning  'Upload' is defined but never used              @typescript-eslint/no-unused-vars
+  5:60  warning  'RefreshCw' is defined but never used           @typescript-eslint/no-unused-vars
+  8:12  warning  'status' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  8:20  warning  'setStatus' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/page.tsx
+  3:17   warning  'useState' is defined but never used       @typescript-eslint/no-unused-vars
+  5:35   warning  'AlertCircle' is defined but never used    @typescript-eslint/no-unused-vars
+  5:48   warning  'FileText' is defined but never used       @typescript-eslint/no-unused-vars
+  5:72   warning  'Download' is defined but never used       @typescript-eslint/no-unused-vars
+  5:82   warning  'Search' is defined but never used         @typescript-eslint/no-unused-vars
+  5:90   warning  'Briefcase' is defined but never used      @typescript-eslint/no-unused-vars
+  5:101  warning  'FileSignature' is defined but never used  @typescript-eslint/no-unused-vars
+  5:116  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+  6:95   warning  'Cell' is defined but never used           @typescript-eslint/no-unused-vars
+  6:111  warning  'Area' is defined but never used           @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/previous-employer/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+  5:23  warning  'Plus' is defined but never used      @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/projection/[empId]/page.tsx
+   5:23  warning  'Info' is defined but never used          @typescript-eslint/no-unused-vars
+  69:56  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/proof-review/[proofId]/page.tsx
+  3:17  warning  'useState' is defined but never used  @typescript-eslint/no-unused-vars
+  5:23  warning  'Info' is defined but never used      @typescript-eslint/no-unused-vars
+  5:43  warning  'XCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  5:52  warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/proof-review/page.tsx
+  3:17  warning  'useState' is defined but never used       @typescript-eslint/no-unused-vars
+  5:39  warning  'CheckCircle2' is defined but never used   @typescript-eslint/no-unused-vars
+  5:53  warning  'FileText' is defined but never used       @typescript-eslint/no-unused-vars
+  5:63  warning  'AlertTriangle' is defined but never used  @typescript-eslint/no-unused-vars
+  5:78  warning  'ShieldCheck' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/proof-upload/[empId]/page.tsx
+  3:17   warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  5:46   warning  'CheckCircle2' is defined but never used  @typescript-eslint/no-unused-vars
+  5:60   warning  'Search' is defined but never used        @typescript-eslint/no-unused-vars
+  5:68   warning  'Filter' is defined but never used        @typescript-eslint/no-unused-vars
+  5:76   warning  'ShieldAlert' is defined but never used   @typescript-eslint/no-unused-vars
+  5:89   warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  5:102  warning  'X' is defined but never used             @typescript-eslint/no-unused-vars
+  5:105  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/regime-comparison/page.tsx
+  3:17  warning  'useState' is defined but never used     @typescript-eslint/no-unused-vars
+  5:10  warning  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/regime-selector/[empId]/page.tsx
+  5:43  warning  'ShieldAlert' is defined but never used    @typescript-eslint/no-unused-vars
+  6:77  warning  'ReferenceLine' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/regime-selector/page.tsx
+    5:36  warning  'Shield' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+    6:5   warning  'AlertCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   72:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/regime-selector/page.tsx:72:9
+  70 |         const oldTotalDeductions = oldStdDeduction + hraExempt + sec80c + sec80d + homeLoanInterest;
+  71 |         const oldTaxable = Math.max(0, grossSalary - oldTotalDeductions);
+> 72 |         setOldTax(calculateOldTax(oldTaxable));
+     |         ^^^^^^^^^ Avoid calling setState() directly within an effect
+  73 |
+  74 |         // New Regime Calculation (Budget 2024 slabs assumed)
+  75 |         const newStdDeduction = 75000; // Updated std deduction for new regime  react-hooks/set-state-in-effect
+  119:87  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+  119:95  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/tax/switch-regime/[empId]/page.tsx
+  5:23  warning  'RefreshCw' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(app)/variable-pay-setup/page.tsx
+    4:10   warning  'CopyPlus' is defined but never used                             @typescript-eslint/no-unused-vars
+    4:39   warning  'Settings2' is defined but never used                            @typescript-eslint/no-unused-vars
+    4:76   warning  'Users' is defined but never used                                @typescript-eslint/no-unused-vars
+    4:83   warning  'ChevronRight' is defined but never used                         @typescript-eslint/no-unused-vars
+  172:93   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  172:105  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(app)/zero-payroll/page.tsx
+    4:31   warning  'Settings' is defined but never used                             @typescript-eslint/no-unused-vars
+  126:114  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/first-login/page.tsx
+   4:30  warning  'ShieldCheck' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  26:30  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/first-login/page.tsx:26:30
+  24 |                 <div key={i} style={{
+  25 |                     position: "absolute",
+> 26 |                     left: `${Math.random() * 100}%`,
+     |                              ^^^^^^^^^^^^^ Cannot call impure function
+  27 |                     top: 0,
+  28 |                     width: 8,
+  29 |                     height: 8,                                                                                                                                             react-hooks/purity
+  30:35  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/first-login/page.tsx:30:35
+  28 |                     width: 8,
+  29 |                     height: 8,
+> 30 |                     borderRadius: Math.random() > 0.5 ? "50%" : 2,
+     |                                   ^^^^^^^^^^^^^ Cannot call impure function
+  31 |                     background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  32 |                     animation: `confetti-fall ${1.5 + Math.random()}s ease-in ${Math.random() * 0.5}s forwards`,
+  33 |                 }} />                  react-hooks/purity
+  32:55  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/first-login/page.tsx:32:55
+  30 |                     borderRadius: Math.random() > 0.5 ? "50%" : 2,
+  31 |                     background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+> 32 |                     animation: `confetti-fall ${1.5 + Math.random()}s ease-in ${Math.random() * 0.5}s forwards`,
+     |                                                       ^^^^^^^^^^^^^ Cannot call impure function
+  33 |                 }} />
+  34 |             ))}
+  35 |         </div>                            react-hooks/purity
+  32:81  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/first-login/page.tsx:32:81
+  30 |                     borderRadius: Math.random() > 0.5 ? "50%" : 2,
+  31 |                     background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+> 32 |                     animation: `confetti-fall ${1.5 + Math.random()}s ease-in ${Math.random() * 0.5}s forwards`,
+     |                                                                                 ^^^^^^^^^^^^^ Cannot call impure function
+  33 |                 }} />
+  34 |             ))}
+  35 |         </div>  react-hooks/purity
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/forgot-password/otp/page.tsx
+  20:27  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/forgot-password/otp/page.tsx:20:27
+  18 |
+  19 |     useEffect(() => {
+> 20 |         if (timer <= 0) { setResendActive(true); return; }
+     |                           ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |         const id = setInterval(() => setTimer((t) => t - 1), 1000);
+  22 |         return () => clearInterval(id);
+  23 |     }, [timer]);  react-hooks/set-state-in-effect
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/login-history/page.tsx
+  46:12  warning  'page' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/login/LoginForm.tsx
+  9:8  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/setup-2fa/page.tsx
+  75:43  warning  'filled' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  75:65  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/setup-2fa/page.tsx:75:65
+  73 |                                     const col = i % 7;
+  74 |                                     const isCorner = (row < 2 && col < 2) || (row < 2 && col >= 5) || (row >= 5 && col < 2);
+> 75 |                                     const filled = isCorner || (Math.random() > 0.5 && !isCorner);
+     |                                                                 ^^^^^^^^^^^^^ Cannot call impure function
+  76 |                                     return <div key={i} style={{ background: i % 3 === 0 || isCorner ? "#000000" : "#FFFFFF", borderRadius: 1 }} />;
+  77 |                                 })}
+  78 |                             </div>  react-hooks/purity
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/verify-otp/page.tsx
+  23:27  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ajiit/Desktop/HRflow/app/(auth)/verify-otp/page.tsx:23:27
+  21 |
+  22 |     useEffect(() => {
+> 23 |         if (timer <= 0) { setResendActive(true); return; }
+     |                           ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  24 |         const id = setInterval(() => setTimer((t) => t - 1), 1000);
+  25 |         return () => clearInterval(id);
+  26 |     }, [timer]);  react-hooks/set-state-in-effect
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/anniversaries/page.tsx
+  4:31  warning  'Filter' is defined but never used        @typescript-eslint/no-unused-vars
+  4:39  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+  4:53  warning  'Check' is defined but never used         @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/approvals/page.tsx
+  4:24  warning  'Filter' is defined but never used  @typescript-eslint/no-unused-vars
+  4:50  warning  'User' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/dept-headcount/page.tsx
+  4:10  warning  'Users' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/directory/page.tsx
+  4:95  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/manager-approvals/page.tsx
+  15:12  warning  'selected' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  15:22  warning  'setSelected' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/notice-board/page.tsx
+  4:62  warning  'Calendar' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/page.tsx
+   5:47  warning  'AlertTriangle' is defined but never used        @typescript-eslint/no-unused-vars
+   6:5   warning  'Calendar' is defined but never used             @typescript-eslint/no-unused-vars
+   6:15  warning  'Zap' is defined but never used                  @typescript-eslint/no-unused-vars
+  38:12  warning  'loading' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  38:21  warning  'setLoading' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/payroll-status/page.tsx
+  3:10  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+  3:62  warning  'Info' is defined but never used          @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(dashboard)/quick-actions/page.tsx
+  4:8  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/complete/page.tsx
+  17:52  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/complete/page.tsx:17:52
+  15 |             {Array.from({ length: 40 }).map((_, i) => (
+  16 |                 <div key={i} style={{
+> 17 |                     position: "absolute", left: `${Math.random() * 100}%`, top: -10,
+     |                                                    ^^^^^^^^^^^^^ Cannot call impure function
+  18 |                     width: 8, height: 8, borderRadius: Math.random() > 0.5 ? "50%" : 2,
+  19 |                     background: colors[i % colors.length],
+  20 |                     animation: `confetti-fall ${2 + Math.random() * 2}s ease-in ${Math.random() * 0.5}s forwards`,  react-hooks/purity
+  18:56  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/complete/page.tsx:18:56
+  16 |                 <div key={i} style={{
+  17 |                     position: "absolute", left: `${Math.random() * 100}%`, top: -10,
+> 18 |                     width: 8, height: 8, borderRadius: Math.random() > 0.5 ? "50%" : 2,
+     |                                                        ^^^^^^^^^^^^^ Cannot call impure function
+  19 |                     background: colors[i % colors.length],
+  20 |                     animation: `confetti-fall ${2 + Math.random() * 2}s ease-in ${Math.random() * 0.5}s forwards`,
+  21 |                 }} />                                react-hooks/purity
+  20:53  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/complete/page.tsx:20:53
+  18 |                     width: 8, height: 8, borderRadius: Math.random() > 0.5 ? "50%" : 2,
+  19 |                     background: colors[i % colors.length],
+> 20 |                     animation: `confetti-fall ${2 + Math.random() * 2}s ease-in ${Math.random() * 0.5}s forwards`,
+     |                                                     ^^^^^^^^^^^^^ Cannot call impure function
+  21 |                 }} />
+  22 |             ))}
+  23 |         </div>                                                                                                                               react-hooks/purity
+  20:83  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/complete/page.tsx:20:83
+  18 |                     width: 8, height: 8, borderRadius: Math.random() > 0.5 ? "50%" : 2,
+  19 |                     background: colors[i % colors.length],
+> 20 |                     animation: `confetti-fall ${2 + Math.random() * 2}s ease-in ${Math.random() * 0.5}s forwards`,
+     |                                                                                   ^^^^^^^^^^^^^ Cannot call impure function
+  21 |                 }} />
+  22 |             ))}
+  23 |         </div>                                                                                                 react-hooks/purity
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/designations/page.tsx
+  129:63  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/locale/page.tsx
+  4:8  warning  'Input' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/welcome/page.tsx
+  17:30  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/welcome/page.tsx:17:30
+  15 |                 <div key={i} style={{
+  16 |                     position: "absolute",
+> 17 |                     left: `${Math.random() * 100}%`,
+     |                              ^^^^^^^^^^^^^ Cannot call impure function
+  18 |                     top: -10,
+  19 |                     width: 8,
+  20 |                     height: 8,                                                                                    react-hooks/purity
+  21:35  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/welcome/page.tsx:21:35
+  19 |                     width: 8,
+  20 |                     height: 8,
+> 21 |                     borderRadius: Math.random() > 0.5 ? "50%" : 2,
+     |                                   ^^^^^^^^^^^^^ Cannot call impure function
+  22 |                     background: colors[i % colors.length],
+  23 |                     animation: `confetti-fall 3s ease-in ${Math.random() * 0.5}s forwards`,
+  24 |                 }} />  react-hooks/purity
+  23:60  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/ajiit/Desktop/HRflow/app/(setup)/welcome/page.tsx:23:60
+  21 |                     borderRadius: Math.random() > 0.5 ? "50%" : 2,
+  22 |                     background: colors[i % colors.length],
+> 23 |                     animation: `confetti-fall 3s ease-in ${Math.random() * 0.5}s forwards`,
+     |                                                            ^^^^^^^^^^^^^ Cannot call impure function
+  24 |                 }} />
+  25 |             ))}
+  26 |         </div>       react-hooks/purity
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step1Personal.tsx
+  40:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step1Personal.tsx:40:13
+  38 |         if (pan.length === 10) {
+  39 |             const valid = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan);
+> 40 |             setPanValid(valid);
+     |             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  41 |         } else {
+  42 |             setPanValid(null);
+  43 |         }  react-hooks/set-state-in-effect
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step2Job.tsx
+  21:36   warning  'data' is defined but never used                                 @typescript-eslint/no-unused-vars
+  21:42   warning  'onUpdate' is defined but never used                             @typescript-eslint/no-unused-vars
+  27:102  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step3Salary.tsx
+   4:8   warning  'ClientOnly' is defined but never used           @typescript-eslint/no-unused-vars
+   5:10  warning  'AreaChart' is defined but never used            @typescript-eslint/no-unused-vars
+   5:21  warning  'Area' is defined but never used                 @typescript-eslint/no-unused-vars
+   5:27  warning  'XAxis' is defined but never used                @typescript-eslint/no-unused-vars
+   5:34  warning  'YAxis' is defined but never used                @typescript-eslint/no-unused-vars
+   5:41  warning  'Tooltip' is defined but never used              @typescript-eslint/no-unused-vars
+   5:50  warning  'ResponsiveContainer' is defined but never used  @typescript-eslint/no-unused-vars
+  31:39  warning  'data' is defined but never used                 @typescript-eslint/no-unused-vars
+  31:45  warning  'onUpdate' is defined but never used             @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step4Statutory.tsx
+  55:42  warning  'data' is defined but never used      @typescript-eslint/no-unused-vars
+  55:48  warning  'onUpdate' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step5Bank.tsx
+  12:37  warning  'data' is defined but never used      @typescript-eslint/no-unused-vars
+  12:43  warning  'onUpdate' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/Step6Documents.tsx
+   4:23  warning  'File' is defined but never used      @typescript-eslint/no-unused-vars
+   4:29  warning  'Image' is defined but never used     @typescript-eslint/no-unused-vars
+  20:42  warning  'data' is defined but never used      @typescript-eslint/no-unused-vars
+  20:48  warning  'onUpdate' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/components/employees/wizard/StepReview.tsx
+  69:38  warning  'data' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/ajiit/Desktop/HRflow/components/ui/ClientOnly.tsx
+  10:21  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ajiit/Desktop/HRflow/components/ui/ClientOnly.tsx:10:21
+   8 | export default function ClientOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
+   9 |     const [mounted, setMounted] = useState(false);
+> 10 |     useEffect(() => setMounted(true), []);
+     |                     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  11 |     if (!mounted) return <>{fallback ?? null}</>;
+  12 |     return <>{children}</>;
+  13 | }  react-hooks/set-state-in-effect
+
+/Users/ajiit/Desktop/HRflow/components/ui/chart-wrapper.tsx
+   3:8  warning  'dynamic' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  20:9  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/ajiit/Desktop/HRflow/components/ui/chart-wrapper.tsx:20:9
+  18 |
+  19 |     useEffect(() => {
+> 20 |         setMounted(true);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |     }, []);
+  22 |
+  23 |     if (!mounted) {  react-hooks/set-state-in-effect
+
+✖ 458 problems (126 errors, 332 warnings)
+

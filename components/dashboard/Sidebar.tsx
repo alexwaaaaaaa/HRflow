@@ -1,0 +1,773 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import {
+    LayoutDashboard, Users, IndianRupee, Clock, Calendar,
+    Briefcase, Target, BookOpen, TrendingUp, Wallet, CreditCard,
+    PiggyBank, Shield, FileText, Settings,
+    HelpCircle, LogOut, ChevronDown, ChevronRight, Gift, Monitor,
+    BarChart2, MessageSquare, Landmark, PieChart, ShieldCheck, FolderOpen,
+    Bell, Code2, AlertTriangle, Lock, Receipt, Layers, Scale,
+    Users2, Globe, GitBranch, LayoutTemplate, Timer, Megaphone,
+    Building2, Zap
+} from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+
+// ── Sub-Menu Link Data ────────────────────────────────────────────────────────
+
+const EMPLOYEE_LINKS = [
+    { label: "Employee List", href: "/employees" },
+    { label: "Add Employee", href: "/employees/add" },
+    { label: "Directory", href: "/employees/directory" },
+    { label: "Salary Revisions", href: "/employees/salary-revisions" },
+    { label: "Onboarding", href: "/onboarding/dashboard" },
+    { label: "Offboarding / FnF", href: "/fnf/dashboard" },
+    { label: "Import Employees", href: "/employees/import" },
+    { label: "Search", href: "/employees/search" },
+];
+
+const ORG_CHART_LINKS = [
+    { label: "Org Chart (Tree)", href: "/org-chart/tree" },
+    { label: "Matrix Org Chart", href: "/org-chart/matrix" },
+    { label: "Departments", href: "/org-chart/departments" },
+    { label: "Designations", href: "/org-chart/designations" },
+    { label: "Grade Bands", href: "/org-chart/grades" },
+    { label: "Locations", href: "/org-chart/locations" },
+    { label: "Cost Centers", href: "/org-chart/cost-centers" },
+    { label: "Budget vs Actual", href: "/org-chart/budget-vs-actual" },
+    { label: "Budget Planning", href: "/org-chart/budget-planning" },
+    { label: "Headcount Planning", href: "/org-chart/planning/headcount" },
+    { label: "Workforce Planning", href: "/org-chart/planning/workforce" },
+    { label: "Workforce Analytics", href: "/org-chart/analytics" },
+    { label: "Headcount Forecast", href: "/org-chart/planning/forecast" },
+    { label: "Open Positions", href: "/org-chart/positions/open" },
+    { label: "Span of Control", href: "/org-chart/span-of-control" },
+    { label: "Holiday Calendar", href: "/org-chart/calendar/holiday" },
+    { label: "Working Calendar", href: "/org-chart/calendar/working" },
+];
+
+const PAYROLL_LINKS = [
+    { label: "Payroll Dashboard", href: "/payroll/dashboard" },
+    { label: "Run Payroll", href: "/payroll/run/select-month" },
+    { label: "Salary Components", href: "/payroll-settings/components" },
+    { label: "Arrears", href: "/payroll/arrears" },
+    { label: "Payslips", href: "/payroll/payslips/bulk" },
+    { label: "IT Declarations", href: "/tax/declarations" },
+    { label: "Form 16", href: "/tax/form-16" },
+    { label: "Variance Report", href: "/payroll/reports/variance" },
+    { label: "LOP Report", href: "/payroll/reports/lop" },
+    { label: "CTC Revision", href: "/payroll/ctc-revision" },
+    { label: "Payroll History", href: "/payroll/history" },
+    { label: "FnF Settlement", href: "/payroll/fnf" },
+];
+
+const ATTENDANCE_LINKS = [
+    { label: "Attendance Dashboard", href: "/attendance/dashboard" },
+    { label: "Live Attendance", href: "/attendance/live" },
+    { label: "Daily Log", href: "/attendance/daily-log" },
+    { label: "Regularization", href: "/attendance/regularization" },
+    { label: "Shift Roster", href: "/attendance/shifts/roster" },
+    { label: "Overtime Report", href: "/attendance/reports/overtime" },
+    { label: "WFH Requests", href: "/attendance/wfh/request" },
+    { label: "WFH Approvals", href: "/attendance/wfh/approve" },
+    { label: "Biometric Devices", href: "/attendance/biometric" },
+    { label: "Holiday Calendar", href: "/attendance/holidays" },
+    { label: "Attendance Reports", href: "/attendance/reports" },
+    { label: "Policy Settings", href: "/attendance/settings/policies" },
+];
+
+const LEAVE_LINKS = [
+    { label: "Leave Dashboard", href: "/leave/dashboard" },
+    { label: "Apply Leave", href: "/my-leave/apply" },
+    { label: "Leave Balance", href: "/leave/balance" },
+    { label: "Team Calendar", href: "/leave/calendar" },
+    { label: "Leave Approvals", href: "/leave/approvals" },
+    { label: "Holiday List", href: "/my-leave/holidays" },
+    { label: "Comp-off", href: "/my-leave/comp-off" },
+    { label: "Leave Allocation", href: "/leave/allocation" },
+    { label: "Leave Reports", href: "/leave/reports" },
+    { label: "Leave Policy", href: "/leave/settings/policy" },
+    { label: "Accrual Settings", href: "/leave/settings/accrual" },
+];
+
+const PERF_LINKS = [
+    { label: "PMS Dashboard", href: "/performance/dashboard" },
+    { label: "Cycle Setup", href: "/performance/cycle-setup" },
+    { label: "Rating Scale", href: "/performance/rating-scale" },
+    { label: "Goal Setting (Emp)", href: "/performance/goals/set" },
+    { label: "Goal Approval (Mgr)", href: "/performance/goals/approve" },
+    { label: "Goal Library", href: "/performance/goals/library" },
+    { label: "Mid-Year Review", href: "/performance/reviews/mid-year" },
+    { label: "Self Appraisal", href: "/performance/reviews/self" },
+    { label: "Manager Appraisal", href: "/performance/reviews/manager" },
+    { label: "Skip-Level Review", href: "/performance/reviews/skip-level" },
+    { label: "Calibration", href: "/performance/calibration" },
+    { label: "Bell Curve", href: "/performance/bell-curve" },
+    { label: "Final Ratings", href: "/performance/final-rating" },
+    { label: "Appraisal Letter", href: "/performance/letters/appraisal" },
+    { label: "Increment Letter", href: "/performance/letters/increment" },
+    { label: "Promo Recommend", href: "/performance/promotion/recommend" },
+    { label: "Promotion Letter", href: "/performance/promotion/letter" },
+    { label: "Promotion Approval", href: "/performance/promotion/approve" },
+    { label: "PIP Initiation", href: "/performance/pip/initiate" },
+    { label: "PIP Weekly Review", href: "/performance/pip/review" },
+    { label: "PIP Outcome", href: "/performance/pip/outcome" },
+    { label: "PMS Reports", href: "/performance/reports" },
+    { label: "PMS Calendar", href: "/performance/calendar" },
+];
+
+const REC_LINKS = [
+    { label: "ATS Dashboard", href: "/recruitment/dashboard" },
+    { label: "Job Postings", href: "/recruitment/jobs" },
+    { label: "Create Job", href: "/recruitment/jobs/create" },
+    { label: "Publish to Job Boards", href: "/recruitment/jobs/publish" },
+    { label: "Candidate List", href: "/recruitment/candidates" },
+    { label: "Resume Parser", href: "/recruitment/parser" },
+    { label: "Candidate Sourcing", href: "/recruitment/sourcing" },
+    { label: "Communications", href: "/recruitment/communications" },
+    { label: "Interviews", href: "/recruitment/interviews" },
+    { label: "Interview Feedback", href: "/recruitment/interviews/feedback" },
+    { label: "Question Bank", href: "/recruitment/interviews/questions" },
+    { label: "Panel Setup", href: "/recruitment/interviews/panel" },
+    { label: "Offer Generation", href: "/recruitment/offers/generate" },
+    { label: "Offer Acceptance", href: "/recruitment/offers/acceptance" },
+    { label: "Employee Referral", href: "/recruitment/referrals" },
+    { label: "BGV Initiation", href: "/recruitment/bgv/initiate" },
+    { label: "BGV Status", href: "/recruitment/bgv/status" },
+    { label: "Onboarding Trigger", href: "/recruitment/onboarding/trigger" },
+    { label: "ATS Reports", href: "/recruitment/reports" },
+];
+
+const LMS_LINKS = [
+    { label: "My Dashboard", href: "/lms/dashboard" },
+    { label: "Course Library", href: "/lms/library" },
+    { label: "Learning Paths", href: "/lms/learning-path" },
+    { label: "Admin Dashboard", href: "/lms/admin/dashboard" },
+    { label: "Course Builder", href: "/lms/admin/course/create" },
+    { label: "Webinars & Live", href: "/lms/calendar" },
+    { label: "Compliance Training", href: "/lms/compliance/calendar" },
+    { label: "Skill Matrix", href: "/lms/skills/matrix" },
+    { label: "Skill Gap Analysis", href: "/lms/skills/gap" },
+    { label: "Gamification", href: "/lms/gamification" },
+    { label: "LMS Reports", href: "/lms/reports" },
+];
+
+const ENGAGEMENT_LINKS = [
+    { label: "R&R Dashboard", href: "/engagement/rr/dashboard" },
+    { label: "Give Recognition", href: "/engagement/rr/give" },
+    { label: "Recognition Feed", href: "/engagement/rr/feed" },
+    { label: "My Rewards", href: "/engagement/rr/my-rewards" },
+    { label: "Reward Catalog", href: "/engagement/rr/catalog" },
+    { label: "R&R Admin", href: "/engagement/rr/admin" },
+    { label: "Survey Dashboard", href: "/engagement/surveys/dashboard" },
+    { label: "Take eNPS", href: "/engagement/surveys/enps-take" },
+    { label: "eNPS Dashboard", href: "/engagement/surveys/enps-dashboard" },
+    { label: "Heatmap Analytics", href: "/engagement/surveys/analytics/heatmap" },
+    { label: "Survey Templates", href: "/engagement/surveys/templates" },
+    { label: "Create Survey", href: "/engagement/surveys/create" },
+];
+
+const OKR_LINKS = [
+    { label: "OKR Dashboard", href: "/okr/dashboard" },
+    { label: "Company OKRs", href: "/okr/company" },
+    { label: "Department OKRs", href: "/okr/department" },
+    { label: "My OKRs", href: "/okr/my-okrs" },
+    { label: "Create OKR", href: "/okr/create" },
+    { label: "Progress Update", href: "/okr/progress" },
+    { label: "Check-in", href: "/okr/check-in" },
+    { label: "Alignment View", href: "/okr/alignment" },
+    { label: "OKR Reports", href: "/okr/reports" },
+    { label: "OKR Settings", href: "/okr/settings" },
+];
+
+const FEEDBACK_LINKS = [
+    { label: "360° Dashboard", href: "/feedback/dashboard" },
+    { label: "Request Feedback", href: "/feedback/request" },
+    { label: "Give Feedback", href: "/feedback/give" },
+    { label: "360° Report", href: "/feedback/report" },
+    { label: "Strengths & Dev", href: "/feedback/strengths" },
+    { label: "Continuous Feedback", href: "/feedback/continuous" },
+    { label: "Feedback History", href: "/feedback/history" },
+    { label: "Kudos Wall", href: "/feedback/kudos" },
+    { label: "Feedback Analytics", href: "/feedback/analytics" },
+];
+
+const SUCCESSION_LINKS = [
+    { label: "Succession Dashboard", href: "/succession" },
+    { label: "9-Box Grid", href: "/succession/nine-box" },
+    { label: "Talent Pool", href: "/succession/talent-pool" },
+    { label: "Development Plans", href: "/succession/development-plans" },
+    { label: "Key Person Risk", href: "/succession/key-person-risk" },
+    { label: "Internal Mobility", href: "/succession/internal-mobility" },
+    { label: "Critical Roles", href: "/succession/critical-roles" },
+    { label: "Succession Readiness", href: "/succession/readiness" },
+    { label: "Attrition Risk", href: "/attrition-risk" },
+];
+
+const WORKFORCE_LINKS = [
+    { label: "Workforce Planning", href: "/workforce-analytics/planning" },
+    { label: "Headcount Forecast", href: "/workforce-analytics/headcount" },
+    { label: "Attrition Forecast", href: "/workforce-analytics/attrition" },
+    { label: "Hiring Plan", href: "/workforce-analytics/hiring-plan" },
+    { label: "Cost Forecast", href: "/workforce-analytics/cost-forecast" },
+    { label: "Scenario Planning", href: "/workforce-analytics/scenarios" },
+    { label: "D&I Dashboard", href: "/workforce-analytics/diversity" },
+];
+
+const EMBEDDED_FINANCE_LINKS = [
+    { label: "Finance Dashboard", href: "/finance/dashboard" },
+    { label: "EWA Portal", href: "/finance/ewa" },
+    { label: "Loan Management", href: "/finance/loans" },
+    { label: "Insurance Marketplace", href: "/finance/insurance/marketplace" },
+    { label: "Company Credit Score", href: "/finance/score" },
+    { label: "Double Entry Ledger", href: "/finance/ledger" },
+    { label: "Finance Analytics", href: "/finance/analytics" },
+    { label: "Finance Settings", href: "/finance/settings" },
+];
+
+const EWA_LINKS = [
+    { label: "EWA Dashboard", href: "/finance/ewa" },
+    { label: "Apply for EWA", href: "/finance/ewa/withdraw" },
+    { label: "EWA History", href: "/finance/ewa/history" },
+    { label: "EWA Admin", href: "/finance/ewa/admin" },
+    { label: "Variable Pay Setup", href: "/variable-pay-setup" },
+    { label: "Off-cycle Payroll", href: "/off-cycle-payroll" },
+];
+
+const LOANS_LINKS = [
+    { label: "Loans & Advances", href: "/payroll-settings/loans" },
+    { label: "Loan Application", href: "/finance/loans/apply" },
+    { label: "Loan Approval", href: "/finance/loans/approve" },
+    { label: "Repayment Schedule", href: "/finance/loans/repayment" },
+    { label: "Gratuity", href: "/payroll/gratuity" },
+    { label: "Statutory Bonus", href: "/payroll/statutory-bonus" },
+    { label: "Leave Encashment", href: "/payroll/leave-encashment" },
+];
+
+const INSURANCE_LINKS = [
+    { label: "Tax Dashboard", href: "/tax/dashboard" },
+    { label: "Tax Declarations", href: "/tax/declarations" },
+    { label: "Proof Upload", href: "/tax/proofs/upload" },
+    { label: "Form 16", href: "/tax/form-16" },
+    { label: "Regime Selector", href: "/tax/regime-selector" },
+    { label: "TDS 24Q Filing", href: "/tax/tds-return-24q" },
+    { label: "TDS Challan", href: "/tax/tds-challan" },
+    { label: "Form 26AS", href: "/tax/form-26as" },
+];
+
+const REIMBURSEMENTS_LINKS = [
+    { label: "My Claims", href: "/reimbursements" },
+    { label: "Raise Claim", href: "/reimbursements/claim" },
+    { label: "Claim Approval", href: "/reimbursements/approve" },
+    { label: "LTA Claim", href: "/reimbursements/lta" },
+    { label: "Medical Claim", href: "/reimbursements/medical" },
+    { label: "Balance Tracker", href: "/reimbursements/balance" },
+    { label: "Reimbursement Policy", href: "/reimbursements/policy" },
+    { label: "Reports", href: "/reimbursements/reports" },
+];
+
+const FBP_LINKS = [
+    { label: "FBP Dashboard", href: "/fbp" },
+    { label: "My Declaration", href: "/fbp/declaration" },
+    { label: "FBP Management", href: "/fbp/management" },
+    { label: "Component Setup", href: "/fbp/components" },
+    { label: "Mid-Year Revision", href: "/fbp/revision" },
+    { label: "FBP Reports", href: "/fbp/reports" },
+];
+
+const COMPLIANCE_LINKS = [
+    { label: "Compliance Hub", href: "/compliance/dashboard" },
+    { label: "PF ECR Filing", href: "/compliance/pf-ecr" },
+    { label: "PF Challan", href: "/compliance/pf-challan" },
+    { label: "ESI Challan", href: "/compliance/esi-challan" },
+    { label: "TDS 24Q Return", href: "/compliance/tds-return-24q" },
+    { label: "PT Challan", href: "/compliance/pt-challan" },
+    { label: "LWF Filing", href: "/compliance/lwf" },
+    { label: "Gazette Monitor", href: "/compliance/gazette-monitor" },
+    { label: "Compliance Calendar", href: "/compliance/calendar" },
+    { label: "Digital Signatures", href: "/compliance/digital-signature" },
+    { label: "Inspector Ready", href: "/compliance/inspector-ready" },
+    { label: "Labour Law Calendar", href: "/compliance/labour-law-calendar" },
+    { label: "Health Score", href: "/compliance/health-score" },
+    { label: "Compliance Settings", href: "/compliance/settings" },
+];
+
+const IT_LINKS = [
+    { label: "IT Dashboard", href: "/it-provisioning" },
+    { label: "Asset List", href: "/it-provisioning/assets" },
+    { label: "Add Asset", href: "/it-provisioning/assets/add" },
+    { label: "Asset Assignment", href: "/it-provisioning/assets/assign" },
+    { label: "Asset Return", href: "/it-provisioning/assets/return" },
+    { label: "Asset Maintenance", href: "/it-provisioning/assets/maintenance" },
+    { label: "Software Licenses", href: "/it-provisioning/software" },
+    { label: "Software Request", href: "/it-provisioning/software/request" },
+    { label: "Access Revocation", href: "/it-provisioning/access/revoke" },
+    { label: "IT Analytics", href: "/it-provisioning/analytics" },
+];
+
+const BGV_LINKS = [
+    { label: "BGV Dashboard", href: "/bgv/dashboard" },
+    { label: "Initiate Request", href: "/bgv/initiate" },
+    { label: "Status Tracking", href: "/bgv/status" },
+    { label: "Discrepancies", href: "/bgv/discrepancies" },
+    { label: "Vendor Management", href: "/bgv/vendors" },
+    { label: "Policy Setup", href: "/bgv/settings/policy" },
+    { label: "BGV Reports", href: "/bgv/reports" },
+];
+
+const DOC_LINKS = [
+    { label: "Repository", href: "/documents/repository" },
+    { label: "Upload Document", href: "/documents/upload" },
+    { label: "Categories", href: "/documents/categories" },
+    { label: "Search & Retrieval", href: "/documents/search" },
+    { label: "Expiry Tracker", href: "/documents/expiry" },
+    { label: "Bulk Generation", href: "/documents/bulk-generation" },
+    { label: "E-Signature Hub", href: "/documents/e-sign" },
+    { label: "Document Reports", href: "/documents/reports" },
+    { label: "Audit Trail", href: "/documents/audit" },
+];
+
+const REPORTS_LINKS = [
+    { label: "Reports Dashboard", href: "/reports/dashboard" },
+    { label: "Custom Builder", href: "/reports/builder" },
+    { label: "Standard Reports", href: "/reports/headcount" },
+    { label: "Payroll & Compliance", href: "/reports/payroll-cost" },
+    { label: "Advanced Analytics", href: "/reports/hr-analytics" },
+    { label: "BRSR Report", href: "/reports/brsr" },
+    { label: "Data Export", href: "/reports/export-dashboard" },
+    { label: "Scheduled Reports", href: "/reports/scheduled" },
+];
+
+const AI_LINKS = [
+    { label: "AI Dashboard", href: "/ai/dashboard" },
+    { label: "HR Copilot", href: "/ai/copilot" },
+    { label: "Natural Language Query", href: "/ai/nl-query" },
+    { label: "Attrition Risk", href: "/ai/attrition-risk" },
+    { label: "Pay Anomaly", href: "/ai/pay-anomaly" },
+    { label: "Gazette Monitor", href: "/ai/gazette-monitor" },
+    { label: "AI Analytics", href: "/ai/analytics" },
+];
+
+const NOTIFICATIONS_LINKS = [
+    { label: "Notification Center", href: "/notifications" },
+    { label: "History", href: "/notifications/history" },
+    { label: "Preferences", href: "/notifications/preferences" },
+    { label: "Push Setup", href: "/notifications/push-setup" },
+    { label: "Digest Email", href: "/notifications/digest" },
+    { label: "Escalation Rules", href: "/notifications/escalation" },
+    { label: "Reminders", href: "/notifications/reminders" },
+    { label: "Templates", href: "/notifications/templates" },
+    { label: "Analytics", href: "/notifications/analytics" },
+];
+
+const SETTINGS_LINKS = [
+    { label: "Company Profile", href: "/payroll-settings" },
+    { label: "Salary Components", href: "/payroll-settings/components" },
+    { label: "Payroll Cycle", href: "/payroll-settings/cycle" },
+    { label: "Payslip Template", href: "/payroll-settings/payslip-template" },
+    { label: "Lock Engine", href: "/payroll-settings/lock" },
+    { label: "Bank Verification", href: "/payroll-settings/bank-verify" },
+    { label: "Bands & Grades", href: "/payroll-settings/bands" },
+    { label: "Approval Matrix", href: "/settings/approval-workflow" },
+    { label: "Role Permissions", href: "/settings/roles" },
+    { label: "Workflow Builder", href: "/settings/workflow-builder" },
+    { label: "API Keys", href: "/settings/api-keys" },
+];
+
+const GRIEVANCE_LINKS = [
+    { label: "Grievance Dashboard", href: "/grievances/dashboard" },
+    { label: "Raise Grievance", href: "/grievances/raise" },
+    { label: "My Grievances", href: "/grievances/my" },
+    { label: "HR Investigation", href: "/grievances/investigation" },
+    { label: "IC Committee", href: "/grievances/ic-committee" },
+    { label: "Hearing Room", href: "/grievances/hearing" },
+    { label: "Grievance Reports", href: "/grievances/reports" },
+    { label: "IC Annual Report", href: "/grievances/posh-report" },
+];
+
+const SECURITY_LINKS = [
+    { label: "Security Dashboard", href: "/security" },
+    { label: "Active Sessions", href: "/security/sessions" },
+    { label: "Failed Logins", href: "/security/failed-logins" },
+    { label: "Data Access Log", href: "/security/data-access" },
+    { label: "IP Whitelist", href: "/security/ip-whitelist" },
+    { label: "DPDP Consent", href: "/security/dpdp-consent" },
+    { label: "Data Deletion", href: "/security/data-deletion" },
+    { label: "Permission Audit", href: "/security/permission-audit" },
+    { label: "Security Incidents", href: "/security/incidents" },
+];
+
+const HELP_LINKS = [
+    { label: "Help Center", href: "/help" },
+    { label: "Knowledge Base", href: "/help/knowledge-base" },
+    { label: "Video Tutorials", href: "/help/videos" },
+    { label: "Chat Support", href: "/help/chat" },
+    { label: "Feature Requests", href: "/help/feature-requests" },
+    { label: "Bug Reports", href: "/help/bug-report" },
+    { label: "Keyboard Shortcuts", href: "/help/shortcuts" },
+    { label: "API Changelog", href: "/help/changelog" },
+];
+
+const DEVELOPER_LINKS = [
+    { label: "Developer Dashboard", href: "/developer" },
+    { label: "API Documentation", href: "/developer/api-docs" },
+    { label: "API Keys", href: "/developer/api-keys" },
+    { label: "OAuth Apps", href: "/developer/oauth-apps" },
+    { label: "Webhook Config", href: "/developer/webhooks" },
+    { label: "Webhook Logs", href: "/developer/webhook-logs" },
+    { label: "API Usage", href: "/developer/usage" },
+    { label: "Sandbox", href: "/developer/sandbox" },
+    { label: "Integrations", href: "/developer/integrations" },
+];
+
+const PAY_EQUITY_LINKS = [
+    { label: "Pay Equity Dashboard", href: "/pay-equity/dashboard" },
+    { label: "Gender Pay Gap", href: "/pay-equity/gender" },
+    { label: "Compa-Ratio", href: "/pay-equity/compa-ratio" },
+    { label: "Unexplained Gap", href: "/pay-equity/unexplained-gap" },
+    { label: "Fair Pay Check", href: "/pay-equity/fair-pay-check" },
+    { label: "Remediation Plan", href: "/pay-equity/remediation" },
+    { label: "Living Wage", href: "/pay-equity/living-wage" },
+    { label: "Executive Comp", href: "/pay-equity/executive-comp" },
+    { label: "Pay Transparency", href: "/pay-equity/transparency" },
+    { label: "Audit Report", href: "/pay-equity/audit" },
+];
+
+const GLOBAL_LINKS = [
+    { label: "Country Setup", href: "/global/setup" },
+    { label: "UAE Payroll", href: "/global/uae" },
+    { label: "Singapore Payroll", href: "/global/singapore" },
+    { label: "Currency Management", href: "/global/currencies" },
+    { label: "Exchange Rates", href: "/global/exchange-rates" },
+    { label: "Expat Management", href: "/global/expats" },
+];
+
+const MULTI_ENTITY_LINKS = [
+    { label: "Entity List", href: "/multi-entity" },
+    { label: "Add Entity", href: "/multi-entity/add" },
+    { label: "Inter-entity Transfer", href: "/multi-entity/transfer" },
+    { label: "Consolidated Payroll", href: "/multi-entity/payroll" },
+    { label: "Group Dashboard", href: "/multi-entity/group-dashboard" },
+    { label: "Group Reports", href: "/multi-entity/reports" },
+];
+
+const TIMESHEET_LINKS = [
+    { label: "Project List", href: "/projects" },
+    { label: "Project Setup", href: "/projects/setup" },
+    { label: "Project Assignment", href: "/projects/assign" },
+    { label: "Client Billing", href: "/projects/billing" },
+    { label: "Utilization Dashboard", href: "/projects/utilization" },
+    { label: "Contractor Timesheet", href: "/projects/contractor-timesheet" },
+    { label: "Timesheet Audit", href: "/projects/audit" },
+];
+
+const NOTICE_BOARD_LINKS = [
+    { label: "Emergency Alert", href: "/notice-board/alert" },
+    { label: "Department Notice", href: "/notice-board/dept-notice" },
+    { label: "Notice Analytics", href: "/notice-board/analytics" },
+    { label: "Comment Moderation", href: "/notice-board/comments" },
+    { label: "Pinned Announcements", href: "/notice-board/pinned" },
+];
+
+const SUPER_ADMIN_LINKS = [
+    { label: "Super Admin Home", href: "/super-admin" },
+    { label: "Organizations", href: "/super-admin/organizations" },
+    { label: "Plan Management", href: "/super-admin/plans" },
+    { label: "Feature Toggles", href: "/super-admin/features" },
+    { label: "Billing", href: "/super-admin/billing" },
+    { label: "Law Change Mgmt", href: "/super-admin/law-changes" },
+    { label: "Announcements", href: "/super-admin/announcements" },
+    { label: "Support Tickets", href: "/super-admin/support" },
+    { label: "Platform Health", href: "/super-admin/health" },
+    { label: "Revenue Dashboard", href: "/super-admin/revenue" },
+    { label: "Usage Analytics", href: "/super-admin/adoption" },
+    { label: "Audit Log", href: "/super-admin/audits" },
+    { label: "CA Partner Portal", href: "/super-admin/ca-portal" },
+    { label: "Reseller Mgmt", href: "/super-admin/resellers" },
+    { label: "Customer Success", href: "/super-admin/customer-success" },
+    { label: "Release Notes", href: "/super-admin/release-notes" },
+    { label: "NPS Score", href: "/super-admin/nps" },
+    { label: "Commission Tracking", href: "/super-admin/commissions" },
+    { label: "Churn Analysis", href: "/super-admin/churn" },
+];
+
+// ── Nav Group Configuration ───────────────────────────────────────────────────
+const NAV_GROUPS = [
+    {
+        label: "MAIN",
+        items: [
+            { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, prefix: "/dashboard", links: [] },
+            { name: "Employees", href: "/employees", icon: Users, prefix: "/employees", links: EMPLOYEE_LINKS },
+            { name: "Org & Structure", href: "/org-chart", icon: Briefcase, prefix: "/org-chart", links: ORG_CHART_LINKS },
+            { name: "Payroll", href: "/payroll/dashboard", icon: IndianRupee, prefix: "/payroll", links: PAYROLL_LINKS },
+            { name: "Attendance", href: "/attendance/dashboard", icon: Clock, prefix: "/attendance", links: ATTENDANCE_LINKS },
+            { name: "Leave", href: "/leave/dashboard", icon: Calendar, prefix: "/leave", links: LEAVE_LINKS },
+        ]
+    },
+    {
+        label: "TALENT",
+        items: [
+            { name: "Recruitment", href: "/recruitment/dashboard", icon: Briefcase, prefix: "/recruitment", links: REC_LINKS },
+            { name: "Performance", href: "/performance/dashboard", icon: Target, prefix: "/performance", links: PERF_LINKS },
+            { name: "Learning", href: "/lms/dashboard", icon: BookOpen, prefix: "/lms", links: LMS_LINKS },
+            { name: "Engagement", href: "/engagement/rr/dashboard", icon: Gift, prefix: "/engagement", links: ENGAGEMENT_LINKS },
+            { name: "Succession", href: "/succession", icon: TrendingUp, prefix: "/succession", links: SUCCESSION_LINKS },
+            { name: "OKRs", href: "/okr/dashboard", icon: BarChart2, prefix: "/okr", links: OKR_LINKS },
+            { name: "360° Feedback", href: "/feedback/dashboard", icon: MessageSquare, prefix: "/feedback", links: FEEDBACK_LINKS },
+            { name: "Workforce Analytics", href: "/workforce-analytics/planning", icon: Users2, prefix: "/workforce-analytics", links: WORKFORCE_LINKS },
+        ]
+    },
+    {
+        label: "FINANCE",
+        items: [
+            { name: "Embedded Finance", href: "/finance/dashboard", icon: Landmark, prefix: "/finance", links: EMBEDDED_FINANCE_LINKS },
+            { name: "EWA & Variables", href: "/finance/ewa", icon: CreditCard, prefix: "/finance/ewa", links: EWA_LINKS },
+            { name: "Loans & Benefits", href: "/payroll-settings/loans", icon: PiggyBank, prefix: "/payroll-settings/loans", links: LOANS_LINKS },
+            { name: "Tax & TDS", href: "/tax/dashboard", icon: Shield, prefix: "/tax", links: INSURANCE_LINKS },
+            { name: "Reimbursements", href: "/reimbursements", icon: Receipt, prefix: "/reimbursements", links: REIMBURSEMENTS_LINKS },
+            { name: "Flexi Benefits (FBP)", href: "/fbp", icon: Layers, prefix: "/fbp", links: FBP_LINKS },
+        ]
+    },
+    {
+        label: "COMPLIANCE & ADMIN",
+        items: [
+            { name: "Compliance", href: "/compliance/dashboard", icon: FileText, prefix: "/compliance", links: COMPLIANCE_LINKS },
+            { name: "IT Provisioning", href: "/it-provisioning", icon: Monitor, prefix: "/it-provisioning", links: IT_LINKS },
+            { name: "Background Checks", href: "/bgv/dashboard", icon: ShieldCheck, prefix: "/bgv", links: BGV_LINKS },
+            { name: "Document Hub", href: "/documents/repository", icon: FolderOpen, prefix: "/documents", links: DOC_LINKS },
+            { name: "Pay Equity", href: "/pay-equity/dashboard", icon: Scale, prefix: "/pay-equity", links: PAY_EQUITY_LINKS },
+            { name: "Grievances", href: "/grievances/dashboard", icon: AlertTriangle, prefix: "/grievances", links: GRIEVANCE_LINKS },
+            { name: "Security", href: "/security", icon: Lock, prefix: "/security", links: SECURITY_LINKS },
+        ]
+    },
+    {
+        label: "REPORTS & ANALYTICS",
+        items: [
+            { name: "Reports Center", href: "/reports/dashboard", icon: PieChart, prefix: "/reports", links: REPORTS_LINKS },
+            { name: "AI Insights", href: "/ai/dashboard", icon: Zap, prefix: "/ai", links: AI_LINKS },
+        ]
+    },
+    {
+        label: "ENTERPRISE",
+        items: [
+            { name: "Multi-Entity", href: "/multi-entity", icon: Building2, prefix: "/multi-entity", links: MULTI_ENTITY_LINKS },
+            { name: "Global Payroll", href: "/global/setup", icon: Globe, prefix: "/global", links: GLOBAL_LINKS },
+            { name: "Timesheet & Projects", href: "/projects", icon: Timer, prefix: "/projects", links: TIMESHEET_LINKS },
+            { name: "Notice Board", href: "/notice-board/alert", icon: Megaphone, prefix: "/notice-board", links: NOTICE_BOARD_LINKS },
+            { name: "Developer Portal", href: "/developer", icon: Code2, prefix: "/developer", links: DEVELOPER_LINKS },
+        ]
+    },
+    {
+        label: "SETTINGS",
+        items: [
+            { name: "Settings", href: "/payroll-settings", icon: Settings, prefix: "/payroll-settings", links: SETTINGS_LINKS },
+            { name: "Notifications", href: "/notifications", icon: Bell, prefix: "/notifications", links: NOTIFICATIONS_LINKS },
+            { name: "FnF & Exit", href: "/fnf/dashboard", icon: GitBranch, prefix: "/fnf", links: [] },
+            { name: "Helpdesk", href: "/helpdesk/dashboard", icon: HelpCircle, prefix: "/helpdesk", links: [] },
+            { name: "Help & Support", href: "/help", icon: LayoutTemplate, prefix: "/help", links: HELP_LINKS },
+            { name: "Super Admin", href: "/super-admin", icon: ShieldCheck, prefix: "/super-admin", links: SUPER_ADMIN_LINKS },
+        ]
+    },
+];
+
+// ── Sub-Link Item ─────────────────────────────────────────────────────────────
+function SubLink({ href, label, pathname }: { href: string; label: string; pathname: string }) {
+    const isActive = pathname === href || pathname.startsWith(href + "/");
+    return (
+        <Link
+            href={href}
+            title={label}
+            aria-current={isActive ? "page" : undefined}
+            className={[
+                "block px-3 py-[5px] rounded-[7px] text-[12px] leading-snug truncate transition-all duration-150",
+                isActive
+                    ? "bg-[rgba(0,229,160,0.1)] text-[#00e5a0] font-500"
+                    : "text-[#3d5166] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#7a8fa6]"
+            ].join(" ")}
+        >
+            {label}
+        </Link>
+    );
+}
+
+// ── Nav Item ──────────────────────────────────────────────────────────────────
+type NavItemProps = {
+    name: string;
+    href: string;
+    icon: React.ElementType;
+    prefix: string;
+    links: { label: string; href: string }[];
+    pathname: string;
+};
+
+function NavItem({ name, href, icon: Icon, prefix, links, pathname }: NavItemProps) {
+    const isActive = pathname === href || pathname.startsWith(prefix);
+    const hasDropdown = links.length > 0;
+    const submenuId = `submenu-${name.toLowerCase().replace(/\s+/g, "-")}`;
+
+    const [open, setOpen] = useState(() => isActive && hasDropdown);
+
+    useEffect(() => {
+        if (isActive && hasDropdown && !open) setOpen(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isActive]);
+
+    const handleToggle = useCallback(() => {
+        if (hasDropdown) setOpen(o => !o);
+    }, [hasDropdown]);
+
+    const rowClasses = [
+        "relative flex h-9 items-center gap-2.5 rounded-[9px] px-3 transition-all duration-150 select-none",
+        isActive
+            ? "bg-[rgba(0,229,160,0.1)] text-[#00e5a0]"
+            : "text-[#7a8fa6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#c8d8e8] hover:translate-x-0.5",
+        hasDropdown ? "cursor-pointer" : "cursor-default",
+    ].join(" ");
+
+    const innerContent = (
+        <>
+            {isActive && (
+                <span className="absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-[3px] bg-[#00e5a0] shadow-[0_0_8px_rgba(0,229,160,0.5)]" aria-hidden="true" />
+            )}
+            <Icon size={15} aria-hidden="true" className="shrink-0" />
+            <span className="flex-1 truncate text-[13px] font-500">{name}</span>
+            {hasDropdown && (
+                <ChevronDown
+                    size={11}
+                    className={`shrink-0 transition-transform duration-200 ${open ? "rotate-0" : "-rotate-90"}`}
+                    aria-hidden="true"
+                />
+            )}
+        </>
+    );
+
+    return (
+        <li>
+            {hasDropdown ? (
+                <button
+                    type="button"
+                    onClick={handleToggle}
+                    aria-expanded={open}
+                    aria-controls={submenuId}
+                    className={`w-full text-left ${rowClasses}`}
+                >
+                    {innerContent}
+                </button>
+            ) : (
+                <Link
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={rowClasses}
+                >
+                    {innerContent}
+                </Link>
+            )}
+
+            {hasDropdown && open && (
+                <ul
+                    id={submenuId}
+                    role="list"
+                    className="ml-3 mt-0.5 mb-1 pl-2.5 border-l border-[#162030] flex flex-col gap-0.5"
+                >
+                    {links.map(l => (
+                        <li key={l.href}>
+                            <SubLink href={l.href} label={l.label} pathname={pathname} />
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </li>
+    );
+}
+
+// ── Main Sidebar ──────────────────────────────────────────────────────────────
+export default function Sidebar() {
+    const pathname = usePathname();
+    const router = useRouter();
+
+    return (
+        <nav
+            aria-label="Main navigation"
+            className="fixed top-0 left-0 h-screen w-60 flex flex-col z-50"
+            style={{
+                background: "#070d18",
+                borderRight: "1px solid #162030",
+            }}
+        >
+            {/* Logo */}
+            <div className="flex items-center gap-3 px-4 py-[17px] border-b border-[#162030] shrink-0">
+                <Link href="/dashboard" className="flex items-center gap-3">
+                    <div
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#00e5a0]"
+                        aria-hidden="true"
+                    >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#04080f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div className="text-[17px] font-700 text-[#f0f4f8] leading-none tracking-[-0.02em]">HRFlow</div>
+                        <div className="mt-[3px] text-[10px] text-[#3d5166] font-500">TechCorp Solutions</div>
+                    </div>
+                </Link>
+            </div>
+
+            {/* Nav Groups */}
+            <div className="flex-1 overflow-y-auto px-2 py-2 pb-4" style={{ scrollbarWidth: "none" }}>
+                {NAV_GROUPS.map((group) => (
+                    <div key={group.label} className="mb-2">
+                        <p
+                            className="px-3 pb-1 pt-2.5 text-[10px] font-600 uppercase tracking-[0.07em] text-[#2a3a4a]"
+                            aria-label={group.label}
+                        >
+                            {group.label}
+                        </p>
+                        <ul role="list" className="flex flex-col gap-0.5">
+                            {group.items.map(item => (
+                                <NavItem
+                                    key={item.name}
+                                    name={item.name}
+                                    href={item.href}
+                                    icon={item.icon}
+                                    prefix={item.prefix}
+                                    links={item.links}
+                                    pathname={pathname}
+                                />
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+
+            {/* User Footer */}
+            <div className="shrink-0 border-t border-[#162030] px-3 py-3">
+                <div className="flex items-center gap-2.5 px-1">
+                    <button
+                        onClick={() => router.push("/my-profile")}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(0,229,160,0.12)] border border-[rgba(0,229,160,0.25)] text-[11px] font-700 text-[#00e5a0] hover:bg-[rgba(0,229,160,0.2)] transition-colors"
+                        aria-label="My profile"
+                    >
+                        PM
+                    </button>
+                    <button
+                        onClick={() => router.push("/my-profile")}
+                        className="min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
+                    >
+                        <div className="truncate text-[12px] font-600 text-[#c8d8e8]">Priya Mehta</div>
+                        <div className="truncate text-[10px] text-[#3d5166]">HR Admin</div>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => router.push("/login")}
+                        className="rounded-[7px] p-1.5 text-[#3d5166] transition-all hover:bg-[rgba(239,68,68,0.1)] hover:text-[#ef4444]"
+                        aria-label="Sign out"
+                        title="Sign out"
+                    >
+                        <LogOut size={14} aria-hidden="true" />
+                    </button>
+                </div>
+            </div>
+        </nav>
+    );
+}
