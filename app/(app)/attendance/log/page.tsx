@@ -1,8 +1,9 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
-import {
-    Search, Filter, Clock, MapPin, Download, ChevronRight,
+import { MapPin, Download, ChevronRight,
     Calendar as CalIcon, Edit3, Fingerprint, Lock, AlertCircle, Monitor
 } from 'lucide-react';
 
@@ -18,6 +19,12 @@ export default function EmployeeCheckInLog() {
     ];
 
     return (
+        <Page
+            title="Detailed Punch Log"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Log" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-5xl mx-auto space-y-6">
 
@@ -64,10 +71,11 @@ export default function EmployeeCheckInLog() {
                 {/* Date Selector & Total Summary */}
                 <div className="flex justify-between items-center bg-[#0D1928] border border-[#1A2A3A] p-4 rounded-xl">
                     <div className="flex items-center space-x-3">
-                        <label className="text-sm text-[#8899AA] font-bold">Select Date:</label>
+                        <label htmlFor="log-date" className="text-sm text-[#8899AA] font-bold">Select Date:</label>
                         <div className="relative">
-                            <CalIcon size={16} className="absolute left-3 top-2.5 text-[#0066FF]" />
+                            <CalIcon size={16} className="absolute left-3 top-2.5 text-[#0066FF]" aria-hidden="true" />
                             <input
+                                id="log-date"
                                 type="date"
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
@@ -105,7 +113,7 @@ export default function EmployeeCheckInLog() {
                                 <div className="bg-[#0A1420] border border-[#1A2A3A] p-4 rounded-lg">
                                     <div className="flex justify-between items-start mb-3">
                                         <div className="flex items-center space-x-3">
-                                            <span className={`px-2 py-0.5 text-xs font-black rounded ${log.type === 'IN' ? 'bg-[#00E5A0]/20 text-[#00E5A0]' : 'bg-[#FF4444]/20 text-[#FF4444]'
+                                            <span className={`px-2 py-0.5 text-xs font-black rounded ${log.type === 'IN' ? 'bg-[#00E5A0]/20 text-[#00E5A0]' : 'bg-[#FF4444]/20 text-[#f87171]'
                                                 }`}>
                                                 {log.type} PUNCH
                                             </span>
@@ -120,11 +128,11 @@ export default function EmployeeCheckInLog() {
 
                                     <div className="grid grid-cols-2 gap-4 text-sm mt-3 pt-3 border-t border-[#1A2A3A]">
                                         <div className="flex items-center text-slate-300">
-                                            <Monitor size={14} className="text-[#556677] mr-2" />
+                                            <Monitor size={14} className="text-[#7a8fa6] mr-2" />
                                             <span className="text-[#8899AA] mr-2">Source:</span> {log.source}
                                         </div>
                                         <div className="flex items-center text-slate-300">
-                                            <MapPin size={14} className={log.verified ? "text-[#556677] mr-2" : "text-[#FFB800] mr-2"} />
+                                            <MapPin size={14} className={log.verified ? "text-[#7a8fa6] mr-2" : "text-[#FFB800] mr-2"} />
                                             <span className="text-[#8899AA] mr-2">Location:</span> {log.location}
                                         </div>
                                     </div>
@@ -147,5 +155,7 @@ export default function EmployeeCheckInLog() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

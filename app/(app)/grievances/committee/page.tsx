@@ -1,9 +1,18 @@
 "use client";
-import React, { useState } from 'react';
-import { Users, Plus, ShieldCheck, AlertTriangle, MoreVertical, Calendar, Award, ExternalLink } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { Users, Plus, ShieldCheck, AlertTriangle, Calendar, Award, ExternalLink } from 'lucide-react';
 
 export default function ICCommitteeManagementScreen() {
     return (
+        <Page
+            title="Internal Complaints Committee (IC)"
+            subtitle="Manage committee members, track tenure limits, and ensure statutory compliance."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Committee" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
@@ -168,5 +177,7 @@ export default function ICCommitteeManagementScreen() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

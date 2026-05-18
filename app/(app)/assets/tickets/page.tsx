@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { LifeBuoy, Search, Filter, MessageSquare, Clock, CheckCircle2 } from 'lucide-react';
 
@@ -15,6 +17,13 @@ export default function ITSupportTickets() {
     const [search, setSearch] = useState('');
 
     return (
+        <Page
+            title="IT Support Helpdesk"
+            subtitle="Manage employee technical requests, routing, and resolutions."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Tickets" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6 flex flex-col items-center">
             <div className="w-full flex items-center justify-between">
                 <div>
@@ -87,5 +96,7 @@ export default function ITSupportTickets() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

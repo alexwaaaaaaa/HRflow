@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, ArrowLeft, Send, Paperclip, Smile, Bot, User } from 'lucide-react';
 import Link from 'next/link';
@@ -32,6 +34,12 @@ export default function ChatSupportScreen() {
     };
 
     return (
+        <Page
+            title="Chat"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Chat" }]}
+            maxWidth="900px"
+        >
+
         <div className="h-screen flex flex-col p-6 max-w-4xl mx-auto">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-4"><ArrowLeft size={14} /> Help Center</Link>
             <div className="flex-1 flex flex-col bg-[#0A1420] border border-[#1A2A3A] rounded-2xl overflow-hidden">
@@ -103,5 +111,7 @@ export default function ChatSupportScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

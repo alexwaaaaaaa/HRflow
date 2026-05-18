@@ -1,8 +1,37 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { FileText, Download, CheckCircle2, ShieldCheck, Mail, RefreshCw } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// ── Sub-components (module-scope) ─────────────────────────────────────────────
+function StepIndicator({
+    num,
+    label,
+    active,
+    done,
+}: {
+    num: number;
+    label: string;
+    active: boolean;
+    done: boolean;
+}) {
+    return (
+        <div className="flex-1 flex flex-col items-center relative">
+            <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-base z-10 ${
+                    done ? "bg-[#00E5A0] text-[#060B14]" : active ? "bg-[#1A2A3A] text-white" : "bg-[#1A2A3A] text-[#8899AA]"
+                }`}
+                aria-current={active ? "step" : undefined}
+            >
+                {done ? <CheckCircle2 size={24} aria-hidden="true" /> : num}
+            </div>
+            <div className={`text-sm font-semibold mt-3 ${active || done ? "text-white" : "text-[#8899AA]"}`}>{label}</div>
+        </div>
+    );
+}
 
 export default function Form16Generator() {
     const [status, setStatus] = useState<"idle" | "generating" | "signing" | "done">("idle");
@@ -14,105 +43,110 @@ export default function Form16Generator() {
     };
 
     return (
-        <div style={{ padding: "24px 32px", maxWidth: 1000, margin: "0 auto", paddingBottom: 100 }}>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-                <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", margin: 0, marginBottom: 8 }}>Form 16 Generator</h1>
-                    <div style={{ fontSize: 13, color: "#8899AA" }}>Generate and digitally sign Form 16 (Part A & Part B) for all employees</div>
-                </div>
-            </div>
-
-            {/* Stepper Wizard */}
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 32, marginBottom: 24 }}>
-
-                <div style={{ display: "flex", gap: 16, marginBottom: 40 }}>
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
-                        <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#00E5A0", color: "#060B14", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, zIndex: 2 }}>1</div>
-                        <div style={{ position: "absolute", top: 20, left: "50%", right: "-50%", height: 2, background: "#00E5A0" }} />
-                        <div style={{ fontSize: 13, fontWeight: 600, color: "#FFFFFF", marginTop: 12 }}>Data Verification</div>
-                    </div>
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
-                        <div style={{ width: 40, height: 40, borderRadius: "50%", background: status === "idle" ? "#1A2A3A" : "#00E5A0", color: status === "idle" ? "#8899AA" : "#060B14", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, zIndex: 2 }}>
-                            {status === "done" ? <CheckCircle2 size={24} /> : "2"}
-                        </div>
-                        <div style={{ position: "absolute", top: 20, left: "-50%", right: "50%", height: 2, background: "#00E5A0" }} />
-                        <div style={{ position: "absolute", top: 20, left: "50%", right: "-50%", height: 2, background: status === "idle" ? "#1A2A3A" : "#00E5A0" }} />
-                        <div style={{ fontSize: 13, fontWeight: 600, color: status === "idle" ? "#8899AA" : "#FFFFFF", marginTop: 12 }}>Generation & Traces</div>
-                    </div>
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
-                        <div style={{ width: 40, height: 40, borderRadius: "50%", background: status === "done" ? "#00E5A0" : "#1A2A3A", color: status === "done" ? "#060B14" : "#8899AA", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, zIndex: 2 }}>3</div>
-                        <div style={{ position: "absolute", top: 20, left: "-50%", right: "50%", height: 2, background: status === "idle" ? "#1A2A3A" : "#00E5A0" }} />
-                        <div style={{ fontSize: 13, fontWeight: 600, color: status === "done" ? "#FFFFFF" : "#8899AA", marginTop: 12 }}>Digital Sign & Distribute</div>
-                    </div>
-                </div>
+        <Page
+            title="Form 16 Generator"
+            subtitle="Generate and digitally sign Form 16 (Part A & Part B) for all employees"
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/dashboard" },
+                { label: "Form 16 Generator" },
+            ]}
+            maxWidth="1000px"
+        >
+            <Card padding="lg">
+                {/* Stepper */}
+                <ol className="flex gap-4 mb-10" aria-label="Form 16 generation steps">
+                    <StepIndicator
+                        num={1}
+                        label="Data Verification"
+                        active={status === "idle"}
+                        done={status !== "idle"}
+                    />
+                    <StepIndicator
+                        num={2}
+                        label="Generation & Traces"
+                        active={status === "generating" || status === "signing"}
+                        done={status === "done"}
+                    />
+                    <StepIndicator
+                        num={3}
+                        label="Digital Sign & Distribute"
+                        active={status === "done"}
+                        done={false}
+                    />
+                </ol>
 
                 {status === "idle" && (
-                    <div style={{ textAlign: "center", maxWidth: 600, margin: "0 auto" }}>
-                        <div style={{ width: 64, height: 64, background: "rgba(0,102,255,0.1)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", marginBottom: 24 }}>
-                            <FileText size={32} color="#0066FF" />
+                    <div className="text-center max-w-lg mx-auto">
+                        <div className="w-16 h-16 bg-[#0066FF]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <FileText size={32} className="text-[#0066FF]" aria-hidden="true" />
                         </div>
-                        <h3 style={{ fontSize: 20, fontWeight: 600, color: "#FFFFFF", marginBottom: 12 }}>Ready to generate Form 16</h3>
-                        <div style={{ fontSize: 14, color: "#8899AA", lineHeight: 1.6, marginBottom: 32 }}>
-                            Payroll is finalized for FY 2024-25. 345 employees are eligible for Form 16. The generated PDFs will automatically include Part A (Traces) and Part B (Annexure) digitally signed.
+                        <h3 className="text-xl font-semibold text-white mb-3">Ready to generate Form 16</h3>
+                        <p className="text-sm text-[#8899AA] leading-relaxed mb-8">
+                            Payroll is finalized for FY 2024-25. 345 employees are eligible for Form 16. The generated PDFs will
+                            automatically include Part A (Traces) and Part B (Annexure) digitally signed.
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-4 mb-8 text-left">
+                            <Card variant="bare" className="bg-[#060B14] border border-[#1A2A3A] rounded-lg p-4">
+                                <div className="text-xs text-[#8899AA] mb-1">Company TAN</div>
+                                <div className="text-sm font-semibold text-white">MUMK12345E</div>
+                            </Card>
+                            <Card variant="bare" className="bg-[#060B14] border border-[#1A2A3A] rounded-lg p-4">
+                                <div className="text-xs text-[#8899AA] mb-1">Signatory Persona</div>
+                                <div className="text-sm font-semibold text-white">Ananya Singh (Director)</div>
+                            </Card>
                         </div>
 
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 32, textAlign: "left" }}>
-                            <div style={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: 16 }}>
-                                <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 4 }}>Company TAN</div>
-                                <div style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF" }}>MUMK12345E</div>
-                            </div>
-                            <div style={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: 16 }}>
-                                <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 4 }}>Signatory Persona</div>
-                                <div style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF" }}>Ananya Singh (Director)</div>
-                            </div>
-                        </div>
-
-                        <button onClick={handleGenerate} style={{ width: 250, height: 48, background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 15, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }} className="hover:opacity-90">
+                        <Button onClick={handleGenerate} className="w-64">
                             Start Generation Process
-                        </button>
+                        </Button>
                     </div>
                 )}
 
                 {status === "generating" && (
-                    <div style={{ textAlign: "center", maxWidth: 600, margin: "0 auto", padding: "40px 0" }}>
-                        <RefreshCw size={48} color="#0066FF" className="animate-spin" style={{ margin: "0 auto", marginBottom: 24 }} />
-                        <h3 style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", marginBottom: 8 }}>Merging Part A from TRACES & Generating Part B</h3>
-                        <div style={{ fontSize: 14, color: "#8899AA" }}>Processed 145 / 345 employees... Please wait.</div>
+                    <div className="text-center max-w-lg mx-auto py-10">
+                        <RefreshCw
+                            size={48}
+                            className="text-[#0066FF] animate-spin mx-auto mb-6"
+                            aria-hidden="true"
+                        />
+                        <h3 className="text-lg font-semibold text-white mb-2">
+                            Merging Part A from TRACES &amp; Generating Part B
+                        </h3>
+                        <p className="text-sm text-[#8899AA]">Processed 145 / 345 employees... Please wait.</p>
                     </div>
                 )}
 
                 {status === "signing" && (
-                    <div style={{ textAlign: "center", maxWidth: 600, margin: "0 auto", padding: "40px 0" }}>
-                        <ShieldCheck size={48} color="#00E5A0" className="animate-pulse" style={{ margin: "0 auto", marginBottom: 24 }} />
-                        <h3 style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", marginBottom: 8 }}>Applying Digital Signatures</h3>
-                        <div style={{ fontSize: 14, color: "#8899AA" }}>Signing PDFs using DSC Token (Ananya Singh)...</div>
+                    <div className="text-center max-w-lg mx-auto py-10">
+                        <ShieldCheck
+                            size={48}
+                            className="text-[#00E5A0] animate-pulse mx-auto mb-6"
+                            aria-hidden="true"
+                        />
+                        <h3 className="text-lg font-semibold text-white mb-2">Applying Digital Signatures</h3>
+                        <p className="text-sm text-[#8899AA]">Signing PDFs using DSC Token (Ananya Singh)...</p>
                     </div>
                 )}
 
                 {status === "done" && (
-                    <div style={{ textAlign: "center", maxWidth: 600, margin: "0 auto" }}>
-                        <div style={{ width: 64, height: 64, background: "rgba(0,229,160,0.1)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", marginBottom: 24 }}>
-                            <CheckCircle2 size={32} color="#00E5A0" />
+                    <div className="text-center max-w-lg mx-auto">
+                        <div className="w-16 h-16 bg-[#00E5A0]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <CheckCircle2 size={32} className="text-[#00E5A0]" aria-hidden="true" />
                         </div>
-                        <h3 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 12 }}>Form 16 Generation Successful!</h3>
-                        <div style={{ fontSize: 14, color: "#8899AA", lineHeight: 1.6, marginBottom: 32 }}>
-                            345 digitally signed Form 16 documents have been generated and are ready to be dispatched explicitly to employees.
-                        </div>
-
-                        <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-                            <button style={{ height: 44, padding: "0 24px", background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} className="hover:bg-[#1A2A3A]">
-                                <Download size={16} /> Download ZIP Archive
-                            </button>
-                            <button style={{ height: 44, padding: "0 24px", background: "#0066FF", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 700, display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} className="hover:opacity-90">
-                                <Mail size={16} /> Email to all 345 Employees
-                            </button>
+                        <h3 className="text-2xl font-bold text-white mb-3">Form 16 Generation Successful!</h3>
+                        <p className="text-sm text-[#8899AA] leading-relaxed mb-8">
+                            345 digitally signed Form 16 documents have been generated and are ready to be dispatched to employees.
+                        </p>
+                        <div className="flex gap-4 justify-center">
+                            <Button variant="secondary" icon={<Download size={16} />}>
+                                Download ZIP Archive
+                            </Button>
+                            <Button icon={<Mail size={16} />}>Email to all 345 Employees</Button>
                         </div>
                     </div>
                 )}
-
-            </div>
-
-        </div>
+            </Card>
+        </Page>
     );
 }

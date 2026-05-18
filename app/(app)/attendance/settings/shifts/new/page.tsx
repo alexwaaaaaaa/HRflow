@@ -1,16 +1,25 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Clock, Sun, Moon, Briefcase, Plus, ChevronLeft, Save,
-    Coffee, CheckCircle2
+    Clock, Sun, Moon, ChevronLeft, Save,
+    Coffee
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function ShiftConfiguration() {
-    const router = useRouter();
+    const _router = useRouter();
 
     return (
+        <Page
+            title="Create Shift Policy"
+            subtitle="Define working hours, breaks, half-day rules and late tracking thresholds."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Shifts", href: "/attendance/settings/shifts" }, { label: "New" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col h-screen">
             <div className="max-w-4xl mx-auto w-full flex flex-col flex-1">
 
@@ -165,5 +174,7 @@ export default function ShiftConfiguration() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

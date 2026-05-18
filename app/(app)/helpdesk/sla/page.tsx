@@ -1,121 +1,186 @@
 "use client";
-import React, { useState } from "react";
-import {
-    Clock, Plus, Settings, AlertCircle, ShieldCheck,
-    ChevronDown, Trash2, Edit2, Zap
-} from "lucide-react";
+import { Clock, Plus, Settings, Edit2 } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function SLAConfig() {
+const SLA_POLICIES = [
+    { name: "Default Internal SLA", active: true, badge: "Active" as const },
+    { name: "VIP Management", active: false, badge: "Active" as const },
+    { name: "Hardware Replacements", active: false, badge: "Draft" as const },
+];
+
+const PRIORITY_TARGETS = [
+    { level: "Critical", resp: "15", respUnit: "mins", res: "2", resUnit: "hrs", colorClass: "text-[#FF4444]" },
+    { level: "High", resp: "1", respUnit: "hrs", res: "8", resUnit: "hrs", colorClass: "text-[#FFB020]" },
+    { level: "Medium", resp: "4", respUnit: "hrs", res: "24", resUnit: "hrs", colorClass: "text-[#33E6FF]" },
+    { level: "Low", resp: "8", respUnit: "hrs", res: "48", resUnit: "hrs", colorClass: "text-[#8899AA]" },
+] as const;
+
+export default function SLAConfigPage() {
     return (
-        <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)]">
-
-            {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-[#1A2A3A]">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <ShieldCheck size={28} className="text-[#00E5A0]" />
-                        Service Level Agreements (SLA)
-                    </h1>
-                    <p className="text-[#8899AA] text-sm mt-1">Define expectations for response and resolution times to maintain high support quality.</p>
-                </div>
-                <div className="flex gap-3 mt-4 md:mt-0">
-                    <button className="px-5 py-2 bg-[#00E5A0] text-[#0A1420] rounded-lg hover:bg-[#00c98d] transition-colors text-sm font-semibold flex items-center gap-2">
-                        <Plus size={16} /> Create SLA Policy
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-                <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-4">SLA Policies</h3>
+        <Page
+            title="Service Level Agreements (SLA)"
+            subtitle="Define expectations for response and resolution times to maintain high support quality."
+            breadcrumbs={[
+                { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                { label: "SLA Configuration" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <Button icon={<Plus size={16} aria-hidden="true" />}>
+                    Create SLA Policy
+                </Button>
+            }
+        >
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+                {/* Left Sidebar */}
+                <div className="space-y-6 lg:col-span-1">
+                    <Card padding="lg">
+                        <h3 className="mb-4 font-bold text-white">SLA Policies</h3>
                         <div className="space-y-2">
-                            <button className="w-full flex justify-between items-center p-3 rounded-xl bg-[#1A2A3A] border border-[#00E5A0]">
-                                <span className="text-sm font-semibold text-white">Default Internal SLA</span>
-                                <span className="text-[10px] bg-[#00E5A0]/20 text-[#00E5A0] px-1.5 rounded uppercase font-bold tracking-wider">Active</span>
-                            </button>
-                            <button className="w-full flex justify-between items-center p-3 rounded-xl bg-transparent border border-transparent hover:border-[#2A3A4A] group transition-colors">
-                                <span className="text-sm text-[#8899AA] group-hover:text-white font-medium">VIP Management</span>
-                                <span className="text-[10px] bg-[#1A2A3A] text-[#8899AA] px-1.5 rounded uppercase font-bold tracking-wider">Active</span>
-                            </button>
-                            <button className="w-full flex justify-between items-center p-3 rounded-xl bg-transparent border border-transparent hover:border-[#2A3A4A] group transition-colors">
-                                <span className="text-sm text-[#8899AA] group-hover:text-white font-medium">Hardware Replacements</span>
-                                <span className="text-[10px] bg-[#1A2A3A] text-[#8899AA] px-1.5 rounded uppercase font-bold tracking-wider border border-[#2A3A4A]">Draft</span>
-                            </button>
+                            {SLA_POLICIES.map((policy) => (
+                                <button
+                                    key={policy.name}
+                                    type="button"
+                                    className={`flex w-full items-center justify-between rounded-xl border p-3 transition-colors ${
+                                        policy.active
+                                            ? "border-[#00E5A0] bg-[#1A2A3A]"
+                                            : "group border-transparent hover:border-[#2A3A4A]"
+                                    }`}
+                                >
+                                    <span
+                                        className={`text-sm font-semibold ${
+                                            policy.active ? "text-white" : "text-[#8899AA] group-hover:text-white"
+                                        }`}
+                                    >
+                                        {policy.name}
+                                    </span>
+                                    <Badge variant={policy.badge === "Active" ? "success" : "neutral"}>
+                                        {policy.badge}
+                                    </Badge>
+                                </button>
+                            ))}
                         </div>
-                    </div>
+                    </Card>
 
-                    <div className="bg-[#gradient-to-br from-[#1A2A3A] to-[#0A1420]] border border-[#2A3A4A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-2 flex items-center gap-2"><Clock size={16} className="text-[#33E6FF]" /> Business Hours</h3>
-                        <p className="text-sm text-[#8899AA] mb-4">SLAs only count down during specified business hours.</p>
-                        <select className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:outline-none mb-2">
+                    <Card padding="lg">
+                        <h3 className="mb-2 flex items-center gap-2 font-bold text-white">
+                            <Clock size={16} className="text-[#33E6FF]" aria-hidden="true" />
+                            Business Hours
+                        </h3>
+                        <p className="mb-4 text-sm text-[#8899AA]">
+                            SLAs only count down during specified business hours.
+                        </p>
+                        <label htmlFor="business-hours" className="sr-only">
+                            Business hours schedule
+                        </label>
+                        <select
+                            id="business-hours"
+                            className="mb-2 w-full rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] px-3 py-2 text-sm text-white outline-none"
+                        >
                             <option>Standard (Mon-Fri, 9am - 6pm)</option>
                             <option>24/7 Support</option>
                         </select>
-                        <button className="text-sm font-semibold text-[#00E5A0] hover:underline">Manage Calendars</button>
-                    </div>
+                        <button
+                            type="button"
+                            className="text-sm font-semibold text-[#00E5A0] hover:underline"
+                        >
+                            Manage Calendars
+                        </button>
+                    </Card>
                 </div>
 
+                {/* Main Panel */}
                 <div className="lg:col-span-3">
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl overflow-hidden shadow-xl">
-
-                        <div className="p-8 border-b border-[#1A2A3A] flex justify-between items-start">
+                    <Card padding="none">
+                        <div className="flex items-start justify-between border-b border-[#1A2A3A] p-8">
                             <div>
-                                <h2 className="text-3xl font-bold text-white mb-2">Default Internal SLA <button className="ml-2 text-[#445566] hover:text-white transition-colors align-middle"><Edit2 size={16} /></button></h2>
-                                <p className="text-[#8899AA] text-sm">Applies to all tickets unless a more specific SLA policy matches.</p>
+                                <h2 className="mb-2 flex items-center gap-2 text-3xl font-bold text-white">
+                                    Default Internal SLA
+                                    <button
+                                        type="button"
+                                        aria-label="Edit SLA policy name"
+                                        className="ml-2 align-middle text-[#445566] transition-colors hover:text-white"
+                                    >
+                                        <Edit2 size={16} aria-hidden="true" />
+                                    </button>
+                                </h2>
+                                <p className="text-sm text-[#8899AA]">
+                                    Applies to all tickets unless a more specific SLA policy matches.
+                                </p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-[#8899AA]">Status:</span>
-                                <div className="bg-[#00E5A0]/10 border border-[#00E5A0]/20 rounded-full px-3 py-1 flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-[#00E5A0] animate-pulse"></div>
-                                    <span className="text-[#00E5A0] text-xs font-bold uppercase tracking-wider">Active</span>
+                                <div className="flex items-center gap-2 rounded-full border border-[#00E5A0]/20 bg-[#00E5A0]/10 px-3 py-1">
+                                    <div className="h-2 w-2 animate-pulse rounded-full bg-[#00E5A0]" aria-hidden="true" />
+                                    <span className="text-xs font-bold uppercase tracking-wider text-[#00E5A0]">
+                                        Active
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="p-8 space-y-10">
-
+                        <div className="space-y-10 p-8">
                             {/* Targets Table */}
                             <section>
-                                <h3 className="text-sm font-bold tracking-wider text-[#8899AA] uppercase mb-4 flex items-center gap-2">
-                                    <Clock size={16} /> Targets by Priority
+                                <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                    <Clock size={16} aria-hidden="true" /> Targets by Priority
                                 </h3>
-                                <div className="border border-[#1A2A3A] bg-[#0A1420] rounded-xl overflow-hidden">
+                                <div className="overflow-hidden rounded-xl border border-[#1A2A3A] bg-[#0A1420]">
                                     <table className="w-full text-left">
                                         <thead>
-                                            <tr className="bg-[#152336] text-[#8899AA] text-xs uppercase tracking-wider border-b border-[#1A2A3A]">
-                                                <th className="p-4 w-1/4">Priority</th>
-                                                <th className="p-4 w-1/3">First Response Time</th>
-                                                <th className="p-4 w-1/3">Resolution Time</th>
+                                            <tr className="border-b border-[#1A2A3A] bg-[#152336] text-xs font-medium uppercase tracking-wider text-[#8899AA]">
+                                                <th scope="col" className="w-1/4 p-4">Priority</th>
+                                                <th scope="col" className="w-1/3 p-4">First Response Time</th>
+                                                <th scope="col" className="w-1/3 p-4">Resolution Time</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-[#1A2A3A]">
-                                            {[
-                                                { level: "Critical", resp: "15 mins", res: "2 hrs", color: "text-[#FF4444]" },
-                                                { level: "High", resp: "1 hr", res: "8 hrs", color: "text-[#FFB020]" },
-                                                { level: "Medium", resp: "4 hrs", res: "24 hrs", color: "text-[#33E6FF]" },
-                                                { level: "Low", resp: "8 hrs", res: "48 hrs", color: "text-[#8899AA]" },
-                                            ].map(p => (
-                                                <tr key={p.level} className="text-sm text-white hover:bg-[#1A2A3A]/30">
-                                                    <td className={`p-4 font-bold ${p.color}`}>{p.level}</td>
+                                            {PRIORITY_TARGETS.map((p) => (
+                                                <tr
+                                                    key={p.level}
+                                                    className="text-sm text-white transition-colors hover:bg-[#1A2A3A]/30"
+                                                >
+                                                    <td className={`p-4 font-bold ${p.colorClass}`}>
+                                                        {p.level}
+                                                    </td>
                                                     <td className="p-4">
-                                                        <div className="flex bg-[#1A2A3A] rounded border border-[#2A3A4A] overflow-hidden w-fit">
-                                                            <input type="text" defaultValue={p.resp.split(' ')[0]} className="w-12 bg-transparent text-center px-2 py-1 focus:outline-none" />
-                                                            <select className="bg-[#2A3A4A] text-[#8899AA] px-2 border-l border-[#2A3A4A] focus:outline-none focus:text-white">
-                                                                <option selected={p.resp.includes('mins')}>mins</option>
-                                                                <option selected={p.resp.includes('hr')}>hrs</option>
-                                                                <option>days</option>
+                                                        <div className="flex w-fit overflow-hidden rounded border border-[#2A3A4A] bg-[#1A2A3A]">
+                                                            <input
+                                                                type="text"
+                                                                defaultValue={p.resp}
+                                                                aria-label={`${p.level} first response time value`}
+                                                                className="w-12 bg-transparent px-2 py-1 text-center outline-none"
+                                                            />
+                                                            <select
+                                                                aria-label={`${p.level} first response time unit`}
+                                                                defaultValue={p.respUnit}
+                                                                className="border-l border-[#2A3A4A] bg-[#2A3A4A] px-2 text-[#8899AA] outline-none focus:text-white"
+                                                            >
+                                                                <option value="mins">mins</option>
+                                                                <option value="hrs">hrs</option>
+                                                                <option value="days">days</option>
                                                             </select>
                                                         </div>
                                                     </td>
                                                     <td className="p-4">
-                                                        <div className="flex bg-[#1A2A3A] rounded border border-[#2A3A4A] overflow-hidden w-fit">
-                                                            <input type="text" defaultValue={p.res.split(' ')[0]} className="w-12 bg-transparent text-center px-2 py-1 focus:outline-none" />
-                                                            <select className="bg-[#2A3A4A] text-[#8899AA] px-2 border-l border-[#2A3A4A] focus:outline-none focus:text-white">
-                                                                <option>mins</option>
-                                                                <option selected={p.res.includes('hr')}>hrs</option>
-                                                                <option>days</option>
+                                                        <div className="flex w-fit overflow-hidden rounded border border-[#2A3A4A] bg-[#1A2A3A]">
+                                                            <input
+                                                                type="text"
+                                                                defaultValue={p.res}
+                                                                aria-label={`${p.level} resolution time value`}
+                                                                className="w-12 bg-transparent px-2 py-1 text-center outline-none"
+                                                            />
+                                                            <select
+                                                                aria-label={`${p.level} resolution time unit`}
+                                                                defaultValue={p.resUnit}
+                                                                className="border-l border-[#2A3A4A] bg-[#2A3A4A] px-2 text-[#8899AA] outline-none focus:text-white"
+                                                            >
+                                                                <option value="mins">mins</option>
+                                                                <option value="hrs">hrs</option>
+                                                                <option value="days">days</option>
                                                             </select>
                                                         </div>
                                                     </td>
@@ -128,31 +193,30 @@ export default function SLAConfig() {
 
                             {/* Applicability Conditions */}
                             <section>
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-sm font-bold tracking-wider text-[#8899AA] uppercase flex items-center gap-2">
-                                        <Settings size={16} /> Applies To (Conditions)
+                                <div className="mb-4 flex items-center justify-between">
+                                    <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                        <Settings size={16} aria-hidden="true" /> Applies To (Conditions)
                                     </h3>
                                 </div>
-                                <div className="bg-[#1A2A3A] border border-[#2A3A4A] p-6 rounded-xl flex flex-col items-center justify-center text-center">
-                                    <p className="text-[#8899AA] text-sm mb-4">This default policy applies to <strong className="text-white">All Tickets</strong>.</p>
-                                    <button className="px-4 py-2 border border-[#445566] text-[#8899AA] hover:text-white hover:border-[#8899AA] rounded-lg transition-colors text-sm font-medium">
+                                <div className="flex flex-col items-center justify-center rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] p-6 text-center">
+                                    <p className="mb-4 text-sm text-[#8899AA]">
+                                        This default policy applies to{" "}
+                                        <strong className="text-white">All Tickets</strong>.
+                                    </p>
+                                    <Button variant="outline" size="sm">
                                         Add Condition (e.g., Department = HR)
-                                    </button>
+                                    </Button>
                                 </div>
                             </section>
 
-                            {/* Actions Area */}
-                            <div className="flex justify-end pt-6 border-t border-[#1A2A3A]">
-                                <button className="px-8 py-3 bg-[#00E5A0] text-[#0A1420] font-bold rounded-xl hover:bg-[#00c98d] transition-colors shadow-[0_10px_20px_rgba(0,229,160,0.2)]">
-                                    Save Policy
-                                </button>
+                            {/* Save */}
+                            <div className="flex justify-end border-t border-[#1A2A3A] pt-6">
+                                <Button>Save Policy</Button>
                             </div>
-
                         </div>
-                    </div>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

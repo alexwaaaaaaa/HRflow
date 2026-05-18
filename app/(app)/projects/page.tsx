@@ -1,12 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Briefcase, Search, Plus, Users, Clock, DollarSign, Activity } from 'lucide-react';
-import Link from 'next/link';
+import { Briefcase, Search, Plus, Users, Clock, DollarSign } from 'lucide-react';
 
 export default function ProjectListScreen() {
     const [filter, setFilter] = useState('active');
 
     return (
+        <Page
+            title="Client Projects"
+            subtitle="Manage billable projects, track aggregate hours, and monitor resource utilization."
+            breadcrumbs={[{ label: "Projects" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -118,5 +126,7 @@ export default function ProjectListScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

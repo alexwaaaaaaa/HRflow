@@ -66,7 +66,7 @@ const WORKFLOWS = [
     "Payroll enrollment for December 2024",
 ];
 
-export default function StepReview({ data, onGoToStep }: { data: Record<string, unknown>; onGoToStep: (s: number) => void }) {
+export default function StepReview({ data: _data, onGoToStep }: { data: Record<string, unknown>; onGoToStep: (s: number) => void }) {
     const completeness = 92;
 
     return (

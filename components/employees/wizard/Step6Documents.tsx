@@ -17,7 +17,7 @@ const UPLOADED = [
     { name: "Experience_Letter_Infosys.pdf", type: "pdf", cat: "Employment", size: "890 KB", date: "Today" },
 ];
 
-export default function Step6Documents({ data, onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
+export default function Step6Documents({ data: _data, onUpdate: _onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
     const [dragging, setDragging] = useState(false);
     const [scanning, setScanning] = useState<string | null>(null);
     const [scanned, setScanned] = useState<string[]>([]);

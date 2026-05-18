@@ -1,9 +1,18 @@
 "use client";
-import React, { useState } from 'react';
-import { Target, BookOpen, ChevronRight, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { Target, BookOpen, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 
 export default function DevelopmentPlanScreen() {
     return (
+        <Page
+            title="Individual Development Plan (IDP)"
+            subtitle="Structured learning and experience tracking for high-potential succession candidates."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Dev Plan" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -117,5 +126,7 @@ export default function DevelopmentPlanScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

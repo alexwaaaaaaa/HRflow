@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Upload, CheckCircle2 } from "lucide-react";
 
@@ -8,6 +10,13 @@ export default function BulkShiftAssignment() {
     const [useRule, setUseRule] = useState(false);
 
     return (
+        <Page
+            title="Bulk Shift Assignment"
+            subtitle="Assign shifts to multiple employees at once"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Roster", href: "/attendance/roster" }, { label: "Bulk Assign" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">Bulk Shift Assignment</h2>
             <p className="text-sm text-[#8899AA] mb-6">Assign shifts to multiple employees at once</p>
@@ -124,5 +133,7 @@ export default function BulkShiftAssignment() {
                 </div>
             )}
         </div>
-    );
+    
+        </Page>
+        );
 }

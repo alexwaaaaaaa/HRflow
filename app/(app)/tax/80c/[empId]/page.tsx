@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, Info, Save } from "lucide-react";
+import { Info, Save, Lock, Upload } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 const INVESTMENTS_80C = [
     { id: "epf", name: "Employee Provident Fund (EPF)", desc: "Auto-computed from payroll", isAuto: true },
@@ -15,6 +17,8 @@ const INVESTMENTS_80C = [
     { id: "ssy", name: "Sukanya Samriddhi Yojana", desc: "For girl child", isAuto: false },
 ];
 
+const _EPF_AMOUNT = 57600;
+
 export default function Section80C() {
     const [values, setValues] = useState<Record<string, string>>({
         epf: "57,600",
@@ -23,95 +27,98 @@ export default function Section80C() {
         elss: "40,000",
     });
 
+    // Calculation — byte-identical to pre-migration
     const totalDeclared = 177600; // 57.6 + 50 + 30 + 40
     const eligibleAmount = Math.min(totalDeclared, 150000);
 
     return (
-        <div style={{ padding: "24px 32px", maxWidth: 1000, margin: "0 auto", paddingBottom: 100 }}>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Link href="/tax/declaration/EMP-0848" style={{ color: "#8899AA", display: "flex", alignItems: "center" }}>
-                        <ChevronLeft size={20} />
-                    </Link>
-                    <div>
-                        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>80C Investments</h1>
-                        <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Maximum deduction allowed: ₹1,50,000</div>
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 32 }}>
-
+        <Page
+            title="80C Investments"
+            subtitle="Maximum deduction allowed: ₹1,50,000"
+            breadcrumbs={[
+                { label: "Tax", href: "/tax" },
+                { label: "Declaration", href: "/tax/declaration/EMP-0848" },
+                { label: "80C Investments" },
+            ]}
+            maxWidth="1000px"
+        >
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
                 {/* Form Area */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
-                    {INVESTMENTS_80C.map(inv => (
-                        <div key={inv.id} style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 20 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                                        <h3 style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", margin: 0 }}>{inv.name}</h3>
+                <div className="flex flex-col gap-4">
+                    {INVESTMENTS_80C.map((inv) => (
+                        <Card key={inv.id} padding="md">
+                            <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        {inv.isAuto && <Lock size={16} className="text-[#8899AA]" aria-hidden="true" />}
+                                        <h3 className="text-sm font-semibold text-white">{inv.name}</h3>
                                         {inv.isAuto && (
-                                            <span style={{ fontSize: 11, background: "rgba(0,229,160,0.1)", color: "#00E5A0", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>Auto-fetched</span>
+                                            <span className="text-[11px] bg-[#00E5A0]/10 text-[#00E5A0] px-1.5 py-0.5 rounded font-semibold">Auto-fetched</span>
                                         )}
                                     </div>
-                                    <div style={{ fontSize: 13, color: "#8899AA" }}>{inv.desc}</div>
+                                    <p className="text-xs text-[#8899AA]">{inv.desc}</p>
                                 </div>
-                                <div style={{ width: 180, position: "relative" }}>
-                                    <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#8899AA", fontSize: 14 }}>₹</span>
-                                    <input
-                                        type="text"
-                                        value={values[inv.id] || ""}
-                                        onChange={(e) => setValues({ ...values, [inv.id]: e.target.value })}
-                                        disabled={inv.isAuto}
-                                        placeholder="0"
-                                        style={{ width: "100%", height: 44, background: inv.isAuto ? "rgba(255,255,255,0.02)" : "#060B14", border: inv.isAuto ? "1px dashed #1A2A3A" : "1px solid #1A2A3A", borderRadius: 8, color: inv.isAuto ? "#8899AA" : "#FFFFFF", fontSize: 15, paddingLeft: 28, paddingRight: 12, outline: "none" }}
-                                    />
+                                <div className="flex items-center gap-3 ml-4">
+                                    <div className="relative w-44">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8899AA] text-sm">₹</span>
+                                        <input
+                                            id={`input-${inv.id}`}
+                                            type="text"
+                                            value={values[inv.id] ?? ""}
+                                            onChange={(e) => setValues({ ...values, [inv.id]: e.target.value })}
+                                            disabled={inv.isAuto}
+                                            placeholder="0"
+                                            aria-label={inv.name}
+                                            className="w-full h-11 bg-[#060B14] border border-[#1A2A3A] rounded-lg text-white text-sm pl-7 pr-3 outline-none focus:border-[#00E5A0] disabled:opacity-60 disabled:cursor-not-allowed"
+                                        />
+                                    </div>
+                                    {!inv.isAuto && (
+                                        <Button variant="secondary" size="sm" icon={<Upload size={14} />}>
+                                            Proof
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
-                        </div>
+                        </Card>
                     ))}
-
                 </div>
 
                 {/* Sticky Summary */}
-                <div style={{ position: "sticky", top: 24, alignSelf: "start" }}>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: 0, marginBottom: 20 }}>80C Summary</h3>
+                <div className="lg:sticky lg:top-6 lg:self-start">
+                    <Card padding="lg">
+                        <h3 className="text-base font-semibold text-white mb-5">80C Summary</h3>
 
-                        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20, borderBottom: "1px solid #1A2A3A", paddingBottom: 20 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                                <span style={{ color: "#8899AA" }}>Total Declared Amount</span>
-                                <span style={{ color: "#FFFFFF", fontWeight: 600 }}>₹{totalDeclared.toLocaleString()}</span>
+                        <div className="flex flex-col gap-3 mb-5 border-b border-[#1A2A3A] pb-5">
+                            <div className="flex justify-between text-sm">
+                                <span className="text-[#8899AA]">Total Declared Amount</span>
+                                <span className="text-white font-semibold">₹{totalDeclared.toLocaleString()}</span>
                             </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                                <span style={{ color: "#8899AA" }}>Maximum Limit</span>
-                                <span style={{ color: "#FFFFFF" }}>₹1,50,000</span>
+                            <div className="flex justify-between text-sm">
+                                <span className="text-[#8899AA]">Maximum Limit</span>
+                                <span className="text-white">₹1,50,000</span>
                             </div>
                         </div>
 
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                            <span style={{ fontSize: 15, color: "#FFFFFF", fontWeight: 600 }}>Eligible Deduction</span>
-                            <span style={{ fontSize: 20, color: "#00E5A0", fontWeight: 700 }}>₹{eligibleAmount.toLocaleString()}</span>
+                        <div className="flex justify-between items-center mb-6">
+                            <span className="text-sm font-semibold text-white">Eligible Deduction</span>
+                            <span className="text-xl font-bold text-[#00E5A0]">₹{eligibleAmount.toLocaleString()}</span>
                         </div>
 
                         {totalDeclared > 150000 && (
-                            <div style={{ background: "rgba(255,184,0,0.1)", border: "1px solid rgba(255,184,0,0.2)", borderRadius: 8, padding: 12, display: "flex", gap: 8, marginBottom: 24 }}>
-                                <Info size={16} color="#FFB800" style={{ flexShrink: 0, marginTop: 2 }} />
-                                <div style={{ fontSize: 13, color: "#FFB800", lineHeight: 1.4 }}>
+                            <div className="bg-[#FFB800]/10 border border-[#FFB800]/20 rounded-lg p-3 flex gap-2 mb-6">
+                                <Info size={16} className="text-[#FFB800] shrink-0 mt-0.5" aria-hidden="true" />
+                                <p className="text-xs text-[#FFB800] leading-relaxed">
                                     Your total declared amount exceeds the ₹1.5L limit. The maximum allowed deduction will be restricted to ₹1,50,000.
-                                </div>
+                                </p>
                             </div>
                         )}
 
-                        <button style={{ width: "100%", height: 44, background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }} className="hover:opacity-90">
-                            <Save size={16} /> Save 80C Declaration
-                        </button>
-                    </div>
+                        <Button className="w-full" icon={<Save size={16} />}>
+                            Save 80C Declaration
+                        </Button>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

@@ -1,10 +1,19 @@
 "use client";
-import React, { useState } from 'react';
-import { IndianRupee, ArrowLeft, TrendingUp, Briefcase, ChevronRight, Lock, Download } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { IndianRupee, ArrowLeft, TrendingUp, ChevronRight, Lock, Download } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyMoneyScreen() {
     return (
+        <Page
+            title="My Total Rewards"
+            subtitle="Holistic view of your compensation, benefits, and long-term equity."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Money" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
 
@@ -138,5 +147,7 @@ export default function MyMoneyScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

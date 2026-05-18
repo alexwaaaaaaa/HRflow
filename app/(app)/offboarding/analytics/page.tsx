@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { PieChart, TrendingUp, Users, Download, Filter, Target } from 'lucide-react';
+import { PieChart, TrendingUp, Download, Filter, Target } from 'lucide-react';
 
 export default function AttritionAnalyticsScreen() {
     return (
+        <Page
+            title="Retention & Attrition Insights"
+            subtitle="Analyze turnover trends, identify flight risks, and understand the core drivers of employee exits."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Analytics" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -124,5 +133,7 @@ export default function AttritionAnalyticsScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

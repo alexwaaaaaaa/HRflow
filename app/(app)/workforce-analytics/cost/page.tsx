@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { IndianRupee, Download, TrendingUp, AlertCircle, PieChart } from 'lucide-react';
 
@@ -6,6 +8,13 @@ export default function CostForecastScreen() {
     const [view, setView] = useState('quarterly');
 
     return (
+        <Page
+            title="Payroll & Benefits Cost Forecast"
+            subtitle="Projected compensation expenses based on current headcount, planned hires, and anticipated increments."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Cost" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -122,5 +131,7 @@ export default function CostForecastScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Users, ArrowLeft, Search, ThumbsUp, MessageSquare, Tag, TrendingUp, Plus } from 'lucide-react';
+import { Users, ArrowLeft, Search, ThumbsUp, MessageSquare, Tag, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 const POSTS = [
@@ -20,6 +22,13 @@ export default function CommunityForumScreen() {
     const filtered = POSTS.filter(p => !search || p.title.toLowerCase().includes(search.toLowerCase()) || p.tags.some(t => t.toLowerCase().includes(search.toLowerCase())));
 
     return (
+        <Page
+            title="Community Forum"
+            subtitle="Ask, share, and learn from 12,000+ HR professionals"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Community" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div className="flex items-center justify-between">
@@ -86,5 +95,7 @@ export default function CommunityForumScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

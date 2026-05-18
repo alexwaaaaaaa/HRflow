@@ -1,107 +1,170 @@
 "use client";
-import React, { useState } from "react";
-import { ArrowLeft, Send, Search, ShieldCheck, FileSearch, Building2 } from "lucide-react";
+
+import { Send, ShieldCheck, FileSearch, Building2 } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function BGVInitiation() {
     return (
-        <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <button className="w-10 h-10 bg-[#0D1928] border border-[#1A2A3A] hover:bg-[#1A2A3A] rounded-xl flex items-center justify-center text-[#8899AA] transition-colors"><ArrowLeft size={16} /></button>
-                    <div>
-                        <h1 className="text-2xl font-bold mb-1">Initiate Background Verification</h1>
-                        <p className="text-sm text-[#8899AA]">Select vendor packages and trigger BGV post offer acceptance.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Page
+            title="Initiate Background Verification"
+            subtitle="Select vendor packages and trigger BGV post offer acceptance"
+            breadcrumbs={[
+                { label: "Recruitment", href: "/recruitment/dashboard" },
+                { label: "BGV", href: "/recruitment/bgv/status" },
+                { label: "Initiate" },
+            ]}
+            maxWidth="900px"
+        >
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 {/* Configuration side */}
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-sm font-semibold text-white mb-2">Selected Candidate</label>
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-4 flex items-center gap-4">
-                            <div className="w-10 h-10 bg-gradient-to-br from-[#0066FF] to-[#00E5A0] rounded-full flex items-center justify-center font-bold text-sm shadow-lg">RS</div>
+                        <label className="mb-2 block text-sm font-semibold text-white">
+                            Selected Candidate
+                        </label>
+                        <Card padding="md" className="flex items-center gap-4">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#0066FF] to-[#00E5A0] text-sm font-bold shadow-lg">
+                                RS
+                            </div>
                             <div>
                                 <h4 className="font-bold text-white">Rahul Sharma</h4>
                                 <p className="text-xs text-[#8899AA]">Senior Frontend Engineer · Offer Accepted</p>
                             </div>
-                        </div>
+                        </Card>
                     </div>
 
                     <div>
-                        <div className="flex justify-between items-end mb-2">
-                            <label className="block text-sm font-semibold text-white">Select Partner Vendor</label>
-                            <span className="text-xs text-[#00E5A0] font-bold">API Connected</span>
+                        <div className="mb-2 flex items-end justify-between">
+                            <label htmlFor="vendor-select" className="block text-sm font-semibold text-white">
+                                Select Partner Vendor
+                            </label>
+                            <span className="text-xs font-bold text-[#00E5A0]">API Connected</span>
                         </div>
-                        <select className="w-full h-12 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-4 text-sm font-medium text-white focus:outline-none focus:border-[#0066FF] transition-colors">
+                        <select
+                            id="vendor-select"
+                            className="h-12 w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-4 text-sm font-medium text-white focus:border-[#0066FF] focus:outline-none"
+                        >
                             <option>AuthBridge Solutions</option>
                             <option>FirstAdvantage India</option>
                             <option>HireRight Global</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-semibold text-white mb-3">Choose Verification Package</label>
+                    <fieldset>
+                        <legend className="mb-3 text-sm font-semibold text-white">
+                            Choose Verification Package
+                        </legend>
                         <div className="space-y-3">
-                            <label className="flex items-start gap-4 p-4 border border-[#0066FF] bg-[#0066FF]/5 rounded-xl cursor-pointer transition-colors shadow-[0_0_15px_rgba(0,102,255,0.1)]">
-                                <input type="radio" name="pkg" defaultChecked className="mt-1 w-4 h-4 accent-[#0066FF]" />
+                            <label className="flex cursor-pointer items-start gap-4 rounded-xl border border-[#0066FF] bg-[#0066FF]/5 p-4 shadow-[0_0_15px_rgba(0,102,255,0.1)] transition-colors">
+                                <input
+                                    type="radio"
+                                    name="pkg"
+                                    defaultChecked
+                                    className="mt-1 h-4 w-4 accent-[#0066FF]"
+                                />
                                 <div>
-                                    <h4 className="font-bold text-white flex items-center gap-2">Standard Technical <span className="px-2 py-0.5 rounded text-[10px] bg-[#1A2A3A] text-[#8899AA]">SDE L1-L3</span></h4>
-                                    <p className="text-xs text-[#8899AA] mt-1">ID (Aadhar/PAN), Academic, Last 2 Employers, Criminal Court Records.</p>
-                                    <p className="text-xs font-bold text-white mt-2">TAT: 5-7 Working Days · ₹2,500</p>
+                                    <h4 className="flex items-center gap-2 font-bold text-white">
+                                        Standard Technical{" "}
+                                        <span className="rounded bg-[#1A2A3A] px-2 py-0.5 text-[10px] text-[#8899AA]">
+                                            SDE L1-L3
+                                        </span>
+                                    </h4>
+                                    <p className="mt-1 text-xs text-[#8899AA]">
+                                        ID (Aadhar/PAN), Academic, Last 2 Employers, Criminal Court Records.
+                                    </p>
+                                    <p className="mt-2 text-xs font-bold text-white">
+                                        TAT: 5-7 Working Days · ₹2,500
+                                    </p>
                                 </div>
                             </label>
 
-                            <label className="flex items-start gap-4 p-4 border border-[#1A2A3A] bg-[#0D1928] hover:border-[#2A3A4A] rounded-xl cursor-pointer transition-colors">
-                                <input type="radio" name="pkg" className="mt-1 w-4 h-4 accent-[#0066FF]" />
+                            <label className="flex cursor-pointer items-start gap-4 rounded-xl border border-[#1A2A3A] bg-[#0D1928] p-4 transition-colors hover:border-[#2A3A4A]">
+                                <input
+                                    type="radio"
+                                    name="pkg"
+                                    className="mt-1 h-4 w-4 accent-[#0066FF]"
+                                />
                                 <div>
-                                    <h4 className="font-bold text-white flex items-center gap-2">Executive Check <span className="px-2 py-0.5 rounded text-[10px] bg-[#1A2A3A] text-[#8899AA]">Leadership</span></h4>
-                                    <p className="text-xs text-[#8899AA] mt-1">All Standard + Global Database Check, Directorship Search, Credit/CIBIL.</p>
-                                    <p className="text-xs font-bold text-white mt-2">TAT: 10-12 Working Days · ₹6,500</p>
+                                    <h4 className="flex items-center gap-2 font-bold text-white">
+                                        Executive Check{" "}
+                                        <span className="rounded bg-[#1A2A3A] px-2 py-0.5 text-[10px] text-[#8899AA]">
+                                            Leadership
+                                        </span>
+                                    </h4>
+                                    <p className="mt-1 text-xs text-[#8899AA]">
+                                        All Standard + Global Database Check, Directorship Search, Credit/CIBIL.
+                                    </p>
+                                    <p className="mt-2 text-xs font-bold text-white">
+                                        TAT: 10-12 Working Days · ₹6,500
+                                    </p>
                                 </div>
                             </label>
                         </div>
-                    </div>
+                    </fieldset>
                 </div>
 
                 {/* Preview & Action Side */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 flex flex-col justify-between">
+                <Card padding="lg" className="flex flex-col justify-between">
                     <div>
-                        <h3 className="font-semibold text-white mb-6">Initiation Summary</h3>
-
+                        <h3 className="mb-6 font-semibold text-white">Initiation Summary</h3>
                         <div className="space-y-5">
                             <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-[#9B59B6] shrink-0"><ShieldCheck size={14} /></div>
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1A2A3A] text-[#9B59B6]">
+                                    <ShieldCheck size={14} aria-hidden="true" />
+                                </div>
                                 <div>
                                     <p className="text-sm font-bold text-white">Data Consent Link</p>
-                                    <p className="text-xs text-[#8899AA] leading-relaxed mt-1">An automated email and SMS will be sent to the candidate requesting data consent and document uploads on the vendor portal.</p>
+                                    <p className="mt-1 text-xs leading-relaxed text-[#8899AA]">
+                                        An automated email and SMS will be sent to the candidate requesting
+                                        data consent and document uploads on the vendor portal.
+                                    </p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-[#0066FF] shrink-0"><FileSearch size={14} /></div>
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1A2A3A] text-[#0066FF]">
+                                    <FileSearch size={14} aria-hidden="true" />
+                                </div>
                                 <div>
                                     <p className="text-sm font-bold text-white">Pre-filled Data</p>
-                                    <p className="text-xs text-[#8899AA] leading-relaxed mt-1">Basic details (Name, Dob, Email, Phone, Resume) will be securely synced to AuthBridge via API.</p>
+                                    <p className="mt-1 text-xs leading-relaxed text-[#8899AA]">
+                                        Basic details (Name, Dob, Email, Phone, Resume) will be securely
+                                        synced to AuthBridge via API.
+                                    </p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-[#FFB800] shrink-0"><Building2 size={14} /></div>
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1A2A3A] text-[#FFB800]">
+                                    <Building2 size={14} aria-hidden="true" />
+                                </div>
                                 <div>
                                     <p className="text-sm font-bold text-white">Compliance</p>
-                                    <p className="text-xs text-[#8899AA] leading-relaxed mt-1">This initiation complies with the GDPR/DPDP rules configured in Module 10.</p>
+                                    <p className="mt-1 text-xs leading-relaxed text-[#8899AA]">
+                                        This initiation complies with the GDPR/DPDP rules configured in
+                                        Module 10.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-[#1A2A3A]">
-                        <button className="w-full h-12 bg-[#00E5A0] text-[#060B14] font-bold rounded-xl hover:bg-[#00c98d] transition-colors flex justify-center items-center gap-2">
-                            <Send size={16} /> Initiate BGV Request
-                        </button>
+                    <div className="mt-8 border-t border-[#1A2A3A] pt-6">
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            icon={<Send size={16} aria-hidden="true" />}
+                            className="w-full justify-center"
+                        >
+                            Initiate BGV Request
+                        </Button>
                     </div>
-                </div>
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

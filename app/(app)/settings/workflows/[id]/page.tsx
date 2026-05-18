@@ -1,65 +1,117 @@
 "use client";
 
-import React from 'react';
-import { GitMerge, ArrowRight, CheckCircle2, Clock, Zap, Users, Mail, ShieldCheck, ArrowLeft } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import Link from 'next/link';
+import { CheckCircle2, Mail, ShieldCheck, Users, Zap } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function WorkflowDetailPage() {
-    const steps = [
-        { id: 1, name: 'Trigger: Leave Request Created', type: 'Trigger', icon: Zap, status: 'complete', description: 'Fires when any employee submits a leave application.' },
-        { id: 2, name: 'Assign to Reporting Manager', type: 'Approval', icon: Users, status: 'complete', description: 'Routes request to the direct manager for Level 1 approval. SLA: 48 hours.' },
-        { id: 3, name: 'Send Notification to Employee', type: 'Action', icon: Mail, status: 'active', description: 'Sends email + push notification to the applicant confirming submission.' },
-        { id: 4, name: 'HR Final Review (Optional)', type: 'Condition', icon: ShieldCheck, status: 'pending', description: 'Only triggered if leave duration > 5 days or category is "Sabbatical".' },
-    ];
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & static data
+// ─────────────────────────────────────────────────────────────────────────────
 
+type StepStatus = "complete" | "active" | "pending";
+type StepType = "Trigger" | "Approval" | "Action" | "Condition";
+
+interface WorkflowStep {
+    id: number;
+    name: string;
+    type: StepType;
+    icon: LucideIcon;
+    status: StepStatus;
+    description: string;
+}
+
+const STEPS: WorkflowStep[] = [
+    { id: 1, name: "Trigger: Leave Request Created", type: "Trigger", icon: Zap, status: "complete", description: "Fires when any employee submits a leave application." },
+    { id: 2, name: "Assign to Reporting Manager", type: "Approval", icon: Users, status: "complete", description: "Routes request to the direct manager for Level 1 approval. SLA: 48 hours." },
+    { id: 3, name: "Send Notification to Employee", type: "Action", icon: Mail, status: "active", description: "Sends email + push notification to the applicant confirming submission." },
+    { id: 4, name: "HR Final Review (Optional)", type: "Condition", icon: ShieldCheck, status: "pending", description: "Only triggered if leave duration > 5 days or category is \"Sabbatical\"." },
+];
+
+const STEP_STATUS_CLASSES: Record<StepStatus, string> = {
+    complete: "bg-emerald-500/20 border border-emerald-500/30",
+    active: "bg-indigo-500/20 border border-indigo-500/30 animate-pulse",
+    pending: "bg-[#1A2A3A] border border-[#2A3A4A]",
+};
+
+const STEP_ICON_CLASSES: Record<StepStatus, string> = {
+    complete: "text-emerald-400",
+    active: "text-indigo-400",
+    pending: "text-[#445566]",
+};
+
+const CARD_BORDER_CLASSES: Record<StepStatus, string> = {
+    complete: "border-[#1A2A3A]",
+    active: "border-indigo-500/30",
+    pending: "border-[#1A2A3A]",
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components
+// ─────────────────────────────────────────────────────────────────────────────
+
+function StepNode({ step, isLast }: { step: WorkflowStep; isLast: boolean }) {
+    const Icon = step.icon;
     return (
-        <div className="p-6 md:p-8 animate-fade-in max-w-4xl mx-auto">
-            <Link href="/settings/workflows" className="text-[#8899AA] hover:text-white text-sm mb-6 inline-block">&larr; Back to Workflows</Link>
-
-            <div className="flex justify-between items-start mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight mb-2 flex items-center gap-3">
-                        <GitMerge size={28} className="text-indigo-400" /> Standard Leave Approval
-                    </h1>
-                    <div className="flex items-center gap-3 text-sm text-[#8899AA]">
-                        <span className="font-mono text-xs bg-[#1A2A3A] text-[#8899AA] px-2 py-0.5 rounded">WF-001</span>
-                        <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-xs font-bold uppercase">Active</span>
-                        <span>1,245 runs</span>
-                    </div>
+        <div className="relative pb-8 last:pb-0">
+            {!isLast && (
+                <div className="absolute left-4 top-10 bottom-0 w-0.5 bg-[#1A2A3A]" aria-hidden="true" />
+            )}
+            <div className="flex items-start gap-4">
+                <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${STEP_STATUS_CLASSES[step.status]}`}
+                    aria-hidden="true"
+                >
+                    {step.status === "complete"
+                        ? <CheckCircle2 size={16} className="text-emerald-400" />
+                        : <Icon size={16} className={STEP_ICON_CLASSES[step.status]} />
+                    }
                 </div>
-                <Button variant="secondary" className="border-[#2A3A4A] text-white">Edit Workflow</Button>
-            </div>
-
-            {/* Visual Pipeline */}
-            <div className="relative pl-8 space-y-0">
-                {steps.map((step, idx) => {
-                    const Icon = step.icon;
-                    return (
-                        <div key={step.id} className="relative pb-8 last:pb-0">
-                            {idx < steps.length - 1 && (
-                                <div className="absolute left-4 top-10 bottom-0 w-0.5 bg-[#1A2A3A]"></div>
-                            )}
-                            <div className="flex items-start gap-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 ${step.status === 'complete' ? 'bg-emerald-500/20 border border-emerald-500/30' :
-                                        step.status === 'active' ? 'bg-indigo-500/20 border border-indigo-500/30 animate-pulse' :
-                                            'bg-[#1A2A3A] border border-[#2A3A4A]'
-                                    }`}>
-                                    {step.status === 'complete' ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Icon size={16} className={step.status === 'active' ? 'text-indigo-400' : 'text-[#445566]'} />}
-                                </div>
-                                <div className={`flex-1 bg-[#0D1928] border rounded-xl p-4 ${step.status === 'active' ? 'border-indigo-500/30' : 'border-[#1A2A3A]'
-                                    }`}>
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="text-white font-medium text-sm">{step.name}</h3>
-                                        <span className="bg-[#1A2A3A] text-[#8899AA] border border-[#2A3A4A] px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">{step.type}</span>
-                                    </div>
-                                    <p className="text-xs text-[#8899AA] leading-relaxed">{step.description}</p>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
+                <Card padding="md" className={`flex-1 ${CARD_BORDER_CLASSES[step.status]}`}>
+                    <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-white font-medium text-sm">{step.name}</h3>
+                        <Badge variant="neutral">{step.type}</Badge>
+                    </div>
+                    <p className="text-xs text-[#8899AA] leading-relaxed">{step.description}</p>
+                </Card>
             </div>
         </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function WorkflowDetailPage() {
+    return (
+        <Page
+            title="Standard Leave Approval"
+            subtitle="WF-001 · 1,245 runs"
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Settings", href: "/settings" },
+                { label: "Workflows", href: "/settings/workflows" },
+                { label: "Standard Leave Approval" },
+            ]}
+            maxWidth="800px"
+            actions={
+                <div className="flex items-center gap-3">
+                    <Badge variant="success" dot>Active</Badge>
+                    <Button variant="secondary" href="/settings/workflows">← Back</Button>
+                    <Button variant="secondary">Edit Workflow</Button>
+                </div>
+            }
+        >
+            <ol className="relative pl-8 space-y-0" aria-label="Workflow steps">
+                {STEPS.map((step, idx) => (
+                    <li key={step.id}>
+                        <StepNode step={step} isLast={idx === STEPS.length - 1} />
+                    </li>
+                ))}
+            </ol>
+        </Page>
     );
 }

@@ -1,116 +1,165 @@
 "use client";
 
-import React from 'react';
 import {
-    ShieldCheck, Eye, MessageSquare, CheckCircle,
-    ArrowLeft, Send, Printer, ExternalLink, Download,
-    History, AlertCircle, FileText
-} from 'lucide-react';
+    ShieldCheck, Eye, CheckCircle, Printer, History, AlertCircle, FileText,
+} from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+interface VerificationItem {
+    label: string;
+    checked: boolean;
+}
+
+const VERIFICATION_ITEMS: VerificationItem[] = [
+    { label: "Bank details verified", checked: true },
+    { label: "Asset clearance confirmed", checked: true },
+    { label: "IT credentials revoked", checked: false },
+    { label: "Gratuity calculation audit", checked: true },
+];
+
+interface EmployeeDetail {
+    k: string;
+    v: string;
+}
+
+const EMPLOYEE_DETAILS: EmployeeDetail[] = [
+    { k: "Name", v: "Arnab Das" },
+    { k: "Emp ID", v: "EMP-771" },
+    { k: "Department", v: "Engineering" },
+    { k: "LWD", v: "24 Apr 2024" },
+];
+
+interface PaymentDetail {
+    k: string;
+    v: string;
+}
+
+const PAYMENT_DETAILS: PaymentDetail[] = [
+    { k: "Gross Earnings", v: "₹4,75,102.00" },
+    { k: "Total Recoveries", v: "₹1,49,900.00" },
+    { k: "Payment Mode", v: "Bank Transfer" },
+    { k: "Account No", v: "XXXX-9821" },
+];
 
 export default function FnFReview() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700">
-
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-4">
-                        <button className="p-2 hover:bg-[#1A2A3A] rounded-xl transition-all text-slate-400">
-                            <ArrowLeft size={20} />
-                        </button>
-                        <div>
-                            <h1 className="text-2xl font-black text-white tracking-tight">Final Settlement Review</h1>
-                            <p className="text-slate-400 text-sm font-medium italic">Internal Audit & Verification Mode</p>
-                        </div>
-                    </div>
-                </div>
-
+        <Page
+            title="Final Settlement Review"
+            subtitle="Internal Audit & Verification Mode"
+            breadcrumbs={[
+                { label: "FnF", href: "/fnf/dashboard" },
+                { label: "Review" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <>
+                    <Button variant="ghost" size="sm" icon={<Printer size={18} aria-hidden="true" />} aria-label="Print" />
+                    <Button variant="ghost" size="sm" icon={<History size={18} aria-hidden="true" />} aria-label="Revision history" />
+                </>
+            }
+        >
+            <div className="space-y-6">
                 {/* Status Bar */}
-                <div className="flex items-center gap-4 bg-[#0D1928] border border-[#1A2A3A] p-4 rounded-2xl shadow-xl">
-                    <div className="bg-amber-500/10 text-amber-500 p-2 rounded-xl">
-                        <Eye size={20} />
+                <Card padding="md">
+                    <div className="flex items-center gap-4">
+                        <div className="rounded-xl bg-amber-500/10 p-2 text-amber-500">
+                            <Eye size={20} aria-hidden="true" />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-xs font-bold uppercase tracking-widest text-amber-500">
+                                Awaiting Final HR Approval
+                            </p>
+                            <p className="mt-1 text-sm font-bold text-[#445566]">
+                                Last edited by <span className="text-blue-500">Finance Team</span> today at 11:42 AM
+                            </p>
+                        </div>
+                        <Badge variant="warning">Pending</Badge>
                     </div>
-                    <div className="flex-1">
-                        <div className="text-xs font-black text-amber-500 uppercase tracking-widest italic">Awaiting Final HR Approval</div>
-                        <div className="text-sm font-bold text-slate-400 mt-1">Last edited by <span className="text-blue-500">Finance Team</span> today at 11:42 AM</div>
-                    </div>
-                    <div className="flex gap-2">
-                        <button className="p-2 border border-[#1A2A3A] rounded-xl text-slate-500 hover:text-white transition-all"><Printer size={18} /></button>
-                        <button className="p-2 border border-[#1A2A3A] rounded-xl text-slate-500 hover:text-white transition-all"><History size={18} /></button>
-                    </div>
-                </div>
+                </Card>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                     {/* Settlement Slip Preview */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-[#111827] border-2 border-slate-800 rounded-3xl p-10 shadow-2xl relative overflow-hidden group">
-
+                    <div className="lg:col-span-2">
+                        <div className="relative overflow-hidden rounded-3xl border-2 border-[#1A2A3A] bg-[#111827] p-10">
                             {/* Watermark */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] rotate-[-25deg] pointer-events-none select-none">
+                            <div
+                                className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-[25deg] select-none opacity-[0.03]"
+                                aria-hidden="true"
+                            >
                                 <FileText size={400} />
                             </div>
 
-                            <div className="relative z-10 space-y-12">
-                                <div className="flex justify-between items-start border-b border-slate-800 pb-8">
-                                    <div className="space-y-4">
-                                        <div className="bg-blue-600 w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-xl">HF</div>
+                            <div className="relative z-10 space-y-10">
+                                <div className="flex items-start justify-between border-b border-[#1A2A3A] pb-8">
+                                    <div className="space-y-3">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-xl font-black text-white">
+                                            HF
+                                        </div>
                                         <div>
-                                            <h2 className="text-xl font-black text-white">Full & Final settlement Statement</h2>
-                                            <p className="text-sm text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">Draft Version 1.0.2</p>
+                                            <h2 className="text-xl font-black text-white">Full &amp; Final Settlement Statement</h2>
+                                            <p className="mt-1 text-sm font-bold uppercase tracking-widest text-[#445566]">
+                                                Draft Version 1.0.2
+                                            </p>
                                         </div>
                                     </div>
-                                    <div className="text-right space-y-1">
-                                        <div className="text-xs font-black text-slate-600 uppercase">Statement Date</div>
-                                        <div className="text-sm font-bold text-white">24 Mar 2024</div>
+                                    <div className="text-right">
+                                        <p className="text-xs font-bold uppercase text-[#445566]">Statement Date</p>
+                                        <p className="text-sm font-bold text-white">24 Mar 2024</p>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-12">
-                                    <div className="space-y-6">
-                                        <h3 className="text-[10px] font-black text-blue-500 uppercase tracking-widest border-l-2 border-blue-500 pl-3">Employee Details</h3>
-                                        <div className="space-y-3">
-                                            {[
-                                                { k: 'Name', v: 'Arnab Das' },
-                                                { k: 'Emp ID', v: 'EMP-771' },
-                                                { k: 'Department', v: 'Engineering' },
-                                                { k: 'LWD', v: '24 Apr 2024' },
-                                            ].map((row, i) => (
-                                                <div key={i} className="flex justify-between text-xs border-b border-slate-800/50 pb-2">
-                                                    <span className="text-slate-500 font-bold">{row.k}</span>
-                                                    <span className="text-white font-black">{row.v}</span>
+                                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                                    <div className="space-y-4">
+                                        <h3 className="border-l-2 border-blue-500 pl-3 text-[10px] font-bold uppercase tracking-widest text-blue-500">
+                                            Employee Details
+                                        </h3>
+                                        <dl className="space-y-2">
+                                            {EMPLOYEE_DETAILS.map((row) => (
+                                                <div key={row.k} className="flex justify-between border-b border-[#1A2A3A]/50 pb-2 text-xs">
+                                                    <dt className="font-bold text-[#445566]">{row.k}</dt>
+                                                    <dd className="font-black text-white">{row.v}</dd>
                                                 </div>
                                             ))}
-                                        </div>
+                                        </dl>
                                     </div>
-                                    <div className="space-y-6">
-                                        <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest border-l-2 border-emerald-500 pl-3">Payment Summary</h3>
-                                        <div className="space-y-3">
-                                            {[
-                                                { k: 'Gross Earnings', v: '₹4,75,102.00' },
-                                                { k: 'Total Recoveries', v: '₹1,49,900.00' },
-                                                { k: 'Payment Mode', v: 'Bank Transfer' },
-                                                { k: 'Account No', v: 'XXXX-9821' },
-                                            ].map((row, i) => (
-                                                <div key={i} className="flex justify-between text-xs border-b border-slate-800/50 pb-2">
-                                                    <span className="text-slate-500 font-bold">{row.k}</span>
-                                                    <span className="text-white font-black">{row.v}</span>
+                                    <div className="space-y-4">
+                                        <h3 className="border-l-2 border-emerald-500 pl-3 text-[10px] font-bold uppercase tracking-widest text-emerald-500">
+                                            Payment Summary
+                                        </h3>
+                                        <dl className="space-y-2">
+                                            {PAYMENT_DETAILS.map((row) => (
+                                                <div key={row.k} className="flex justify-between border-b border-[#1A2A3A]/50 pb-2 text-xs">
+                                                    <dt className="font-bold text-[#445566]">{row.k}</dt>
+                                                    <dd className="font-black text-white">{row.v}</dd>
                                                 </div>
                                             ))}
-                                        </div>
+                                        </dl>
                                     </div>
                                 </div>
 
-                                <div className="bg-blue-500/5 border border-blue-500/10 rounded-2xl p-6 text-center">
-                                    <div className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-2 leading-none">Net Payable (INR)</div>
-                                    <div className="text-5xl font-black text-white tracking-tighter drop-shadow-lg tabular-nums">THREE LAKH TWENTY FIVE THOUSAND TWO HUNDRED TWO</div>
+                                <div className="rounded-2xl border border-blue-500/10 bg-blue-500/5 p-6 text-center">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                                        Net Payable (INR)
+                                    </p>
+                                    <p className="mt-2 text-2xl font-black text-white">
+                                        THREE LAKH TWENTY FIVE THOUSAND TWO HUNDRED TWO
+                                    </p>
                                 </div>
 
-                                <div className="flex justify-between pt-8 border-t border-slate-800 italic">
-                                    <div className="text-[10px] text-slate-500 font-bold">* Computer generated statement. No physical signature required.</div>
-                                    <div className="flex gap-4">
-                                        <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><ShieldCheck size={16} /></div>
-                                        <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500"><Printer size={16} /></div>
+                                <div className="flex items-center justify-between border-t border-[#1A2A3A] pt-6">
+                                    <p className="text-[10px] text-[#445566]">
+                                        * Computer generated statement. No physical signature required.
+                                    </p>
+                                    <div className="flex gap-3">
+                                        <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-500">
+                                            <ShieldCheck size={16} aria-hidden="true" />
+                                        </div>
+                                        <div className="rounded-lg bg-blue-500/10 p-2 text-blue-500">
+                                            <Printer size={16} aria-hidden="true" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -119,54 +168,74 @@ export default function FnFReview() {
 
                     {/* Review Actions & Verification */}
                     <div className="space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-8 space-y-8 shadow-xl">
-                            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest border-b border-[#1A2A3A] pb-4 italic">Verification checklist</h3>
-
-                            <div className="space-y-4">
-                                {[
-                                    { label: 'Bank details verified', checked: true },
-                                    { label: 'Asset clearance confirmed', checked: true },
-                                    { label: 'IT credentials revoked', checked: false },
-                                    { label: 'Gratuity calculation audit', checked: true },
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-center gap-3 group cursor-pointer">
-                                        <div className={`w-5 h-5 rounded-md flex items-center justify-center transition-all ${item.checked ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'border-2 border-[#1A2A3A] group-hover:border-blue-500'}`}>
+                        <Card padding="lg">
+                            <h3 className="mb-6 border-b border-[#1A2A3A] pb-4 text-xs font-bold uppercase tracking-widest text-[#445566]">
+                                Verification Checklist
+                            </h3>
+                            <ul className="space-y-4" role="list">
+                                {VERIFICATION_ITEMS.map((item) => (
+                                    <li key={item.label} className="flex cursor-pointer items-center gap-3">
+                                        <div
+                                            className={`flex h-5 w-5 items-center justify-center rounded-md transition-all ${
+                                                item.checked
+                                                    ? "bg-emerald-500"
+                                                    : "border-2 border-[#1A2A3A]"
+                                            }`}
+                                            aria-hidden="true"
+                                        >
                                             {item.checked && <CheckCircle size={12} className="text-white" />}
                                         </div>
-                                        <span className={`text-xs font-bold transition-all ${item.checked ? 'text-slate-200' : 'text-slate-500'}`}>{item.label}</span>
-                                    </div>
+                                        <span
+                                            className={`text-xs font-bold ${
+                                                item.checked ? "text-[#8899AA]" : "text-[#445566]"
+                                            }`}
+                                        >
+                                            {item.label}
+                                        </span>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
 
-                            <div className="space-y-2 pt-4">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Feedback / Observations</label>
+                            <div className="mt-6 space-y-2">
+                                <label htmlFor="review-feedback" className="text-[10px] font-bold uppercase tracking-widest text-[#445566]">
+                                    Feedback / Observations
+                                </label>
                                 <textarea
+                                    id="review-feedback"
                                     placeholder="Add any internal comments for audit trail..."
-                                    className="w-full bg-[#060B14] border border-[#1A2A3A] rounded-xl p-4 text-xs text-white outline-none focus:border-blue-500/50 resize-none min-h-[100px] leading-relaxed italic"
+                                    rows={4}
+                                    className="w-full resize-none rounded-xl border border-[#1A2A3A] bg-[#060B14] p-4 text-xs leading-relaxed text-white outline-none focus:border-[#00e5a0]"
                                 />
                             </div>
 
-                            <div className="space-y-3 pt-4 border-t border-[#1A2A3A]">
-                                <button className="w-full py-4 bg-emerald-600 rounded-xl text-white font-black text-sm hover:translate-y-[-2px] transition-all shadow-xl flex items-center justify-center gap-2">
-                                    <CheckCircle size={18} /> Approve & Finalize
-                                </button>
-                                <button className="w-full py-4 bg-[#060B14] border border-rose-500/30 rounded-xl text-rose-500 font-bold text-sm hover:bg-rose-500/5 transition-all flex items-center justify-center gap-2">
-                                    <History size={16} /> Revert to Finance
-                                </button>
+                            <div className="mt-6 space-y-3 border-t border-[#1A2A3A] pt-4">
+                                <Button
+                                    variant="primary"
+                                    icon={<CheckCircle size={18} aria-hidden="true" />}
+                                    className="w-full"
+                                >
+                                    Approve &amp; Finalize
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    icon={<History size={16} aria-hidden="true" />}
+                                    className="w-full"
+                                >
+                                    Revert to Finance
+                                </Button>
                             </div>
-                        </div>
+                        </Card>
 
-                        <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl flex gap-3 shadow-lg">
-                            <AlertCircle size={18} className="text-blue-500 shrink-0" />
-                            <p className="text-[10px] text-slate-500 font-bold leading-relaxed italic tracking-tight">
-                                Approving this statement will lock the financial records for the current auditing period. Any subsequent changes will require a revision case.
+                        <div className="flex gap-3 rounded-2xl border border-blue-500/10 bg-blue-500/5 p-4">
+                            <AlertCircle size={18} className="mt-0.5 shrink-0 text-blue-500" aria-hidden="true" />
+                            <p className="text-[10px] font-bold leading-relaxed text-[#445566]">
+                                Approving this statement will lock the financial records for the current auditing period.
+                                Any subsequent changes will require a revision case.
                             </p>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

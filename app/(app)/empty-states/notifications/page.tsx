@@ -1,6 +1,6 @@
 "use client";
 import EmptyState from '@/components/ui/EmptyState';
-import { Bell, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 function IllustrationNotifications() {
     return (

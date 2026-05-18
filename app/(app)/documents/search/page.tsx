@@ -1,11 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    Search, Filter, Calendar, Type, Users, Shield,
-    FileText, User, Clock, CheckCircle2, AlertTriangle, File, Folder
+    Search, Calendar, Type, Users, User, Clock, File, Folder
 } from 'lucide-react';
-import Link from 'next/link';
 
 const SEARCH_RESULTS = [
     { id: '1', name: 'Q4_Appraisal_Report_Rahul.pdf', type: 'PDF', owner: 'Rahul Sharma', date: '12 Nov 2024', size: '2.4 MB', cat: 'Appraisals', match: 'Matched in full-text content' },
@@ -139,6 +139,12 @@ export default function DocumentSearchScreen() {
 
 function FilterSection({ title, icon, children }: any) {
     return (
+        <Page
+            title="Global Document Search"
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Search" }]}
+            maxWidth="1400px"
+        >
+
         <div>
             <h4 className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-wider mb-3">
                 <span className="text-[#0066FF]">{icon}</span> {title}
@@ -147,5 +153,7 @@ function FilterSection({ title, icon, children }: any) {
                 {children}
             </div>
         </div>
+    
+        </Page>
     );
 }

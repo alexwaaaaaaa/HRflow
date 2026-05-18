@@ -1,8 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "DM Sans", sans-serif;
+  --font-sans: var(--font-dm-sans), "DM Sans", sans-serif;
 
   /* ── Base surfaces ── */
   --color-bg-base:       #04080f;
@@ -41,7 +40,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
   background-color: #04080f;
   color: #f0f4f8;
   -webkit-font-smoothing: antialiased;
@@ -400,6 +399,28 @@ html, body {
   50%       { opacity: 0.5; transform: scale(0.8); }
 }
 
+/* Floating-card animations used by AuthRightPanel and marketing surfaces.
+   Three offset variants so cards on the same screen don't sync up. */
+@keyframes float-y-0 {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes float-y-1 {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+@keyframes float-y-2 {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* Shake — used by login form on auth failure */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80%       { transform: translateX(4px); }
+}
+
 .animate-fade-in        { animation: fade-in 0.25s ease-out forwards; }
 .animate-fade-in-up     { animation: fade-in-up 0.3s ease-out forwards; }
 .animate-slide-in-left  { animation: slide-in-left 0.2s ease-out forwards; }
@@ -409,6 +430,20 @@ html, body {
 .animate-spin-slow      { animation: spin-slow 3s linear infinite; }
 .animate-bounce-gentle  { animation: bounce-gentle 2s ease-in-out infinite; }
 .animate-count-up       { animation: count-up 0.4s ease-out forwards; }
+.animate-float          { animation: float-y-0 6s ease-in-out infinite; }
+.animate-float-1        { animation: float-y-1 7s ease-in-out infinite 0.5s; }
+.animate-float-2        { animation: float-y-2 5.5s ease-in-out infinite 1s; }
+.animate-shake          { animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+/* Reduced motion — kill non-essential animations for accessibility. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* Stagger children */
 .stagger-children > *:nth-child(1) { animation-delay: 0ms; }

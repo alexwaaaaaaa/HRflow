@@ -1,19 +1,27 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { HeadphonesIcon, Laptop, MonitorSmartphone, Key, ShieldAlert, Paperclip, Send } from 'lucide-react';
+
+const CATEGORIES = [
+    { id: 'Hardware', icon: Laptop, desc: 'Laptop, Monitor, Mouse' },
+    { id: 'Software', icon: MonitorSmartphone, desc: 'App installation, OS issues' },
+    { id: 'Access', icon: Key, desc: 'Passwords, VPN, SSO' },
+    { id: 'Security', icon: ShieldAlert, desc: 'Phishing, Malware, Data' },
+];
 
 export default function CreateTicketScreen() {
     const [category, setCategory] = useState('');
 
-    const CATEGORIES = [
-        { id: 'Hardware', icon: Laptop, desc: 'Laptop, Monitor, Mouse' },
-        { id: 'Software', icon: MonitorSmartphone, desc: 'App installation, OS issues' },
-        { id: 'Access', icon: Key, desc: 'Passwords, VPN, SSO' },
-        { id: 'Security', icon: ShieldAlert, desc: 'Phishing, Malware, Data' },
-    ];
-
     return (
-        <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
+        <Page
+            title="Raise IT Support Ticket"
+            subtitle="Describe your issue and IT will get back to you shortly."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Create Ticket" }]}
+            maxWidth="900px"
+        >
+        <div className="space-y-8">
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-bold text-white flex items-center gap-3"><HeadphonesIcon size={24} className="text-sky-400" /> Raise IT Support Ticket</h1>
@@ -34,7 +42,7 @@ export default function CreateTicketScreen() {
                                     <div className={`font-bold text-sm mb-1 ${category === c.id ? 'text-white' : 'text-[#8899AA]'}`}>{c.id}</div>
                                     <div className="text-[#556677] text-[10px] text-center">{c.desc}</div>
                                 </label>
-                            )
+                            );
                         })}
                     </div>
                 </div>
@@ -79,5 +87,6 @@ export default function CreateTicketScreen() {
                 )}
             </div>
         </div>
+        </Page>
     );
 }

@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Grid, HelpCircle, Download, FileSpreadsheet } from 'lucide-react';
+import { Grid, HelpCircle, FileSpreadsheet } from 'lucide-react';
 
 export default function NineBoxGridScreen() {
     // Logic for a standard 9-box
@@ -24,6 +26,13 @@ export default function NineBoxGridScreen() {
     ];
 
     return (
+        <Page
+            title="Executive 9-Box Grid"
+            subtitle="Holistic view of employee performance vs. potential based on Q3 Calibration Cycle."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "9 Box" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -97,5 +106,7 @@ export default function NineBoxGridScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

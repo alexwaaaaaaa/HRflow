@@ -1,13 +1,22 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+
 import React from "react";
 import Link from "next/link";
-import {
-    Briefcase, ChevronRight, Edit, Users, Clock, Target, CreditCard, ChevronDown, CheckCircle2
+import { ChevronRight, Edit, Clock, Target, CreditCard, CheckCircle2
 } from "lucide-react";
 
 export default function OpenPositionsDetailScreen() {
     return (
+        <Page
+            title="Senior AI Engineer"
+            subtitle="Target Hire Date"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Positions", href: "/org-chart/positions" }, { label: "Open", href: "/org-chart/positions/open" }, { label: "Id" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="max-w-6xl mx-auto space-y-6">
 
@@ -85,7 +94,7 @@ export default function OpenPositionsDetailScreen() {
                                     <div>
                                         <p className="text-[11px] text-[#8899AA] mb-1">Hiring Manager</p>
                                         <div className="flex items-center gap-2">
-                                            <img src="https://i.pravatar.cc/150?u=a" className="w-5 h-5 rounded-full" alt="HM" />
+                                            <Image src="https://i.pravatar.cc/150?u=a" className="w-5 h-5 rounded-full" alt="HM" width={20} height={20} />
                                             <p className="text-sm text-white font-medium">Amit Kumar</p>
                                         </div>
                                     </div>
@@ -187,5 +196,7 @@ export default function OpenPositionsDetailScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

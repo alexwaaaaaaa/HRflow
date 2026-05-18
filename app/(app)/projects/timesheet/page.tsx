@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Clock, Calendar as CalendarIcon, Play, Square, MoreVertical, Plus } from 'lucide-react';
+import { Clock, Calendar as CalendarIcon, Play, Square, Plus } from 'lucide-react';
 
 export default function TimeEntryScreen() {
     const [activeTimer, setActiveTimer] = useState(false);
 
     return (
+        <Page
+            title="My Timesheet"
+            subtitle="Log hours, submit weekly timesheets, and track your utilization."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Timesheet" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -138,5 +147,7 @@ export default function TimeEntryScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

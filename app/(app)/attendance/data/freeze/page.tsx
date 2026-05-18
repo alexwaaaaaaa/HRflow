@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Lock, Calendar, CheckCircle2, AlertTriangle, ShieldCheck
+    Lock, Calendar, AlertTriangle, ShieldCheck
 } from 'lucide-react';
 
 export default function AttendanceFreeze() {
     return (
+        <Page
+            title="Attendance Freeze"
+            subtitle="Lock attendance records for past payroll cycles to prevent unauthorized retrospective edits."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Data", href: "/attendance/data" }, { label: "Freeze" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto space-y-6">
 
@@ -73,5 +82,7 @@ export default function AttendanceFreeze() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

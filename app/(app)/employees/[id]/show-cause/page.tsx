@@ -1,77 +1,123 @@
 "use client";
 
-import { use, useState } from "react";
-import Link from "next/link";
+import { use } from "react";
 import { AlertTriangle } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 export default function ShowCauseNotice({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [status, setStatus] = useState<"draft" | "issued" | "responded">("draft");
+  const { id } = use(params);
 
-    return (
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 32px 80px" }}>
-            <Link href={`/employees/${id}`} style={{ color: "#8899AA", textDecoration: "none", fontSize: 13 }}>← Back to Profile</Link>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginTop: 12, marginBottom: 8 }}>Show Cause Notice</h2>
-            <div style={{ fontSize: 14, color: "#8899AA", marginBottom: 28 }}>Issue a formal notice requiring the employee to explain their conduct</div>
+  const handleIssue = () => {
+    // TODO: replace with real mutation
+    alert("Show cause notice issued (stub)");
+  };
 
-            {/* Status Tracker */}
-            <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 32 }}>
-                {[
-                    { key: "draft", label: "Notice Issued" },
-                    { key: "issued", label: "Response Received" },
-                    { key: "responded", label: "Reviewed" },
-                ].map((s, i) => (
-                    <div key={s.key} style={{ display: "flex", alignItems: "center" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", background: status >= s.key ? "rgba(0,229,160,0.05)" : "#0D1928", border: `1px solid ${status >= s.key ? "#00E5A0" : "#1A2A3A"}`, borderRadius: 20 }}>
-                            <div style={{ width: 20, height: 20, borderRadius: "50%", background: ["issued", "responded"].includes(status) && i < ["draft", "issued", "responded"].indexOf(status) ? "#00E5A0" : status === s.key ? "rgba(0,229,160,0.2)" : "#1A2A3A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#00E5A0", fontWeight: 700 }}>
-                                {i + 1}
-                            </div>
-                            <span style={{ fontSize: 13, color: "#FFFFFF" }}>{s.label}</span>
-                        </div>
-                        {i < 2 && <div style={{ width: 30, height: 2, background: "#1A2A3A" }} />}
-                    </div>
-                ))}
+  return (
+    <Page
+      title="Show Cause Notice"
+      subtitle="Issue a formal notice requiring the employee to explain their conduct"
+      breadcrumbs={[
+        { label: "Employees", href: "/employees" },
+        { label: "Rahul Sharma", href: `/employees/${id}` },
+        { label: "Show Cause Notice" },
+      ]}
+      maxWidth="900px"
+    >
+      {/* Status tracker */}
+      <div className="mb-8 flex flex-wrap items-center gap-0">
+        {[
+          { label: "Notice Issued" },
+          { label: "Response Received" },
+          { label: "Reviewed" },
+        ].map((s, i) => (
+          <div key={s.label} className="flex items-center">
+            <div className="flex items-center gap-2 rounded-full border border-[#1A2A3A] bg-[#0D1928] px-4 py-2">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1A2A3A] text-[11px] font-bold text-[#8899AA]">
+                {i + 1}
+              </div>
+              <span className="text-[13px] text-white">{s.label}</span>
             </div>
+            {i < 2 && <div className="h-0.5 w-7 bg-[#1A2A3A]" aria-hidden="true" />}
+          </div>
+        ))}
+      </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 20 }}>Notice Details</h3>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                            <div>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Subject / Allegation *</label>
-                                <input placeholder="e.g. Unauthorized absence from 5th to 8th November 2024" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
-                            </div>
-                            <div>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Body of Notice *</label>
-                                <textarea rows={5} defaultValue={`You are hereby required to submit written explanation for your conduct related to the alleged misconduct. Your explanation must be submitted within the stipulated time.`} style={{ width: "100%", background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "12px 14px", color: "#FFFFFF", fontSize: 13, outline: "none", resize: "none", boxSizing: "border-box" }}></textarea>
-                            </div>
-                            <div>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Response Deadline *</label>
-                                <input type="date" defaultValue="2024-11-25" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", outline: "none" }} />
-                            </div>
-                        </div>
-                        <button style={{ width: "100%", height: 44, background: "#FF4444", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 600, cursor: "pointer", marginTop: 24 }}>Issue Notice to Employee</button>
-                    </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 16 }}>Employee Response</h3>
-                        <div style={{ padding: "20px", background: "#060B14", borderRadius: 12, border: "1px solid #1A2A3A", marginBottom: 16, minHeight: 100 }}>
-                            <div style={{ fontSize: 13, color: "#445566", fontStyle: "italic" }}>No response submitted yet. Response is due by 25/11/2024.</div>
-                        </div>
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>HR Review / Outcome</label>
-                            <textarea rows={3} placeholder="After receiving employee response, add your remarks and outcome here..." style={{ width: "100%", background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "12px 14px", color: "#FFFFFF", fontSize: 13, outline: "none", resize: "none", boxSizing: "border-box" }}></textarea>
-                        </div>
-                    </div>
-                    <div style={{ background: "rgba(255,68,68,0.05)", border: "1px solid rgba(255,68,68,0.2)", borderRadius: 12, padding: 16, display: "flex", gap: 12 }}>
-                        <AlertTriangle color="#FF4444" size={18} style={{ flexShrink: 0 }} />
-                        <div style={{ fontSize: 13, color: "#FF4444", lineHeight: 1.5 }}>Failure to respond by the deadline may result in further disciplinary action including termination.</div>
-                    </div>
-                </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Left: Notice form */}
+        <Card padding="md">
+          <h3 className="mb-5 text-base font-semibold text-white">Notice Details</h3>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="scn-subject" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                Subject / Allegation *
+              </label>
+              <input
+                id="scn-subject"
+                placeholder="e.g. Unauthorized absence from 5th to 8th November 2024"
+                className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-[13px] text-white outline-none"
+              />
             </div>
+            <div>
+              <label htmlFor="scn-body" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                Body of Notice *
+              </label>
+              <textarea
+                id="scn-body"
+                rows={5}
+                defaultValue="You are hereby required to submit written explanation for your conduct related to the alleged misconduct. Your explanation must be submitted within the stipulated time."
+                className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3.5 text-[13px] text-white outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="scn-deadline" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                Response Deadline *
+              </label>
+              <input
+                id="scn-deadline"
+                type="date"
+                defaultValue="2024-11-25"
+                className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+              />
+            </div>
+          </div>
+          <Button variant="danger" className="mt-6 w-full" onClick={handleIssue}>
+            Issue Notice to Employee
+          </Button>
+        </Card>
+
+        {/* Right: Response */}
+        <div className="space-y-5">
+          <Card padding="md">
+            <h3 className="mb-4 text-base font-semibold text-white">Employee Response</h3>
+            <div className="mb-4 min-h-[100px] rounded-xl border border-[#1A2A3A] bg-[#060B14] p-5">
+              <div className="text-[13px] italic text-[#445566]">
+                No response submitted yet. Response is due by 25/11/2024.
+              </div>
+            </div>
+            <div>
+              <label htmlFor="hr-review" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                HR Review / Outcome
+              </label>
+              <textarea
+                id="hr-review"
+                rows={3}
+                placeholder="After receiving employee response, add your remarks and outcome here..."
+                className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3.5 text-[13px] text-white outline-none"
+              />
+            </div>
+          </Card>
+
+          <div className="flex items-start gap-3 rounded-xl border border-[rgba(255,68,68,0.2)] bg-[rgba(255,68,68,0.05)] p-4">
+            <AlertTriangle size={18} className="shrink-0 text-[#FF4444]" aria-hidden="true" />
+            <div className="text-[13px] leading-relaxed text-[#FF4444]">
+              Failure to respond by the deadline may result in further disciplinary action including
+              termination.
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </Page>
+  );
 }

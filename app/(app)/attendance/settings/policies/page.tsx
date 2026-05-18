@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
     Clock, Settings, Save
 } from 'lucide-react';
 
 export default function AttendancePolicy() {
     return (
+        <Page
+            title="General Attendance Policy"
+            subtitle="Configure global rules for regularizations, grace periods, and tracking behavior."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Policies" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto space-y-6">
 
@@ -91,5 +100,7 @@ export default function AttendancePolicy() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

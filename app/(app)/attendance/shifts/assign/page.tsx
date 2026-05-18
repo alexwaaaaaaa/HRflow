@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    Calendar, ChevronLeft, ChevronRight, Search,
-    Save, Clock, CheckCircle2, UserCircle2, AlertTriangle
+    Calendar, ChevronLeft, ChevronRight,
+    Save, CheckCircle2, UserCircle2, AlertTriangle
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -28,6 +30,13 @@ export default function SingleShiftAssign() {
     };
 
     return (
+        <Page
+            title="Assign Individual Shift"
+            subtitle="Custom schedule override for specific week."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Shifts", href: "/attendance/shifts" }, { label: "Assign" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto space-y-6">
 
@@ -76,7 +85,7 @@ export default function SingleShiftAssign() {
 
                         <div className="grid gap-3">
                             {currentWeekDates.map((dayLabel, index) => {
-                                const currentShift = shifts.find(s => s.id === assignedShifts[index]);
+                                const _currentShift = shifts.find(s => s.id === assignedShifts[index]);
                                 const isWeekend = index >= 5;
 
                                 return (
@@ -138,5 +147,7 @@ export default function SingleShiftAssign() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

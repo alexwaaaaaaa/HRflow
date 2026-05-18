@@ -1,10 +1,19 @@
 "use client";
-import React, { useState } from 'react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
 import { Wallet, ArrowLeft, Download, CheckCircle2, ChevronRight, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ContractorPaymentsScreen() {
     return (
+        <Page
+            title="Contractor Payment Runs"
+            subtitle="Generate bank advice files for net payments to contractors via NEFT/RTGS"
+            breadcrumbs={[{ label: "Contractor", href: "/contractor" }, { label: "Payments" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/contractor/list" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Contractor Payroll</Link>
             <div className="flex items-center justify-between">
@@ -82,5 +91,7 @@ export default function ContractorPaymentsScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

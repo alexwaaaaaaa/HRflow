@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Users, ArrowLeft, BarChart2, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PeerComparisonScreen() {
     return (
+        <Page
+            title="Peer Comparison & Analytics"
+            subtitle="Anonymized percentile rankings compared to colleagues in the same level/role."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Peer Comparison" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
             <div className="flex items-center justify-between">
@@ -58,5 +67,7 @@ export default function PeerComparisonScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

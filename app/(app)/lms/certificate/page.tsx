@@ -1,93 +1,107 @@
 "use client";
-import React from 'react';
-import { Award, Download, Share2, ExternalLink, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import React from "react";
+import { Award, Download, Share2, ExternalLink, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import Page from "@/components/ui/Page";
+import Button from "@/components/ui/Button";
 
-const MY_CERTS = [
+interface Cert {
+    id: string;
+    course: string;
+    issuer: string;
+    date: string;
+    gradientClass: string;
+    textColorClass: string;
+}
+
+const MY_CERTS: Cert[] = [
     {
-        id: 'TC-REACT-089921',
-        course: 'Advanced React Patterns & Architecture',
-        issuer: 'TechCorp LMS',
-        date: 'Oct 24, 2025',
-        color: 'from-blue-600 to-indigo-600',
-        textColor: 'text-blue-400',
+        id: "TC-REACT-089921",
+        course: "Advanced React Patterns & Architecture",
+        issuer: "TechCorp LMS",
+        date: "Oct 24, 2025",
+        gradientClass: "from-blue-600 to-indigo-600",
+        textColorClass: "text-blue-400",
     },
     {
-        id: 'TC-NODE-044512',
-        course: 'Node.js Microservices Masterclass',
-        issuer: 'TechCorp LMS',
-        date: 'Aug 11, 2025',
-        color: 'from-emerald-600 to-teal-600',
-        textColor: 'text-emerald-400',
+        id: "TC-NODE-044512",
+        course: "Node.js Microservices Masterclass",
+        issuer: "TechCorp LMS",
+        date: "Aug 11, 2025",
+        gradientClass: "from-emerald-600 to-teal-600",
+        textColorClass: "text-emerald-400",
     },
     {
-        id: 'TC-SEC-022001',
-        course: 'Cybersecurity Fundamentals for Engineers',
-        issuer: 'TechCorp LMS',
-        date: 'Jun 3, 2025',
-        color: 'from-amber-600 to-orange-600',
-        textColor: 'text-amber-400',
+        id: "TC-SEC-022001",
+        course: "Cybersecurity Fundamentals for Engineers",
+        issuer: "TechCorp LMS",
+        date: "Jun 3, 2025",
+        gradientClass: "from-amber-600 to-orange-600",
+        textColorClass: "text-amber-400",
     },
 ];
 
+function CertCard({ cert }: { cert: Cert }) {
+    return (
+        <Link
+            href={`/lms/certificate/${cert.id}`}
+            className="group bg-[#0A1420] border border-[#1A2A3A] hover:border-[#2A3A4A] rounded-2xl overflow-hidden transition-all hover:bg-[#0D1928] block flex flex-col"
+        >
+            <div className={`h-20 bg-gradient-to-br ${cert.gradientClass} flex items-center justify-center`}>
+                <Award size={32} className="text-white opacity-80" aria-hidden="true" />
+            </div>
+            <div className="p-5">
+                <h3 className="text-white font-bold text-sm mb-1 line-clamp-2">{cert.course}</h3>
+                <p className="text-[#8899AA] text-xs mb-3">{cert.issuer} · {cert.date}</p>
+                <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-mono ${cert.textColorClass} bg-[#1A2A3A] px-2 py-0.5 rounded`}>
+                        {cert.id}
+                    </span>
+                </div>
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#1A2A3A]">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => e.preventDefault()}
+                        aria-label={`Download PDF for ${cert.course}`}
+                        icon={<Download size={12} aria-hidden="true" />}
+                    >
+                        PDF
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => e.preventDefault()}
+                        aria-label={`Share ${cert.course} certificate`}
+                        icon={<Share2 size={12} aria-hidden="true" />}
+                    >
+                        Share
+                    </Button>
+                    <span className={`ml-auto text-xs font-bold flex items-center gap-1 ${cert.textColorClass}`}>
+                        View <ExternalLink size={10} aria-hidden="true" />
+                    </span>
+                </div>
+            </div>
+        </Link>
+    );
+}
+
 export default function MyCertificatesPage() {
     return (
-        <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <Award size={24} className="text-amber-400" /> My Certificates
-                    </h1>
-                    <p className="text-[#8899AA] text-sm mt-1">{MY_CERTS.length} certificates earned</p>
-                </div>
-                <Link
-                    href="/lms/dashboard"
-                    className="text-sm text-[#8899AA] hover:text-white flex items-center gap-1 transition-colors"
-                >
-                    Browse Courses <ArrowRight size={14} />
-                </Link>
-            </div>
-
+        <Page
+            title="My Certificates"
+            subtitle={`${MY_CERTS.length} certificates earned`}
+            breadcrumbs={[{ label: "LMS", href: "/lms/dashboard" }, { label: "Certificates" }]}
+            maxWidth="1000px"
+            actions={
+                <Button variant="secondary" iconRight={<ArrowRight size={14} />} href="/lms/library">Browse Courses</Button>
+            }
+        >
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {MY_CERTS.map(cert => (
-                    <Link
-                        key={cert.id}
-                        href={`/lms/certificate/${cert.id}`}
-                        className="group bg-[#0A1420] border border-[#1A2A3A] hover:border-[#2A3A4A] rounded-2xl overflow-hidden transition-all hover:bg-[#0D1928]"
-                    >
-                        {/* gradient banner */}
-                        <div className={`h-20 bg-gradient-to-br ${cert.color} flex items-center justify-center`}>
-                            <Award size={32} className="text-white opacity-80" />
-                        </div>
-                        <div className="p-5">
-                            <h3 className="text-white font-bold text-sm mb-1 line-clamp-2">{cert.course}</h3>
-                            <p className="text-[#8899AA] text-xs mb-3">{cert.issuer} · {cert.date}</p>
-                            <div className="flex items-center gap-2">
-                                <span className={`text-[10px] font-mono ${cert.textColor} bg-[#1A2A3A] px-2 py-0.5 rounded`}>
-                                    {cert.id}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#1A2A3A]">
-                                <button
-                                    onClick={e => e.preventDefault()}
-                                    className="flex items-center gap-1 text-[#556677] hover:text-white transition-colors text-xs"
-                                >
-                                    <Download size={12} /> PDF
-                                </button>
-                                <button
-                                    onClick={e => e.preventDefault()}
-                                    className="flex items-center gap-1 text-[#556677] hover:text-white transition-colors text-xs"
-                                >
-                                    <Share2 size={12} /> Share
-                                </button>
-                                <span className={`ml-auto text-xs font-bold flex items-center gap-1 ${cert.textColor}`}>
-                                    View <ExternalLink size={10} />
-                                </span>
-                            </div>
-                        </div>
-                    </Link>
+                {MY_CERTS.map((cert) => (
+                    <CertCard key={cert.id} cert={cert} />
                 ))}
             </div>
-        </div>
+        </Page>
     );
 }

@@ -1,118 +1,253 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Users, Search, Plus, Filter, MoreVertical, Shield, Mail, CheckCircle2, XCircle, Clock } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import Link from 'next/link';
+import { Mail, MoreVertical, Shield, XCircle } from "lucide-react";
+
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & static data (module scope — keeps the page render fn pure)
+// ─────────────────────────────────────────────────────────────────────────────
+
+type Role = "Super Admin" | "HR Admin" | "Payroll Admin" | "Manager" | "Employee";
+type Status = "Active" | "Invited" | "Deactivated";
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: Role;
+    status: Status;
+    last: string;
+    avatar: string;
+}
+
+const USERS: User[] = [
+    { id: 1, name: "Priya Sharma", email: "priya.sharma@kaarya.io", role: "Super Admin", status: "Active", last: "2 mins ago", avatar: "PS" },
+    { id: 2, name: "Vikram Desai", email: "vikram.desai@kaarya.io", role: "HR Admin", status: "Active", last: "1 hr ago", avatar: "VD" },
+    { id: 3, name: "Aditi Menon", email: "aditi.menon@kaarya.io", role: "Payroll Admin", status: "Active", last: "3 hrs ago", avatar: "AM" },
+    { id: 4, name: "Rohan Kapoor", email: "rohan.kapoor@kaarya.io", role: "Manager", status: "Active", last: "Yesterday", avatar: "RK" },
+    { id: 5, name: "Kavita Singh", email: "kavita.singh@kaarya.io", role: "Employee", status: "Invited", last: "Never", avatar: "KS" },
+    { id: 6, name: "Arjun Nair", email: "arjun.nair@kaarya.io", role: "Employee", status: "Deactivated", last: "30 days ago", avatar: "AN" },
+];
+
+const ROLE_VARIANT: Record<Role, BadgeVariant> = {
+    "Super Admin": "purple",
+    "HR Admin": "info",
+    "Payroll Admin": "info",
+    Manager: "success",
+    Employee: "neutral",
+};
+
+const STATUS_VARIANT: Record<Status, BadgeVariant> = {
+    Active: "success",
+    Invited: "info",
+    Deactivated: "neutral",
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MINUTE = 60 * 1000;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+
+/**
+ * Convert a human-readable "last active" string into a sortable millis-ago
+ * number. Smaller value = more recent. "Never" sorts last (Infinity).
+ *
+ * Supports the formats currently used in the mocked dataset:
+ *   "2 mins ago" / "1 hr ago" / "Yesterday" / "30 days ago" / "Never".
+ */
+export function parseLastActive(value: string): number {
+    if (!value) return Infinity;
+    const v = value.trim();
+    if (v.toLowerCase() === "never") return Infinity;
+    if (v.toLowerCase() === "yesterday") return DAY;
+
+    const match = v.match(/^(\d+)\s+(min|mins|minute|minutes|hr|hrs|hour|hours|day|days)\s+ago$/i);
+    if (!match) return Infinity;
+    const n = Number(match[1]);
+    const unit = match[2].toLowerCase();
+    if (unit.startsWith("min")) return n * MINUTE;
+    if (unit.startsWith("hr") || unit.startsWith("hour")) return n * HOUR;
+    if (unit.startsWith("day")) return n * DAY;
+    return Infinity;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell components (module scope — react/no-unstable-nested-components)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function UserCell({ user }: { user: User }) {
+    const isInactive = user.status === "Deactivated";
+    return (
+        <div className="flex items-center gap-3">
+            <div
+                aria-hidden="true"
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                    isInactive
+                        ? "bg-[#1A2A3A] text-[#c8d8e8]"
+                        : "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+                }`}
+            >
+                {user.avatar}
+            </div>
+            <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-white">{user.name}</p>
+                <p className="truncate text-xs text-[#8899AA]">{user.email}</p>
+            </div>
+        </div>
+    );
+}
+
+function RoleBadge({ role }: { role: Role }) {
+    return (
+        <span className="inline-flex items-center gap-1.5">
+            {role === "Super Admin" && (
+                <Shield size={12} className="text-amber-400" aria-hidden="true" />
+            )}
+            <Badge variant={ROLE_VARIANT[role]}>{role}</Badge>
+        </span>
+    );
+}
+
+function StatusBadge({ status }: { status: Status }) {
+    return (
+        <Badge
+            variant={STATUS_VARIANT[status]}
+            dot={status === "Active"}
+        >
+            {status === "Invited" && <Mail size={11} aria-hidden="true" />}
+            {status === "Deactivated" && <XCircle size={11} aria-hidden="true" />}
+            {status}
+        </Badge>
+    );
+}
+
+function LastActive({ value }: { value: string }) {
+    return <span className="text-sm text-[#8899AA]">{value}</span>;
+}
+
+function RowMenu({ user }: { user: User }) {
+    return (
+        <button
+            type="button"
+            aria-label={`Actions for ${user.name}`}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#7a8fa6] transition-colors hover:bg-[#1A2A3A] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00e5a0]"
+        >
+            <MoreVertical size={16} aria-hidden="true" />
+        </button>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Columns
+// ─────────────────────────────────────────────────────────────────────────────
+
+const COLUMNS: Column<User>[] = [
+    {
+        key: "user",
+        label: "User",
+        render: (u) => <UserCell user={u} />,
+        sortable: true,
+        sortValue: (u) => u.name,
+    },
+    {
+        key: "role",
+        label: "Role",
+        render: (u) => <RoleBadge role={u.role} />,
+        sortable: true,
+        sortValue: (u) => u.role,
+    },
+    {
+        key: "status",
+        label: "Status",
+        render: (u) => <StatusBadge status={u.status} />,
+        sortable: true,
+        sortValue: (u) => u.status,
+    },
+    {
+        key: "last",
+        label: "Last active",
+        render: (u) => <LastActive value={u.last} />,
+        sortable: true,
+        sortValue: (u) => parseLastActive(u.last),
+    },
+    {
+        key: "actions",
+        label: "",
+        align: "right",
+        width: "w-12",
+        render: (u) => <RowMenu user={u} />,
+    },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function UsersListPage() {
-    const users = [
-        { id: 1, name: 'Priya Sharma', email: 'priya.sharma@kaarya.io', role: 'Super Admin', status: 'Active', last: '2 mins ago', avatar: 'PS' },
-        { id: 2, name: 'Vikram Desai', email: 'vikram.desai@kaarya.io', role: 'HR Admin', status: 'Active', last: '1 hr ago', avatar: 'VD' },
-        { id: 3, name: 'Aditi Menon', email: 'aditi.menon@kaarya.io', role: 'Payroll Admin', status: 'Active', last: '3 hrs ago', avatar: 'AM' },
-        { id: 4, name: 'Rohan Kapoor', email: 'rohan.kapoor@kaarya.io', role: 'Manager', status: 'Active', last: 'Yesterday', avatar: 'RK' },
-        { id: 5, name: 'Kavita Singh', email: 'kavita.singh@kaarya.io', role: 'Employee', status: 'Invited', last: 'Never', avatar: 'KS' },
-        { id: 6, name: 'Arjun Nair', email: 'arjun.nair@kaarya.io', role: 'Employee', status: 'Deactivated', last: '30 days ago', avatar: 'AN' },
+    const totalCount = USERS.length;
+    const activeCount = USERS.filter((u) => u.status === "Active").length;
+    const invitedCount = USERS.filter((u) => u.status === "Invited").length;
+    const deactivatedCount = USERS.filter((u) => u.status === "Deactivated").length;
+
+    const stats = [
+        { label: "Total Users", value: String(totalCount) },
+        { label: "Active", value: String(activeCount) },
+        { label: "Pending Invites", value: String(invitedCount) },
+        { label: "Deactivated", value: String(deactivatedCount) },
     ];
 
     return (
-        <div className="p-6 md:p-8 animate-fade-in max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight mb-2 flex items-center gap-3">
-                        <Users size={28} className="text-indigo-400" /> Platform Users
-                    </h1>
-                    <p className="text-[#8899AA] text-sm max-w-2xl">
-                        Manage user accounts, roles, and access to the Kaarya platform.
-                    </p>
+        <Page
+            title="Users"
+            subtitle="Manage user accounts, roles, and access to the Kaarya platform."
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Settings", href: "/settings" },
+                { label: "Users" },
+            ]}
+            maxWidth="1280px"
+            actions={
+                <Button href="/settings/users/invite">+ Invite user</Button>
+            }
+        >
+            <div className="space-y-6">
+                {/* Stat tiles */}
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {stats.map((s) => (
+                        <Card key={s.label} padding="md">
+                            <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#8899AA]">
+                                {s.label}
+                            </div>
+                            <div className="text-2xl font-bold text-white">{s.value}</div>
+                        </Card>
+                    ))}
                 </div>
-                <div className="flex gap-3">
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl flex items-center px-3 py-1.5 focus-within:border-indigo-500/50 transition-colors w-64 hidden md:flex">
-                        <Search size={16} className="text-[#8899AA]" />
-                        <input type="text" placeholder="Search users..." className="bg-transparent border-none outline-none text-white text-sm ml-2 w-full" />
-                    </div>
-                    <Link href="/settings/users/invite">
-                        <Button className="bg-indigo-600 hover:bg-indigo-500 text-white border-none py-2 px-6">
-                            <Plus size={16} className="mr-2" /> Invite User
-                        </Button>
-                    </Link>
-                </div>
-            </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {[
-                    { label: 'Total Users', value: '6' },
-                    { label: 'Active', value: '4' },
-                    { label: 'Pending Invites', value: '1' },
-                    { label: 'Deactivated', value: '1' },
-                ].map((s, i) => (
-                    <div key={i} className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-4">
-                        <div className="text-xs text-[#8899AA] uppercase tracking-wider font-semibold mb-1">{s.label}</div>
-                        <div className="text-2xl font-bold text-white">{s.value}</div>
-                    </div>
-                ))}
+                {/* Users table */}
+                <Card padding="none">
+                    <DataTable<User>
+                        data={USERS}
+                        columns={COLUMNS}
+                        rowKey={(u) => u.id}
+                        searchable
+                        searchPlaceholder="Search users…"
+                        aria-label="Platform users"
+                        emptyTitle="No users yet"
+                        emptyDescription="Invite your team to get started."
+                        emptyAction={
+                            <Button size="sm" href="/settings/users/invite">+ Invite user</Button>
+                        }
+                    />
+                </Card>
             </div>
-
-            {/* Users Table */}
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[700px]">
-                        <thead>
-                            <tr className="border-b border-[#1A2A3A] bg-[#131B2B]">
-                                <th className="p-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">User</th>
-                                <th className="p-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Role</th>
-                                <th className="p-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Status</th>
-                                <th className="p-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Last Active</th>
-                                <th className="p-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider w-16"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map((user) => (
-                                <tr key={user.id} className="border-b border-[#1A2A3A] hover:bg-[#131B2B] transition-colors group">
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${user.status === 'Deactivated' ? 'bg-[#1A2A3A] text-[#445566]' : 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white'
-                                                }`}>{user.avatar}</div>
-                                            <div>
-                                                <div className="text-white font-medium text-sm">{user.name}</div>
-                                                <div className="text-xs text-[#8899AA]">{user.email}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="flex items-center gap-1.5">
-                                            {user.role === 'Super Admin' && <Shield size={12} className="text-amber-400" />}
-                                            <span className="text-sm text-white">{user.role}</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <span className={`px-2.5 py-1 rounded text-xs font-medium border flex items-center gap-1 w-fit ${user.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                                user.status === 'Invited' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                    'bg-[#1A2A3A] text-[#8899AA] border-[#2A3A4A]'
-                                            }`}>
-                                            {user.status === 'Active' && <CheckCircle2 size={12} />}
-                                            {user.status === 'Invited' && <Mail size={12} />}
-                                            {user.status === 'Deactivated' && <XCircle size={12} />}
-                                            {user.status}
-                                        </span>
-                                    </td>
-                                    <td className="p-4">
-                                        <span className="text-sm text-[#8899AA] flex items-center gap-1.5">
-                                            <Clock size={12} /> {user.last}
-                                        </span>
-                                    </td>
-                                    <td className="p-4">
-                                        <button className="text-[#445566] hover:text-white transition-colors opacity-0 group-hover:opacity-100">
-                                            <MoreVertical size={16} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        </Page>
     );
 }

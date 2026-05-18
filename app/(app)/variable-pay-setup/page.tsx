@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { SlidersHorizontal, Target, Award, Crosshair, Check } from "lucide-react";
 
@@ -17,6 +19,13 @@ export default function VariablePaySetupPage() {
     ];
 
     return (
+        <Page
+            title="Variable Pay Setup"
+            subtitle="Configure performance-linked incentive plans based on company & individual metrics."
+            breadcrumbs={[{ label: "Variable Pay Setup" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -191,5 +200,7 @@ export default function VariablePaySetupPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

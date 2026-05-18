@@ -1,62 +1,114 @@
 "use client";
-import React from 'react';
-import { Mailbox, Clock, Save } from 'lucide-react';
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Clock, Mailbox } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema
+// ─────────────────────────────────────────────────────────────────────────────
+
+const digestSchema = z.object({
+    enabled: z.boolean(),
+    frequency: z.enum(["daily", "weekly"]),
+    deliveryTime: z.string().min(1, "Delivery time is required"),
+});
+
+type DigestForm = z.infer<typeof digestSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function DigestEmailSetupPage() {
+    const toast = useToast();
+
+    const { register, handleSubmit, formState: { isSubmitting } } = useForm<DigestForm>({
+        resolver: zodResolver(digestSchema),
+        defaultValues: { enabled: true, frequency: "daily", deliveryTime: "09:00" },
+    });
+
+    const onSubmit = async (_data: DigestForm) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 500));
+        toast.show({ variant: "success", title: "Digest settings saved" });
+    };
+
     return (
-        <div className="min-h-screen p-6 max-w-3xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <Mailbox className="text-amber-500" />
-                        Digest Email Configuration
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Batch non-urgent notifications into a single daily or weekly summary email.</p>
-                </div>
-            </div>
+        <Page
+            title="Digest Email Configuration"
+            subtitle="Batch non-urgent notifications into a single daily or weekly summary email."
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Settings", href: "/settings" },
+                { label: "Notifications", href: "/settings/notifications" },
+                { label: "Digest" },
+            ]}
+            maxWidth="700px"
+        >
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Card padding="lg">
+                    <div className="space-y-6">
+                        {/* Enable toggle */}
+                        <label className="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <span className="text-white font-medium text-sm">Enable Digest Emails</span>
+                                <p className="text-xs text-[#556677] mt-1">Turn off to send everything instantly (not recommended for large teams).</p>
+                            </div>
+                            <div className="relative shrink-0 ml-4">
+                                <input type="checkbox" {...register("enabled")} className="sr-only peer" />
+                                <div className="w-11 h-6 bg-[#131B2B] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 border border-[#2A3A4A] transition-colors" />
+                            </div>
+                        </label>
 
-            <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-xl p-6 space-y-6">
-                <div>
-                    <label className="flex items-center justify-between cursor-pointer">
-                        <div>
-                            <span className="text-white font-medium text-sm">Enable Digest Emails</span>
-                            <p className="text-xs text-[#556677] mt-1">Turn off to send everything instantly (not recommended for large teams).</p>
+                        <div className="border-t border-[#1A2A3A] pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="frequency" className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2">Frequency</label>
+                                <select
+                                    id="frequency"
+                                    {...register("frequency")}
+                                    className="w-full bg-[#060D1A] border border-[#1A2A3A] rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-amber-500"
+                                >
+                                    <option value="daily">Daily Digest</option>
+                                    <option value="weekly">Weekly Digest</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="deliveryTime" className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2">Delivery Time</label>
+                                <div className="relative">
+                                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556677]" size={16} aria-hidden="true" />
+                                    <select
+                                        id="deliveryTime"
+                                        {...register("deliveryTime")}
+                                        className="w-full pl-10 pr-3 py-2 bg-[#060D1A] border border-[#1A2A3A] rounded-lg text-white text-sm outline-none focus:border-amber-500"
+                                    >
+                                        <option value="08:00">08:00 AM</option>
+                                        <option value="09:00">09:00 AM</option>
+                                        <option value="17:00">05:00 PM</option>
+                                        <option value="18:00">06:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div className="relative">
-                            <input type="checkbox" className="sr-only peer" defaultChecked />
-                            <div className="w-11 h-6 bg-[#131B2B] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 border border-[#2A3A4A] transition-colors"></div>
-                        </div>
-                    </label>
-                </div>
 
-                <div className="border-t border-[#1A2A3A] pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2">Frequency</label>
-                        <select className="w-full bg-[#060D1A] border border-[#1A2A3A] rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-amber-500">
-                            <option>Daily Digest</option>
-                            <option>Weekly Digest</option>
-                        </select>
+                        <div className="border-t border-[#1A2A3A] pt-6 flex justify-end">
+                            <Button
+                                type="submit"
+                                isLoading={isSubmitting}
+                                loadingText="Saving…"
+                                icon={<Mailbox size={16} aria-hidden="true" />}
+                            >
+                                Save Setup
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2">Delivery Time</label>
-                        <div className="relative">
-                            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556677]" size={16} />
-                            <select className="w-full pl-10 pr-3 py-2 bg-[#060D1A] border border-[#1A2A3A] rounded-lg text-white text-sm outline-none focus:border-amber-500">
-                                <option>08:00 AM</option>
-                                <option>09:00 AM</option>
-                                <option>05:00 PM</option>
-                                <option>06:00 PM</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="border-t border-[#1A2A3A] pt-6 flex justify-end">
-                    <button className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-[#060D1A] px-6 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-amber-500/20">
-                        <Save size={16} /> Save Setup
-                    </button>
-                </div>
-            </div>
-        </div>
+                </Card>
+            </form>
+        </Page>
     );
 }

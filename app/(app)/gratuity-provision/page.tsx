@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import { Coins, AlertCircle, Search, Download, CheckCircle2, TrendingUp, History } from "lucide-react";
 
@@ -185,6 +187,27 @@ export default function GratuityProvisionPage() {
 
 function InfoIcon() {
     return (
+        <Page
+            title="Gratuity Provision Management"
+            subtitle="Track monthly gratuity liabilities and 5-year eligibility status."
+            breadcrumbs={[{ label: "Gratuity Provision" }]}
+            maxWidth="1200px"
+        >
+
+
+
+
+
+
+
         <span className="inline-flex justify-center items-center w-3 h-3 rounded-full border border-gray-500 text-[8px] ml-1 cursor-help relative -top-0.5">i</span>
+    
+        
+
+        
+
+        
+
+        </Page>
     );
 }

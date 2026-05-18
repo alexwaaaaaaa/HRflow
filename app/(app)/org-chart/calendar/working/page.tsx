@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-    Clock, ChevronRight, Plus, Users, Save, CheckCircle
+    Clock, ChevronRight, Plus, Users, CheckCircle
 } from "lucide-react";
 
 export default function WorkingCalendarScreen() {
@@ -18,6 +20,13 @@ export default function WorkingCalendarScreen() {
     const [selectedShift, setSelectedShift] = useState(SHIFTS[0]);
 
     return (
+        <Page
+            title="Working Hours / Shifts"
+            subtitle="Configure weekly schedule and attendance rules for this pattern."
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Calendar", href: "/org-chart/calendar" }, { label: "Working" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -135,10 +144,12 @@ export default function WorkingCalendarScreen() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-[#1A2A3A]">
-                                            {DAYS.map((day, idx) => {
+                                            {DAYS.map((day, _idx) => {
                                                 const isWeekendInDefault = (day === 'Saturday' || day === 'Sunday') && selectedShift.id !== 'S4';
 
                                                 return (
+
+
                                                     <tr key={day} className={`hover:bg-[#1A2A3A]/20 ${isWeekendInDefault ? 'opacity-60' : ''}`}>
                                                         <td className="p-3 text-sm font-medium text-white w-28">{day}</td>
                                                         <td className="p-3 text-center">
@@ -169,7 +180,9 @@ export default function WorkingCalendarScreen() {
                                                             {isWeekendInDefault ? '0h' : '8h'}
                                                         </td>
                                                     </tr>
-                                                )
+                                                
+        
+)
                                             })}
                                         </tbody>
                                     </table>
@@ -218,5 +231,7 @@ export default function WorkingCalendarScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
     FileText, Search, Library, Plus, Star, Tag, ChevronRight, Copy
@@ -28,6 +30,13 @@ export default function SurveyTemplatesScreen() {
     );
 
     return (
+        <Page
+            title="Template Library"
+            subtitle="Start with expert-designed surveys or build your own from scratch."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Templates" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -129,5 +138,7 @@ export default function SurveyTemplatesScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,10 +1,27 @@
 "use client";
 
-import Link from "next/link";
-import { Plus, Search, MoreVertical, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, MoreVertical, CheckCircle2, XCircle } from "lucide-react";
 import { useState } from "react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
 
-const COMPONENTS = [
+// migrated: immersive-ui
+
+interface SalaryComponent {
+    id: string;
+    name: string;
+    type: "Earning" | "Deduction";
+    calc: string;
+    taxable: boolean;
+    pf: boolean;
+    status: "Active" | "Inactive";
+    isSystem: boolean;
+}
+
+const COMPONENTS: SalaryComponent[] = [
     { id: "COMP-01", name: "Basic Salary", type: "Earning", calc: "Flat Amount", taxable: true, pf: true, status: "Active", isSystem: true },
     { id: "COMP-02", name: "House Rent Allowance (HRA)", type: "Earning", calc: "Formula (50% of Basic)", taxable: true, pf: false, status: "Active", isSystem: true },
     { id: "COMP-03", name: "Special Allowance", type: "Earning", calc: "Formula (Gross - Basic - HRA)", taxable: true, pf: false, status: "Active", isSystem: true },
@@ -15,93 +32,124 @@ const COMPONENTS = [
     { id: "COMP-08", name: "Income Tax (TDS)", type: "Deduction", calc: "Auto Calculated", taxable: false, pf: false, status: "Active", isSystem: true },
 ];
 
+const TABS = ["Earnings", "Deductions", "Reimbursements", "Formulas", "Pay Slips"] as const;
+type Tab = typeof TABS[number];
+
+const COLUMNS: Column<SalaryComponent>[] = [
+    {
+        key: "name",
+        label: "Component Name",
+        render: (c) => (
+            <div>
+                <div className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
+                    {c.name}
+                    {c.isSystem && <span className="text-[10px] bg-[#1A2A3A] px-1.5 py-0.5 rounded text-[#8899AA]">System</span>}
+                </div>
+                <div className="text-xs text-[#8899AA]">{c.id} · Pro-rata applicable</div>
+            </div>
+        ),
+        sortable: true,
+        sortValue: (c) => c.name,
+    },
+    {
+        key: "calc",
+        label: "Calculation Type",
+        render: (c) => <span className="text-sm text-white">{c.calc}</span>,
+    },
+    {
+        key: "taxable",
+        label: "Taxable",
+        align: "center",
+        render: (c) =>
+            c.taxable
+                ? <CheckCircle2 size={15} className="text-[#00E5A0] mx-auto" aria-label="Taxable" />
+                : <XCircle size={15} className="text-[#445566] mx-auto" aria-label="Not taxable" />,
+    },
+    {
+        key: "status",
+        label: "Status",
+        render: (c) => <Badge variant={c.status === "Active" ? "success" : "neutral"}>{c.status}</Badge>,
+    },
+    {
+        key: "actions",
+        label: "",
+        align: "right",
+        render: (c) =>
+            c.calc.includes("Formula") ? (
+                <Button variant="ghost" size="sm" href="/payroll-settings/components/formula">Edit Formula</Button>
+            ) : (
+                <Button variant="ghost" size="sm" aria-label={`More actions for ${c.name}`}>
+                    <MoreVertical size={14} aria-hidden="true" />
+                </Button>
+            ),
+    },
+];
+
 export default function SalaryComponents() {
-    const [activeTab, setActiveTab] = useState("Earnings");
+    const [activeTab, setActiveTab] = useState<Tab>("Earnings");
+
+    const filtered = COMPONENTS.filter((c) => {
+        if (activeTab === "Formulas") return c.calc.includes("Formula");
+        if (activeTab === "Earnings") return c.type === "Earning";
+        if (activeTab === "Deductions") return c.type === "Deduction";
+        return false;
+    });
 
     return (
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
-                <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 8 }}>Salary Components</h1>
-                    <div style={{ fontSize: 14, color: "#8899AA" }}>Configure earnings, deductions, and variable pay elements for your payroll calculation.</div>
-                </div>
-                <button style={{ height: 40, padding: "0 20px", background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                    <Plus size={18} /> Add Component
-                </button>
-            </div>
-
-            <div style={{ display: "flex", gap: 32 }}>
+        <Page
+            title="Salary Components"
+            subtitle="Configure earnings, deductions, and variable pay elements for your payroll calculation."
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll/dashboard" },
+                { label: "Settings", href: "/payroll-settings" },
+                { label: "Components" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <Button icon={<Plus size={16} aria-hidden="true" />}>Add Component</Button>
+            }
+        >
+            <div className="flex gap-8">
                 {/* Sidebar Navigation */}
-                <div style={{ width: 240, flexShrink: 0 }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                        {["Earnings", "Deductions", "Reimbursements", "Formulas", "Pay Slips"].map((item) => (
-                            <div key={item} onClick={() => setActiveTab(item)} style={{ padding: "12px 16px", borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: activeTab === item ? 600 : 500, color: activeTab === item ? "#00E5A0" : "#8899AA", background: activeTab === item ? "rgba(0,229,160,0.1)" : "transparent", transition: "all 0.2s" }} className="hover:bg-[#1A2A3A]">
-                                {item}
-                            </div>
+                <nav className="w-52 shrink-0" aria-label="Component categories">
+                    <ul className="space-y-1" role="list">
+                        {TABS.map((tab) => (
+                            <li key={tab}>
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                                        activeTab === tab
+                                            ? "font-semibold text-[#00E5A0] bg-[#00E5A0]/10"
+                                            : "font-medium text-[#8899AA] hover:bg-[#1A2A3A]"
+                                    }`}
+                                    aria-current={activeTab === tab ? "page" : undefined}
+                                >
+                                    {tab}
+                                </button>
+                            </li>
                         ))}
-                    </div>
-                </div>
+                    </ul>
+                </nav>
 
                 {/* Main Content */}
-                <div style={{ flex: 1, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                        <h2 style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF" }}>{activeTab} Components</h2>
-                        <div style={{ position: "relative" }}>
-                            <Search size={16} color="#8899AA" style={{ position: "absolute", left: 12, top: 12 }} />
-                            <input type="text" placeholder={`Search ${activeTab.toLowerCase()}`} style={{ width: 260, height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px 0 36px", color: "#FFFFFF", fontSize: 14, outline: "none" }} />
+                <div className="flex-1">
+                    <Card padding="lg">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-semibold text-white">{activeTab} Components</h2>
                         </div>
-                    </div>
-
-                    <div style={{ border: "1px solid #1A2A3A", borderRadius: 12, overflow: "hidden" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                            <thead>
-                                <tr style={{ background: "#0A1420", borderBottom: "1px solid #1A2A3A", textAlign: "left" }}>
-                                    <th style={{ padding: "16px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Component Name</th>
-                                    <th style={{ padding: "16px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Calculation Type</th>
-                                    <th style={{ padding: "16px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Taxable</th>
-                                    <th style={{ padding: "16px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Status</th>
-                                    <th style={{ padding: "16px", width: 64 }}></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {COMPONENTS.filter(c => activeTab === "Formulas" || c.type === (activeTab.includes("Earning") ? "Earning" : activeTab.includes("Deduction") ? "Deduction" : activeTab)).map((comp) => (
-                                    <tr key={comp.id} style={{ borderBottom: "1px solid #1A2A3A" }}>
-                                        <td style={{ padding: "16px" }}>
-                                            <div style={{ fontSize: 14, fontWeight: 600, color: "#FFFFFF", marginBottom: 4, display: "flex", alignItems: "center", gap: 8 }}>
-                                                {comp.name}
-                                                {comp.isSystem && <span style={{ padding: "2px 6px", background: "#1A2A3A", borderRadius: 4, fontSize: 10, color: "#8899AA" }}>System</span>}
-                                            </div>
-                                            <div style={{ fontSize: 12, color: "#8899AA" }}>{comp.id} • Pro-rata applicable</div>
-                                        </td>
-                                        <td style={{ padding: "16px" }}>
-                                            <div style={{ fontSize: 14, color: "#FFFFFF" }}>{comp.calc}</div>
-                                        </td>
-                                        <td style={{ padding: "16px" }}>
-                                            {comp.taxable ? <CheckCircle2 size={16} color="#00E5A0" /> : <XCircle size={16} color="#445566" />}
-                                        </td>
-                                        <td style={{ padding: "16px" }}>
-                                            <span style={{ padding: "4px 8px", borderRadius: 4, fontSize: 12, fontWeight: 600, background: comp.status === "Active" ? "rgba(0,229,160,0.1)" : "rgba(136,153,170,0.1)", color: comp.status === "Active" ? "#00E5A0" : "#8899AA" }}>
-                                                {comp.status}
-                                            </span>
-                                        </td>
-                                        <td style={{ padding: "16px", textAlign: "right" }}>
-                                            {activeTab === "Formulas" && comp.calc.includes("Formula") ? (
-                                                <Link href="/payroll-settings/components/formula">
-                                                    <button style={{ background: "transparent", border: "none", cursor: "pointer", color: "#0066FF", fontSize: 13, fontWeight: 600 }}>Edit Formula</button>
-                                                </Link>
-                                            ) : (
-                                                <button style={{ background: "transparent", border: "none", cursor: "pointer", color: "#8899AA" }}>
-                                                    <MoreVertical size={16} />
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                        <DataTable<SalaryComponent>
+                            data={filtered}
+                            columns={COLUMNS}
+                            rowKey={(c) => c.id}
+                            searchable
+                            searchPlaceholder={`Search ${activeTab.toLowerCase()}…`}
+                            aria-label={`${activeTab} salary components`}
+                            emptyTitle="No components found"
+                        />
+                    </Card>
                 </div>
             </div>
-        </div>
+        </Page>
     );
 }

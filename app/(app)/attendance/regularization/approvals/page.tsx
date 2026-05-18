@@ -1,8 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    Search, Filter, CheckCircle2, XCircle, Clock, Calendar,
+    Search, Filter, XCircle, Calendar,
     MessageSquare, Check
 } from 'lucide-react';
 
@@ -17,6 +19,13 @@ export default function RegularizationApproval() {
     ];
 
     return (
+        <Page
+            title="Regularization Approvals"
+            subtitle="Review and approve attendance adjustments requested by team members."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Regularization", href: "/attendance/regularization" }, { label: "Approvals" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-6xl mx-auto space-y-6">
 
@@ -135,5 +144,7 @@ export default function RegularizationApproval() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

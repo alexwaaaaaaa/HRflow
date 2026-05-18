@@ -1,42 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
-import {
-    Shield, ChevronRight, FileText, Download, Users, AlertCircle, Phone
-} from "lucide-react";
+import { FileText, Download, Users, Phone, ChevronRight } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function InsurancePolicyDetailScreen() {
+export default function InsurancePolicyDetailPage() {
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <Link href="/finance/insurance/marketplace" className="hover:text-white transition-colors">Insurance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-white">My Policies</span>
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <Shield className="w-8 h-8 text-indigo-400" />
-                        My Corporate Policies
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">View active coverage limits, E-Cards, and dependent details.</p>
-                </div>
-            </div>
-
+        <Page
+            title="My Corporate Policies"
+            subtitle="View active coverage limits, E-Cards, and dependent details."
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "Insurance", href: "/finance/insurance/marketplace" },
+                { label: "My Policies" },
+            ]}
+            maxWidth="1200px"
+        >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                {/* Main Policy details */}
                 <div className="lg:col-span-2 space-y-6">
-
                     {/* GMC Card */}
-                    <div className="bg-gradient-to-br from-[#1A2A3A] to-[#0D1928] border border-indigo-500/50 rounded-2xl p-6 shadow-[0_0_30px_rgba(99,102,241,0.1)]">
+                    <Card padding="lg" className="border-indigo-500/50 shadow-[0_0_30px_rgba(99,102,241,0.1)] bg-gradient-to-br from-[#1A2A3A] to-[#0D1928]">
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex gap-4">
-                                <div className="p-3 bg-white rounded-xl h-14 w-14 flex items-center justify-center">
+                                <div className="p-3 bg-white rounded-xl h-14 w-14 flex items-center justify-center" aria-hidden="true">
                                     <span className="text-indigo-600 font-bold text-xs text-center border p-1">STAR<br />HEALTH</span>
                                 </div>
                                 <div>
@@ -44,9 +33,7 @@ export default function InsurancePolicyDetailScreen() {
                                     <p className="text-[#8899AA] text-sm mt-1">Policy NO: P/150000/01/2025/1129</p>
                                 </div>
                             </div>
-                            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold tracking-widest uppercase">
-                                Active
-                            </span>
+                            <Badge variant="success">Active</Badge>
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 border-y border-[#2A3A4A] py-6">
@@ -68,27 +55,23 @@ export default function InsurancePolicyDetailScreen() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col md:flex-row gap-4 lg:gap-8 justify-between items-start md:items-center">
+                        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
                             <div className="flex gap-2 text-sm text-[#8899AA]">
-                                <Users className="w-5 h-5 text-indigo-400" />
+                                <Users size={20} className="text-indigo-400" aria-hidden="true" />
                                 <span>Covering: Self + Spouse + 1 Child</span>
                             </div>
                             <div className="flex gap-3 w-full md:w-auto">
-                                <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-medium rounded-lg transition-colors">
-                                    <Download className="w-4 h-4" /> E-Card
-                                </button>
-                                <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-sm font-medium rounded-lg transition-colors">
-                                    <FileText className="w-4 h-4" /> Policy PDF
-                                </button>
+                                <Button variant="secondary" size="sm" icon={<Download size={14} />}>E-Card</Button>
+                                <Button variant="ghost" size="sm" icon={<FileText size={14} />}>Policy PDF</Button>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    {/* GPA Card */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                    {/* GTL Card */}
+                    <Card padding="lg">
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex gap-4 items-center">
-                                <div className="p-2 bg-white rounded-lg h-10 w-10 flex items-center justify-center">
+                                <div className="p-2 bg-white rounded-lg h-10 w-10 flex items-center justify-center" aria-hidden="true">
                                     <span className="text-red-600 font-bold text-[10px] text-center">HDFC<br />LIFE</span>
                                 </div>
                                 <div>
@@ -96,12 +79,9 @@ export default function InsurancePolicyDetailScreen() {
                                     <p className="text-[#8899AA] text-xs mt-0.5">Policy NO: GTL/1120/44</p>
                                 </div>
                             </div>
-                            <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded text-[10px] font-bold tracking-widest uppercase">
-                                Active
-                            </span>
+                            <Badge variant="success">Active</Badge>
                         </div>
-
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
                                 <p className="text-[#8899AA] text-xs mb-1">Sum Assured</p>
                                 <p className="text-white font-bold">₹45,00,000</p>
@@ -118,39 +98,35 @@ export default function InsurancePolicyDetailScreen() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                    </Card>
                 </div>
 
                 {/* Sidebar */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                    <Card padding="lg">
                         <h3 className="text-lg font-bold text-white mb-4">Quick Links</h3>
                         <ul className="space-y-2">
-                            <li>
-                                <Link href="/finance/insurance/claims" className="flex items-center justify-between p-3 rounded-lg border border-[#2A3A4A] hover:bg-[#1A2A3A]/50 transition-colors group">
-                                    <span className="text-sm text-white group-hover:text-indigo-400">Claims History & Status</span>
-                                    <ChevronRight className="w-4 h-4 text-[#8899AA] group-hover:text-indigo-400" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/finance/insurance/dependents" className="flex items-center justify-between p-3 rounded-lg border border-[#2A3A4A] hover:bg-[#1A2A3A]/50 transition-colors group">
-                                    <span className="text-sm text-white group-hover:text-indigo-400">Manage Dependents</span>
-                                    <ChevronRight className="w-4 h-4 text-[#8899AA] group-hover:text-indigo-400" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/finance/insurance/endorsements" className="flex items-center justify-between p-3 rounded-lg border border-[#2A3A4A] hover:bg-[#1A2A3A]/50 transition-colors group">
-                                    <span className="text-sm text-white group-hover:text-indigo-400">Endorsements (Mid-term changes)</span>
-                                    <ChevronRight className="w-4 h-4 text-[#8899AA] group-hover:text-indigo-400" />
-                                </Link>
-                            </li>
+                            {[
+                                { href: "/finance/insurance/claims", label: "Claims History & Status" },
+                                { href: "/finance/insurance/dependents", label: "Manage Dependents" },
+                                { href: "/finance/insurance/endorsements", label: "Endorsements (Mid-term changes)" },
+                            ].map((link) => (
+                                <li key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        className="flex items-center justify-between p-3 rounded-lg border border-[#2A3A4A] hover:bg-[#1A2A3A]/50 transition-colors group"
+                                    >
+                                        <span className="text-sm text-white group-hover:text-indigo-400">{link.label}</span>
+                                        <ChevronRight size={16} className="text-[#8899AA] group-hover:text-indigo-400" aria-hidden="true" />
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
-                    </div>
+                    </Card>
 
-                    <div className="bg-gradient-to-r from-red-500/10 to-transparent border border-red-500/20 rounded-2xl p-6">
+                    <Card padding="lg" className="bg-gradient-to-r from-red-500/10 to-transparent border-red-500/20">
                         <div className="flex items-center gap-2 mb-3">
-                            <Phone className="w-5 h-5 text-red-400" />
+                            <Phone size={20} className="text-red-400" aria-hidden="true" />
                             <h3 className="text-sm font-bold text-white">Emergency Assist (24x7)</h3>
                         </div>
                         <p className="text-xs text-[#8899AA] mb-4">For immediate hospitalization assistance or cashless approval queries at network hospitals.</p>
@@ -158,10 +134,9 @@ export default function InsurancePolicyDetailScreen() {
                             <p className="font-mono text-xl font-bold text-white tracking-widest">1800-425-2255</p>
                             <p className="text-[10px] text-red-400 mt-1 uppercase">Star Health TPA Helpdesk</p>
                         </div>
-                    </div>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

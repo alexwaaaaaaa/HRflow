@@ -1,174 +1,251 @@
 "use client";
-import React, { useState } from "react";
-import {
-    ArrowLeft, Clock, Server, Paperclip, Send, AlertCircle,
-    CheckCircle2, Info
-} from "lucide-react";
-import Link from "next/link";
+import { useState } from "react";
+import { Server, Paperclip, Send, AlertCircle, CheckCircle2, Info } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function TicketDetail() {
-    const [reply, setReply] = useState("");
+interface Message {
+    id: number;
+    sender: string;
+    role: string;
+    time: string;
+    content: string;
+    attachments?: string[];
+}
 
-    const MOCK_MESSAGES = [
-        { id: 1, sender: "Arjun Mehta", role: "Employee", time: "Today, 10:30 AM", content: "Hi team, I am unable to access the Jira project boards. It says my license has expired. Could you please provision access? Attached is the screenshot.", attachments: ["jira_error.png"] },
-        { id: 2, sender: "System", role: "Bot", time: "Today, 10:31 AM", content: "Your request has been routed to the IT Support queue. Current average response time is 2 hours." },
-        { id: 3, sender: "Amit Verma", role: "IT Agent", time: "Today, 11:15 AM", content: "Hi Arjun, looking into this now. It seems your Atlassian group assignment was missed during onboarding. I am syncing the groups now, it should work in 15 mins. Please confirm once able to access." },
-    ];
+const MOCK_MESSAGES: Message[] = [
+    {
+        id: 1,
+        sender: "Arjun Mehta",
+        role: "Employee",
+        time: "Today, 10:30 AM",
+        content: "Hi team, I am unable to access the Jira project boards. It says my license has expired. Could you please provision access? Attached is the screenshot.",
+        attachments: ["jira_error.png"],
+    },
+    {
+        id: 2,
+        sender: "System",
+        role: "Bot",
+        time: "Today, 10:31 AM",
+        content: "Your request has been routed to the IT Support queue. Current average response time is 2 hours.",
+    },
+    {
+        id: 3,
+        sender: "Amit Verma",
+        role: "IT Agent",
+        time: "Today, 11:15 AM",
+        content: "Hi Arjun, looking into this now. It seems your Atlassian group assignment was missed during onboarding. I am syncing the groups now, it should work in 15 mins. Please confirm once able to access.",
+    },
+];
 
-    return (
-        <div className="p-6 max-w-[1200px] mx-auto h-[calc(100vh-80px)] flex flex-col">
-
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6 shrink-0">
-                <div className="flex items-center gap-4">
-                    <Link href="/helpdesk/my-tickets" className="w-10 h-10 rounded-xl bg-[#1A2A3A] flex items-center justify-center text-[#8899AA] hover:text-white transition-colors">
-                        <ArrowLeft size={20} />
-                    </Link>
-                    <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <span className="text-[#8899AA] font-mono text-sm font-semibold">TKT-4492</span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#FFB020] bg-[#FFB020]/10 border border-[#FFB020]/20 px-2 py-0.5 rounded">In Progress</span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#FF4444] bg-[#FF4444]/10 border border-[#FF4444]/20 px-2 py-0.5 rounded flex items-center gap-1">
-                                <AlertCircle size={10} /> Urgent
-                            </span>
-                        </div>
-                        <h1 className="text-2xl font-bold text-white">Cannot access Jira board</h1>
-                    </div>
-                </div>
-                <div className="flex gap-3">
-                    <button className="px-4 py-2 bg-[#1A2A3A] text-[#8899AA] rounded-lg border border-[#2A3A4A] hover:bg-[#2A3A4A] hover:text-white transition-colors text-sm font-medium">
-                        Cancel Request
-                    </button>
-                    <button className="px-4 py-2 bg-[#00E5A0] text-[#0A1420] rounded-lg hover:bg-[#00c98d] transition-colors text-sm font-semibold flex items-center gap-2 shadow-[0_5px_15px_rgba(0,229,160,0.2)]">
-                        <CheckCircle2 size={16} /> Mark Resolved
-                    </button>
+function ThreadMessage({ msg }: { readonly msg: Message }) {
+    if (msg.role === "Bot") {
+        return (
+            <div className="flex justify-center">
+                <div className="flex items-center gap-2 rounded-full border border-[#2A3A4A] bg-[#1A2A3A] px-4 py-2 text-xs text-[#8899AA]">
+                    <Info size={14} className="text-[#33E6FF]" aria-hidden="true" />
+                    {msg.content}
                 </div>
             </div>
+        );
+    }
 
-            <div className="flex gap-6 flex-1 min-h-0">
+    return (
+        <div className="flex flex-col">
+            <div className="mb-2 flex items-center gap-3">
+                {msg.role === "Employee" ? (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1A2A3A] text-xs font-bold text-white">
+                        AM
+                    </div>
+                ) : (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#33E6FF] text-xs font-bold text-[#0A1420]">
+                        AV
+                    </div>
+                )}
+                <span className="text-[15px] font-semibold text-white">{msg.sender}</span>
+                <Badge variant="success">{msg.role}</Badge>
+                <span className="ml-2 text-xs text-[#445566]">{msg.time}</span>
+            </div>
+            <div className="ml-11 max-w-[80%]">
+                <div
+                    className={`rounded-2xl rounded-tl-sm border p-4 text-sm leading-relaxed ${
+                        msg.role === "Employee"
+                            ? "border-[#2A3A4A] bg-[#1A2A3A] text-white"
+                            : "border-[#33E6FF]/30 bg-[#0A1420] text-white"
+                    }`}
+                >
+                    {msg.content}
+                </div>
+                {msg.attachments && (
+                    <div className="mt-2 flex gap-2">
+                        {msg.attachments.map((att) => (
+                            <div
+                                key={att}
+                                className="flex cursor-pointer items-center gap-2 rounded-lg border border-[#2A3A4A] bg-[#0A1420] px-3 py-2 transition-colors hover:border-[#33E6FF]"
+                            >
+                                <Paperclip size={14} className="text-[#8899AA]" aria-hidden="true" />
+                                <span className="text-xs font-medium text-white">{att}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
 
+export default function TicketDetailPage() {
+    const [reply, setReply] = useState("");
+
+    return (
+        <Page
+            title="Cannot access Jira board"
+            subtitle="TKT-4492"
+            breadcrumbs={[
+                { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                { label: "My Tickets", href: "/helpdesk/my-tickets" },
+                { label: "TKT-4492" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <>
+
+
+
+
+
+
+                    <div className="flex items-center gap-3">
+                        <Badge variant="warning">In Progress</Badge>
+                        <Badge variant="danger">
+                            <AlertCircle size={10} aria-hidden="true" /> Urgent
+                        </Badge>
+                    </div>
+                    <Button variant="outline">Cancel Request</Button>
+                    <Button icon={<CheckCircle2 size={16} aria-hidden="true" />}>
+                        Mark Resolved
+                    </Button>
+                </>
+            }
+        >
+            <div className="flex gap-6">
                 {/* Main Chat Thread */}
-                <div className="flex-1 bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl flex flex-col overflow-hidden">
-
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#1A2A3A] bg-[#0F1C2E]">
                     {/* Thread Canvas */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div className="flex-1 space-y-6 overflow-y-auto p-6">
                         {MOCK_MESSAGES.map((msg) => (
-                            msg.role === "Bot" ? (
-                                <div key={msg.id} className="flex justify-center">
-                                    <div className="bg-[#1A2A3A] px-4 py-2 rounded-full flex items-center gap-2 text-xs text-[#8899AA] border border-[#2A3A4A]">
-                                        <Info size={14} className="text-[#33E6FF]" /> {msg.content}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div key={msg.id} className="flex flex-col">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        {msg.role === "Employee" ? (
-                                            <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center font-bold text-xs text-white">AM</div>
-                                        ) : (
-                                            <div className="w-8 h-8 rounded-full bg-[#33E6FF] flex items-center justify-center font-bold text-xs text-[#0A1420]">AV</div>
-                                        )}
-                                        <span className="font-semibold text-white text-[15px]">{msg.sender}</span>
-                                        <span className="text-[10px] text-[#00E5A0] bg-[#00E5A0]/10 px-2 py-0.5 rounded font-mono">{msg.role}</span>
-                                        <span className="text-xs text-[#445566] ml-2">{msg.time}</span>
-                                    </div>
-
-                                    <div className="ml-11 max-w-[80%]">
-                                        <div className={`p-4 rounded-2xl rounded-tl-sm text-sm leading-relaxed ${msg.role === "Employee" ? 'bg-[#1A2A3A] text-white border border-[#2A3A4A]' : 'bg-[#0A1420] text-white border border-[#33E6FF]/30'
-                                            }`}>
-                                            {msg.content}
-                                        </div>
-
-                                        {/* Attachments */}
-                                        {msg.attachments && (
-                                            <div className="mt-2 flex gap-2">
-                                                {msg.attachments.map(att => (
-                                                    <div key={att} className="flex items-center gap-2 bg-[#0A1420] border border-[#2A3A4A] rounded-lg px-3 py-2 cursor-pointer hover:border-[#33E6FF] transition-colors">
-                                                        <Paperclip size={14} className="text-[#8899AA]" />
-                                                        <span className="text-xs text-white font-medium">{att}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )
+                            <ThreadMessage key={msg.id} msg={msg} />
                         ))}
                     </div>
 
                     {/* Reply Box */}
-                    <div className="p-4 bg-[#152336] border-t border-[#1A2A3A]">
-                        <div className="bg-[#0A1420] border border-[#2A3A4A] rounded-xl overflow-hidden focus-within:border-[#00E5A0] transition-colors">
+                    <div className="border-t border-[#1A2A3A] bg-[#152336] p-4">
+                        <div className="overflow-hidden rounded-xl border border-[#2A3A4A] bg-[#0A1420] transition-colors focus-within:border-[#00E5A0]">
                             <textarea
                                 value={reply}
                                 onChange={(e) => setReply(e.target.value)}
                                 placeholder="Type your reply here..."
-                                className="w-full bg-transparent text-white p-4 text-sm focus:outline-none resize-none min-h-[100px]"
-                            ></textarea>
-                            <div className="bg-[#1A2A3A] px-4 py-2 flex items-center justify-between border-t border-[#2A3A4A]">
-                                <button className="p-2 text-[#8899AA] hover:text-white hover:bg-[#2A3A4A] rounded-lg transition-colors">
-                                    <Paperclip size={18} />
-                                </button>
+                                aria-label="Reply to ticket"
+                                className="min-h-[100px] w-full resize-none bg-transparent p-4 text-sm text-white outline-none"
+                            />
+                            <div className="flex items-center justify-between border-t border-[#2A3A4A] bg-[#1A2A3A] px-4 py-2">
                                 <button
-                                    disabled={!reply.trim()}
-                                    className="px-6 py-2 bg-[#00E5A0] text-[#0A1420] font-bold rounded-lg hover:bg-[#00c98d] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                                    type="button"
+                                    aria-label="Attach file"
+                                    className="rounded-lg p-2 text-[#8899AA] transition-colors hover:bg-[#2A3A4A] hover:text-white"
                                 >
-                                    Send <Send size={16} />
+                                    <Paperclip size={18} aria-hidden="true" />
                                 </button>
+                                <Button
+                                    disabled={!reply.trim()}
+                                    icon={<Send size={16} aria-hidden="true" />}
+                                >
+                                    Send
+                                </Button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Sidebar: Meta Data */}
+                {/* Right Sidebar */}
                 <div className="w-[300px] shrink-0 space-y-6">
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-4 border-b border-[#1A2A3A] pb-2">Ticket Details</h3>
+                    <Card padding="lg">
+                        <h3 className="mb-4 border-b border-[#1A2A3A] pb-2 font-bold text-white">
+                            Ticket Details
+                        </h3>
                         <div className="space-y-4 text-sm">
                             <div>
-                                <span className="text-[#8899AA] block mb-1 text-xs">Category</span>
-                                <span className="flex items-center gap-2 text-white font-medium bg-[#1A2A3A] px-3 py-1.5 rounded-lg w-fit">
-                                    <Server size={14} className="text-[#33E6FF]" /> IT Support
+                                <span className="mb-1 block text-xs text-[#8899AA]">Category</span>
+                                <span className="flex w-fit items-center gap-2 rounded-lg bg-[#1A2A3A] px-3 py-1.5 font-medium text-white">
+                                    <Server size={14} className="text-[#33E6FF]" aria-hidden="true" />
+                                    IT Support
                                 </span>
                             </div>
                             <div>
-                                <span className="text-[#8899AA] block mb-1 text-xs">Sub-category</span>
-                                <span className="text-white font-medium">Software Access / License</span>
+                                <span className="mb-1 block text-xs text-[#8899AA]">Sub-category</span>
+                                <span className="font-medium text-white">Software Access / License</span>
                             </div>
                             <div>
-                                <span className="text-[#8899AA] block mb-1 text-xs">Assigned Agent</span>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <div className="w-6 h-6 rounded-full bg-[#33E6FF] text-[#0A1420] flex items-center justify-center font-bold text-[10px]">AV</div>
-                                    <span className="text-white font-medium">Amit Verma</span>
+                                <span className="mb-1 block text-xs text-[#8899AA]">Assigned Agent</span>
+                                <div className="mt-1 flex items-center gap-2">
+                                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#33E6FF] text-[10px] font-bold text-[#0A1420]">
+                                        AV
+                                    </div>
+                                    <span className="font-medium text-white">Amit Verma</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-4 border-b border-[#1A2A3A] pb-2">SLA Tracking</h3>
+                    <Card padding="lg">
+                        <h3 className="mb-4 border-b border-[#1A2A3A] pb-2 font-bold text-white">
+                            SLA Tracking
+                        </h3>
                         <div className="space-y-4">
                             <div>
-                                <div className="flex justify-between text-xs mb-1">
+                                <div className="mb-1 flex justify-between text-xs">
                                     <span className="text-[#8899AA]">First Response SLA</span>
-                                    <span className="text-[#00E5A0] font-bold">Met</span>
+                                    <span className="font-bold text-[#00E5A0]">Met</span>
                                 </div>
-                                <div className="w-full h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#00E5A0] w-full"></div>
+                                <div
+                                    className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A2A3A]"
+                                    role="progressbar"
+                                    aria-valuenow={100}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label="First response SLA: met"
+                                >
+                                    <div className="h-full w-full bg-[#00E5A0]" />
                                 </div>
                             </div>
                             <div>
-                                <div className="flex justify-between text-xs mb-1">
+                                <div className="mb-1 flex justify-between text-xs">
                                     <span className="text-[#8899AA]">Resolution SLA (4 hrs left)</span>
-                                    <span className="text-[#FFB020] font-bold">At Risk</span>
+                                    <span className="font-bold text-[#FFB020]">At Risk</span>
                                 </div>
-                                <div className="w-full h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#FFB020] w-[80%] animate-pulse"></div>
+                                <div
+                                    className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A2A3A]"
+                                    role="progressbar"
+                                    aria-valuenow={80}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label="Resolution SLA: 80% elapsed, at risk"
+                                >
+                                    <div className="h-full w-[80%] animate-pulse bg-[#FFB020]" />
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
-        </div>
+        
+
+        
+
+        
+
+        </Page>
     );
 }

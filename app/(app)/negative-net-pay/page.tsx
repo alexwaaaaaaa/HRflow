@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import { AlertTriangle, TrendingDown, RefreshCw, HandCoins, Info } from "lucide-react";
 
@@ -10,6 +12,13 @@ export default function NegativeNetPayPage() {
     ];
 
     return (
+        <Page
+            title="Negative Net Pay (Recovery Cases)"
+            subtitle="Manage cases where employee deductions exceed their gross earnings."
+            breadcrumbs={[{ label: "Negative Net Pay" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-6xl mx-auto space-y-6">
 
@@ -100,5 +109,7 @@ export default function NegativeNetPayPage() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Share, UserCheck, Monitor, ArrowRight, ShieldAlert, CheckCircle2 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function AssetAssignmentScreen() {
     const [step, setStep] = useState(1);
@@ -9,6 +10,13 @@ export default function AssetAssignmentScreen() {
     const [asset, setAsset] = useState('');
 
     return (
+        <Page
+            title="Assign Asset to Employee"
+            subtitle="Check out hardware from IT inventory to an employee."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Assign" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -95,5 +103,7 @@ export default function AssetAssignmentScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

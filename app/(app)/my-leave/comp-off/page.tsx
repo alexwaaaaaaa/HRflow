@@ -1,75 +1,176 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Clock, Calendar, ArrowRight, CheckCircle, Info
-} from 'lucide-react';
+import { useState, type FormEvent } from "react";
+import { Clock, Calendar, ArrowRight, Info } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 
-export default function CompOffRequestScreen() {
+interface CompOffForm {
+    workedOn: string;
+    hours: number;
+    justification: string;
+}
+
+const TODAY = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+})();
+
+export default function CompOffRequestPage() {
+    const toast = useToast();
+    const [form, setForm] = useState<CompOffForm>({
+        workedOn: TODAY,
+        hours: 8,
+        justification: "",
+    });
+    const [submitting, setSubmitting] = useState(false);
+
+    const isValid =
+        !!form.workedOn && form.hours >= 4 && form.justification.trim().length >= 10;
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (!isValid) return;
+        setSubmitting(true);
+        try {
+            // TODO: replace with real mutation
+            await new Promise((r) => setTimeout(r, 600));
+            toast.show({
+                variant: "success",
+                title: "Comp-off request submitted",
+                description:
+                    form.hours >= 8
+                        ? "A full-day comp-off is pending manager approval."
+                        : "A half-day comp-off is pending manager approval.",
+            });
+            setForm({ workedOn: TODAY, hours: 8, justification: "" });
+        } catch {
+            toast.show({
+                variant: "danger",
+                title: "Could not submit",
+                description: "Please try again or contact HR.",
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-3xl mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1">Request Comp-off</h1>
-                        <p className="text-sm text-[#8899AA]">Claim compensatory leave for working on a weekend or public holiday.</p>
+        <Page
+            title="Request comp-off"
+            subtitle="Claim compensatory leave for working a weekend or public holiday"
+            breadcrumbs={[
+                { label: "My Leave", href: "/my-leave" },
+                { label: "Comp-off" },
+            ]}
+            maxWidth="800px"
+        >
+            <Card padding="lg">
+                <form onSubmit={handleSubmit} className="space-y-6" aria-label="Comp-off request">
+                    <div className="space-y-2">
+                        <label htmlFor="worked-on" className="text-xs font-semibold uppercase tracking-wider text-[#8899AA]">
+                            Date worked on
+                        </label>
+                        <div className="relative">
+                            <Calendar
+                                size={16}
+                                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#3b82f6]"
+                                aria-hidden="true"
+                            />
+                            <input
+                                id="worked-on"
+                                type="date"
+                                max={TODAY}
+                                value={form.workedOn}
+                                onChange={(e) => setForm((f) => ({ ...f, workedOn: e.target.value }))}
+                                className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] py-3 pl-9 pr-3 text-sm text-white outline-none focus:border-[#3b82f6]"
+                                required
+                            />
+                        </div>
+                        <p className="text-xs text-[#556677]">
+                            Must be a weekend (Saturday/Sunday) or an official holiday.
+                        </p>
                     </div>
-                </div>
 
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl shadow-lg p-8">
-                    <form className="space-y-6">
-
-                        {/* Date of Work */}
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold text-[#8899AA]">Date Worked On</label>
-                            <div className="relative">
-                                <Calendar size={18} className="absolute left-3 top-3 text-[#0066FF]" />
-                                <input type="date" className="w-full bg-[#060B14] border border-[#1A2A3A] text-white rounded-lg pl-10 pr-3 py-3 outline-none focus:border-[#0066FF] text-sm" />
-                            </div>
-                            <p className="text-[10px] text-[#556677]">Must be a week-off (Saturday/Sunday) or an Official Holiday.</p>
+                    <div className="space-y-2">
+                        <label htmlFor="hours" className="text-xs font-semibold uppercase tracking-wider text-[#8899AA]">
+                            Hours logged
+                        </label>
+                        <div className="relative">
+                            <Clock
+                                size={16}
+                                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#3b82f6]"
+                                aria-hidden="true"
+                            />
+                            <input
+                                id="hours"
+                                type="number"
+                                min={4}
+                                max={24}
+                                step={0.5}
+                                value={form.hours}
+                                onChange={(e) =>
+                                    setForm((f) => ({
+                                        ...f,
+                                        hours: Number(e.target.value) || 0,
+                                    }))
+                                }
+                                className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] py-3 pl-9 pr-3 text-sm font-semibold text-white outline-none focus:border-[#3b82f6]"
+                                required
+                            />
                         </div>
+                        <p className="text-xs text-[#556677]">
+                            Minimum 4 hours for half-day comp-off · 8 hours for full-day.
+                        </p>
+                    </div>
 
-                        {/* Hours */}
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold text-[#8899AA]">Hours Logged</label>
-                            <div className="relative">
-                                <Clock size={18} className="absolute left-3 top-3 text-[#0066FF]" />
-                                <input type="number" defaultValue={8} className="w-full bg-[#060B14] border border-[#1A2A3A] text-white rounded-lg pl-10 pr-3 py-3 outline-none focus:border-[#0066FF] text-sm font-bold" />
-                            </div>
-                            <p className="text-[10px] text-[#556677]">Minimum 4 hours required for a half-day comp-off, 8 hours for full-day.</p>
+                    <div className="space-y-2">
+                        <label htmlFor="justification" className="text-xs font-semibold uppercase tracking-wider text-[#8899AA]">
+                            Work details / project justification
+                        </label>
+                        <textarea
+                            id="justification"
+                            rows={4}
+                            minLength={10}
+                            placeholder="E.g., Production deployment for the Alpha release"
+                            value={form.justification}
+                            onChange={(e) =>
+                                setForm((f) => ({ ...f, justification: e.target.value }))
+                            }
+                            className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none focus:border-[#3b82f6]"
+                            required
+                        />
+                    </div>
+
+                    <div
+                        role="note"
+                        className="flex items-start gap-3 rounded-lg border border-[#1A2A3A] bg-[#060B14] p-4 text-sm"
+                    >
+                        <Info size={16} className="mt-0.5 shrink-0 text-[#3b82f6]" aria-hidden="true" />
+                        <div className="text-[#8899AA]">
+                            <p className="mb-1 font-semibold text-white">Important</p>
+                            Comp-off requests expire if not submitted within{" "}
+                            <strong className="text-white">14 days</strong> of the worked date.
+                            Once approved, the leave must be used within{" "}
+                            <strong className="text-white">45 days</strong>.
                         </div>
+                    </div>
 
-                        {/* Reason / Project */}
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold text-[#8899AA]">Work Details / Project Justification</label>
-                            <textarea
-                                rows={4}
-                                placeholder="E.g., Production deployment for the Alpha release..."
-                                className="w-full bg-[#060B14] border border-[#1A2A3A] text-white text-sm rounded-lg p-3 outline-none focus:border-[#0066FF] shadow-inner resize-none"
-                            ></textarea>
-                        </div>
-
-                        {/* Policy Notice */}
-                        <div className="bg-[#060B14] border border-[#1A2A3A] p-4 rounded-lg flex items-start text-sm">
-                            <Info size={16} className="text-[#0066FF] mr-3 flex-shrink-0 mt-0.5" />
-                            <div className="text-[#8899AA]">
-                                <span className="text-white font-bold block mb-1">Important Guideline</span>
-                                Comp-off requests expire if not submitted within <strong className="text-white">14 days</strong> of the worked weekend. Once approved, the leave must be consumed within <strong className="text-white">45 days</strong>.
-                            </div>
-                        </div>
-
-                        <div className="pt-4 border-t border-[#1A2A3A] flex justify-end">
-                            <button type="button" className="px-8 py-3 bg-[#0066FF] text-white font-bold rounded-xl hover:bg-[#0052cc] transition-colors shadow-[0_0_15px_rgba(0,102,255,0.4)] flex justify-center items-center">
-                                Submit for Approval <ArrowRight size={18} className="ml-2" />
-                            </button>
-                        </div>
-
-                    </form>
-                </div>
-
-            </div>
-        </div>
+                    <div className="flex justify-end border-t border-[#1A2A3A] pt-4">
+                        <Button
+                            type="submit"
+                            disabled={!isValid}
+                            isLoading={submitting}
+                            loadingText="Submitting…"
+                            iconRight={<ArrowRight size={16} />}
+                        >
+                            Submit for approval
+                        </Button>
+                    </div>
+                </form>
+            </Card>
+        </Page>
     );
 }

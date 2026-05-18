@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import {
-    LineChart, PieChart as PieChartIcon, Download, Filter, ChevronRight, BarChart3, TrendingUp
-} from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Cell, PieChart, Pie, Legend } from 'recharts';
-import ChartWrapper from '@/components/ui/ChartWrapper';
+import { PieChart as PieChartIcon, Download, Filter, BarChart3, TrendingUp } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Cell, PieChart, Pie, Legend } from "recharts";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import ChartWrapper from "@/components/ui/ChartWrapper";
 
 const MONTHLY_USAGE = [
     { month: "May", amount: 1200000, unique_users: 145 },
@@ -24,68 +24,65 @@ const USAGE_BY_DEPARTMENT = [
     { name: "Operations", value: 10, color: "#F59E0B" },
 ];
 
-export default function EWAReportsScreen() {
+interface KpiTile {
+    label: string;
+    value: string;
+    sub: string;
+    subColor: string;
+    valueColor?: string;
+    icon?: any;
+}
+
+const KPI_TILES: KpiTile[] = [
+    { label: "Total Active Users", value: "280", sub: "14% vs last month", subColor: "text-emerald-400", icon: TrendingUp },
+    { label: "Avg. Withdrawal Amount", value: "₹8,750", sub: "Per transaction", subColor: "text-[#8899AA]" },
+    { label: "Avg. Transactions / User", value: "2.1", sub: "Per month", subColor: "text-[#8899AA]" },
+    { label: "Fee Revenue Generated", value: "₹1,05,500", sub: "YTD via 1% fee model", subColor: "text-[#8899AA]", valueColor: "text-emerald-400" },
+];
+
+const INSIGHTS = [
+    { color: "text-[#00E5FF]", title: "Peak Withdrawal Days", body: "65% of all EWA transactions occur between the 20th and 25th of the month, indicating mid-month liquidity crunches." },
+    { color: "text-purple-400", title: "Average Wait Time", body: "On average, funds are deposited into employee accounts within 12 seconds of successful IMPS API trigger." },
+    { color: "text-emerald-400", title: "Retention Correlation", body: "Employees using EWA at least once a quarter have a 22% lower attrition rate compared to non-users in similar roles." },
+] as const;
+
+export default function EWAReportsPage() {
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <Link href="/finance/ewa" className="hover:text-white transition-colors">EWA</Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-white">Reports & Analytics</span>
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <LineChart className="w-8 h-8 text-[#00E5FF]" />
-                        EWA Usage Analytics
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Deep dive into adoption rates, withdrawal patterns, and financial impact.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-medium rounded-lg transition-colors">
-                        <Filter className="w-4 h-4" />
-                        H2 2025
-                    </button>
-                    <button className="flex items-center gap-2 px-6 py-2 bg-[#00E5FF] hover:bg-[#00C5DD] text-[#0B1221] text-sm font-semibold rounded-lg transition-colors shadow-[0_0_15px_rgba(0,229,255,0.3)]">
-                        <Download className="w-4 h-4" />
-                        Download Report
-                    </button>
-                </div>
-            </div>
-
+        <Page
+            title="EWA Usage Analytics"
+            subtitle="Deep dive into adoption rates, withdrawal patterns, and financial impact."
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "EWA", href: "/finance/ewa" },
+                { label: "Reports & Analytics" },
+            ]}
+            maxWidth="1300px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Filter size={14} />}>H2 2025</Button>
+                    <Button icon={<Download size={14} />}>Download Report</Button>
+                </>
+            }
+        >
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Total Active Users</p>
-                    <h3 className="text-2xl font-bold text-white mb-1">280</h3>
-                    <p className="flex items-center gap-1 text-xs font-medium text-emerald-400">
-                        <TrendingUp className="w-3 h-3" /> 14% vs last month
-                    </p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Avg. Withdrawal Amount</p>
-                    <h3 className="text-2xl font-bold text-white mb-1">₹8,750</h3>
-                    <p className="text-xs text-[#8899AA]">Per transaction</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Avg. Transactions / User</p>
-                    <h3 className="text-2xl font-bold text-white mb-1">2.1</h3>
-                    <p className="text-xs text-[#8899AA]">Per month</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Fee Revenue Generated</p>
-                    <h3 className="text-2xl font-bold text-emerald-400 mb-1">₹1,05,500</h3>
-                    <p className="text-xs text-[#8899AA]">YTD via 1% fee model</p>
-                </div>
+                {KPI_TILES.map((tile) => (
+                    <Card key={tile.label} padding="lg">
+                        <p className="text-[#8899AA] text-sm font-medium mb-1">{tile.label}</p>
+                        <h3 className={`text-2xl font-bold mb-1 ${tile.valueColor ?? "text-white"}`}>{tile.value}</h3>
+                        <p className={`text-xs flex items-center gap-1 ${tile.subColor}`}>
+                            {"icon" in tile && tile.icon && <tile.icon size={12} aria-hidden="true" />}
+                            {tile.sub}
+                        </p>
+                    </Card>
+                ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 {/* Volume Trend */}
-                <div className="lg:col-span-2 bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                <Card padding="lg" className="lg:col-span-2">
                     <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5 text-[#8899AA]" />
+                        <BarChart3 size={20} className="text-[#8899AA]" aria-hidden="true" />
                         Monthly Disbursement Volume
                     </h2>
                     <div className="h-72">
@@ -102,21 +99,21 @@ export default function EWAReportsScreen() {
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: "#8899AA", fontSize: 12 }} tickFormatter={(val) => `₹${val / 100000}L`} />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: "#1A2A3A", border: "none", borderRadius: "8px", color: "#fff" }}
-                                    formatter={(value: any) => [`₹${value.toLocaleString()}`, "Amount"]}
+                                    formatter={(value: any) => [`₹${value?.toLocaleString?.() ?? value}`, "Amount"]}
                                 />
                                 <Area type="monotone" dataKey="amount" name="Disbursement" stroke="#00E5FF" strokeWidth={3} fillOpacity={1} fill="url(#colorAmt)" />
                             </AreaChart>
                         </ChartWrapper>
                     </div>
-                </div>
+                </Card>
 
                 {/* Usage by Department */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                <Card padding="lg">
                     <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                        <PieChartIcon className="w-5 h-5 text-[#8899AA]" />
+                        <PieChartIcon size={20} className="text-[#8899AA]" aria-hidden="true" />
                         Adoption by Department
                     </h2>
-                    <div className="h-64 relative">
+                    <div className="h-64">
                         <ChartWrapper height="h-full">
                             <PieChart>
                                 <Pie
@@ -137,31 +134,25 @@ export default function EWAReportsScreen() {
                                     contentStyle={{ backgroundColor: "#1A2A3A", border: "none", borderRadius: "8px", color: "#fff" }}
                                     formatter={(value: any) => [`${value}%`, "Share of Users"]}
                                 />
-                                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '11px', color: '#8899AA' }} />
+                                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: "11px", color: "#8899AA" }} />
                             </PieChart>
                         </ChartWrapper>
                     </div>
-                </div>
+                </Card>
             </div>
 
             {/* Insights Panel */}
-            <div className="bg-gradient-to-r from-[#1A2A3A]/40 to-[#0D1928] border border-[#2A3A4A] rounded-2xl p-6">
+            <Card padding="lg" className="bg-gradient-to-r from-[#1A2A3A]/40 to-[#0D1928] border-[#2A3A4A]">
                 <h3 className="text-lg font-bold text-white mb-4">Behavioral Insights</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <div className="text-[#00E5FF] font-medium text-sm mb-1">Peak Withdrawal Days</div>
-                        <p className="text-[#8899AA] text-sm">65% of all EWA transactions occur between the 20th and 25th of the month, indicating mid-month liquidity crunches.</p>
-                    </div>
-                    <div className="border-t md:border-t-0 md:border-l border-[#2A3A4A] pt-4 md:pt-0 md:pl-6">
-                        <div className="text-purple-400 font-medium text-sm mb-1">Average Wait Time</div>
-                        <p className="text-[#8899AA] text-sm">On average, funds are deposited into employee accounts within 12 seconds of successful IMPS API trigger.</p>
-                    </div>
-                    <div className="border-t md:border-t-0 md:border-l border-[#2A3A4A] pt-4 md:pt-0 md:pl-6">
-                        <div className="text-emerald-400 font-medium text-sm mb-1">Retention Correlation</div>
-                        <p className="text-[#8899AA] text-sm">Employees using EWA at least once a quarter have a 22% lower attrition rate compared to non-users in similar roles.</p>
-                    </div>
+                    {INSIGHTS.map((insight, i) => (
+                        <div key={insight.title} className={i > 0 ? "border-t md:border-t-0 md:border-l border-[#2A3A4A] pt-4 md:pt-0 md:pl-6" : ""}>
+                            <div className={`${insight.color} font-medium text-sm mb-1`}>{insight.title}</div>
+                            <p className="text-[#8899AA] text-sm">{insight.body}</p>
+                        </div>
+                    ))}
                 </div>
-            </div>
-        </div>
+            </Card>
+        </Page>
     );
 }

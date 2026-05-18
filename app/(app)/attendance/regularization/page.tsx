@@ -1,8 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    Clock, AlertCircle, FileText, CheckCircle2, ChevronRight, HelpCircle
+    Clock, AlertCircle, ChevronRight, HelpCircle
 } from 'lucide-react';
 
 export default function RegularizationRequest() {
@@ -18,6 +20,13 @@ export default function RegularizationRequest() {
     ];
 
     return (
+        <Page
+            title="Request Attendance Regularization"
+            subtitle="Submit corrections for missed punches, late arrivals, or early departures."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Regularization" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto space-y-6">
 
@@ -169,5 +178,7 @@ export default function RegularizationRequest() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

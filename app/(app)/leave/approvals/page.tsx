@@ -1,106 +1,318 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Search, CheckCircle, XCircle, Calendar, MessageSquare, AlertTriangle
-} from 'lucide-react';
+import { useState } from "react";
+import { AlertTriangle, Calendar, CheckCircle, CheckCircle2, MessageSquare, XCircle } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+import { useToast } from "@/components/ui/Toast";
 
-export default function LeaveApprovalManagerScreen() {
-    const pendingRequests = [
-        { id: 'REQ-4512', name: 'Rohan Sharma', dept: 'Engineering', type: 'Privilege Leave', duration: '3 Days', dates: '24 Nov - 26 Nov', reason: 'Attending a family wedding out of station.', balance: 14.5, conflict: null },
-        { id: 'REQ-4518', name: 'Priya Nair', dept: 'HR', type: 'Sick Leave', duration: '1 Day', dates: '12 Nov', reason: 'Not feeling well, running a fever.', balance: 4, conflict: 'Overlap with David Chen' },
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & static data
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface LeaveRequest {
+    id: string;
+    name: string;
+    initials: string;
+    dept: string;
+    type: string;
+    duration: string;
+    dates: string;
+    reason: string;
+    balance: number;
+    conflict?: string;
+}
+
+const PENDING: LeaveRequest[] = [
+    {
+        id: "REQ-4512",
+        name: "Rohan Sharma",
+        initials: "RS",
+        dept: "Engineering",
+        type: "Privilege Leave",
+        duration: "3 Days",
+        dates: "24 Nov - 26 Nov",
+        reason: "Attending a family wedding out of station.",
+        balance: 14.5,
+    },
+    {
+        id: "REQ-4518",
+        name: "Priya Nair",
+        initials: "PN",
+        dept: "HR",
+        type: "Sick Leave",
+        duration: "1 Day",
+        dates: "12 Nov",
+        reason: "Not feeling well, running a fever.",
+        balance: 4,
+        conflict: "Overlap with David Chen",
+    },
+    {
+        id: "REQ-4521",
+        name: "Arjun Mehta",
+        initials: "AM",
+        dept: "Product",
+        type: "Casual Leave",
+        duration: "2 Days",
+        dates: "18 Nov - 19 Nov",
+        reason: "Personal work.",
+        balance: 3,
+    },
+    {
+        id: "REQ-4525",
+        name: "David Chen",
+        initials: "DC",
+        dept: "Sales",
+        type: "Comp-off",
+        duration: "1 Day",
+        dates: "14 Nov",
+        reason: "Worked on Sunday for client demo.",
+        balance: 1,
+    },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell components (module scope — no components inside render)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function EmployeeCell({ row }: { row: LeaveRequest }) {
+    return (
+        <div className="flex items-center gap-3">
+            <div
+                aria-hidden="true"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#2A3A4A] bg-[#1A2A3A] font-bold text-white"
+            >
+                {row.initials}
+            </div>
+            <div>
+                <p className="text-sm font-semibold text-white">{row.name}</p>
+                <p className="text-xs text-[#8899AA]">{row.dept} · {row.id}</p>
+            </div>
+        </div>
+    );
+}
+
+function LeaveTypeCell({ row }: { row: LeaveRequest }) {
+    return (
+        <div>
+            <Badge variant="info">{row.type}</Badge>
+            <p className="mt-1 text-xs text-[#8899AA]">{row.duration}</p>
+        </div>
+    );
+}
+
+function DatesCell({ row }: { row: LeaveRequest }) {
+    return (
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+            <Calendar size={13} className="text-[#0066FF]" aria-hidden="true" />
+            {row.dates}
+        </div>
+    );
+}
+
+function ReasonCell({ row }: { row: LeaveRequest }) {
+    return (
+        <div className="flex items-start gap-2">
+            <MessageSquare size={13} className="mt-0.5 shrink-0 text-[#7a8fa6]" aria-hidden="true" />
+            <span className="max-w-[200px] truncate text-sm italic text-white" title={row.reason}>
+                &ldquo;{row.reason}&rdquo;
+            </span>
+        </div>
+    );
+}
+
+function StatusCell({ row }: { row: LeaveRequest }) {
+    return (
+        <div className="space-y-1">
+            <p className="text-xs text-[#8899AA]">
+                Balance: <span className="font-semibold text-white">{row.balance} days</span>
+            </p>
+            {row.conflict ? (
+                <span className="flex items-center gap-1 text-xs text-[#FFB800]">
+                    <AlertTriangle size={12} aria-hidden="true" />
+                    {row.conflict}
+                </span>
+            ) : (
+                <span className="flex items-center gap-1 text-xs text-[#7a8fa6]">
+                    <CheckCircle size={12} aria-hidden="true" /> No overlaps
+                </span>
+            )}
+        </div>
+    );
+}
+
+function ActionsCell({ row, onApprove, onReject, busy }: {
+    row: LeaveRequest;
+    onApprove: (req: LeaveRequest) => void;
+    onReject: (req: LeaveRequest) => void;
+    busy: string | null;
+}) {
+    return (
+        <div className="flex justify-end gap-2">
+            <Button
+                variant="danger"
+                size="sm"
+                icon={<XCircle size={14} aria-hidden="true" />}
+                isLoading={busy === row.id}
+                onClick={() => onReject(row)}
+                aria-label={`Reject ${row.name}'s leave`}
+            >
+                Reject
+            </Button>
+            <Button
+                size="sm"
+                icon={<CheckCircle size={14} aria-hidden="true" />}
+                isLoading={busy === row.id}
+                onClick={() => onApprove(row)}
+                aria-label={`Approve ${row.name}'s leave`}
+            >
+                Approve
+            </Button>
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function LeaveApprovalsPage() {
+    const toast = useToast();
+    const [requests, setRequests] = useState(PENDING);
+    const [busy, setBusy] = useState<string | null>(null);
+    const [tab, setTab] = useState<"pending" | "history">("pending");
+
+    const act = async (req: LeaveRequest, decision: "approve" | "reject") => {
+        setBusy(req.id);
+        try {
+            // TODO: replace with real mutation
+            await new Promise((r) => setTimeout(r, 400));
+            setRequests((p) => p.filter((r) => r.id !== req.id));
+            toast.show({
+                variant: decision === "approve" ? "success" : "warning",
+                title: decision === "approve" ? "Leave approved" : "Leave rejected",
+                description: `${req.name}'s ${req.type.toLowerCase()} request has been ${decision}d.`,
+            });
+        } finally {
+            setBusy(null);
+        }
+    };
+
+    const columns: Column<LeaveRequest>[] = [
+        {
+            key: "employee",
+            label: "Employee",
+            render: (row) => <EmployeeCell row={row} />,
+            sortable: true,
+            sortValue: (row) => row.name,
+        },
+        {
+            key: "type",
+            label: "Leave Type",
+            render: (row) => <LeaveTypeCell row={row} />,
+            sortable: true,
+            sortValue: (row) => row.type,
+        },
+        {
+            key: "dates",
+            label: "Dates",
+            render: (row) => <DatesCell row={row} />,
+            sortable: true,
+            sortValue: (row) => row.dates,
+        },
+        {
+            key: "reason",
+            label: "Reason",
+            render: (row) => <ReasonCell row={row} />,
+        },
+        {
+            key: "status",
+            label: "Balance / Conflict",
+            render: (row) => <StatusCell row={row} />,
+            sortable: true,
+            sortValue: (row) => row.balance,
+        },
+        {
+            key: "actions",
+            label: "",
+            align: "right",
+            render: (row) => (
+                <ActionsCell
+                    row={row}
+                    onApprove={(r) => act(r, "approve")}
+                    onReject={(r) => act(r, "reject")}
+                    busy={busy}
+                />
+            ),
+        },
     ];
 
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-5xl mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1">Leave Approvals</h1>
-                        <p className="text-sm text-[#8899AA]">Review and action leave requests from your reporting team.</p>
-                    </div>
-                </div>
-
+        <Page
+            title="Leave approvals"
+            subtitle="Review and action leave requests from your reporting team"
+            breadcrumbs={[
+                { label: "Leave", href: "/leave/dashboard" },
+                { label: "Approvals" },
+            ]}
+            maxWidth="1300px"
+        >
+            <div className="space-y-6">
                 {/* Tabs */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] p-1 rounded-xl inline-flex space-x-1 mb-4">
-                    <button className="px-6 py-2 rounded-lg bg-[#0066FF] text-white text-sm font-bold shadow-sm">
-                        Pending (2)
+                <div role="tablist" aria-label="Approval tabs" className="inline-flex gap-1 rounded-xl border border-[#1A2A3A] bg-[#0D1928] p-1">
+                    <button
+                        role="tab"
+                        aria-selected={tab === "pending"}
+                        onClick={() => setTab("pending")}
+                        className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
+                            tab === "pending"
+                                ? "bg-[#0066FF] text-white shadow-sm"
+                                : "text-[#8899AA] hover:bg-[#1A2A3A] hover:text-white"
+                        }`}
+                    >
+                        Pending ({requests.length})
                     </button>
-                    <button className="px-6 py-2 rounded-lg text-[#8899AA] hover:text-white text-sm font-bold hover:bg-[#1A2A3A] transition-colors">
-                        Actioned History
+                    <button
+                        role="tab"
+                        aria-selected={tab === "history"}
+                        onClick={() => setTab("history")}
+                        className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
+                            tab === "history"
+                                ? "bg-[#0066FF] text-white shadow-sm"
+                                : "text-[#8899AA] hover:bg-[#1A2A3A] hover:text-white"
+                        }`}
+                    >
+                        Actioned history
                     </button>
                 </div>
 
-                {/* Approvals List */}
-                <div className="space-y-6">
-                    {pendingRequests.map((req) => (
-                        <div key={req.id} className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl overflow-hidden shadow-lg hover:border-[#2A3A4A] transition-colors">
-                            <div className="p-6">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="flex items-start space-x-4">
-                                        <div className="w-12 h-12 rounded-full bg-[#1A2A3A] flex items-center justify-center font-bold text-white border-2 border-[#2A3A4A]">
-                                            {req.name.split(' ').map(n => n[0]).join('')}
-                                        </div>
-                                        <div>
-                                            <div className="text-lg font-bold text-white">{req.name} <span className="text-xs font-normal text-[#8899AA] ml-2">({req.dept})</span></div>
-                                            <div className="text-sm text-[#556677] mt-0.5">Req ID: {req.id}</div>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-xl font-black text-white">{req.duration}</div>
-                                        <div className="text-xs font-bold text-[#00E5A0] bg-[#00E5A0]/10 px-2 py-0.5 rounded border border-[#00E5A0]/20 inline-block mt-1 uppercase w-max">
-                                            {req.type}
-                                        </div>
-                                    </div>
+                {tab === "pending" ? (
+                    <Card padding="none">
+                        <DataTable<LeaveRequest>
+                            data={requests}
+                            columns={columns}
+                            rowKey={(r) => r.id}
+                            searchable
+                            searchPlaceholder="Search by name, department, or leave type…"
+                            aria-label="Pending leave approval requests"
+                            emptyTitle="All caught up"
+                            emptyDescription="No pending leave requests for your team."
+                            emptyAction={
+                                <div className="flex justify-center">
+                                    <CheckCircle2 className="h-12 w-12 text-[#00e5a0]" aria-hidden="true" />
                                 </div>
-
-                                <div className="grid grid-cols-3 gap-6 mb-6">
-                                    <div className="bg-[#0A1420] border border-[#1A2A3A] p-4 rounded-lg">
-                                        <span className="text-xs text-[#8899AA] font-bold uppercase tracking-wider block mb-1">Dates</span>
-                                        <div className="font-bold text-white flex items-center"><Calendar size={14} className="mr-2 text-[#0066FF]" /> {req.dates}</div>
-                                    </div>
-                                    <div className="bg-[#0A1420] border border-[#1A2A3A] p-4 rounded-lg col-span-2 relative">
-                                        <span className="text-xs text-[#8899AA] font-bold uppercase tracking-wider block mb-1">Reason Provided</span>
-                                        <div className="font-medium text-white italic">"{req.reason}"</div>
-                                        <MessageSquare size={32} className="absolute right-4 bottom-2 text-[#1A2A3A] opacity-50" />
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center justify-between border-t border-[#1A2A3A] pt-6">
-                                    <div className="flex space-x-6">
-                                        <div className="flex items-center text-sm">
-                                            <span className="w-2 h-2 rounded-full bg-[#00E5A0] mr-2"></span>
-                                            <span className="text-[#8899AA] mr-2">Available Balance:</span> <span className="font-bold text-white">{req.balance} days</span>
-                                        </div>
-                                        {req.conflict ? (
-                                            <div className="flex items-center text-sm text-[#FFB800]">
-                                                <AlertTriangle size={14} className="mr-2" />
-                                                <span className="font-bold">Team Conflict: {req.conflict}</span>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center text-sm text-[#556677]">
-                                                <CheckCircle size={14} className="mr-2" /> No team overlaps
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex space-x-3">
-                                        <button className="px-6 py-2.5 bg-[#0A1420] border border-[#1A2A3A] text-[#FF4444] font-bold text-sm rounded-lg hover:bg-[#FF4444]/10 transition-colors flex items-center">
-                                            <XCircle size={16} className="mr-2" /> Reject
-                                        </button>
-                                        <button className="px-6 py-2.5 bg-[#00E5A0] text-[#060B14] font-bold text-sm rounded-lg hover:bg-[#00cca0] transition-colors flex items-center shadow-[0_0_15px_rgba(0,229,160,0.3)]">
-                                            <CheckCircle size={16} className="mr-2" /> Approve Leave
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
+                            }
+                        />
+                    </Card>
+                ) : (
+                    <Card padding="lg" className="text-center text-sm text-[#8899AA]">
+                        Actioned history will appear here.
+                    </Card>
+                )}
             </div>
-        </div>
+        </Page>
     );
 }

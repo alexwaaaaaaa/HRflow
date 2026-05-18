@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Target, Search, Eye, AlertTriangle, CheckCircle2, QrCode } from 'lucide-react';
 
@@ -9,6 +11,13 @@ export default function AssetAuditScreen() {
     ];
 
     return (
+        <Page
+            title="Physical Asset Audit"
+            subtitle="Conduct and manage comprehensive physical verification of IT hardware."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Audit" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -115,5 +124,7 @@ export default function AssetAuditScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

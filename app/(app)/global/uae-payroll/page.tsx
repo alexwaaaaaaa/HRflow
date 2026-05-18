@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Landmark, CheckCircle2, ChevronRight, Activity, CalendarDays, FileText } from 'lucide-react';
+import { CheckCircle2, CalendarDays } from 'lucide-react';
 
 export default function UAEPayrollScreen() {
     return (
@@ -139,10 +141,31 @@ export default function UAEPayrollScreen() {
 
 function DownloadSIFIcon() {
     return (
+        <Page
+            title="Uae Payroll"
+            subtitle="Manage processing, Gratuity tracking, and MoHRE WPS (Wage Protection System) compliance."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Uae Payroll" }]}
+            maxWidth="1400px"
+        >
+
+
+
+
+
+
+
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
         </svg>
+    
+        
+
+        
+
+        
+
+        </Page>
     );
 }

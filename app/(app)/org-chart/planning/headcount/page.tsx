@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
-    Users, ChevronRight, Save, Play, Plus, Trash2, ArrowRight
+    Users, ChevronRight, Save, Play, Plus, ArrowRight
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
@@ -20,6 +22,12 @@ const FORECAST_DATA = [
 
 export default function HeadcountPlanningScreen() {
     return (
+        <Page
+            title="Headcount Planning"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Planning", href: "/org-chart/planning" }, { label: "Headcount" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -150,5 +158,7 @@ export default function HeadcountPlanningScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

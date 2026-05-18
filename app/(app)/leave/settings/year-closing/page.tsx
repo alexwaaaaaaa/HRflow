@@ -1,90 +1,125 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Calendar, AlertTriangle, ShieldCheck, PlayCircle, Loader, CheckCircle
-} from 'lucide-react';
+import { AlertTriangle, Calendar, CheckCircle, PlayCircle, ShieldCheck } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card, { CardHeader, CardTitle } from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
-export default function LeaveYearClosingScreen() {
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function LeaveYearClosingPage() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-4xl mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1">Year-end Leave Closing</h1>
-                        <p className="text-sm text-[#8899AA]">Execute year-end carry forward, encashment, and lapsing processes.</p>
-                    </div>
-                </div>
-
-                <div className="bg-[#FF4444]/10 border border-[#FF4444]/30 rounded-xl p-6 mb-6">
-                    <div className="flex items-start">
-                        <AlertTriangle size={24} className="text-[#FF4444] mr-4 flex-shrink-0" />
+        <Page
+            title="Year-end Leave Closing"
+            subtitle="Execute year-end carry forward, encashment, and lapsing processes"
+            breadcrumbs={[
+                { label: "Leave", href: "/leave/dashboard" },
+                { label: "Settings" },
+                { label: "Year Closing" },
+            ]}
+            maxWidth="900px"
+        >
+            <div className="space-y-6">
+                {/* Warning banner */}
+                <div
+                    role="alert"
+                    className="rounded-xl border border-[#FF4444]/30 bg-[#FF4444]/10 p-6"
+                >
+                    <div className="flex items-start gap-4">
+                        <AlertTriangle size={24} className="shrink-0 text-[#FF4444]" aria-hidden="true" />
                         <div>
-                            <h2 className="text-lg font-bold text-white mb-2">Critical Operation</h2>
-                            <p className="text-sm text-[#8899AA] leading-relaxed">
-                                Running the year-end closing process is irreversible. It will calculate unused balances as of Dec 31st (or configured year end), lapse ineligible leaves, carry forward eligible leaves based on limits, and mark surplus leaves for encashment.
+                            <h2 className="mb-2 text-lg font-bold text-white">Critical Operation</h2>
+                            <p className="text-sm leading-relaxed text-[#8899AA]">
+                                Running the year-end closing process is irreversible. It will calculate unused balances as of
+                                Dec 31st (or configured year end), lapse ineligible leaves, carry forward eligible leaves based
+                                on limits, and mark surplus leaves for encashment.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                    {/* Process Config */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl shadow-lg p-6 space-y-6">
-                        <h3 className="font-bold text-white border-b border-[#1A2A3A] pb-3 text-lg flex items-center">
-                            <Calendar size={18} className="mr-2 text-[#0066FF]" /> Closing Parameters
-                        </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                    {/* Closing parameters */}
+                    <Card padding="lg">
+                        <CardHeader className="border-b border-[#1A2A3A] pb-3">
+                            <CardTitle className="flex items-center gap-2">
+                                <Calendar size={18} className="text-[#0066FF]" aria-hidden="true" />
+                                Closing Parameters
+                            </CardTitle>
+                        </CardHeader>
 
-                        <div className="space-y-4">
+                        <div className="mt-4 space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-[#8899AA] uppercase tracking-wider block mb-2">Financial Year Ending</label>
-                                <div className="bg-[#060B14] border border-[#1A2A3A] p-3 rounded-lg text-white font-bold flex justify-between items-center">
-                                    <span>31 December 2024</span>
-                                    <span className="text-xs bg-[#1A2A3A] px-2 py-1 rounded text-[#8899AA] font-mono">Calendar Year</span>
+                                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                    Financial Year Ending
+                                </label>
+                                <div className="flex items-center justify-between rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3">
+                                    <span className="font-bold text-white">31 December 2024</span>
+                                    <span className="rounded bg-[#1A2A3A] px-2 py-1 font-mono text-xs text-[#8899AA]">
+                                        Calendar Year
+                                    </span>
                                 </div>
                             </div>
 
                             <div>
-                                <label className="text-xs font-bold text-[#8899AA] uppercase tracking-wider block mb-2">Effective Date for New Balances</label>
-                                <input type="date" defaultValue="2025-01-01" className="w-full bg-[#060B14] border border-[#1A2A3A] text-white font-bold p-3 rounded-lg outline-none focus:border-[#0066FF]" />
+                                <label htmlFor="effective-date" className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                    Effective Date for New Balances
+                                </label>
+                                <input
+                                    id="effective-date"
+                                    type="date"
+                                    defaultValue="2025-01-01"
+                                    className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 font-bold text-white outline-none focus:border-[#0066FF]"
+                                />
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    {/* Pre-flight Checks */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl shadow-lg p-6 space-y-4">
-                        <h3 className="font-bold text-white border-b border-[#1A2A3A] pb-3 text-lg flex items-center">
-                            <ShieldCheck size={18} className="mr-2 text-[#00E5A0]" /> Readiness Checks
-                        </h3>
+                    {/* Readiness checks */}
+                    <Card padding="lg">
+                        <CardHeader className="border-b border-[#1A2A3A] pb-3">
+                            <CardTitle className="flex items-center gap-2">
+                                <ShieldCheck size={18} className="text-[#00E5A0]" aria-hidden="true" />
+                                Readiness Checks
+                            </CardTitle>
+                        </CardHeader>
 
-                        <ul className="space-y-4">
-                            <li className="flex items-center text-sm">
-                                <CheckCircle size={18} className="text-[#00E5A0] mr-3" />
+                        <ul className="mt-4 space-y-4" aria-label="Pre-flight readiness checks">
+                            <li className="flex items-center gap-3 text-sm">
+                                <CheckCircle size={18} className="shrink-0 text-[#00E5A0]" aria-hidden="true" />
                                 <span className="text-[#8899AA]">All leave requests till Dec 31 resolved</span>
                             </li>
-                            <li className="flex items-center text-sm">
-                                <CheckCircle size={18} className="text-[#00E5A0] mr-3" />
+                            <li className="flex items-center gap-3 text-sm">
+                                <CheckCircle size={18} className="shrink-0 text-[#00E5A0]" aria-hidden="true" />
                                 <span className="text-[#8899AA]">Carry forward limits configured</span>
                             </li>
-                            <li className="flex items-center text-sm">
-                                <AlertTriangle size={18} className="text-[#FFB800] mr-3" />
-                                <span className="text-[#FFB800] font-bold">3 Pending Leave Cancellations</span>
-                                <button className="ml-auto text-xs text-[#0066FF] hover:underline">Resolve</button>
+                            <li className="flex items-center justify-between gap-3 text-sm">
+                                <div className="flex items-center gap-3">
+                                    <AlertTriangle size={18} className="shrink-0 text-[#FFB800]" aria-hidden="true" />
+                                    <span className="font-bold text-[#FFB800]">3 Pending Leave Cancellations</span>
+                                </div>
+                                <Button variant="ghost" size="sm">Resolve</Button>
                             </li>
                         </ul>
 
-                        <div className="pt-6 mt-4 border-t border-[#1A2A3A]">
-                            <button className="w-full py-4 bg-[#0066FF] text-white font-bold text-lg rounded-xl hover:bg-[#0052cc] transition-colors shadow-[0_0_20px_rgba(0,102,255,0.4)] flex justify-center items-center opacity-50 cursor-not-allowed">
-                                <PlayCircle size={20} className="mr-2" /> Run Closing Process
-                            </button>
-                            <p className="text-center text-[10px] text-[#556677] mt-3 uppercase tracking-wider">Fix warnings to enable</p>
+                        <div className="mt-6 border-t border-[#1A2A3A] pt-6">
+                            <Button
+                                className="w-full"
+                                disabled
+                                icon={<PlayCircle size={20} aria-hidden="true" />}
+                                aria-label="Run closing process (disabled until warnings are resolved)"
+                            >
+                                Run Closing Process
+                            </Button>
+                            <p className="mt-3 text-center text-[10px] uppercase tracking-wider text-[#556677]">
+                                Fix warnings to enable
+                            </p>
                         </div>
-                    </div>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

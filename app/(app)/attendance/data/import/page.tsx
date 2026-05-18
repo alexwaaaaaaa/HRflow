@@ -1,9 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    UploadCloud, FileSpreadsheet, Download, AlertCircle,
-    CheckCircle2, Clock, Play
+    UploadCloud, FileSpreadsheet, Download, AlertCircle, Play
 } from 'lucide-react';
 
 export default function AttendanceBulkImport() {
@@ -11,6 +12,13 @@ export default function AttendanceBulkImport() {
     const [isUploaded, setIsUploaded] = useState(false);
 
     return (
+        <Page
+            title="Bulk Attendance Import"
+            subtitle="Upload raw punch logs or legacy attendance summaries via CSV/Excel."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Data", href: "/attendance/data" }, { label: "Import" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto space-y-6">
 
@@ -152,5 +160,7 @@ export default function AttendanceBulkImport() {
                 )}
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

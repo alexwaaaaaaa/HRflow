@@ -1,13 +1,21 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
 import React from "react";
 import Link from "next/link";
-import {
-    Network, ChevronRight, Download, Users, AlertTriangle, ArrowLeftRight
+import { ChevronRight, Users, AlertTriangle, ArrowLeftRight
 } from "lucide-react";
 
 export default function SpanOfControlDetailScreen() {
     return (
+        <Page
+            title="Manager Analysis: Rahul Sharma"
+            subtitle="Role & Department"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Span Of Control", href: "/org-chart/span-of-control" }, { label: "Id" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -17,7 +25,7 @@ export default function SpanOfControlDetailScreen() {
                         <span className="text-white">Rahul Sharma</span>
                     </div>
                     <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <img src="https://i.pravatar.cc/150?u=mgr0" className="w-10 h-10 rounded-full border-2 border-pink-500" alt="mgr" />
+                        <Image src="https://i.pravatar.cc/150?u=mgr0" width={40} height={40} className="w-10 h-10 rounded-full border-2 border-pink-500" alt="mgr" />
                         Manager Analysis: Rahul Sharma
                     </h1>
                 </div>
@@ -70,7 +78,7 @@ export default function SpanOfControlDetailScreen() {
                     <div className="grid grid-cols-3 gap-4">
                         {Array.from({ length: 12 }).map((_, i) => (
                             <div key={i} className="flex items-center gap-3 p-3 bg-[#1A2A3A]/40 border border-[#2A3A4A] rounded-xl hover:border-indigo-500/30 transition-colors">
-                                <img src={`https://i.pravatar.cc/150?u=rep${i}`} className="w-10 h-10 rounded-full" alt="dr" />
+                                <Image src={`https://i.pravatar.cc/150?u=rep${i}`} width={40} height={40} className="w-10 h-10 rounded-full" alt="dr" />
                                 <div className="flex-1 min-w-0">
                                     <div className="text-sm font-bold text-white truncate">Report Name {i + 1}</div>
                                     <div className="text-[10px] text-[#8899AA] truncate">Regional Sales Manager {i % 3 === 0 ? '(IC)' : '(Mgr)'}</div>
@@ -101,5 +109,7 @@ export default function SpanOfControlDetailScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

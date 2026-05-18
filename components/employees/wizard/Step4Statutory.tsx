@@ -52,7 +52,7 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
     );
 }
 
-export default function Step4Statutory({ data, onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
+export default function Step4Statutory({ data: _data, onUpdate: _onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
     const [pfEnabled, setPfEnabled] = useState(true);
     const [uanVerifying, setUanVerifying] = useState(false);
     const [uanVerified, setUanVerified] = useState<null | boolean>(null);

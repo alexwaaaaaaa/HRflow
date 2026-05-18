@@ -1,59 +1,80 @@
 "use client";
 
-import React from 'react';
 import {
-    History, Edit3, ArrowLeft, RefreshCcw,
-    AlertTriangle, MessageSquare, Save, ChevronRight, FileText, Download, Briefcase, ShieldCheck
-} from 'lucide-react';
+    History, RefreshCcw, AlertTriangle, MessageSquare, FileText, Briefcase, ShieldCheck,
+} from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+interface RevisionPriority {
+    label: string;
+    active: boolean;
+}
+
+const REVISION_PRIORITIES: RevisionPriority[] = [
+    { label: "Routine", active: false },
+    { label: "Urgent", active: true },
+    { label: "Immediate", active: false },
+];
+
+interface LockedField {
+    label: string;
+    original: string;
+    icon: typeof FileText;
+}
+
+const LOCKED_FIELDS: LockedField[] = [
+    { label: "Leave Encashment", original: "82,500", icon: FileText },
+    { label: "Notice Recovery", original: "48,000", icon: Briefcase },
+    { label: "Statutory Dues", original: "2,15,400", icon: ShieldCheck },
+];
 
 export default function FnFRevision() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700">
-
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-4">
-                        <button className="p-2 hover:bg-[#1A2A3A] rounded-xl transition-all text-slate-400">
-                            <ArrowLeft size={20} />
-                        </button>
-                        <div>
-                            <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-                                Case Revision <RefreshCcw size={20} className="text-amber-500" />
-                            </h1>
-                            <p className="text-slate-400 text-sm font-medium">Revisit and modify finalized settlement for Correction.</p>
-                        </div>
-                    </div>
-                    <div className="flex gap-3">
-                        <button className="px-5 py-2.5 bg-[#0D1928] border border-[#1A2A3A] rounded-xl text-sm font-bold text-slate-400 hover:text-white transition-all flex items-center shadow-lg">
-                            <History size={16} className="mr-2" /> Revision History
-                        </button>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-                    {/* Left: Revision Details */}
-                    <div className="lg:col-span-3 space-y-8">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-8 space-y-8 shadow-2xl relative overflow-hidden group">
-
-                            <div className="flex items-center gap-6 mb-4 pb-6 border-b border-[#1A2A3A]">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1A2A3A] to-slate-800 flex items-center justify-center font-black text-blue-500 text-2xl border border-blue-500/20">
+        <Page
+            title="Case Revision"
+            subtitle="Revisit and modify finalized settlement for correction."
+            breadcrumbs={[
+                { label: "FnF", href: "/fnf/dashboard" },
+                { label: "Revision" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <Button variant="secondary" icon={<History size={16} aria-hidden="true" />}>
+                    Revision History
+                </Button>
+            }
+        >
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+                {/* Left: Revision Details */}
+                <div className="space-y-6 lg:col-span-3">
+                    <Card padding="lg">
+                        <div className="space-y-8">
+                            {/* Employee Header */}
+                            <div className="flex items-center gap-6 border-b border-[#1A2A3A] pb-6">
+                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-blue-500/20 bg-gradient-to-br from-[#1A2A3A] to-[#0D1928] text-2xl font-black text-blue-500">
                                     AD
                                 </div>
                                 <div className="flex-1">
-                                    <h2 className="text-xl font-black text-white tracking-tight">Arnab Das</h2>
-                                    <p className="text-xs text-slate-500 font-black tracking-widest uppercase italic">Original settlement: ₹3,25,202.00 • 24 Mar 24</p>
+                                    <h2 className="text-xl font-black tracking-tight text-white">Arnab Das</h2>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-[#445566]">
+                                        Original settlement: ₹3,25,202.00 · 24 Mar 24
+                                    </p>
                                 </div>
-                                <div className="text-right">
-                                    <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg">Post-Audit Revision</span>
-                                </div>
+                                <Badge variant="warning">Post-Audit Revision</Badge>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Primary Revision Reason</label>
-                                    <select className="w-full bg-[#060B14] border border-[#1A2A3A] rounded-xl px-4 py-4 text-sm font-bold text-white outline-none focus:border-amber-500/50 appearance-none shadow-inner">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <label htmlFor="revision-reason" className="text-[10px] font-bold uppercase tracking-widest text-[#445566]">
+                                        Primary Revision Reason
+                                    </label>
+                                    <select
+                                        id="revision-reason"
+                                        className="w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-4 py-4 text-sm font-bold text-white outline-none focus:border-[#00e5a0]"
+                                    >
                                         <option>Discrepancy in Leave Balance</option>
                                         <option>Incorrect TDS Calculation</option>
                                         <option>Missed Expense Reimbursement</option>
@@ -61,75 +82,100 @@ export default function FnFRevision() {
                                         <option>Legal / Dispute Order</option>
                                     </select>
                                 </div>
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Revision Priority</label>
-                                    <div className="flex gap-3">
-                                        {['Routine', 'Urgent', 'Immediate'].map((p) => (
-                                            <button key={p} className={`flex-1 py-4 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all ${p === 'Urgent' ? 'bg-amber-500/10 border-amber-500 text-amber-500' : 'bg-[#060B14] border-[#1A2A3A] text-slate-600'
-                                                }`}>
-                                                {p}
-                                            </button>
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#445566]">
+                                        Revision Priority
+                                    </p>
+                                    <div className="flex gap-3" role="radiogroup" aria-label="Revision priority">
+                                        {REVISION_PRIORITIES.map((p) => (
+                                            <label
+                                                key={p.label}
+                                                className={`flex flex-1 cursor-pointer items-center justify-center rounded-xl border-2 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${
+                                                    p.active
+                                                        ? "border-amber-500 bg-amber-500/10 text-amber-500"
+                                                        : "border-[#1A2A3A] bg-[#060B14] text-[#445566]"
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="revision-priority"
+                                                    value={p.label}
+                                                    defaultChecked={p.active}
+                                                    className="sr-only"
+                                                />
+                                                {p.label}
+                                            </label>
                                         ))}
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 italic">
-                                    <MessageSquare size={14} className="text-blue-500" /> Executive summary of the Correction
+                            <div className="space-y-3">
+                                <label htmlFor="revision-summary" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#445566]">
+                                    <MessageSquare size={14} className="text-blue-500" aria-hidden="true" />
+                                    Executive Summary of the Correction
                                 </label>
                                 <textarea
+                                    id="revision-summary"
                                     placeholder="Explain exactly what is being revised and the justification for this outlier change..."
-                                    className="w-full bg-[#060B14] border border-[#1A2A3A] rounded-2xl p-5 text-slate-300 outline-none focus:border-amber-500/50 min-h-[160px] resize-none font-medium leading-relaxed italic shadow-inner"
+                                    rows={6}
+                                    className="w-full resize-none rounded-2xl border border-[#1A2A3A] bg-[#060B14] p-5 text-sm leading-relaxed text-[#8899AA] outline-none focus:border-[#00e5a0]"
                                 />
                             </div>
 
-                            <div className="p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl flex gap-4">
-                                <AlertTriangle size={20} className="text-rose-500 shrink-0 mt-0.5" />
-                                <div className="text-xs text-slate-500 font-medium leading-relaxed italic">
-                                    Warning: Revision case will trigger a notification to the employee and internal audit team. This will create a secondary settlement statement (v2.0).
-                                </div>
+                            <div className="flex items-start gap-4 rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
+                                <AlertTriangle size={20} className="mt-0.5 shrink-0 text-rose-500" aria-hidden="true" />
+                                <p className="text-xs leading-relaxed text-[#445566]">
+                                    Warning: Revision case will trigger a notification to the employee and internal audit
+                                    team. This will create a secondary settlement statement (v2.0).
+                                </p>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Right: Revision Scope */}
-                    <div className="space-y-6 animate-in slide-in-from-right duration-1000">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-3xl p-6 space-y-6 shadow-2xl relative overflow-hidden">
-                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-[#1A2A3A] pb-4 text-center">Locked Fields Adjustment</h3>
-
-                            <div className="space-y-4">
-                                {[
-                                    { label: 'Leave Encashment', original: '82,500', icon: FileText },
-                                    { label: 'Notice Recovery', original: '48,000', icon: Briefcase },
-                                    { label: 'Statutory Dues', original: '2,15,400', icon: ShieldCheck },
-                                ].map((field, i) => (
-                                    <div key={i} className="space-y-2 group cursor-pointer">
-                                        <div className="flex justify-between items-center text-[10px] font-black text-slate-500 uppercase tracking-tighter">
-                                            <span>{field.label}</span>
-                                            <span className="group-hover:text-blue-500 transition-colors">Edit</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 p-3 bg-[#060B14] border border-[#1A2A3A] rounded-xl group-hover:border-amber-500/30 transition-all">
-                                            <field.icon size={14} className="text-slate-600" />
-                                            <input type="text" defaultValue={field.original} className="bg-transparent text-sm font-black text-white w-full outline-none" />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="pt-6">
-                                <button className="w-full py-4 bg-amber-600 rounded-2xl text-white font-black text-sm hover:scale-[1.02] transition-all shadow-[0_0_25px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2 italic">
-                                    <RefreshCcw size={18} /> Initiate Revision
-                                </button>
-                            </div>
-
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700" />
-                        </div>
-                    </div>
-
+                    </Card>
                 </div>
 
+                {/* Right: Revision Scope */}
+                <div className="space-y-6">
+                    <Card padding="lg">
+                        <h3 className="mb-6 border-b border-[#1A2A3A] pb-4 text-center text-[10px] font-bold uppercase tracking-widest text-[#445566]">
+                            Locked Fields Adjustment
+                        </h3>
+                        <div className="space-y-4">
+                            {LOCKED_FIELDS.map((field) => {
+                                const Icon = field.icon;
+                                return (
+                                    <div key={field.label} className="space-y-2">
+                                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-tight text-[#445566]">
+                                            <span>{field.label}</span>
+                                            <span className="text-blue-500">Edit</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 rounded-xl border border-[#1A2A3A] bg-[#060B14] p-3 transition-colors hover:border-amber-500/30">
+                                            <Icon size={14} className="text-[#445566]" aria-hidden="true" />
+                                            <label htmlFor={`field-${field.label}`} className="sr-only">
+                                                {field.label}
+                                            </label>
+                                            <input
+                                                id={`field-${field.label}`}
+                                                type="text"
+                                                defaultValue={field.original}
+                                                className="w-full bg-transparent text-sm font-black text-white outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <Button
+                            variant="primary"
+                            icon={<RefreshCcw size={18} aria-hidden="true" />}
+                            className="mt-6 w-full"
+                        >
+                            Initiate Revision
+                        </Button>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </Page>
     );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Calculator, Users, CheckCircle2, Download, AlertCircle, IndianRupee } from "lucide-react";
 
@@ -15,6 +17,13 @@ export default function StatutoryBonusPage() {
     ];
 
     return (
+        <Page
+            title="Statutory Bonus Calculation"
+            subtitle="Compute and distribute Payment of Bonus Act (1965) liabilities."
+            breadcrumbs={[{ label: "Statutory Bonus" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1500px] mx-auto space-y-6">
 
@@ -193,5 +202,7 @@ export default function StatutoryBonusPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

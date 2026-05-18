@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { ShieldAlert, LogOut, Gavel, UserX, AlertTriangle, ChevronRight } from 'lucide-react';
 
 export default function InvoluntaryExitScreen() {
     const [step, setStep] = useState(1);
     return (
+        <Page
+            title="Involuntary Exit Protocol"
+            subtitle="Initiate sensitive terminations enforcing immediate system lockouts and legal compliance."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Involuntary" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <div className="mb-8 border-b border-[#1A2A3A] pb-6 flex items-center justify-between">
                 <div>
@@ -106,6 +115,8 @@ export default function InvoluntaryExitScreen() {
                 )}
             </div>
         </div>
+    
+        </Page>
     );
 }
 

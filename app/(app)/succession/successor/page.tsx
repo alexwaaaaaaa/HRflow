@@ -1,10 +1,18 @@
 "use client";
-import React, { useState } from 'react';
-import { UserCheck, SplitSquareHorizontal, History, Crown, ThumbsUp, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { UserCheck, SplitSquareHorizontal, Crown } from 'lucide-react';
 
 export default function SuccessorSelectionScreen() {
     return (
+        <Page
+            title="Successor Nomination & Review"
+            subtitle="Calibrate potential successors relative to critical role requirements."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Successor" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -105,5 +113,7 @@ export default function SuccessorSelectionScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

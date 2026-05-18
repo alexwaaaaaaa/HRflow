@@ -1,146 +1,162 @@
 "use client";
 import React, { useState } from "react";
-import {
-    Star, MessageSquare, Send, ThumbsUp, ThumbsDown, BookOpen, User, CheckCircle2
-} from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Star, MessageSquare, Send, ThumbsUp, BookOpen, User, CheckCircle2 } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+const RATING_LABELS: Record<number, string> = {
+    1: "Poor",
+    2: "Fair",
+    3: "Good",
+    4: "Very Good",
+    5: "Excellent! Highly Recommend",
+};
+
+interface AspectRating {
+    label: string;
+    icon: React.ElementType;
+    id: string;
+}
+
+const ASPECTS: AspectRating[] = [
+    { label: "Content Quality", icon: BookOpen, id: "content" },
+    { label: "Instructor (Sarah Drasner)", icon: User, id: "instructor" },
+    { label: "Relevance to Your Job", icon: ThumbsUp, id: "relevance" },
+];
+
+function SuccessState() {
+    return (
+        <Page
+            title="Feedback Received!"
+            subtitle="Thank you for helping us improve our training programs"
+            breadcrumbs={[
+                { label: "LMS", href: "/lms/dashboard" },
+                { label: "Course", href: "/lms/course/1" },
+                { label: "Feedback" },
+            ]}
+            maxWidth="800px"
+        >
+            <Card padding="lg" variant="elevated" className="text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#00E5A0]/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2" aria-hidden="true" />
+                <div className="w-24 h-24 mx-auto bg-gradient-to-b from-[#00E5A0] to-teal-600 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,229,160,0.3)]">
+                    <CheckCircle2 size={48} className="text-[#0A1420]" aria-hidden="true" />
+                </div>
+                <p className="text-[#8899AA] mb-8">Your insights are incredibly valuable to authors and future learners.</p>
+                <Button variant="secondary" href="/lms/dashboard">Return to Dashboard</Button>
+            </Card>
+        </Page>
+    );
+}
 
 export default function TrainingFeedback() {
-    const params = useParams();
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [submitted, setSubmitted] = useState(false);
+    const [aspectRatings, setAspectRatings] = useState<Record<string, number>>({});
 
-    if (submitted) {
-        return (
-            <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] flex items-center justify-center">
-                <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-3xl p-10 text-center shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#00E5A0]/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="w-24 h-24 mx-auto bg-gradient-to-b from-[#00E5A0] to-teal-600 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,229,160,0.3)]">
-                        <CheckCircle2 size={48} className="text-[#0A1420]" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-white mb-4">Feedback Received!</h1>
-                    <p className="text-[#8899AA] mb-8">Thank you for helping us improve our training programs. Your insights are incredibly valuable to authors and future learners.</p>
-                    <Link href="/lms/dashboard" className="px-8 py-3 bg-[#1A2A3A] text-white border border-[#2A3A4A] font-bold rounded-xl hover:bg-[#2A3A4A] transition-colors">
-                        Return to Dashboard
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+    if (submitted) return <SuccessState />;
 
     return (
-        <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] py-12">
-
-            <div className="mb-8 text-center">
-                <h1 className="text-3xl font-extrabold text-white mb-3">Course Feedback</h1>
-                <p className="text-[#8899AA] text-lg">Advanced React Patterns & Architecture</p>
-            </div>
-
-            <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-8 shadow-xl">
-
+        <Page
+            title="Course Feedback"
+            subtitle="Advanced React Patterns & Architecture"
+            breadcrumbs={[
+                { label: "LMS", href: "/lms/dashboard" },
+                { label: "Course", href: "/lms/course/1" },
+                { label: "Feedback" },
+            ]}
+            maxWidth="800px"
+        >
+            <Card padding="lg">
+                {/* Overall Rating */}
                 <div className="mb-10 text-center">
                     <h2 className="text-xl font-bold text-white mb-6">How would you rate this course overall?</h2>
-                    <div className="flex justify-center gap-2">
-                        {[1, 2, 3, 4, 5].map(star => (
+                    <div className="flex justify-center gap-2" role="group" aria-label="Overall course rating">
+                        {[1, 2, 3, 4, 5].map((star) => (
                             <button
                                 key={star}
+                                type="button"
                                 onClick={() => setRating(star)}
                                 onMouseEnter={() => setHoverRating(star)}
                                 onMouseLeave={() => setHoverRating(0)}
-                                className="p-2 transition-transform hover:scale-110 focus:outline-none"
+                                aria-label={`Rate ${star} out of 5 stars`}
+                                aria-pressed={rating === star}
+                                className="p-2 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00e5a0] rounded"
                             >
                                 <Star
                                     size={48}
-                                    className={`transition-colors duration-200 ${(hoverRating || rating) >= star
-                                            ? 'text-[#FFB020] fill-[#FFB020] drop-shadow-[0_0_10px_rgba(255,176,32,0.5)]'
-                                            : 'text-[#2A3A4A]'
-                                        }`}
+                                    className={`transition-colors duration-200 ${(hoverRating || rating) >= star ? "text-[#FFB020] fill-[#FFB020] drop-shadow-[0_0_10px_rgba(255,176,32,0.5)]" : "text-[#2A3A4A]"}`}
+                                    aria-hidden="true"
                                 />
                             </button>
                         ))}
                     </div>
-                    <p className="text-sm font-medium text-[#FFB020] mt-4 h-5">
-                        {rating === 1 && "Poor"}
-                        {rating === 2 && "Fair"}
-                        {rating === 3 && "Good"}
-                        {rating === 4 && "Very Good"}
-                        {rating === 5 && "Excellent! Highly Recommend"}
+                    <p className="text-sm font-medium text-[#FFB020] mt-4 h-5" aria-live="polite">
+                        {rating > 0 ? RATING_LABELS[rating] : ""}
                     </p>
                 </div>
 
                 <div className="space-y-8">
-
                     {/* Detailed Ratings */}
                     <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-xl p-6">
                         <h3 className="font-semibold text-white mb-6">Rate specific aspects</h3>
-
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3 text-[#8899AA]">
-                                    <BookOpen size={18} /> <span className="text-sm font-medium">Content Quality</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    {[1, 2, 3, 4, 5].map(v => (
-                                        <button key={v} className="w-8 h-8 rounded border border-[#2A3A4A] text-xs font-semibold text-[#8899AA] hover:border-[#33E6FF] hover:text-[#33E6FF] focus:bg-[#33E6FF] focus:text-[#0A1420] transition-colors">{v}</button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3 text-[#8899AA]">
-                                    <User size={18} /> <span className="text-sm font-medium">Instructor (Sarah Drasner)</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    {[1, 2, 3, 4, 5].map(v => (
-                                        <button key={v} className="w-8 h-8 rounded border border-[#2A3A4A] text-xs font-semibold text-[#8899AA] hover:border-[#33E6FF] hover:text-[#33E6FF] focus:bg-[#33E6FF] focus:text-[#0A1420] transition-colors">{v}</button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3 text-[#8899AA]">
-                                    <ThumbsUp size={18} /> <span className="text-sm font-medium">Relevance to Your Job</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    {[1, 2, 3, 4, 5].map(v => (
-                                        <button key={v} className="w-8 h-8 rounded border border-[#2A3A4A] text-xs font-semibold text-[#8899AA] hover:border-[#33E6FF] hover:text-[#33E6FF] focus:bg-[#33E6FF] focus:text-[#0A1420] transition-colors">{v}</button>
-                                    ))}
-                                </div>
-                            </div>
+                            {ASPECTS.map((aspect) => {
+                                const Icon = aspect.icon;
+                                return (
+                                    <div key={aspect.id} className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3 text-[#8899AA]">
+                                            <Icon size={18} aria-hidden="true" />
+                                            <span className="text-sm font-medium">{aspect.label}</span>
+                                        </div>
+                                        <div className="flex gap-2" role="group" aria-label={`Rate ${aspect.label}`}>
+                                            {[1, 2, 3, 4, 5].map((v) => (
+                                                <button
+                                                    key={v}
+                                                    type="button"
+                                                    aria-label={`${v} out of 5`}
+                                                    aria-pressed={aspectRatings[aspect.id] === v}
+                                                    onClick={() => setAspectRatings((prev) => ({ ...prev, [aspect.id]: v }))}
+                                                    className={`w-8 h-8 rounded border text-xs font-semibold transition-colors ${aspectRatings[aspect.id] === v ? "border-[#33E6FF] bg-[#33E6FF] text-[#0A1420]" : "border-[#2A3A4A] text-[#8899AA] hover:border-[#33E6FF] hover:text-[#33E6FF]"}`}
+                                                >
+                                                    {v}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* Written Review */}
                     <div>
-                        <label className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
-                            <MessageSquare size={16} className="text-[#00E5A0]" /> Written Review (Optional)
+                        <label htmlFor="written-review" className="block text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                            <MessageSquare size={16} className="text-[#00E5A0]" aria-hidden="true" />
+                            Written Review (Optional)
                         </label>
                         <textarea
+                            id="written-review"
                             rows={4}
                             placeholder="What did you like about this course? How could it be improved?"
                             className="w-full bg-[#0A1420] border border-[#2A3A4A] text-white rounded-xl p-4 text-sm focus:outline-none focus:border-[#00E5A0] resize-none transition-colors"
-                        ></textarea>
+                        />
                     </div>
 
                     <div className="pt-6 border-t border-[#1A2A3A] flex justify-end gap-4">
-                        <button className="px-6 py-3 font-semibold text-[#8899AA] hover:text-white transition-colors">Skip</button>
-                        <button
+                        <Button variant="ghost" size="sm">Skip</Button>
+                        <Button
+                            variant="primary"
                             onClick={() => setSubmitted(true)}
                             disabled={rating === 0}
-                            className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${rating > 0
-                                    ? 'bg-[#00E5A0] text-[#0A1420] hover:bg-[#00c98d] shadow-[0_5px_15px_rgba(0,229,160,0.2)] cursor-pointer'
-                                    : 'bg-[#1A2A3A] text-[#445566] cursor-not-allowed'
-                                }`}
+                            icon={<Send size={16} aria-hidden="true" />}
                         >
-                            <Send size={18} /> Submit Feedback
-                        </button>
+                            Submit Feedback
+                        </Button>
                     </div>
-
                 </div>
-            </div>
-
-        </div>
+            </Card>
+        </Page>
     );
 }

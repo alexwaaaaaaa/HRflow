@@ -1,15 +1,24 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import {
-    GitMerge, ChevronRight, Settings, Download, Search, Briefcase, Filter, ArrowRight
+    GitMerge, ChevronRight, Settings, Download, Briefcase, ArrowRight
 } from "lucide-react";
 
 export default function WorkforcePlanningScreen() {
     const [activeTab, setActiveTab] = useState("skills");
 
     return (
+        <Page
+            title="Workforce Planning (Strategic)"
+            subtitle="Require immediate pipeline"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Planning", href: "/org-chart/planning" }, { label: "Workforce" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -127,5 +136,7 @@ export default function WorkforcePlanningScreen() {
                 </div>
             )}
         </div>
+    
+        </Page>
     );
 }

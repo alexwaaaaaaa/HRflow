@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { UserMinus, CheckCircle2, ShieldAlert, CalendarClock, MessageSquare } from 'lucide-react';
+import { UserMinus, CheckCircle2, ShieldAlert, CalendarClock } from 'lucide-react';
 
 export default function ManagerReviewScreen() {
     return (
+        <Page
+            title="Manager Review: Resignation"
+            subtitle="Review employee resignation request, confirm dates, and initiate handover processes."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Review" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -128,5 +137,7 @@ export default function ManagerReviewScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,144 +1,228 @@
 "use client";
-import React, { useState } from 'react';
-import {
-    ArrowLeft, Search, User, Laptop, Calendar, MessageSquare, AlertTriangle, ShieldCheck, CheckCircle2
-} from 'lucide-react';
-import Link from 'next/link';
 
-export default function AssetReturnScreen() {
-    const [assetId, setAssetId] = useState('');
-    const [returnDate, setReturnDate] = useState('');
-    const [condition, setCondition] = useState('Good');
-    const [notes, setNotes] = useState('');
-    const [action, setAction] = useState('Pool');
+import { Laptop, Calendar, MessageSquare, AlertTriangle, ShieldCheck, CheckCircle2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import FormField from "@/components/ui/FormField";
+import { useToast } from "@/components/ui/Toast";
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Returning asset:', { assetId, returnDate, condition, notes, action });
+// ─── Schema ──────────────────────────────────────────────────────────────────
+
+const returnAssetSchema = z.object({
+    assetId: z.string().min(1, "Please select an asset"),
+    returnDate: z.string().min(1, "Return date is required"),
+    condition: z.enum(["Good (Normal Wear)", "Damaged (Needs Repair)", "Lost / Stolen"]),
+    action: z.enum(["Pool", "Repair", "WriteOff"]),
+    notes: z.string().optional(),
+});
+
+type ReturnAssetForm = z.infer<typeof returnAssetSchema>;
+
+// ─── Static data ─────────────────────────────────────────────────────────────
+
+const CONDITIONS = ["Good (Normal Wear)", "Damaged (Needs Repair)", "Lost / Stolen"] as const;
+
+const POST_RETURN_ACTIONS = [
+    { id: "Pool" as const, label: "Return to Pool", desc: "Ready for reassignment" },
+    { id: "Repair" as const, label: "Send to Repair", desc: "Log maint. ticket" },
+    { id: "WriteOff" as const, label: "Write-off", desc: "Depreciate & dispose" },
+];
+
+const ACTION_ACTIVE_CLASSES: Record<"Pool" | "Repair" | "WriteOff", string> = {
+    Pool: "border-[#00e5a0] bg-[rgba(0,229,160,0.1)]",
+    Repair: "border-[#f59e0b] bg-[rgba(245,158,11,0.1)]",
+    WriteOff: "border-[#ef4444] bg-[rgba(239,68,68,0.1)]",
+};
+
+const ACTION_CHECK_CLASSES: Record<"Pool" | "Repair" | "WriteOff", string> = {
+    Pool: "text-[#00e5a0]",
+    Repair: "text-[#f59e0b]",
+    WriteOff: "text-[#ef4444]",
+};
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function AssetReturnPage() {
+    const toast = useToast();
+    const { control, handleSubmit, watch, formState: { isSubmitting } } = useForm<ReturnAssetForm>({
+        resolver: zodResolver(returnAssetSchema),
+        defaultValues: {
+            assetId: "",
+            returnDate: "",
+            condition: "Good (Normal Wear)",
+            action: "Pool",
+            notes: "",
+        },
+    });
+
+    // eslint-disable-next-line react-hooks/incompatible-library -- RHF watch() is intentional; condition/action drive the warning banner
+    const condition = watch("condition");
+    const action = watch("action");
+    const showWarning = (condition === "Damaged (Needs Repair)" || condition === "Lost / Stolen") && action === "Pool";
+
+    const onSubmit = async (_data: ReturnAssetForm) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 700));
+        toast.show({ variant: "success", title: "Return processed", description: "The asset return has been recorded and status updated." });
     };
 
     return (
-        <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] font-sans">
-
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/it/assets" className="p-2 border border-[#2A3A4A] bg-[#1A2A3A] text-[#8899AA] rounded-xl hover:bg-[#2A3A4A] hover:text-white transition-colors">
-                    <ArrowLeft size={20} />
+        <Page
+            title="Process Asset Return"
+            subtitle="Record an asset returned by an employee and update its status"
+            breadcrumbs={[
+                { label: "IT", href: "/it/dashboard" },
+                { label: "Assets", href: "/it/assets" },
+                { label: "Return" },
+            ]}
+            maxWidth="900px"
+            actions={
+                <Link href="/it/assets">
+                    <Button variant="outline" icon={<ArrowLeft size={14} aria-hidden="true" />}>
+                        Back to Assets
+                    </Button>
                 </Link>
-                <div>
-                    <h1 className="text-3xl font-extrabold text-white mb-2">Process Asset Return</h1>
-                    <p className="text-[#8899AA]">Record an asset returned by an employee and update its status.</p>
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-
-                <div className="bg-[#0F1C2E] border border-[#2A3A4A] rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
-
-                    {/* Asset Selection */}
-                    <div>
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><Laptop size={14} /> Asset to Return</label>
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8899AA]" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search by Asset ID or Assigned Employee..."
-                                value={assetId}
-                                onChange={e => setAssetId(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl pl-12 pr-4 py-3.5 focus:outline-none focus:border-[#FFB020] transition-colors"
-                                required
+            }
+        >
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" aria-label="Asset return form">
+                <Card padding="lg">
+                    <div className="space-y-6">
+                        {/* Asset search */}
+                        <div className="space-y-1.5">
+                            <label htmlFor="return-asset-id" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                <Laptop size={14} aria-hidden="true" /> Asset to Return
+                            </label>
+                            <FormField
+                                control={control}
+                                name="assetId"
+                                inputProps={{
+                                    id: "return-asset-id",
+                                    placeholder: "Search by Asset ID or Assigned Employee…",
+                                }}
                             />
-                        </div>
-                        <p className="text-xs text-[#8899AA] mt-2">Displays currently 'Assigned' assets.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Date */}
-                        <div>
-                            <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><Calendar size={14} /> Return Date</label>
-                            <input
-                                type="date"
-                                value={returnDate}
-                                onChange={e => setReturnDate(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#FFB020] transition-colors"
-                                required
-                            />
+                            <p className="text-xs text-[#8899AA]">Displays currently 'Assigned' assets.</p>
                         </div>
 
-                        {/* Condition Check */}
-                        <div>
-                            <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><ShieldCheck size={14} /> Condition Upon Return</label>
-                            <select
-                                value={condition}
-                                onChange={e => setCondition(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#FFB020] transition-colors appearance-none cursor-pointer"
-                            >
-                                <option>Good (Normal Wear)</option>
-                                <option>Damaged (Needs Repair)</option>
-                                <option>Lost / Stolen</option>
-                            </select>
-                        </div>
-                    </div>
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            {/* Return date */}
+                            <div className="space-y-1.5">
+                                <label htmlFor="return-date" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                    <Calendar size={14} aria-hidden="true" /> Return Date
+                                </label>
+                                <FormField
+                                    control={control}
+                                    name="returnDate"
+                                    inputProps={{ id: "return-date", type: "date" }}
+                                />
+                            </div>
 
-                    {/* Next Action Selection */}
-                    <div className="pt-4 border-t border-[#1A2A3A]">
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-4">Post-Return Action</label>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {[
-                                { id: 'Pool', label: 'Return to Pool', desc: 'Ready for reassignment' },
-                                { id: 'Repair', label: 'Send to Repair', desc: 'Log maint. ticket' },
-                                { id: 'WriteOff', label: 'Write-off', desc: 'Depreciate & dispose' }
-                            ].map(act => (
-                                <button
-                                    key={act.id}
-                                    type="button"
-                                    onClick={() => setAction(act.id)}
-                                    className={`text-left p-4 rounded-xl border transition-all ${action === act.id
-                                        ? act.id === 'Repair' ? 'bg-[#FFB020]/10 border-[#FFB020]' : act.id === 'WriteOff' ? 'bg-[#FF4444]/10 border-[#FF4444]' : 'bg-[#00E5A0]/10 border-[#00E5A0]'
-                                        : 'bg-[#1A2A3A] border-[#2A3A4A] text-[#8899AA] hover:border-[#445566]'
-                                        }`}
-                                >
-                                    <div className="flex items-center justify-between mb-1">
-                                        <span className={`font-bold text-sm ${action === act.id ? 'text-white' : ''}`}>{act.label}</span>
-                                        {action === act.id && <CheckCircle2 size={16} className={act.id === 'Repair' ? 'text-[#FFB020]' : act.id === 'WriteOff' ? 'text-[#FF4444]' : 'text-[#00E5A0]'} />}
+                            {/* Condition */}
+                            <Controller
+                                control={control}
+                                name="condition"
+                                render={({ field }) => (
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="return-condition" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                            <ShieldCheck size={14} aria-hidden="true" /> Condition Upon Return
+                                        </label>
+                                        <select
+                                            id="return-condition"
+                                            {...field}
+                                            className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none transition-colors focus:border-[#00e5a0]"
+                                        >
+                                            {CONDITIONS.map((c) => (
+                                                <option key={c} value={c}>{c}</option>
+                                            ))}
+                                        </select>
                                     </div>
-                                    <p className={`text-[10px] ${action === act.id ? 'text-[#8899AA]' : 'text-[#445566]'}`}>{act.desc}</p>
-                                </button>
-                            ))}
+                                )}
+                            />
+                        </div>
+
+                        {/* Post-return action */}
+                        <div className="border-t border-[#1A2A3A] pt-4">
+                            <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">Post-Return Action</p>
+                            <Controller
+                                control={control}
+                                name="action"
+                                render={({ field }) => (
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3" role="radiogroup" aria-label="Post-return action">
+                                        {POST_RETURN_ACTIONS.map((act) => {
+                                            const isActive = field.value === act.id;
+                                            return (
+                                                <Button
+                                                    key={act.id}
+                                                    type="button"
+                                                    role="radio"
+                                                    aria-checked={isActive}
+                                                    variant={isActive ? "secondary" : "ghost"}
+                                                    onClick={() => field.onChange(act.id)}
+                                                    className={`flex flex-col items-start rounded-xl p-4 h-auto text-left ${isActive ? ACTION_ACTIVE_CLASSES[act.id] : ""}`}
+                                                >
+                                                    <div className="mb-1 flex w-full items-center justify-between">
+                                                        <span className={`text-sm font-bold ${isActive ? "text-white" : ""}`}>{act.label}</span>
+                                                        {isActive && (
+                                                            <CheckCircle2
+                                                                size={16}
+                                                                className={ACTION_CHECK_CLASSES[act.id]}
+                                                                aria-hidden="true"
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <p className={`text-[10px] ${isActive ? "text-[#8899AA]" : "text-[#445566]"}`}>{act.desc}</p>
+                                                </Button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            />
+                        </div>
+
+                        {/* Notes */}
+                        <div className="border-t border-[#1A2A3A] pt-4">
+                            <label htmlFor="return-notes" className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                <MessageSquare size={14} aria-hidden="true" /> Inspection Notes
+                            </label>
+                            <Controller
+                                control={control}
+                                name="notes"
+                                render={({ field }) => (
+                                    <textarea
+                                        id="return-notes"
+                                        {...field}
+                                        rows={4}
+                                        placeholder="Detail any damages, missing chargers, or reasons for write-off…"
+                                        className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none transition-colors focus:border-[#00e5a0]"
+                                    />
+                                )}
+                            />
+                            {showWarning && (
+                                <p className="mt-2 flex items-start gap-1 text-xs text-[#ef4444]" role="alert">
+                                    <AlertTriangle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
+                                    Warning: You marked the asset as {condition} but selected "Return to Pool". Consider sending it to repair.
+                                </p>
+                            )}
                         </div>
                     </div>
+                </Card>
 
-                    {/* Notes */}
-                    <div className="pt-4 border-t border-[#1A2A3A]">
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><MessageSquare size={14} /> Inspection Notes</label>
-                        <textarea
-                            rows={4}
-                            placeholder="Detail any damages, missing chargers, or reasons for write-off..."
-                            value={notes}
-                            onChange={e => setNotes(e.target.value)}
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#FFB020] transition-colors resize-none"
-                        ></textarea>
-                        {(condition === 'Damaged' || condition === 'Lost / Stolen') && action === 'Pool' && (
-                            <p className="text-xs text-[#FF4444] mt-2 flex items-start gap-1">
-                                <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-                                Warning: You marked the asset as {condition} but selected "Return to Pool". Consider sending it to repair.
-                            </p>
-                        )}
-                    </div>
-
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-4 mt-8 pt-4">
-                    <Link href="/it/assets" className="px-6 py-3 font-bold text-[#8899AA] hover:text-white transition-colors">
-                        Cancel
-                    </Link>
-                    <button type="submit" className="px-8 py-3 bg-[#FFB020] text-[#0A1420] font-bold rounded-xl hover:bg-[#eacc41] transition-colors shadow-[0_5px_15px_rgba(255,176,32,0.2)]">
+                <div className="flex items-center justify-end gap-4">
+                    <Button variant="outline" href="/it/assets">Cancel</Button>
+                    <Button
+                        type="submit"
+                        isLoading={isSubmitting}
+                        loadingText="Processing…"
+                        className="bg-[#f59e0b] text-[#060B14] hover:bg-[#e6a600]"
+                    >
                         Complete Return Process
-                    </button>
+                    </Button>
                 </div>
-
             </form>
-        </div>
+        </Page>
     );
 }

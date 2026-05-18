@@ -1,13 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Search, FolderOpen, User, Plus, FileText, CheckCircle2, ChevronDown, Clock, MessageSquare, AlertTriangle, Paperclip } from 'lucide-react';
+import { FolderOpen, Plus, FileText, ChevronDown, Clock, MessageSquare, Paperclip } from 'lucide-react';
 import Link from 'next/link';
 
-export default function GrievanceInvestigationScreen({ params }: { params: { id: string } }) {
+export default function GrievanceInvestigationScreen({ params: _params }: { params: { id: string } }) {
     const defaultId = "GRV-2026-142";
     const [activeTab, setActiveTab] = useState('evidence');
 
     return (
+        <Page
+            title="Investigation Workspace:"
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Id" }, { label: "Investigation" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between border-b border-[#1A2A3A] pb-4 mb-4">
                 <div>
@@ -185,5 +193,7 @@ export default function GrievanceInvestigationScreen({ params }: { params: { id:
 
             </div>
         </div>
+    
+        </Page>
     );
 }

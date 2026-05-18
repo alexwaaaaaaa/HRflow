@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { History, Calendar, Monitor, Download, TrendingUp, AlertTriangle, MapPin } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
+import DataTable, { type Column } from "@/components/ui/DataTable";
 
 type Status = "Success" | "Failed" | "Suspicious";
 interface LoginEntry {
@@ -32,123 +35,117 @@ const ALL_DATA: LoginEntry[] = [
     { date: "30/10/2024 11:00 AM", device: "MacBook Pro", browser: "Chrome 120", location: "Mumbai, MH", ip: "103.21.xx.xx", status: "Success" },
 ];
 
-const STATUS_CONFIG: Record<Status, { label: string; color: string; bg: string; emoji: string }> = {
-    Success: { label: "Success", color: "#00E5A0", bg: "rgba(0,229,160,0.12)", emoji: "✅" },
-    Failed: { label: "Failed", color: "#FF4444", bg: "rgba(255,68,68,0.12)", emoji: "❌" },
-    Suspicious: { label: "Suspicious", color: "#FFB800", bg: "rgba(255,184,0,0.12)", emoji: "⚠️" },
+const STATUS_BADGE: Record<Status, "success" | "danger" | "warning"> = {
+    Success: "success",
+    Failed: "danger",
+    Suspicious: "warning",
 };
 
 type Filter = "All" | Status;
 const FILTERS: Filter[] = ["All", "Success", "Failed", "Suspicious"];
 
+const COLUMNS: Column<LoginEntry>[] = [
+    { key: "date", label: "Date & Time", render: (r) => <span className="text-sm text-[#8899AA]">{r.date}</span> },
+    { key: "device", label: "Device", render: (r) => <span className="text-sm text-white">{r.device}</span> },
+    { key: "browser", label: "Browser", render: (r) => <span className="text-sm text-white">{r.browser}</span> },
+    { key: "location", label: "Location", render: (r) => <span className="text-sm text-white">{r.location}</span> },
+    { key: "ip", label: "IP Address", render: (r) => <span className="text-sm text-[#8899AA] font-mono">{r.ip}</span> },
+    {
+        key: "status", label: "Status",
+        render: (r) => (
+            <div className="flex items-center gap-2">
+                <Badge variant={STATUS_BADGE[r.status]}>{r.status}</Badge>
+                <a href="/security/access-logs" className="text-xs text-[#0066FF] hover:underline whitespace-nowrap">View Details</a>
+            </div>
+        ),
+    },
+];
+
 export default function LoginHistoryPage() {
     const [filter, setFilter] = useState<Filter>("All");
-    const [page] = useState(1);
 
     const filtered = filter === "All" ? ALL_DATA : ALL_DATA.filter((e) => e.status === filter);
 
     const stats = [
-        { count: 40, label: "Successful Logins", color: "#00E5A0", icon: <TrendingUp size={16} color="#00E5A0" />, note: "+12% vs last month" },
-        { count: 3, label: "Failed Attempts", color: "#FF4444", icon: <AlertTriangle size={16} color="#FF4444" />, note: "2 this week" },
-        { count: 2, label: "New Devices", color: "#FFB800", icon: <Monitor size={16} color="#FFB800" />, note: "Unrecognized" },
-        { count: 5, label: "Locations", color: "#0066FF", icon: <MapPin size={16} color="#0066FF" />, note: "Cities" },
+        { count: 40, label: "Successful Logins", variant: "success" as const, icon: <TrendingUp size={16} aria-hidden="true" />, note: "+12% vs last month" },
+        { count: 3, label: "Failed Attempts", variant: "danger" as const, icon: <AlertTriangle size={16} aria-hidden="true" />, note: "2 this week" },
+        { count: 2, label: "New Devices", variant: "warning" as const, icon: <Monitor size={16} aria-hidden="true" />, note: "Unrecognized" },
+        { count: 5, label: "Locations", variant: "info" as const, icon: <MapPin size={16} aria-hidden="true" />, note: "Cities" },
     ];
 
+    const STAT_COLORS: Record<string, string> = {
+        success: "#00E5A0",
+        danger: "#FF4444",
+        warning: "#FFB800",
+        info: "#0066FF",
+    };
+
     return (
-        <div className="min-h-screen p-8" style={{ background: "#060B14" }}>
-            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div className="min-h-screen p-8 bg-[#060B14]">
+            <div className="max-w-[1200px] mx-auto">
                 {/* Breadcrumb */}
-                <p style={{ fontSize: 12, color: "#445566", marginBottom: 8 }}>Settings &gt; Security &gt; Login History</p>
+                <p className="text-xs text-[#445566] mb-2">Settings &gt; Security &gt; Login History</p>
 
                 {/* Title */}
                 <div className="flex items-center gap-3 mb-2">
-                    <History size={26} color="#00E5A0" />
-                    <h1 style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Login History</h1>
+                    <History size={26} color="#00E5A0" aria-hidden="true" />
+                    <h1 className="text-[28px] font-bold text-white m-0">Login History</h1>
                 </div>
 
                 {/* Filters row */}
                 <div className="flex items-center gap-4 mt-6 mb-6 flex-wrap">
                     {/* Date range */}
-                    <div className="flex items-center gap-2 px-4 h-10 rounded-lg cursor-pointer" style={{ background: "#0D1928", border: "1px solid #1A2A3A", fontSize: 14, color: "#FFFFFF" }}>
-                        <Calendar size={14} color="#8899AA" /> Last 30 days
+                    <div className="flex items-center gap-2 px-4 h-10 rounded-lg bg-[#0D1928] border border-[#1A2A3A] text-sm text-white cursor-pointer">
+                        <Calendar size={14} color="#8899AA" aria-hidden="true" /> Last 30 days
                     </div>
                     {/* Status filter */}
-                    <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid #1A2A3A" }}>
+                    <div className="flex rounded-lg overflow-hidden border border-[#1A2A3A]" role="group" aria-label="Filter by status">
                         {FILTERS.map((f) => (
-                            <button key={f} onClick={() => setFilter(f)}
-                                style={{ padding: "6px 14px", fontSize: 13, background: filter === f ? "#00E5A0" : "#0D1928", color: filter === f ? "#060B14" : "#8899AA", border: "none", cursor: "pointer", fontWeight: filter === f ? 600 : 400, transition: "all 0.15s" }}>
+                            <Button
+                                key={f}
+                                variant={filter === f ? "primary" : "secondary"}
+                                size="sm"
+                                onClick={() => setFilter(f)}
+                                className="rounded-none border-0 border-r border-[#1A2A3A] last:border-r-0"
+                                aria-pressed={filter === f}
+                            >
                                 {f}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                     {/* Device */}
-                    <div className="flex items-center gap-2 px-4 h-10 rounded-lg cursor-pointer" style={{ background: "#0D1928", border: "1px solid #1A2A3A", fontSize: 14, color: "#FFFFFF" }}>
-                        <Monitor size={14} color="#8899AA" /> All Devices
+                    <div className="flex items-center gap-2 px-4 h-10 rounded-lg bg-[#0D1928] border border-[#1A2A3A] text-sm text-white cursor-pointer">
+                        <Monitor size={14} color="#8899AA" aria-hidden="true" /> All Devices
                     </div>
                     {/* Export */}
                     <Button variant="secondary" size="md" className="ml-auto flex items-center gap-2">
-                        <Download size={14} /> Export CSV
+                        <Download size={14} aria-hidden="true" /> Export CSV
                     </Button>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     {stats.map((s) => (
-                        <div key={s.label} className="rounded-2xl p-5" style={{ background: "#0D1928", border: "1px solid #1A2A3A" }}>
+                        <Card key={s.label} variant="default" padding="md">
                             <div className="flex items-center justify-between mb-2">
-                                <span style={{ fontSize: 28, fontWeight: 700, color: s.color }}>{s.count}</span>
-                                {s.icon}
+                                <span className="text-[28px] font-bold" style={{ color: STAT_COLORS[s.variant] }}>{s.count}</span>
+                                <span style={{ color: STAT_COLORS[s.variant] }}>{s.icon}</span>
                             </div>
-                            <div style={{ fontSize: 14, color: "#FFFFFF", fontWeight: 500 }}>{s.label}</div>
-                            <div style={{ fontSize: 12, color: "#445566", marginTop: 2 }}>{s.note}</div>
-                        </div>
+                            <div className="text-sm text-white font-medium">{s.label}</div>
+                            <div className="text-xs text-[#445566] mt-0.5">{s.note}</div>
+                        </Card>
                     ))}
                 </div>
 
                 {/* Table */}
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #1A2A3A" }}>
-                    {/* Header */}
-                    <div className="grid grid-cols-6 gap-4 px-5 py-3" style={{ background: "#0A1420" }}>
-                        {["Date & Time", "Device", "Browser", "Location", "IP Address", "Status"].map((h) => (
-                            <div key={h} style={{ fontSize: 11, fontWeight: 500, color: "#8899AA", textTransform: "uppercase", letterSpacing: 1 }}>{h}</div>
-                        ))}
-                    </div>
-
-                    {/* Rows */}
-                    {filtered.map((entry, i) => {
-                        const sc = STATUS_CONFIG[entry.status];
-                        return (
-                            <div key={i}
-                                className="group grid grid-cols-6 gap-4 px-5 items-center transition-all duration-150"
-                                style={{
-                                    height: 52, background: entry.status === "Suspicious" ? "rgba(255,184,0,0.04)" : entry.status === "Failed" ? "rgba(255,68,68,0.04)" : "transparent",
-                                    borderTop: "1px solid #1A2A3A", borderLeft: entry.status === "Suspicious" ? "3px solid #FFB800" : entry.status === "Failed" ? "3px solid transparent" : "3px solid transparent"
-                                }}>
-                                <div style={{ fontSize: 13, color: "#8899AA" }}>{entry.date}</div>
-                                <div style={{ fontSize: 13, color: "#FFFFFF" }}>{entry.device}</div>
-                                <div style={{ fontSize: 13, color: "#FFFFFF" }}>{entry.browser}</div>
-                                <div style={{ fontSize: 13, color: "#FFFFFF" }}>{entry.location}</div>
-                                <div style={{ fontSize: 13, color: "#8899AA", fontFamily: "monospace" }}>{entry.ip}</div>
-                                <div className="flex items-center gap-2">
-                                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4, background: sc.bg, color: sc.color, borderRadius: 20, padding: "3px 10px", fontSize: 12, fontWeight: 500 }}>
-                                        {sc.emoji} {sc.label}
-                                    </span>
-                                    <a href="/security/access-logs" className="opacity-0 group-hover:opacity-100 transition-all duration-150 animate-slide-in-right" style={{ fontSize: 12, color: "#0066FF", whiteSpace: "nowrap" }}>View Details</a>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* Pagination */}
-                <div className="flex items-center justify-between mt-4">
-                    <p style={{ fontSize: 13, color: "#8899AA" }}>Showing 1-{filtered.length} of {filtered.length} entries</p>
-                    <div className="flex gap-2">
-                        <button className="w-8 h-8 rounded-lg text-sm font-medium" style={{ background: "#00E5A0", color: "#060B14", border: "none", cursor: "pointer" }}>1</button>
-                        <button className="w-8 h-8 rounded-lg text-sm" style={{ background: "#1A2A3A", color: "#8899AA", border: "none", cursor: "pointer" }}>2</button>
-                        <button className="w-8 h-8 rounded-lg text-sm" style={{ background: "#1A2A3A", color: "#8899AA", border: "none", cursor: "pointer" }}>3</button>
-                    </div>
-                </div>
+                <DataTable<LoginEntry>
+                    data={filtered}
+                    columns={COLUMNS}
+                    rowKey={(r) => `${r.date}-${r.ip}`}
+                    aria-label="Login history"
+                    emptyTitle="No login records"
+                    emptyDescription="No login records match the selected filter."
+                />
             </div>
         </div>
     );

@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import Page from "@/components/ui/Page";
+
+import { useState, useEffect } from "react";
 import { RefreshCw, Download, Printer } from "lucide-react";
+import { seededFloats } from "@/lib/random";
 
 const LOCATIONS = ["Mumbai HQ — Gate 1", "Mumbai HQ — Gate 2", "Pune Office", "Bengaluru Office"];
 
@@ -16,6 +19,9 @@ const QR_LOG = [
 export default function QRCodeAttendance() {
     const [selectedLoc, setSelectedLoc] = useState(0);
     const [countdown, setCountdown] = useState(300); // 5 mins
+
+    // Stable seeded QR cell pattern — deterministic per location
+    const qrCells = seededFloats(selectedLoc + 1, 100);
 
     useEffect(() => {
         const t = setInterval(() => {
@@ -32,6 +38,13 @@ export default function QRCodeAttendance() {
     const progress = (countdown / 300) * 100;
 
     return (
+        <Page
+            title="QR Code Attendance Setup"
+            subtitle="Generate and manage location-based QR codes for attendance marking"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Qr" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">QR Code Attendance Setup</h2>
             <p className="text-sm text-[#8899AA] mb-6">Generate and manage location-based QR codes for attendance marking</p>
@@ -56,8 +69,8 @@ export default function QRCodeAttendance() {
                                 <div className="w-full h-full p-4">
                                     {/* Simulated QR pattern */}
                                     <div className="grid grid-cols-10 gap-0.5 w-full h-full">
-                                        {Array.from({ length: 100 }, (_, i) => (
-                                            <div key={i} className="rounded-sm" style={{ backgroundColor: Math.random() > 0.5 ? "#000" : "#fff" }} />
+                                        {qrCells.map((v, i) => (
+                                            <div key={i} className="rounded-sm" style={{ backgroundColor: v > 0.5 ? "#000" : "#fff" }} />
                                         ))}
                                     </div>
                                 </div>
@@ -136,5 +149,7 @@ export default function QRCodeAttendance() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

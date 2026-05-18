@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import { Download, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { ChartWrapper } from "@/components/ui/chart-wrapper";
+import ChartWrapper from "@/components/ui/ChartWrapper";
 import { Tooltip as RechartsTooltip } from 'recharts';
 
 const ABS_DATA = [
@@ -25,6 +27,13 @@ const DEPT_ABS = [
 
 export default function AbsenteeismReport() {
     return (
+        <Page
+            title="Absenteeism Report"
+            subtitle="November 2024 • All Departments"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Absenteeism" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -128,5 +137,7 @@ export default function AbsenteeismReport() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

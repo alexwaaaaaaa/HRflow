@@ -1,161 +1,305 @@
 "use client";
-import React, { useState } from "react";
-import { ArrowLeft, Save, Globe, Eye, UploadCloud, Plus, Loader2 } from "lucide-react";
+
+import { useState } from "react";
+import { Globe, Eye, Plus, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import FormField from "@/components/ui/FormField";
+import { useToast } from "@/components/ui/Toast";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema (Tier 2 form — basic info fields)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const createJobSchema = z.object({
+    title: z.string().min(3, "Job title must be at least 3 characters"),
+    department: z.string().min(1, "Department is required"),
+    hiringManager: z.string().min(1, "Hiring manager is required"),
+    jobType: z.string().min(1, "Job type is required"),
+    workplaceType: z.string().min(1, "Workplace type is required"),
+});
+
+type CreateJobValues = z.infer<typeof createJobSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface PublishOption {
+    name: string;
+    desc: string;
+    active: boolean;
+}
+
+const PUBLISH_OPTIONS: PublishOption[] = [
+    { name: "Internal Job Board", desc: "Visible to employees", active: true },
+    { name: "Careers Page", desc: "Visible externally", active: true },
+    { name: "LinkedIn Jobs", desc: "Auto-syndicate via API", active: false },
+    { name: "Naukri.com", desc: "Auto-syndicate via API", active: false },
+];
+
+const SKILL_TAGS = ["React.js", "TypeScript", "3+ YOE", "System Design"];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function CreateJobScreen() {
-    const [saving, setSaving] = useState(false);
+    const toast = useToast();
     const [published, setPublished] = useState(false);
 
-    function handleSubmit() {
-        setSaving(true);
-        setTimeout(() => {
-            setSaving(false);
-            setPublished(true);
-        }, 1500);
-    }
+    const { control, handleSubmit, formState: { isSubmitting } } = useForm<CreateJobValues>({
+        resolver: zodResolver(createJobSchema),
+        defaultValues: {
+            title: "",
+            department: "Engineering",
+            hiringManager: "Priya Nair",
+            jobType: "Full-time",
+            workplaceType: "Hybrid",
+        },
+    });
+
+    const onSubmit = async (_data: CreateJobValues) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 1500));
+        setPublished(true);
+        toast.show({
+            variant: "success",
+            title: "Job published",
+            description: "Your job posting is now live on the careers page.",
+        });
+    };
 
     if (published) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-8">
-                <div className="text-center max-w-md">
-                    <div className="w-16 h-16 rounded-full bg-[#00E5A0]/20 border border-[#00E5A0]/30 mx-auto mb-4 flex items-center justify-center">
-                        <Globe size={28} className="text-[#00E5A0]" />
+            <Page
+                title="Job Published"
+                breadcrumbs={[
+                    { label: "Recruitment", href: "/recruitment/dashboard" },
+                    { label: "Jobs", href: "/recruitment/jobs" },
+                    { label: "Published" },
+                ]}
+                maxWidth="600px"
+            >
+                <Card padding="lg" className="text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[#00E5A0]/30 bg-[#00E5A0]/20">
+                        <Globe size={28} className="text-[#00E5A0]" aria-hidden="true" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Job Published Successfully!</h2>
-                    <p className="text-[#8899AA] text-sm mb-6">Senior Frontend Engineer role is now live on your careers page and syndicated to LinkedIn & Indeed.</p>
-                    <div className="flex gap-3 justify-center">
-                        <button className="h-10 px-4 bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl hover:bg-[#243040] transition-colors">View Live Posting</button>
-                        <button className="h-10 px-4 bg-[#0066FF] text-white text-sm font-bold rounded-xl hover:bg-[#0052cc] transition-colors">Go to Job Pipeline</button>
+                    <h2 className="mb-2 text-2xl font-bold text-white">Job Published Successfully!</h2>
+                    <p className="mb-6 text-sm text-[#8899AA]">
+                        Senior Frontend Engineer role is now live on your careers page and syndicated to
+                        LinkedIn &amp; Indeed.
+                    </p>
+                    <div className="flex justify-center gap-3">
+                        <Button variant="secondary">View Live Posting</Button>
+                        <Button>Go to Job Pipeline</Button>
                     </div>
-                </div>
-            </div>
+                </Card>
+            </Page>
         );
     }
 
     return (
-        <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                    <button className="w-10 h-10 bg-[#0D1928] border border-[#1A2A3A] hover:bg-[#1A2A3A] rounded-xl flex items-center justify-center text-[#8899AA] transition-colors"><ArrowLeft size={16} /></button>
-                    <div>
-                        <h1 className="text-3xl font-bold mb-1">Create Job Posting</h1>
-                        <p className="text-sm text-[#8899AA]">Draft a new requisition and publish to job boards</p>
-                    </div>
-                </div>
-                <div className="flex gap-3">
-                    <button className="h-10 px-4 bg-[#1A2A3A] text-white text-sm rounded-xl hover:bg-[#243040] flex items-center gap-2 transition-colors">
-                        <Save size={14} /> Save Draft
-                    </button>
-                    <button onClick={handleSubmit} disabled={saving} className="h-10 px-4 bg-[#00E5A0] text-[#060B14] text-sm font-bold rounded-xl hover:bg-[#00c98d] flex items-center gap-2 transition-all disabled:opacity-50">
-                        {saving ? <><Loader2 size={14} className="animate-spin" /> Publishing...</> : <><Globe size={14} /> Publish Job</>}
-                    </button>
-                </div>
-            </div>
+        <Page
+            title="Create Job Posting"
+            subtitle="Draft a new requisition and publish to job boards"
+            breadcrumbs={[
+                { label: "Recruitment", href: "/recruitment/dashboard" },
+                { label: "Jobs", href: "/recruitment/jobs" },
+                { label: "Create" },
+            ]}
+            maxWidth="900px"
+            actions={
+                <>
+                    <Button variant="secondary">Save Draft</Button>
+                    <Button
+                        icon={isSubmitting ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <Globe size={14} aria-hidden="true" />}
+                        isLoading={isSubmitting}
+                        loadingText="Publishing…"
+                        onClick={handleSubmit(onSubmit)}
+                    >
+                        Publish Job
+                    </Button>
+                </>
+            }
+        >
+            <form onSubmit={handleSubmit(onSubmit)} aria-label="Create job posting">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    <div className="space-y-6 lg:col-span-2">
+                        {/* Basic Info */}
+                        <Card padding="lg">
+                            <h3 className="mb-4 text-sm font-semibold text-white">Basic Information</h3>
+                            <div className="space-y-4">
+                                <FormField
+                                    control={control}
+                                    name="title"
+                                    label="Job Title *"
+                                    inputProps={{ placeholder: "e.g. Senior Frontend Engineer" }}
+                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label htmlFor="department" className="mb-1.5 block text-xs font-medium text-[#8899AA]">
+                                            Department *
+                                        </label>
+                                        <select
+                                            id="department"
+                                            className="h-10 w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-3 text-sm text-white focus:border-[#0066FF] focus:outline-none"
+                                        >
+                                            <option>Engineering</option>
+                                            <option>Sales</option>
+                                            <option>Marketing</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="hiring-manager" className="mb-1.5 block text-xs font-medium text-[#8899AA]">
+                                            Hiring Manager *
+                                        </label>
+                                        <select
+                                            id="hiring-manager"
+                                            className="h-10 w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-3 text-sm text-white focus:border-[#0066FF] focus:outline-none"
+                                        >
+                                            <option>Priya Nair</option>
+                                            <option>Rajesh Kumar</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label htmlFor="job-type" className="mb-1.5 block text-xs font-medium text-[#8899AA]">
+                                            Job Type
+                                        </label>
+                                        <select
+                                            id="job-type"
+                                            className="h-10 w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-3 text-sm text-white focus:border-[#0066FF] focus:outline-none"
+                                        >
+                                            <option>Full-time</option>
+                                            <option>Contract</option>
+                                            <option>Internship</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="workplace-type" className="mb-1.5 block text-xs font-medium text-[#8899AA]">
+                                            Workplace Type
+                                        </label>
+                                        <select
+                                            id="workplace-type"
+                                            className="h-10 w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-3 text-sm text-white focus:border-[#0066FF] focus:outline-none"
+                                        >
+                                            <option>Hybrid</option>
+                                            <option>On-site</option>
+                                            <option>Remote</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Basic Info */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-semibold mb-4 text-sm">Basic Information</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Job Title *</label>
-                                <input placeholder="e.g. Senior Frontend Engineer" className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white placeholder-[#445566] focus:outline-none focus:border-[#0066FF] transition-colors" />
+                        {/* Job Description — Tier 3: rich-text fallback */}
+                        <Card padding="lg">
+                            <div className="mb-4 flex items-center justify-between">
+                                <h3 className="text-sm font-semibold text-white">Job Description</h3>
+                                <Button variant="outline" size="sm">AI Generate ✨</Button>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Department *</label>
-                                    <select className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF] transition-colors">
-                                        <option>Engineering</option><option>Sales</option><option>Marketing</option>
-                                    </select>
+                            {/* TODO: replace with rich-text editor */}
+                            <div className="mb-4 overflow-hidden rounded-xl border border-[#1A2A3A] bg-[#0A1420]">
+                                <div className="flex items-center gap-1 border-b border-[#1A2A3A] p-1.5">
+                                    {["B", "I", "U", "List", "Link"].map((t) => (
+                                        <button
+                                            key={t}
+                                            type="button"
+                                            className="rounded px-2 py-1 text-xs text-[#8899AA] transition-colors hover:bg-[#1A2A3A]"
+                                        >
+                                            {t}
+                                        </button>
+                                    ))}
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Hiring Manager *</label>
-                                    <select className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF] transition-colors">
-                                        <option>Priya Nair</option><option>Rajesh Kumar</option>
-                                    </select>
-                                </div>
+                                <textarea
+                                    id="job-description"
+                                    aria-label="Job description"
+                                    rows={8}
+                                    placeholder="Write the job description, responsibilities, and requirements here…"
+                                    className="w-full resize-none bg-transparent p-4 text-sm text-white placeholder-[#445566] focus:outline-none"
+                                />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Job Type</label>
-                                    <select className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF] transition-colors">
-                                        <option>Full-time</option><option>Contract</option><option>Internship</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Workplace Type</label>
-                                    <select className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF] transition-colors">
-                                        <option>Hybrid</option><option>On-site</option><option>Remote</option>
-                                    </select>
-                                </div>
+
+                            <div className="flex flex-wrap gap-2">
+                                {SKILL_TAGS.map((tag) => (
+                                    <div
+                                        key={tag}
+                                        className="flex items-center gap-1 rounded-lg bg-[#1A2A3A] px-2.5 py-1.5 text-xs text-white"
+                                    >
+                                        {tag}{" "}
+                                        <button
+                                            type="button"
+                                            aria-label={`Remove ${tag} tag`}
+                                            className="ml-1 text-[#8899AA] hover:text-[#FF4444]"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    icon={<Plus size={12} aria-hidden="true" />}
+                                >
+                                    Add Skill Tag
+                                </Button>
                             </div>
-                        </div>
+                        </Card>
                     </div>
 
-                    {/* Job Description */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold text-sm">Job Description</h3>
-                            <button className="text-xs text-[#0066FF] font-medium border border-[#0066FF] rounded-lg px-2 py-1 flex items-center gap-1 hover:bg-[#0066FF]/10 transition-colors">AI Generate ✨</button>
-                        </div>
-                        <div className="mb-4 bg-[#0A1420] border border-[#1A2A3A] rounded-xl overflow-hidden">
-                            <div className="flex items-center gap-1 border-b border-[#1A2A3A] p-1.5">
-                                {['B', 'I', 'U', 'List', 'Link'].map(t => (
-                                    <button key={t} className="px-2 py-1 hover:bg-[#1A2A3A] text-xs text-[#8899AA] rounded transition-colors">{t}</button>
+                    <div className="space-y-6">
+                        {/* Publishing options */}
+                        <Card padding="lg">
+                            <h3 className="mb-4 text-sm font-semibold text-white">Publishing options</h3>
+                            <div className="space-y-4">
+                                {PUBLISH_OPTIONS.map((opt) => (
+                                    <div key={opt.name} className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm font-medium text-white">{opt.name}</p>
+                                            <p className="text-[10px] text-[#445566]">{opt.desc}</p>
+                                        </div>
+                                        <div
+                                            className={`flex h-5 w-9 cursor-pointer items-center rounded-full px-0.5 transition-colors ${
+                                                opt.active ? "bg-[#00E5A0]" : "bg-[#1A2A3A]"
+                                            }`}
+                                            role="switch"
+                                            aria-checked={opt.active}
+                                            aria-label={opt.name}
+                                        >
+                                            <div
+                                                className={`h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                                                    opt.active ? "translate-x-4" : "translate-x-0"
+                                                }`}
+                                            />
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
-                            <textarea rows={8} placeholder="Write the job description, responsibilities, and requirements here..." className="w-full bg-transparent p-4 text-sm text-white placeholder-[#445566] focus:outline-none resize-none" />
-                        </div>
+                        </Card>
 
-                        <div className="flex flex-wrap gap-2">
-                            {["React.js", "TypeScript", "3+ YOE", "System Design"].map(tag => (
-                                <div key={tag} className="flex items-center gap-1 bg-[#1A2A3A] text-xs px-2.5 py-1.5 rounded-lg text-white">
-                                    {tag} <button className="text-[#8899AA] hover:text-[#FF4444] ml-1">×</button>
-                                </div>
-                            ))}
-                            <button className="flex items-center gap-1 text-[#0066FF] text-xs px-2.5 py-1.5 border border-dashed border-[#0066FF] rounded-lg hover:bg-[#0066FF]/10 transition-colors">
-                                <Plus size={12} /> Add Skill Tag
-                            </button>
-                        </div>
+                        {/* Preview widget */}
+                        <Card padding="lg">
+                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#1A2A3A]">
+                                <Eye size={20} className="text-[#8899AA]" aria-hidden="true" />
+                            </div>
+                            <h4 className="mb-2 font-bold text-white">How it looks</h4>
+                            <p className="mb-4 text-xs text-[#8899AA]">
+                                Preview the job posting exactly as candidates will see it across different
+                                platforms.
+                            </p>
+                            <Button variant="outline" size="sm" className="w-full justify-center">
+                                Open Preview
+                            </Button>
+                        </Card>
                     </div>
                 </div>
-
-                <div className="space-y-6">
-                    {/* Settings & Syndication */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-semibold mb-4 text-sm">Publishing options</h3>
-                        <div className="space-y-4">
-                            {[
-                                { name: "Internal Job Board", desc: "Visible to employees", active: true },
-                                { name: "Careers Page", desc: "Visible externally", active: true },
-                                { name: "LinkedIn Jobs", desc: "Auto-syndicate via API", active: false },
-                                { name: "Naukri.com", desc: "Auto-syndicate via API", active: false }
-                            ].map((opt, i) => (
-                                <div key={i} className="flex items-center justify-between">
-                                    <div>
-                                        <p className="text-sm font-medium text-white">{opt.name}</p>
-                                        <p className="text-[10px] text-[#445566]">{opt.desc}</p>
-                                    </div>
-                                    <div className={`w-9 h-5 rounded-full flex items-center px-0.5 cursor-pointer transition-colors ${opt.active ? 'bg-[#00E5A0]' : 'bg-[#1A2A3A]'}`}>
-                                        <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${opt.active ? 'translate-x-4' : 'translate-x-0'}`} />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Preview widget */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                        <div className="w-12 h-12 bg-[#1A2A3A] rounded-xl flex items-center justify-center mb-4">
-                            <Eye size={20} className="text-[#8899AA]" />
-                        </div>
-                        <h4 className="font-bold text-white mb-2">How it looks</h4>
-                        <p className="text-xs text-[#8899AA] mb-4">Preview the job posting exactly as candidates will see it across different platforms.</p>
-                        <button className="w-full h-9 bg-transparent border border-[#2A3A4A] text-[#8899AA] text-xs font-medium rounded-lg hover:border-[#445566] hover:text-white transition-all">Open Preview</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </form>
+        </Page>
     );
 }

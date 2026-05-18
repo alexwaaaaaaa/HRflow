@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Globe, MapPin, CheckCircle2, AlertTriangle, Info, TrendingUp } from 'lucide-react';
 
 export default function LivingWageScreen() {
     return (
+        <Page
+            title="Global Living Wage Tracker"
+            subtitle="Ensure compliance with global living wage standards and internal CSR commitments."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Living Wage" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -116,5 +125,7 @@ export default function LivingWageScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

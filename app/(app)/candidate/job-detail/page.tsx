@@ -1,17 +1,29 @@
 "use client";
 import React from 'react';
-import { MapPin, Briefcase, Clock, ArrowLeft, Share2, Globe, Heart } from 'lucide-react';
+import { MapPin, Briefcase, ArrowLeft, Share2, Globe, Heart } from 'lucide-react';
 import Link from 'next/link';
+import Page from '@/components/ui/Page';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
 
 export default function JobDetailScreen() {
     return (
-        <div className="min-h-screen bg-[#060D1A] py-10 px-6">
-            <div className="max-w-4xl mx-auto space-y-6">
+        <Page
+            title="Senior Frontend Engineer"
+            subtitle="Engineering · Bengaluru, India (Hybrid) · Full-time"
+            breadcrumbs={[
+                { label: 'Home', href: '/' },
+                { label: 'Careers', href: '/candidate/jobs' },
+                { label: 'Senior Frontend Engineer', href: '/candidate/job-detail' },
+            ]}
+        >
+            <div className="space-y-6">
+                <Link href="/candidate/jobs" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 inline-flex">
+                    <ArrowLeft size={16} aria-hidden="true" /> Back to all jobs
+                </Link>
 
-                <Link href="/candidate/jobs" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 inline-flex"><ArrowLeft size={16} /> Back to all jobs</Link>
-
-                <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                <Card padding="lg" className="relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" aria-hidden="true"></div>
 
                     <div className="flex justify-between items-start relative z-10">
                         <div>
@@ -19,12 +31,12 @@ export default function JobDetailScreen() {
                                 <span className="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase rounded-lg border border-indigo-500/30">Engineering</span>
                                 <span className="text-[#556677] text-sm">Req ID: JB001</span>
                             </div>
-                            <h1 className="text-4xl font-black text-white tracking-tight mb-4">Senior Frontend Engineer</h1>
+                            <h2 className="text-4xl font-black text-white tracking-tight mb-4">Senior Frontend Engineer</h2>
 
                             <div className="flex flex-wrap items-center gap-6 text-sm text-[#AABBCC]">
-                                <span className="flex items-center gap-2"><MapPin size={18} className="text-[#556677]" /> Bengaluru, India (Hybrid)</span>
-                                <span className="flex items-center gap-2"><Briefcase size={18} className="text-[#556677]" /> Full-time</span>
-                                <span className="flex items-center gap-2"><Globe size={18} className="text-[#556677]" /> Mid-Senior Level</span>
+                                <span className="flex items-center gap-2"><MapPin size={18} className="text-[#556677]" aria-hidden="true" /> Bengaluru, India (Hybrid)</span>
+                                <span className="flex items-center gap-2"><Briefcase size={18} className="text-[#556677]" aria-hidden="true" /> Full-time</span>
+                                <span className="flex items-center gap-2"><Globe size={18} className="text-[#556677]" aria-hidden="true" /> Mid-Senior Level</span>
                             </div>
                         </div>
 
@@ -33,16 +45,16 @@ export default function JobDetailScreen() {
                                 Apply Now
                             </Link>
                             <div className="flex gap-2">
-                                <button className="flex-1 bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white p-3 rounded-xl flex items-center justify-center transition-colors">
-                                    <Heart size={20} className="text-[#556677] hover:text-rose-400" />
-                                </button>
-                                <button className="flex-1 bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white p-3 rounded-xl flex items-center justify-center transition-colors">
-                                    <Share2 size={20} className="text-[#556677] hover:text-white" />
-                                </button>
+                                <Button variant="ghost" size="sm" aria-label="Save job">
+                                    <Heart size={20} />
+                                </Button>
+                                <Button variant="ghost" size="sm" aria-label="Share job">
+                                    <Share2 size={20} />
+                                </Button>
                             </div>
                         </div>
                     </div>
-                </div>
+                </Card>
 
                 <div className="grid md:grid-cols-3 gap-8 pt-4">
                     <div className="md:col-span-2 space-y-8 text-slate-300 leading-relaxed">
@@ -76,7 +88,7 @@ export default function JobDetailScreen() {
                     </div>
 
                     <div className="space-y-6">
-                        <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6">
+                        <Card padding="lg">
                             <h3 className="text-white font-bold mb-4">Life at HRFlow</h3>
                             <ul className="space-y-4">
                                 <li className="flex items-start gap-3 text-sm text-[#AABBCC]">
@@ -92,11 +104,10 @@ export default function JobDetailScreen() {
                                     <div><strong className="text-white block">Unlimited PTO</strong>Take the time you need to recharge, no questions asked.</div>
                                 </li>
                             </ul>
-                        </div>
+                        </Card>
                     </div>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

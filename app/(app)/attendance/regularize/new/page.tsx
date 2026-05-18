@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { ChevronLeft, Upload, CheckCircle2, Clock } from "lucide-react";
 import Link from "next/link";
@@ -40,6 +42,13 @@ export default function RegularizationRequest() {
     }
 
     return (
+        <Page
+            title="Request Submitted!"
+            subtitle="Kavya Reddy will review within 24 hours."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Regularize", href: "/attendance/regularize" }, { label: "New" }]}
+            maxWidth="900px"
+        >
+
         <div className="p-6 md:p-8 max-w-[720px] mx-auto text-white">
             <Link href="/attendance" className="flex items-center gap-1 text-sm text-[#8899AA] hover:text-white mb-5 w-fit">
                 <ChevronLeft className="w-4 h-4" /> Attendance → My Attendance → Regularize
@@ -187,5 +196,7 @@ export default function RegularizationRequest() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

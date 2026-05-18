@@ -1,46 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    GitMerge, ChevronRight, CheckCircle2, AlertCircle, RefreshCw
-} from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, RefreshCw } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function LoanRestructureScreen() {
+const PRINCIPAL_BAL = 250000;
+const OLD_EMI = 14000;
+const INT_RATE = 8.5; // p.a.
+
+export default function LoanRestructurePage() {
     const [newTenure, setNewTenure] = useState(24);
 
-    // Mock vars based on Ln-8790
-    const principalBal = 250000;
-    const oldEmi = 14000;
-    const intRate = 8.5; // p.a.
-    const monthlyRate = intRate / 12 / 100;
-
-    const newEmi = principalBal * monthlyRate * Math.pow(1 + monthlyRate, newTenure) / (Math.pow(1 + monthlyRate, newTenure) - 1);
+    const monthlyRate = INT_RATE / 12 / 100;
+    const newEmi = PRINCIPAL_BAL * monthlyRate * Math.pow(1 + monthlyRate, newTenure) / (Math.pow(1 + monthlyRate, newTenure) - 1);
 
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col items-center">
-
-            <div className="w-full max-w-4xl text-left mb-6">
-                <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                    <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <Link href="/finance/loans" className="hover:text-white transition-colors">Loans</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <span className="text-white">Restructure</span>
-                </div>
-
-                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                    <GitMerge className="w-8 h-8 text-amber-400" />
-                    Restructure Loan Account
-                </h1>
-                <p className="text-sm text-[#8899AA] mt-1">Modify EMI amounts by extending or reducing the remaining tenure of an active loan.</p>
-            </div>
-
-            <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
-
+        <Page
+            title="Restructure Loan Account"
+            subtitle="Modify EMI amounts by extending or reducing the remaining tenure of an active loan."
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "Loans", href: "/finance/loans" },
+                { label: "Restructure" },
+            ]}
+            maxWidth="1000px"
+        >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2 space-y-6">
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-
+                    <Card padding="lg">
                         <div className="flex items-start justify-between mb-8 pb-6 border-b border-[#1A2A3A]">
                             <div>
                                 <h2 className="text-xl font-bold text-white">Sneha Rao</h2>
@@ -48,7 +38,7 @@ export default function LoanRestructureScreen() {
                             </div>
                             <div className="text-right">
                                 <p className="font-mono text-indigo-400 font-bold">LN-8790</p>
-                                <p className="text-amber-500 text-xs mt-1">Target Account</p>
+                                <Badge variant="warning" className="mt-1">Target Account</Badge>
                             </div>
                         </div>
 
@@ -62,21 +52,26 @@ export default function LoanRestructureScreen() {
 
                         <div>
                             <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                                <RefreshCw className="w-4 h-4 text-emerald-400" /> New Payment Terms
+                                <RefreshCw size={16} className="text-emerald-400" aria-hidden="true" /> New Payment Terms
                             </h3>
-
                             <div className="space-y-6">
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="block text-sm font-medium text-[#8899AA]">New Remaining Tenure</label>
+                                        <label htmlFor="new-tenure-slider" className="block text-sm font-medium text-[#8899AA]">New Remaining Tenure</label>
                                         <span className="text-emerald-400 font-bold">{newTenure} Months</span>
                                     </div>
                                     <input
+                                        id="new-tenure-slider"
                                         type="range"
-                                        min="6" max="60" step="1"
+                                        min="6"
+                                        max="60"
+                                        step="1"
                                         value={newTenure}
                                         onChange={(e) => setNewTenure(Number(e.target.value))}
                                         className="w-full h-2 bg-[#1A2A3A] rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                        aria-valuemin={6}
+                                        aria-valuemax={60}
+                                        aria-valuenow={newTenure}
                                     />
                                     <div className="flex justify-between text-xs text-[#8899AA] mt-2">
                                         <span>6 mo</span>
@@ -86,8 +81,9 @@ export default function LoanRestructureScreen() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-[#8899AA] mb-2">Reason for Restructuring</label>
+                                    <label htmlFor="restructure-reason" className="block text-sm font-medium text-[#8899AA] mb-2">Reason for Restructuring</label>
                                     <textarea
+                                        id="restructure-reason"
                                         rows={2}
                                         className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-amber-400 focus:outline-none"
                                         placeholder="Financial hardship, salary revision, etc."
@@ -95,63 +91,52 @@ export default function LoanRestructureScreen() {
                                 </div>
                             </div>
                         </div>
+                    </Card>
 
-                    </div>
-
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-
+                    <Card padding="lg">
                         <label className="flex items-start gap-3 cursor-pointer mb-6">
-                            <input type="checkbox" className="mt-1 bg-[#1A2A3A] border-[#2A3A4A] rounded text-emerald-500 focus:ring-0 focus:ring-offset-0" />
+                            <input type="checkbox" className="mt-1 accent-emerald-500" />
                             <div className="text-sm text-[#8899AA]">
                                 I confirm having obtained physical/digital approval from the employee acknowledging the new EMI schedule and revised interest implications.
                             </div>
                         </label>
-
-                        <button className="w-full flex justify-center items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-[#0B1221] font-semibold rounded-lg transition-colors shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                            <CheckCircle2 className="w-5 h-5" /> Apply Restructure Strategy
-                        </button>
-                    </div>
+                        <Button className="w-full" icon={<CheckCircle2 size={20} />}>Apply Restructure Strategy</Button>
+                    </Card>
                 </div>
 
+                {/* EMI Comparison Sidebar */}
                 <div className="md:col-span-1">
-                    <div className="bg-gradient-to-br from-[#1A2A3A]/40 to-[#0D1928] border border-[#2A3A4A] rounded-2xl p-6 sticky top-8">
+                    <Card padding="lg" className="sticky top-8 bg-gradient-to-br from-[#1A2A3A]/40 to-[#0D1928] border-[#2A3A4A]">
                         <h2 className="text-lg font-bold text-white mb-6">EMI Projection Comparison</h2>
-
                         <div className="space-y-6">
-
                             <div className="p-4 rounded-xl border border-pink-500/20 bg-pink-500/5 opacity-60">
                                 <p className="text-xs text-[#8899AA] mb-1">Old Monthly EMI</p>
-                                <div className="text-2xl font-bold text-white line-through decoration-pink-500">₹{oldEmi.toLocaleString()}</div>
+                                <div className="text-2xl font-bold text-white line-through decoration-pink-500">₹{OLD_EMI.toLocaleString()}</div>
                                 <p className="text-xs text-[#8899AA] mt-1">For 20 months</p>
                             </div>
-
-                            <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                            <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10">
                                 <p className="text-xs text-emerald-400 font-medium mb-1 flex justify-between">
                                     <span>New Monthly EMI</span>
-                                    {newEmi < oldEmi ? (
-                                        <span className="bg-emerald-500/20 px-1.5 py-0.5 rounded">-₹{(oldEmi - newEmi).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                    ) : (
-                                        <span className="bg-pink-500/20 text-pink-400 px-1.5 py-0.5 rounded">+₹{(newEmi - oldEmi).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                    )}
+                                    {newEmi < OLD_EMI
+                                        ? <span className="bg-emerald-500/20 px-1.5 py-0.5 rounded">-₹{(OLD_EMI - newEmi).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                        : <span className="bg-pink-500/20 text-pink-400 px-1.5 py-0.5 rounded">+₹{(newEmi - OLD_EMI).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                    }
                                 </p>
                                 <div className="text-3xl font-black text-white">₹{newEmi.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
-                                <p className="text-xs text-[#8899AA] mt-1">For {newTenure} months at {intRate}% p.a.</p>
+                                <p className="text-xs text-[#8899AA] mt-1">For {newTenure} months at {INT_RATE}% p.a.</p>
                             </div>
-
                             <div className="pt-4 border-t border-[#2A3A4A]">
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="text-[#8899AA]">Net Interest Impact</span>
-                                    <span className={newTenure > 20 ? 'text-pink-400' : 'text-emerald-400'}>
-                                        {newTenure > 20 ? 'Pays more interest' : 'Saves interest'}
+                                    <span className={newTenure > 20 ? "text-pink-400" : "text-emerald-400"}>
+                                        {newTenure > 20 ? "Pays more interest" : "Saves interest"}
                                     </span>
                                 </div>
                             </div>
                         </div>
-
-                    </div>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

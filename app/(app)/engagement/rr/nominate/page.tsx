@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
     Users, Search, Star, Award, ChevronRight, CheckCircle2, UserPlus, Info
@@ -44,6 +46,13 @@ export default function PeerNominationScreen() {
     };
 
     return (
+        <Page
+            title="Peer Nomination"
+            subtitle="Nominate your colleagues for major awards and recognition programs."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Nominate" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -88,13 +97,16 @@ export default function PeerNominationScreen() {
                                                 const Icon = cat.icon;
                                                 const isSelected = selectedCategory === cat.id;
                                                 return (
+
+
                                                     <label key={cat.id} className={`cursor-pointer border-2 rounded-2xl p-6 transition-all ${isSelected ? 'border-[#33E6FF] bg-[#1A2A3A]' : 'border-[#2A3A4A] bg-[#152336] hover:border-[#445566]'}`}>
                                                         <input type="radio" name="category" className="sr-only" checked={isSelected} onChange={() => setSelectedCategory(cat.id)} />
                                                         <Icon size={32} color={cat.color} className="mb-4" />
                                                         <h3 className={`font-bold text-sm mb-2 ${isSelected ? 'text-white' : 'text-[#CCDDEE]'}`}>{cat.name}</h3>
                                                         <p className="text-xs text-[#8899AA] leading-relaxed">{cat.desc}</p>
                                                     </label>
-                                                )
+                                                
+            )
                                             })}
                                         </div>
                                         <div className="flex justify-end pt-8">
@@ -209,5 +221,7 @@ export default function PeerNominationScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

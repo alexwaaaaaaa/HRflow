@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Archive, Search, FolderClosed, Calendar, FileText } from 'lucide-react';
 
@@ -6,6 +8,13 @@ export default function ArchiveScreen() {
     const [searchTerm, setSearchTerm] = useState('');
 
     return (
+        <Page
+            title="Notice Archive"
+            subtitle="Search through past announcements, expired policies, and historical communications."
+            breadcrumbs={[{ label: "Notice Board", href: "/notice-board" }, { label: "Archive" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -77,5 +86,7 @@ export default function ArchiveScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

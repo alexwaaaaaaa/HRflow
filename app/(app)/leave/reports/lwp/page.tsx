@@ -1,119 +1,174 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    AlertTriangle, Download, Filter, Search, Calendar, ChevronRight
-} from 'lucide-react';
+import { AlertTriangle, Calendar, ChevronRight, Download } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
 
-export default function LeaveWithoutPayDetail() {
-    const lwpData = [
-        { id: 'EMP044', name: 'Aditi Jain', dept: 'Design', dates: '12 Nov - 14 Nov', days: 3, reason: 'Sick leave exhausted.', status: 'Deducted in Nov Payroll' },
-        { id: 'EMP108', name: 'Suresh Kumar', dept: 'Engineering', dates: '24 Oct', days: 1, reason: 'Unapproved absence.', status: 'Pending Deduction' },
-    ];
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & static data
+// ─────────────────────────────────────────────────────────────────────────────
 
+type LWPStatus = "Deducted in Nov Payroll" | "Pending Deduction";
+
+interface LWPRow {
+    id: string;
+    name: string;
+    dept: string;
+    dates: string;
+    days: number;
+    reason: string;
+    status: LWPStatus;
+}
+
+const LWP_DATA: LWPRow[] = [
+    { id: "EMP044", name: "Aditi Jain", dept: "Design", dates: "12 Nov - 14 Nov", days: 3, reason: "Sick leave exhausted.", status: "Deducted in Nov Payroll" },
+    { id: "EMP108", name: "Suresh Kumar", dept: "Engineering", dates: "24 Oct", days: 1, reason: "Unapproved absence.", status: "Pending Deduction" },
+];
+
+const STATUS_VARIANT: Record<LWPStatus, "success" | "warning"> = {
+    "Deducted in Nov Payroll": "success",
+    "Pending Deduction": "warning",
+};
+
+const SUMMARY_CARDS = [
+    { label: "Total LWP Days (MTD)", value: "18 Days", variant: "danger" as const },
+    { label: "Affected Employees", value: "7 People", variant: "neutral" as const },
+    { label: "Pending Deductions", value: "4 Cases", variant: "warning" as const },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function EmployeeCell({ row }: { row: LWPRow }) {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-[1200px] mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1 flex items-center">
-                            Leave Without Pay (LWP) Details <AlertTriangle size={20} className="ml-3 text-[#FF4444]" />
-                        </h1>
-                        <p className="text-sm text-[#8899AA]">Track absences that result in pay deduction and ensure they are synced with payroll.</p>
-                    </div>
-                    <div className="flex space-x-3">
-                        <button className="px-4 py-2 bg-[#0D1928] border border-[#1A2A3A] text-sm font-semibold rounded-lg hover:bg-[#1A2A3A] transition-colors flex items-center text-white">
-                            <Download size={16} className="mr-2 text-[#00E5A0]" /> Export LWP Data
-                        </button>
-                    </div>
-                </div>
-
-                {/* Summary Cards */}
-                <div className="grid grid-cols-3 gap-6 mb-6">
-                    <div className="bg-[#FF4444]/5 border border-[#FF4444]/20 rounded-xl p-5 shadow-[0_0_15px_rgba(255,68,68,0.05)]">
-                        <div className="text-sm font-bold text-[#FF4444] mb-2 uppercase tracking-wider">Total LWP Days (MTD)</div>
-                        <div className="text-4xl font-black text-white">18 <span className="text-sm font-bold text-[#8899AA] uppercase">Days</span></div>
-                    </div>
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-5 shadow-lg">
-                        <div className="text-sm font-bold text-[#8899AA] mb-2 uppercase tracking-wider">Affected Employees</div>
-                        <div className="text-4xl font-black text-white">7 <span className="text-sm font-bold text-[#556677] uppercase">People</span></div>
-                    </div>
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-5 shadow-lg">
-                        <div className="text-sm font-bold text-[#8899AA] mb-2 uppercase tracking-wider">Pending Deductions</div>
-                        <div className="text-4xl font-black text-[#FFB800]">4 <span className="text-sm font-bold text-[#556677] uppercase">Cases</span></div>
-                    </div>
-                </div>
-
-                {/* Data Table */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl overflow-hidden shadow-lg">
-                    <div className="p-4 border-b border-[#1A2A3A] bg-[#0A1420] flex justify-between items-center">
-                        <div className="relative w-80">
-                            <Search size={16} className="absolute left-3 top-2.5 text-[#556677]" />
-                            <input
-                                type="text"
-                                placeholder="Search employee..."
-                                className="w-full bg-[#060B14] border border-[#1A2A3A] text-sm text-white rounded-lg pl-9 pr-3 py-2 outline-none focus:border-[#0066FF]"
-                            />
-                        </div>
-                        <div className="flex space-x-3">
-                            <button className="px-3 py-2 bg-[#060B14] border border-[#1A2A3A] rounded-lg text-[#8899AA] hover:text-white transition-colors">
-                                <Filter size={16} />
-                            </button>
-                        </div>
-                    </div>
-
-                    <table className="w-full text-left text-sm whitespace-nowrap">
-                        <thead className="bg-[#0A1420] border-b border-[#1A2A3A]">
-                            <tr>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider">Employee</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider">LWP Dates</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider text-center">Days</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider">Reason / Origin</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider">Payroll Status</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#1A2A3A]">
-                            {lwpData.map((row, i) => (
-                                <tr key={i} className="hover:bg-[#1A2A3A]/30 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="font-bold text-white text-base">{row.name}</div>
-                                        <div className="text-xs text-[#8899AA]">{row.id} • {row.dept}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="font-bold text-white flex items-center"><Calendar size={14} className="mr-2 text-[#0066FF]" /> {row.dates}</div>
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <div className="text-lg font-black text-[#FF4444]">{row.days}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="text-sm text-[#8899AA] truncate max-w-[200px]" title={row.reason}>{row.reason}</div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {row.status.includes('Pending') ? (
-                                            <span className="px-2 py-1 text-xs font-bold uppercase bg-[#FFB800]/10 text-[#FFB800] border border-[#FFB800]/20 rounded tracking-wider">
-                                                Pending Deduction
-                                            </span>
-                                        ) : (
-                                            <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00E5A0]/10 text-[#00E5A0] border border-[#00E5A0]/20 rounded tracking-wider">
-                                                Processed
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="text-[#0066FF] hover:text-[#00E5A0] font-bold text-sm transition-colors flex items-center justify-end w-full">
-                                            View Details <ChevronRight size={16} className="ml-1" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
+        <div>
+            <p className="text-base font-bold text-white">{row.name}</p>
+            <p className="text-xs text-[#8899AA]">{row.id} · {row.dept}</p>
         </div>
+    );
+}
+
+function DatesCell({ row }: { row: LWPRow }) {
+    return (
+        <div className="flex items-center gap-2 font-bold text-white">
+            <Calendar size={14} className="text-[#0066FF]" aria-hidden="true" />
+            {row.dates}
+        </div>
+    );
+}
+
+function ActionsCell() {
+    return (
+        <Button
+            variant="ghost"
+            size="sm"
+            iconRight={<ChevronRight size={16} aria-hidden="true" />}
+        >
+            View Details
+        </Button>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Columns
+// ─────────────────────────────────────────────────────────────────────────────
+
+const COLUMNS: Column<LWPRow>[] = [
+    {
+        key: "employee",
+        label: "Employee",
+        render: (r) => <EmployeeCell row={r} />,
+        sortable: true,
+        sortValue: (r) => r.name,
+    },
+    {
+        key: "dates",
+        label: "LWP Dates",
+        render: (r) => <DatesCell row={r} />,
+    },
+    {
+        key: "days",
+        label: "Days",
+        align: "center",
+        render: (r) => <span className="text-lg font-black text-[#FF4444]">{r.days}</span>,
+        sortable: true,
+        sortValue: (r) => r.days,
+    },
+    {
+        key: "reason",
+        label: "Reason / Origin",
+        render: (r) => (
+            <span className="max-w-[200px] truncate text-sm text-[#8899AA]" title={r.reason}>
+                {r.reason}
+            </span>
+        ),
+    },
+    {
+        key: "status",
+        label: "Payroll Status",
+        render: (r) => <Badge variant={STATUS_VARIANT[r.status]}>{r.status}</Badge>,
+    },
+    {
+        key: "actions",
+        label: "",
+        align: "right",
+        render: () => <ActionsCell />,
+    },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function LWPDetailPage() {
+    return (
+        <Page
+            title="Leave Without Pay (LWP) Details"
+            subtitle="Track absences that result in pay deduction and ensure they are synced with payroll"
+            breadcrumbs={[
+                { label: "Leave", href: "/leave/dashboard" },
+                { label: "Reports", href: "/leave/reports" },
+                { label: "LWP" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <Button variant="secondary" icon={<Download size={14} aria-hidden="true" />}>
+                    Export LWP Data
+                </Button>
+            }
+        >
+            <div className="space-y-6">
+                {/* Summary cards */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                    {SUMMARY_CARDS.map((c) => (
+                        <Card key={c.label} padding="md">
+                            <div className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#8899AA]">
+                                {c.variant === "danger" && <AlertTriangle size={14} aria-hidden="true" />}
+                                {c.label}
+                            </div>
+                            <p className="text-4xl font-black text-white">{c.value}</p>
+                        </Card>
+                    ))}
+                </div>
+
+                {/* Data table */}
+                <Card padding="none">
+                    <DataTable<LWPRow>
+                        data={LWP_DATA}
+                        columns={COLUMNS}
+                        rowKey={(r) => r.id}
+                        searchable
+                        searchPlaceholder="Search employee…"
+                        aria-label="Leave without pay records"
+                        emptyTitle="No LWP records"
+                        emptyDescription="No leave without pay instances found for the selected period."
+                    />
+                </Card>
+            </div>
+        </Page>
     );
 }

@@ -1,5 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
 import { FileCheck, ArrowLeft, Download, Mail, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,6 +14,13 @@ const CERTS = [
 
 export default function Form16AScreen() {
     return (
+        <Page
+            title="Form 16A Generation"
+            subtitle="Generate and distribute quarterly TDS certificates to contractors"
+            breadcrumbs={[{ label: "Contractor", href: "/contractor" }, { label: "Form 16a" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/contractor/list" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Contractor Payroll</Link>
             <div className="flex items-center justify-between">
@@ -78,5 +87,7 @@ export default function Form16AScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

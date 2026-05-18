@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Target, Users, AlertTriangle, TrendingUp, Presentation, Crown } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SuccessionDashboardScreen() {
     return (
+        <Page
+            title="Executive Succession Dashboard"
+            subtitle="Monitor bench strength, critical role coverage, and leadership continuity planning."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Dashboard" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -107,5 +116,7 @@ export default function SuccessionDashboardScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

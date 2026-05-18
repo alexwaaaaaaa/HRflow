@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Gift, Star, Clock, ArrowRight, Wallet, History, TrendingUp, TrendingDown, Target, Zap, Shield, Users, Heart
+    Gift, Star, Clock, ArrowRight, Wallet, TrendingUp, TrendingDown, Target, Zap, Shield, Users, Heart
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,6 +28,13 @@ export default function MyRewardsScreen() {
     ];
 
     return (
+        <Page
+            title="My Rewards"
+            subtitle="Track your points, view earned badges, and manage your redemptions."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "My Rewards" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)]">
 
             <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -118,6 +127,8 @@ export default function MyRewardsScreen() {
                                     {BADGES.map(badge => {
                                         const Icon = badge.icon;
                                         return (
+
+
                                             <div key={badge.id} className="flex flex-col items-center">
                                                 <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-3 relative ${badge.unlocked ? 'bg-[#152336] border-2 shadow-lg shadow-[#000000]/50' : 'bg-[#0A1420] border-2 border-[#1A2A3A] opacity-40 grayscale'}`} style={badge.unlocked ? { borderColor: badge.color } : {}}>
                                                     <Icon size={32} color={badge.unlocked ? badge.color : '#8899AA'} />
@@ -129,7 +140,8 @@ export default function MyRewardsScreen() {
                                                 </div>
                                                 <span className={`text-sm font-bold text-center leading-tight ${badge.unlocked ? 'text-white' : 'text-[#445566]'}`}>{badge.name}</span>
                                             </div>
-                                        )
+                                        
+            )
                                     })}
                                 </div>
                             </div>
@@ -224,6 +236,8 @@ export default function MyRewardsScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }
 

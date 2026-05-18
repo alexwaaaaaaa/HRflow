@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
 import {
-    Search, Filter, ShieldCheck, Download, Activity, Eye, FileText, User,
-    Trash2, Edit, AlertCircle, Calendar, UploadCloud
+    Search, ShieldCheck, Download, Activity, Eye, FileText, User,
+    Trash2, AlertCircle, Calendar, UploadCloud
 } from 'lucide-react';
 
 const AUDIT_LOGS = [
@@ -16,6 +18,13 @@ const AUDIT_LOGS = [
 
 export default function DocumentAuditScreen() {
     return (
+        <Page
+            title="Document Audit Trail"
+            subtitle="Immutable log of all interactions, permission changes, and document lifecycle events."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Audit" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col h-screen">
             <div className="max-w-[1400px] mx-auto w-full flex flex-col flex-1">
 
@@ -131,5 +140,7 @@ export default function DocumentAuditScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

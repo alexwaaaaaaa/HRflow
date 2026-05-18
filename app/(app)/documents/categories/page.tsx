@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Folder, FolderOpen, Plus, MoreVertical, Edit2, Trash2, ShieldCheck, UserCheck, Lock
+    Folder, FolderOpen, Plus, Edit2, Trash2, ShieldCheck, UserCheck, Lock
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -15,6 +17,13 @@ const CATEGORIES = [
 
 export default function DocumentCategoryScreen() {
     return (
+        <Page
+            title="Document Categories"
+            subtitle="Manage global document classification and folder structures."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Categories" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-6xl mx-auto">
 
@@ -90,5 +99,7 @@ export default function DocumentCategoryScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

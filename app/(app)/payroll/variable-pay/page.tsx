@@ -2,13 +2,19 @@
 
 import React, { useState } from "react";
 import {
-    TrendingUp, Users, Clock, IndianRupee, Search, Filter,
-    Download, ChevronRight, Loader2, CheckCircle2, BarChart3,
-    AlertCircle, Plus, Upload
+    TrendingUp, Users, Clock, IndianRupee, Download,
+    ChevronRight, Loader2, CheckCircle2, BarChart3,
+    AlertCircle, Plus, Upload,
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from 'recharts';
-import { Tooltip as RechartsTooltip } from "recharts";
-import { ChartWrapper } from "@/components/ui/chart-wrapper";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, Tooltip as RechartsTooltip } from "recharts";
+import ChartWrapper from "@/components/ui/ChartWrapper";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+// ─── Types & static data ──────────────────────────────────────────────────────
 
 interface Employee {
     name: string;
@@ -40,220 +46,353 @@ const DEPT_CHART = [
 ];
 
 const STATUS_MAP = {
-    approved: { label: "Approved", bg: "rgba(0,229,160,0.1)", color: "#00E5A0" },
-    pending: { label: "Pending Input", bg: "rgba(255,184,0,0.1)", color: "#FFB800" },
-    missing: { label: "No Data", bg: "rgba(255,68,68,0.1)", color: "#FF4444" },
-    rejected: { label: "Rejected", bg: "rgba(136,153,170,0.1)", color: "#8899AA" },
+    approved: { label: "Approved", variant: "success" as const },
+    pending: { label: "Pending Input", variant: "warning" as const },
+    missing: { label: "No Data", variant: "danger" as const },
+    rejected: { label: "Rejected", variant: "neutral" as const },
 };
 
+const CHART_TOOLTIP_STYLE = { background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8 };
+
+// ─── Module-scope subcomponents ───────────────────────────────────────────────
+
+function EmployeeCell({ row }: { row: Employee }) {
+    return (
+        <div className="flex items-center gap-3">
+            <div
+                aria-hidden="true"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1A2A3A] text-[10px] font-bold text-[#8899AA]"
+            >
+                {row.avatar}
+            </div>
+            <div>
+                <p className="text-sm font-medium text-white">{row.name}</p>
+                <p className="text-[11px] text-[#445566]">{row.emp}</p>
+            </div>
+        </div>
+    );
+}
+
+function RoleCell({ row }: { row: Employee }) {
+    return (
+        <div>
+            <p className="text-sm text-[#8899AA]">{row.role}</p>
+            <p className="text-[11px] text-[#445566]">{row.dept}</p>
+        </div>
+    );
+}
+
+function AchievementCell({ row }: { row: Employee }) {
+    if (row.achievement === 0) {
+        return <span className="text-xs text-[#445566]">No data</span>;
+    }
+    const color = row.achievement >= 100 ? "#00E5A0" : row.achievement >= 85 ? "#FFB800" : "#FF4444";
+    return (
+        <div className="flex flex-col items-center gap-1">
+            <span className="text-sm font-semibold" style={{ color }}>{row.achievement}%</span>
+            <div className="h-1.5 w-20 rounded-full bg-[#1A2A3A]">
+                <div
+                    className="h-1.5 rounded-full transition-all"
+                    style={{ width: `${Math.min(row.achievement, 100)}%`, background: color }}
+                    role="progressbar"
+                    aria-valuenow={Math.min(row.achievement, 100)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${row.name} achievement`}
+                />
+            </div>
+        </div>
+    );
+}
+
+function PayoutCell({ row }: { row: Employee }) {
+    const payout = row.achievement > 0 ? Math.round(row.target * Math.min(row.achievement, 100) / 100) : 0;
+    return payout > 0 ? (
+        <span className="text-sm font-semibold text-[#00E5A0]">₹{payout.toLocaleString("en-IN")}</span>
+    ) : (
+        <span className="text-[#445566]">—</span>
+    );
+}
+
+function ActionCell({ row }: { row: Employee }) {
+    if (row.status === "pending" || row.status === "missing") {
+        return (
+            <Button variant="ghost" size="sm" icon={<Plus size={11} aria-hidden="true" />}>
+                Enter
+            </Button>
+        );
+    }
+    return (
+        <Button variant="ghost" size="sm" iconRight={<ChevronRight size={11} aria-hidden="true" />}>
+            View
+        </Button>
+    );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function VariablePayPage() {
-    const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    const filtered = EMPLOYEES.filter(e =>
-        (statusFilter === "all" || e.status === statusFilter) &&
-        (e.name.toLowerCase().includes(search.toLowerCase()) || e.dept.toLowerCase().includes(search.toLowerCase()))
+    const filtered = EMPLOYEES.filter((e) =>
+        statusFilter === "all" || e.status === statusFilter
     );
 
     const totalTarget = EMPLOYEES.reduce((s, e) => s + e.target, 0);
-    const totalEstPayout = EMPLOYEES.filter(e => e.achievement > 0)
+    const totalEstPayout = EMPLOYEES.filter((e) => e.achievement > 0)
         .reduce((s, e) => s + Math.round(e.target * Math.min(e.achievement, 100) / 100), 0);
-    const avgAchievement = Math.round(EMPLOYEES.filter(e => e.achievement > 0).reduce((s, e) => s + e.achievement, 0) / EMPLOYEES.filter(e => e.achievement > 0).length);
-    const pendingCount = EMPLOYEES.filter(e => e.status === "pending" || e.status === "missing").length;
+    const avgAchievement = Math.round(
+        EMPLOYEES.filter((e) => e.achievement > 0).reduce((s, e) => s + e.achievement, 0) /
+        EMPLOYEES.filter((e) => e.achievement > 0).length
+    );
+    const pendingCount = EMPLOYEES.filter((e) => e.status === "pending" || e.status === "missing").length;
 
     function handleSubmitToPayroll() {
         setSubmitting(true);
         setTimeout(() => { setSubmitting(false); setSubmitted(true); }, 2500);
     }
 
-    return (
-        <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
+    const columns: Column<Employee>[] = [
+        {
+            key: "employee",
+            label: "Employee",
+            render: (r) => <EmployeeCell row={r} />,
+            sortable: true,
+            sortValue: (r) => r.name,
+        },
+        {
+            key: "role",
+            label: "Role",
+            render: (r) => <RoleCell row={r} />,
+        },
+        {
+            key: "target",
+            label: "Target Variable (₹)",
+            align: "right",
+            render: (r) => <span className="text-sm font-medium text-white">₹{r.target.toLocaleString("en-IN")}</span>,
+            sortable: true,
+            sortValue: (r) => r.target,
+        },
+        {
+            key: "achievement",
+            label: "Achievement %",
+            align: "center",
+            render: (r) => <AchievementCell row={r} />,
+        },
+        {
+            key: "payout",
+            label: "Est. Payout (₹)",
+            align: "right",
+            render: (r) => <PayoutCell row={r} />,
+        },
+        {
+            key: "status",
+            label: "Status",
+            render: (r) => <Badge variant={STATUS_MAP[r.status].variant}>{STATUS_MAP[r.status].label}</Badge>,
+        },
+        {
+            key: "action",
+            label: "Action",
+            align: "center",
+            render: (r) => <ActionCell row={r} />,
+        },
+    ];
 
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold mb-1">Variable Pay</h1>
-                    <p className="text-sm text-[#8899AA]">Q4 FY 2024–25 · Performance-linked payout computation</p>
-                </div>
-                <div className="flex gap-3 flex-wrap">
-                    <button className="flex items-center gap-2 h-10 px-4 bg-[#1A2A3A] text-sm rounded-xl hover:bg-[#243040] transition-colors">
-                        <Upload size={15} /> Bulk Upload
-                    </button>
-                    <button className="flex items-center gap-2 h-10 px-4 bg-[#1A2A3A] text-sm rounded-xl hover:bg-[#243040] transition-colors">
-                        <Download size={15} /> Export
-                    </button>
-                    <button
+    return (
+        <Page
+            title="Variable Pay"
+            subtitle="Q4 FY 2024–25 · Performance-linked payout computation"
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll" },
+                { label: "Variable Pay" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Upload size={15} aria-hidden="true" />}>
+                        Bulk Upload
+                    </Button>
+                    <Button variant="secondary" icon={<Download size={15} aria-hidden="true" />}>
+                        Export
+                    </Button>
+                    <Button
                         onClick={handleSubmitToPayroll}
                         disabled={submitting || submitted}
-                        className={`flex items-center gap-2 h-10 px-5 text-sm font-semibold rounded-xl transition-all ${submitted ? "bg-[#00E5A0]/20 text-[#00E5A0] border border-[#00E5A0]/30" : "bg-[#00E5A0] text-[#060B14] hover:bg-[#00c98d]"}`}
+                        variant={submitted ? "outline" : "primary"}
+                        icon={
+                            submitting ? (
+                                <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+                            ) : submitted ? (
+                                <CheckCircle2 size={15} aria-hidden="true" />
+                            ) : (
+                                <TrendingUp size={15} aria-hidden="true" />
+                            )
+                        }
                     >
-                        {submitting ? <><Loader2 size={15} className="animate-spin" /> Submitting...</>
-                            : submitted ? <><CheckCircle2 size={15} /> Submitted to Payroll</>
-                                : <><TrendingUp size={15} /> Save & Submit to Payroll</>}
-                    </button>
-                </div>
-            </div>
-
-            {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                {[
-                    { label: "Total Target Variable", value: `₹${(totalTarget / 100000).toFixed(1)}L`, sub: "Budgeted across all eligible", icon: IndianRupee, color: "#FFB800" },
-                    { label: "Estimated Payout", value: `₹${(totalEstPayout / 100000).toFixed(2)}L`, sub: `Avg ${avgAchievement}% achievement`, icon: TrendingUp, color: "#00E5A0" },
-                    { label: "Eligible Employees", value: String(EMPLOYEES.length), sub: "Q4 variable pay entitled", icon: Users, color: "#0066FF" },
-                    { label: "Pending Inputs", value: String(pendingCount), sub: "Manager input required", icon: Clock, color: "#FF4444" },
-                ].map(card => (
-                    <div key={card.label} className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-5">
-                        <div className="flex items-start justify-between mb-3">
-                            <p className="text-xs text-[#8899AA]">{card.label}</p>
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: card.color + "18" }}>
-                                <card.icon size={15} style={{ color: card.color }} />
+                        {submitting ? "Submitting…" : submitted ? "Submitted to Payroll" : "Save & Submit to Payroll"}
+                    </Button>
+                </>
+            }
+        >
+            <div className="space-y-6">
+                {/* KPI Cards */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Card>
+                        <div className="mb-3 flex items-start justify-between">
+                            <p className="text-xs text-[#8899AA]">Total Target Variable</p>
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(255,184,0,0.1)]">
+                                <IndianRupee size={15} className="text-[#FFB800]" aria-hidden="true" />
                             </div>
                         </div>
-                        <p className="text-2xl font-bold text-white mb-0.5">{card.value}</p>
-                        <p className="text-[11px] text-[#8899AA]">{card.sub}</p>
-                    </div>
-                ))}
-            </div>
-
-            {/* Chart + breakdown side by side */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-6">
-                {/* Dept achievement chart */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-base font-semibold flex items-center gap-2"><BarChart3 size={16} className="text-[#0066FF]" /> Department Achievement %</h3>
-                        <span className="text-xs text-[#8899AA]">Q4 FY 2024–25</span>
-                    </div>
-                    <div className="h-[160px]">
-                        <ChartWrapper>
-                            <ChartWrapper height="h-[200px]">
-                                <BarChart data={DEPT_CHART} barSize={32}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#1A2A3A" vertical={false} />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#8899AA", fontSize: 12 }} />
-                                    <YAxis domain={[0, 130]} axisLine={false} tickLine={false} tick={{ fill: "#8899AA", fontSize: 11 }} />
-                                    <RechartsTooltip contentStyle={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8 }} itemStyle={{ color: "#fff" }} labelStyle={{ color: "#8899AA" }} formatter={(v) => [`${v}%`, "Achievement"]} />
-                                    <Bar dataKey="achieved" radius={[6, 6, 0, 0]}>
-                                        {DEPT_CHART.map(d => (
-                                            <Cell key={d.name} fill={d.achieved >= 100 ? "#00E5A0" : d.achieved >= 85 ? "#FFB800" : "#FF4444"} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ChartWrapper>
-                        </ChartWrapper>
-                    </div>
-                    <div className="flex gap-4 mt-2 text-xs text-[#8899AA]">
-                        <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-[#00E5A0]" /> ≥100%</span>
-                        <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-[#FFB800]" /> 85–99%</span>
-                        <span className="flex items-center gap-1"><span className="w-3 h-2 rounded bg-[#FF4444]" /> &lt;85%</span>
-                    </div>
-                </div>
-
-                {/* Pending alerts */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-                        <AlertCircle size={16} className="text-[#FFB800]" /> Missing Inputs
-                    </h3>
-                    <div className="space-y-3">
-                        {EMPLOYEES.filter(e => e.status === "missing").map(e => (
-                            <div key={e.emp} className="flex items-center gap-3 p-3 bg-[#FF4444]/5 border border-[#FF4444]/15 rounded-xl">
-                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-[10px] font-bold text-[#8899AA]">{e.avatar}</div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-white truncate">{e.name}</p>
-                                    <p className="text-[11px] text-[#8899AA]">{e.dept}</p>
-                                </div>
-                                <button className="text-xs text-[#0066FF] flex items-center hover:underline">
-                                    Remind <ChevronRight size={12} />
-                                </button>
+                        <p className="text-2xl font-bold text-white">₹{(totalTarget / 100000).toFixed(1)}L</p>
+                        <p className="mt-1 text-[11px] text-[#8899AA]">Budgeted across all eligible</p>
+                    </Card>
+                    <Card>
+                        <div className="mb-3 flex items-start justify-between">
+                            <p className="text-xs text-[#8899AA]">Estimated Payout</p>
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(0,229,160,0.1)]">
+                                <TrendingUp size={15} className="text-[#00E5A0]" aria-hidden="true" />
                             </div>
-                        ))}
-                        {EMPLOYEES.filter(e => e.status === "missing").length === 0 && (
-                            <p className="text-sm text-[#445566] text-center py-4">All data received ✓</p>
-                        )}
-                    </div>
+                        </div>
+                        <p className="text-2xl font-bold text-white">₹{(totalEstPayout / 100000).toFixed(2)}L</p>
+                        <p className="mt-1 text-[11px] text-[#8899AA]">Avg {avgAchievement}% achievement</p>
+                    </Card>
+                    <Card>
+                        <div className="mb-3 flex items-start justify-between">
+                            <p className="text-xs text-[#8899AA]">Eligible Employees</p>
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(0,102,255,0.1)]">
+                                <Users size={15} className="text-[#0066FF]" aria-hidden="true" />
+                            </div>
+                        </div>
+                        <p className="text-2xl font-bold text-white">{EMPLOYEES.length}</p>
+                        <p className="mt-1 text-[11px] text-[#8899AA]">Q4 variable pay entitled</p>
+                    </Card>
+                    <Card>
+                        <div className="mb-3 flex items-start justify-between">
+                            <p className="text-xs text-[#8899AA]">Pending Inputs</p>
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(255,68,68,0.1)]">
+                                <Clock size={15} className="text-red-400" aria-hidden="true" />
+                            </div>
+                        </div>
+                        <p className="text-2xl font-bold text-white">{pendingCount}</p>
+                        <p className="mt-1 text-[11px] text-[#8899AA]">Manager input required</p>
+                    </Card>
                 </div>
-            </div>
 
-            {/* Table toolbar */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
-                <div className="relative flex-1">
-                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#445566]" />
-                    <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search employee or department..."
-                        className="w-full h-10 bg-[#0D1928] border border-[#1A2A3A] rounded-xl pl-9 pr-3 text-sm text-white placeholder-[#445566] focus:outline-none focus:border-[#00E5A0] transition-colors" />
+                {/* Chart + Missing Inputs */}
+                <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+                    {/* Dept achievement chart */}
+                    <Card padding="lg">
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="flex items-center gap-2 text-base font-semibold text-white">
+                                <BarChart3 size={16} className="text-[#0066FF]" aria-hidden="true" />
+                                Department Achievement %
+                            </h3>
+                            <span className="text-xs text-[#8899AA]">Q4 FY 2024–25</span>
+                        </div>
+                        <ChartWrapper height="h-[200px]">
+                            <BarChart data={DEPT_CHART} barSize={32}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#1A2A3A" vertical={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#8899AA", fontSize: 12 }} />
+                                <YAxis domain={[0, 130]} axisLine={false} tickLine={false} tick={{ fill: "#8899AA", fontSize: 11 }} />
+                                <RechartsTooltip
+                                    contentStyle={CHART_TOOLTIP_STYLE}
+                                    itemStyle={{ color: "#fff" }}
+                                    labelStyle={{ color: "#8899AA" }}
+                                    formatter={(v) => [`${v}%`, "Achievement"]}
+                                />
+                                <Bar dataKey="achieved" radius={[6, 6, 0, 0]}>
+                                    {DEPT_CHART.map((d) => (
+                                        <Cell
+                                            key={d.name}
+                                            fill={d.achieved >= 100 ? "#00E5A0" : d.achieved >= 85 ? "#FFB800" : "#FF4444"}
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ChartWrapper>
+                        <div className="mt-3 flex gap-4 text-xs text-[#8899AA]" aria-label="Chart legend">
+                            <span className="flex items-center gap-1">
+                                <span className="h-2 w-3 rounded bg-[#00E5A0]" aria-hidden="true" /> ≥100%
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="h-2 w-3 rounded bg-[#FFB800]" aria-hidden="true" /> 85–99%
+                            </span>
+                            <span className="flex items-center gap-1">
+                                <span className="h-2 w-3 rounded bg-[#FF4444]" aria-hidden="true" /> &lt;85%
+                            </span>
+                        </div>
+                    </Card>
+
+                    {/* Missing Inputs */}
+                    <Card padding="lg">
+                        <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-white">
+                            <AlertCircle size={16} className="text-[#FFB800]" aria-hidden="true" />
+                            Missing Inputs
+                        </h3>
+                        <div className="space-y-3">
+                            {EMPLOYEES.filter((e) => e.status === "missing").map((e) => (
+                                <div
+                                    key={e.emp}
+                                    className="flex items-center gap-3 rounded-xl border border-red-500/15 bg-red-500/5 p-3"
+                                >
+                                    <div
+                                        aria-hidden="true"
+                                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1A2A3A] text-[10px] font-bold text-[#8899AA]"
+                                    >
+                                        {e.avatar}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-medium text-white">{e.name}</p>
+                                        <p className="text-[11px] text-[#8899AA]">{e.dept}</p>
+                                    </div>
+                                    <Button variant="ghost" size="sm" iconRight={<ChevronRight size={12} aria-hidden="true" />}>
+                                        Remind
+                                    </Button>
+                                </div>
+                            ))}
+                            {EMPLOYEES.filter((e) => e.status === "missing").length === 0 && (
+                                <p className="py-4 text-center text-sm text-[#445566]">All data received ✓</p>
+                            )}
+                        </div>
+                    </Card>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Filter size={14} className="text-[#445566]" />
-                    {["all", "approved", "pending", "missing"].map(s => (
-                        <button key={s} onClick={() => setStatusFilter(s)}
-                            className={`h-9 px-3 text-xs rounded-lg capitalize transition-all ${statusFilter === s ? "bg-[#0066FF] text-white" : "bg-[#1A2A3A] text-[#8899AA] hover:text-white"}`}>
-                            {s === "all" ? "All" : STATUS_MAP[s as keyof typeof STATUS_MAP]?.label}
+
+                {/* Filter tabs */}
+                <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter by status">
+                    {(["all", "approved", "pending", "missing"] as const).map((s) => (
+                        <button
+                            key={s}
+                            role="tab"
+                            aria-selected={statusFilter === s}
+                            onClick={() => setStatusFilter(s)}
+                            className={`rounded-lg px-3 py-2 text-xs capitalize transition-colors ${
+                                statusFilter === s
+                                    ? "bg-[#0066FF] text-white"
+                                    : "bg-[#1A2A3A] text-[#8899AA] hover:text-white"
+                            }`}
+                        >
+                            {s === "all" ? "All" : STATUS_MAP[s].label}
                         </button>
                     ))}
                 </div>
-            </div>
 
-            {/* Table */}
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead className="bg-[#0A1420]">
-                        <tr className="text-xs text-[#8899AA]">
-                            <th className="px-5 py-3.5 text-left font-medium">Employee</th>
-                            <th className="px-5 py-3.5 text-left font-medium">Role</th>
-                            <th className="px-5 py-3.5 text-right font-medium">Target Variable (₹)</th>
-                            <th className="px-5 py-3.5 text-center font-medium">Achievement %</th>
-                            <th className="px-5 py-3.5 text-right font-medium">Est. Payout (₹)</th>
-                            <th className="px-5 py-3.5 text-left font-medium">Status</th>
-                            <th className="px-5 py-3.5 text-center font-medium">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#0A1420]">
-                        {filtered.map(emp => {
-                            const cfg = STATUS_MAP[emp.status];
-                            const payout = emp.achievement > 0 ? Math.round(emp.target * Math.min(emp.achievement, 100) / 100) : 0;
-                            const achieveColor = emp.achievement >= 100 ? "#00E5A0" : emp.achievement >= 85 ? "#FFB800" : emp.achievement > 0 ? "#FF4444" : "#445566";
-                            return (
-                                <tr key={emp.emp} className="hover:bg-[#1A2A3A]/40 transition-colors">
-                                    <td className="px-5 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-[10px] font-bold text-[#8899AA]">{emp.avatar}</div>
-                                            <div>
-                                                <p className="font-medium text-white">{emp.name}</p>
-                                                <p className="text-[11px] text-[#445566]">{emp.emp}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-5 py-4 text-[#8899AA]">{emp.role}<br /><span className="text-[11px] text-[#445566]">{emp.dept}</span></td>
-                                    <td className="px-5 py-4 text-right font-medium text-white">₹{emp.target.toLocaleString("en-IN")}</td>
-                                    <td className="px-5 py-4">
-                                        {emp.achievement > 0 ? (
-                                            <div className="flex flex-col items-center gap-1">
-                                                <span className="font-semibold text-sm" style={{ color: achieveColor }}>{emp.achievement}%</span>
-                                                <div className="w-full max-w-[80px] bg-[#1A2A3A] rounded-full h-1.5">
-                                                    <div className="h-1.5 rounded-full transition-all" style={{ width: `${Math.min(emp.achievement, 100)}%`, background: achieveColor }} />
-                                                </div>
-                                            </div>
-                                        ) : <span className="text-[#445566] text-xs">No data</span>}
-                                    </td>
-                                    <td className="px-5 py-4 text-right">
-                                        {payout > 0 ? <span className="font-semibold text-[#00E5A0]">₹{payout.toLocaleString("en-IN")}</span> : <span className="text-[#445566]">—</span>}
-                                    </td>
-                                    <td className="px-5 py-4">
-                                        <span className="text-[11px] font-medium px-2.5 py-1 rounded-full whitespace-nowrap" style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
-                                    </td>
-                                    <td className="px-5 py-4 text-center">
-                                        {emp.status === "pending" || emp.status === "missing"
-                                            ? <button className="text-xs text-[#0066FF] hover:underline flex items-center mx-auto gap-1"><Plus size={11} /> Enter</button>
-                                            : <button className="text-xs text-[#8899AA] hover:text-white transition-colors flex items-center mx-auto gap-1">View <ChevronRight size={11} /></button>}
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                        {filtered.length === 0 && (
-                            <tr><td colSpan={7} className="px-5 py-12 text-center text-[#445566]">No employees found</td></tr>
-                        )}
-                    </tbody>
-                </table>
+                {/* Variable Pay Table */}
+                <Card padding="none">
+                    <DataTable<Employee>
+                        data={filtered}
+                        columns={columns}
+                        rowKey={(r) => r.emp}
+                        searchable
+                        searchPlaceholder="Search employee or department…"
+                        aria-label="Variable pay computation"
+                        emptyTitle="No employees found"
+                        emptyDescription="No employees match your current filter."
+                    />
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

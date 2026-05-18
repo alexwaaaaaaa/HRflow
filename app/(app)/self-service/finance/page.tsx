@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Landmark, ArrowLeft, ArrowRight, Wallet, Percent, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyFinanceScreen() {
     return (
+        <Page
+            title="My Finances"
+            subtitle="Manage salary accounts, advance salary, and statutory deposits."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Finance" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
             <div className="flex items-center justify-between">
@@ -75,5 +84,7 @@ export default function MyFinanceScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

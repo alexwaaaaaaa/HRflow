@@ -1,110 +1,134 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Calculator, Code2, HelpCircle, Save } from "lucide-react";
+import { Calculator, Code2, HelpCircle, Save } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// migrated: immersive-ui
+
+const VARIABLES = [
+    { name: "Basic", desc: "Basic Salary Value" },
+    { name: "Gross", desc: "Total Gross CTC" },
+    { name: "CityType", desc: "'Metro' or 'Non-Metro'" },
+    { name: "BaseDays", desc: "Total worked days" },
+    { name: "Age", desc: "Employee Age (for PT/TDS)" },
+] as const;
+
+const SNIPPET_BUTTONS = ["+ Basic", "+ Gross", "if ... else", "Math.min()"] as const;
 
 export default function FormulaBuilder() {
     return (
-        <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px" }}>
-            <div style={{ marginBottom: 32, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                <div>
-                    <Link href="/payroll-settings/components" style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8899AA", textDecoration: "none", fontSize: 14, marginBottom: 16 }}>
-                        <ArrowLeft size={16} /> Back to Components
-                    </Link>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 8 }}>Formula Builder: HRA</h1>
-                    <div style={{ fontSize: 14, color: "#8899AA" }}>House Rent Allowance calculation logic for CTC structures.</div>
-                </div>
-                <div style={{ display: "flex", gap: 12 }}>
-                    <button style={{ height: 40, padding: "0 16px", background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                        Cancel
-                    </button>
-                    <button style={{ height: 40, padding: "0 20px", background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                        <Save size={16} /> Save Formula
-                    </button>
-                </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 32 }}>
+        <Page
+            title="Formula Builder: HRA"
+            subtitle="House Rent Allowance calculation logic for CTC structures."
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll/dashboard" },
+                { label: "Settings", href: "/payroll-settings" },
+                { label: "Components", href: "/payroll-settings/components" },
+                { label: "Formula Builder" },
+            ]}
+            maxWidth="1000px"
+            actions={
+                <>
+                    <Button variant="secondary" href="/payroll-settings/components">Cancel</Button>
+                    <Button icon={<Save size={14} aria-hidden="true" />}>Save Formula</Button>
+                </>
+            }
+        >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Editor Area */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, overflow: "hidden" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 20px", background: "#0A1420", borderBottom: "1px solid #1A2A3A" }}>
-                            <Code2 size={18} color="#00E5A0" />
-                            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF" }}>Expression Editor</h3>
+                <div className="md:col-span-2 space-y-6">
+                    <Card padding="none">
+                        <div className="flex items-center gap-3 px-5 py-4 bg-[#0A1420] border-b border-[#1A2A3A]">
+                            <Code2 size={16} className="text-[#00E5A0]" aria-hidden="true" />
+                            <h3 className="text-sm font-semibold text-white">Expression Editor</h3>
                         </div>
-                        <div style={{ padding: 20 }}>
-                            <div style={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: 16, minHeight: 160, fontFamily: "monospace", fontSize: 14, color: "#FFFFFF", lineHeight: 1.6 }}>
-                                <span style={{ color: "#0066FF" }}>if</span> (CityType == <span style={{ color: "#FFB800" }}>&apos;Metro&apos;</span>) {'{\n'}
-                                <span style={{ paddingLeft: 20 }}>return Basic * <span style={{ color: "#00E5A0" }}>0.50</span>;\n</span>
-                                {'} '} <span style={{ color: "#0066FF" }}>else</span> {'{\n'}
-                                <span style={{ paddingLeft: 20 }}>return Basic * <span style={{ color: "#00E5A0" }}>0.40</span>;\n</span>
-                                {'}'}
+                        <div className="p-5">
+                            <div
+                                className="bg-[#060B14] border border-[#1A2A3A] rounded-lg p-4 min-h-40 font-mono text-sm text-white leading-relaxed"
+                                role="region"
+                                aria-label="Formula expression editor"
+                            >
+                                <span className="text-[#0066FF]">if</span> (CityType == <span className="text-[#FFB800]">&apos;Metro&apos;</span>) {"{"}
+                                <br />
+                                <span className="pl-5">return Basic * <span className="text-[#00E5A0]">0.50</span>;</span>
+                                <br />
+                                {"} "}<span className="text-[#0066FF]">else</span> {"{"}
+                                <br />
+                                <span className="pl-5">return Basic * <span className="text-[#00E5A0]">0.40</span>;</span>
+                                <br />
+                                {"}"}
                             </div>
-                            <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                                <button style={{ height: 28, padding: "0 12px", background: "#1A2A3A", border: "none", borderRadius: 4, color: "#FFFFFF", fontSize: 12, cursor: "pointer", fontFamily: "monospace" }}>+ Basic</button>
-                                <button style={{ height: 28, padding: "0 12px", background: "#1A2A3A", border: "none", borderRadius: 4, color: "#FFFFFF", fontSize: 12, cursor: "pointer", fontFamily: "monospace" }}>+ Gross</button>
-                                <button style={{ height: 28, padding: "0 12px", background: "#1A2A3A", border: "none", borderRadius: 4, color: "#FFFFFF", fontSize: 12, cursor: "pointer", fontFamily: "monospace" }}>if ... else</button>
-                                <button style={{ height: 28, padding: "0 12px", background: "#1A2A3A", border: "none", borderRadius: 4, color: "#FFFFFF", fontSize: 12, cursor: "pointer", fontFamily: "monospace" }}>Math.min()</button>
+                            <div className="mt-3 flex gap-2 flex-wrap">
+                                {SNIPPET_BUTTONS.map((btn) => (
+                                    <button
+                                        key={btn}
+                                        type="button"
+                                        className="h-7 px-3 bg-[#1A2A3A] rounded text-white text-xs font-mono hover:bg-[#2A3A4A] transition-colors"
+                                    >
+                                        {btn}
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                            <Calculator size={18} color="#0066FF" />
-                            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF" }}>Test Formula</h3>
+                    <Card padding="lg">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Calculator size={16} className="text-[#0066FF]" aria-hidden="true" />
+                            <h3 className="text-sm font-semibold text-white">Test Formula</h3>
                         </div>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+                        <div className="grid grid-cols-2 gap-4 mb-5">
                             <div>
-                                <label style={{ fontSize: 13, color: "#8899AA", display: "block", marginBottom: 6 }}>Basic Salary Input</label>
-                                <input type="number" defaultValue="40000" style={{ width: "100%", height: 38, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 12px", color: "#FFFFFF", fontSize: 14, outline: "none" }} />
+                                <label htmlFor="basic-input" className="block text-xs text-[#8899AA] mb-2">Basic Salary Input</label>
+                                <input
+                                    id="basic-input"
+                                    type="number"
+                                    defaultValue="40000"
+                                    className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 text-white text-sm outline-none focus:border-[#00E5A0]"
+                                />
                             </div>
                             <div>
-                                <label style={{ fontSize: 13, color: "#8899AA", display: "block", marginBottom: 6 }}>City Type</label>
-                                <select style={{ width: "100%", height: 38, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 12px", color: "#FFFFFF", fontSize: 14, outline: "none", cursor: "pointer" }}>
+                                <label htmlFor="city-type" className="block text-xs text-[#8899AA] mb-2">City Type</label>
+                                <select
+                                    id="city-type"
+                                    className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 text-white text-sm outline-none focus:border-[#00E5A0]"
+                                >
                                     <option>Metro</option>
                                     <option>Non-Metro</option>
                                 </select>
                             </div>
                         </div>
-                        <div style={{ background: "rgba(0,229,160,0.05)", border: "1px dashed rgba(0,229,160,0.3)", borderRadius: 8, padding: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <div style={{ fontSize: 14, color: "#8899AA" }}>Result:</div>
-                            <div style={{ fontSize: 24, fontWeight: 700, color: "#00E5A0" }}>₹20,000</div>
+                        <div className="bg-[#00E5A0]/5 border border-dashed border-[#00E5A0]/30 rounded-lg p-4 flex justify-between items-center">
+                            <span className="text-sm text-[#8899AA]">Result:</span>
+                            <span className="text-2xl font-bold text-[#00E5A0]">₹20,000</span>
                         </div>
-                    </div>
+                    </Card>
                 </div>
 
-                {/* Sidebar Variables */}
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", marginBottom: 16 }}>Available Variables</h3>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                        {[
-                            { name: "Basic", desc: "Basic Salary Value" },
-                            { name: "Gross", desc: "Total Gross CTC" },
-                            { name: "CityType", desc: "'Metro' or 'Non-Metro'" },
-                            { name: "BaseDays", desc: "Total worked days" },
-                            { name: "Age", desc: "Employee Age (for PT/TDS)" }
-                        ].map(va => (
-                            <div key={va.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 12, borderBottom: "1px solid #1A2A3A" }}>
-                                <div>
-                                    <div style={{ fontSize: 13, fontWeight: 600, color: "#FFFFFF", fontFamily: "monospace", display: "inline-block", background: "#1A2A3A", padding: "2px 6px", borderRadius: 4, marginBottom: 4 }}>{va.name}</div>
-                                    <div style={{ fontSize: 12, color: "#8899AA" }}>{va.desc}</div>
-                                </div>
-                            </div>
+                {/* Variables Sidebar */}
+                <Card padding="lg">
+                    <h3 className="text-sm font-semibold text-white mb-4">Available Variables</h3>
+                    <ul className="space-y-3" role="list">
+                        {VARIABLES.map((v) => (
+                            <li key={v.name} className="pb-3 border-b border-[#1A2A3A] last:border-b-0">
+                                <code className="inline-block bg-[#1A2A3A] px-2 py-0.5 rounded text-xs text-white font-mono mb-1">{v.name}</code>
+                                <p className="text-xs text-[#8899AA]">{v.desc}</p>
+                            </li>
                         ))}
-                    </div>
+                    </ul>
 
-                    <div style={{ marginTop: 24, padding: 16, background: "rgba(0,102,255,0.05)", borderRadius: 8, border: "1px solid rgba(0,102,255,0.2)" }}>
-                        <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                            <HelpCircle size={16} color="#0066FF" style={{ flexShrink: 0, marginTop: 2 }} />
-                            <div style={{ fontSize: 12, color: "#8899AA", lineHeight: 1.5 }}>
-                                Use JavaScript-like syntax. Use <span style={{ fontFamily: "monospace", color: "#FFFFFF" }}>Math.min(a,b)</span> for maximum limits or standard operators (<span style={{ fontFamily: "monospace", color: "#FFFFFF" }}>+, -, *, /</span>).
-                            </div>
+                    <div className="mt-6 p-4 bg-[#0066FF]/5 rounded-lg border border-[#0066FF]/20">
+                        <div className="flex gap-2 items-start">
+                            <HelpCircle size={14} className="text-[#0066FF] shrink-0 mt-0.5" aria-hidden="true" />
+                            <p className="text-xs text-[#8899AA] leading-relaxed">
+                                Use JavaScript-like syntax. Use <code className="font-mono text-white">Math.min(a,b)</code> for maximum limits or standard operators (<code className="font-mono text-white">+, -, *, /</code>).
+                            </p>
                         </div>
                     </div>
-                </div>
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

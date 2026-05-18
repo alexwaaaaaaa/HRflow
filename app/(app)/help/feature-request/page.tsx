@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { TrendingUp, ArrowLeft, ThumbsUp, MessageSquare, Search, ChevronUp, Tag, Plus } from 'lucide-react';
+import { TrendingUp, ArrowLeft, MessageSquare, Search, ChevronUp, Tag, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 const REQUESTS = [
@@ -30,6 +32,13 @@ export default function FeatureRequestScreen() {
     const filtered = REQUESTS.filter(r => !search || r.title.toLowerCase().includes(search.toLowerCase()) || r.category.toLowerCase().includes(search.toLowerCase()));
 
     return (
+        <Page
+            title="Feature Requests"
+            subtitle="Vote for features you want. We ship the most popular ones every sprint."
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Feature Request" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div className="flex items-center justify-between">
@@ -71,6 +80,8 @@ export default function FeatureRequestScreen() {
                     const hasVoted = voted.includes(req.id);
                     const cfg = STATUS_CONFIG[req.status] ?? STATUS_CONFIG['Considering'];
                     return (
+
+
                         <div key={req.id} className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-5 flex items-start gap-4 hover:border-[#2A3A4A] transition-all">
                             <button onClick={() => setVoted(p => hasVoted ? p.filter(x => x !== req.id) : [...p, req.id])}
                                 className={`flex flex-col items-center gap-1 px-3 py-2.5 rounded-xl border font-bold text-sm min-w-16 transition-all ${hasVoted ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-[#131B2B] border-[#2A3A4A] text-[#8899AA] hover:text-white hover:border-[#3A4A5A]'}`}>
@@ -93,9 +104,12 @@ export default function FeatureRequestScreen() {
                                 <MessageSquare size={12} /> {req.comments}
                             </div>
                         </div>
-                    );
+                    
+            );
                 })}
             </div>
         </div>
+    
+        </Page>
     );
 }

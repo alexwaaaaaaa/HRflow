@@ -1,18 +1,41 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Target, Search, Filter, ShieldAlert, CheckCircle2, ChevronRight, Users } from 'lucide-react';
+import { Target, Search, Filter, ShieldAlert, CheckCircle2, Users } from 'lucide-react';
 import Link from 'next/link';
+
+type CoverageColor = "emerald" | "rose" | "amber";
+
+const COVERAGE_TEXT_CLASSES: Record<CoverageColor, string> = {
+    emerald: "font-bold text-emerald-400",
+    rose: "font-bold text-rose-400",
+    amber: "font-bold text-amber-400",
+} as const;
+
+const COVERAGE_ICON_CLASSES: Record<CoverageColor, string> = {
+    emerald: "text-emerald-400",
+    rose: "text-rose-400",
+    amber: "text-amber-400",
+} as const;
 
 export default function CriticalRolesScreen() {
     const ROLES = [
-        { title: 'Chief Executive Officer', dept: 'Executive', incumbent: 'Arjun Mehta', impact: 'Extreme', coverage: 'Adequate', readiness: '1 Ready Now', color: 'emerald' },
-        { title: 'Chief Technology Officer', dept: 'Engineering', incumbent: 'Sarah Jenkins', impact: 'Extreme', coverage: 'Risk', readiness: '0 Ready Now (2 in 1-2 yrs)', color: 'rose' },
-        { title: 'VP, Global Sales', dept: 'Revenue', incumbent: 'David Torres', impact: 'High', coverage: 'Adequate', readiness: '2 Ready Now', color: 'emerald' },
-        { title: 'VP, Product Strategy', dept: 'Product', incumbent: 'Priya Sharma', impact: 'High', coverage: 'Vulnerable', readiness: '1 (Flight Risk)', color: 'amber' },
-        { title: 'Director, Cybersecurity', dept: 'Engineering', incumbent: 'Vacant', impact: 'High', coverage: 'Critical Risk', readiness: 'No Internal Successors', color: 'rose' },
+        { title: 'Chief Executive Officer', dept: 'Executive', incumbent: 'Arjun Mehta', impact: 'Extreme', coverage: 'Adequate', readiness: '1 Ready Now', color: 'emerald' as CoverageColor },
+        { title: 'Chief Technology Officer', dept: 'Engineering', incumbent: 'Sarah Jenkins', impact: 'Extreme', coverage: 'Risk', readiness: '0 Ready Now (2 in 1-2 yrs)', color: 'rose' as CoverageColor },
+        { title: 'VP, Global Sales', dept: 'Revenue', incumbent: 'David Torres', impact: 'High', coverage: 'Adequate', readiness: '2 Ready Now', color: 'emerald' as CoverageColor },
+        { title: 'VP, Product Strategy', dept: 'Product', incumbent: 'Priya Sharma', impact: 'High', coverage: 'Vulnerable', readiness: '1 (Flight Risk)', color: 'amber' as CoverageColor },
+        { title: 'Director, Cybersecurity', dept: 'Engineering', incumbent: 'Vacant', impact: 'High', coverage: 'Critical Risk', readiness: 'No Internal Successors', color: 'rose' as CoverageColor },
     ];
 
     return (
+        <Page
+            title="Critical Roles Registry"
+            subtitle="Identify positions essential to business continuity and evaluate current succession coverage."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Critical Roles" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -74,8 +97,8 @@ export default function CriticalRolesScreen() {
                                     </td>
                                     <td className="p-4">
                                         <div className="flex items-center gap-2 mb-1">
-                                            {role.color === 'emerald' ? <CheckCircle2 size={14} className="text-emerald-400" /> : <ShieldAlert size={14} className={`text-${role.color}-400`} />}
-                                            <span className={`font-bold text-${role.color}-400`}>{role.coverage}</span>
+                                            {role.color === 'emerald' ? <CheckCircle2 size={14} className="text-emerald-400" /> : <ShieldAlert size={14} className={COVERAGE_ICON_CLASSES[role.color]} />}
+                                            <span className={COVERAGE_TEXT_CLASSES[role.color]}>{role.coverage}</span>
                                         </div>
                                         <div className="text-[#8899AA] text-xs">{role.readiness}</div>
                                     </td>
@@ -91,5 +114,7 @@ export default function CriticalRolesScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

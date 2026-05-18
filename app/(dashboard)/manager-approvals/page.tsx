@@ -12,7 +12,7 @@ const pending = [
 ];
 
 export default function ManagerApprovals() {
-    const [selected, setSelected] = useState<number[]>([]);
+    const [_selected, _setSelected] = useState<number[]>([]);
 
     return (
         <div style={{ padding: "24px 32px", paddingBottom: 64 }} className="animate-fade-in relative min-h-[calc(100vh-64px)]">

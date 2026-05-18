@@ -1,108 +1,113 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, Download, CheckCircle2, FileText, CreditCard, Users, ExternalLink } from "lucide-react";
+import React from "react";
+import { CheckCircle2, FileText, CreditCard, Users, ExternalLink, Download } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 export default function Form24QQuarterDetail({ params }: { params: { quarter: string } }) {
-    const qStr = params.quarter.toUpperCase(); // Q1, Q2 etc
+    const qStr = params.quarter.toUpperCase();
 
-    // Simulate data based on quarter
     const isFiled = qStr === "Q1";
-    const statusText = isFiled ? "Filed Successfully" : "Pending Generation";
-    const statusColor = isFiled ? "#00E5A0" : "#0066FF";
+    const isQ4 = qStr === "Q4";
 
     return (
-        <div style={{ padding: "24px 32px", maxWidth: 1000, margin: "0 auto", paddingBottom: 100 }}>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Link href="/tax/form24q" style={{ color: "#8899AA", display: "flex", alignItems: "center" }}>
-                        <ChevronLeft size={20} />
-                    </Link>
-                    <div>
-                        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Form 24Q - {qStr} (FY 2024-25)</h1>
-                        <div style={{ fontSize: 13, color: statusColor, marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                            {isFiled && <CheckCircle2 size={14} />} {statusText}
-                        </div>
-                    </div>
-                </div>
-                {!isFiled ? (
-                    <button style={{ height: 40, padding: "0 20px", background: "#0066FF", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} className="hover:opacity-90">
-                        <FileText size={16} /> Generate TXT for FVU Utility
-                    </button>
+        <Page
+            title={`Form 24Q - ${qStr} (FY 2024-25)`}
+            subtitle={isFiled ? "Filed Successfully" : "Pending Generation"}
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/dashboard" },
+                { label: "Form 24Q", href: "/tax/form24q" },
+                { label: qStr },
+            ]}
+            maxWidth="1000px"
+            actions={
+                !isFiled ? (
+                    <Button icon={<FileText size={16} />}>Generate TXT for FVU Utility</Button>
                 ) : (
-                    <button style={{ height: 40, padding: "0 20px", background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} className="hover:bg-[#1A2A3A]">
-                        <Download size={16} /> Download Filed TXT
-                    </button>
+                    <Button variant="secondary" icon={<Download size={16} />}>Download Filed TXT</Button>
+                )
+            }
+        >
+            <div className="space-y-6">
+                {/* KPI Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card padding="lg">
+                        <h4 className="text-sm text-[#8899AA] mb-2 flex items-center gap-2">
+                            <CreditCard size={16} aria-hidden="true" /> Challan Count
+                        </h4>
+                        <div className="text-3xl font-bold text-white">12</div>
+                        <div className="text-xs text-[#00E5A0] mt-1">All fully mapped</div>
+                    </Card>
+                    <Card padding="lg">
+                        <h4 className="text-sm text-[#8899AA] mb-2 flex items-center gap-2">
+                            <Users size={16} aria-hidden="true" /> Total Deductees
+                        </h4>
+                        <div className="text-3xl font-bold text-white">345</div>
+                    </Card>
+                    <Card padding="lg">
+                        <h4 className="text-sm text-[#8899AA] mb-2">Total TDS Deposited</h4>
+                        <div className="text-3xl font-bold text-white">₹14,50,000</div>
+                    </Card>
+                </div>
+
+                {/* Q4 Annexure II */}
+                {isQ4 && (
+                    <Card padding="lg" className="border border-[#FFB800]/20 bg-[#FFB800]/5">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h3 className="text-base font-semibold text-[#FFB800] mb-2">Annexure II Required</h3>
+                                <p className="text-sm text-[#FFB800] max-w-xl leading-relaxed">
+                                    Q4 return includes Annexure II, which requires the complete salary breakdown, exemptions,
+                                    deductions under Chapter VI-A, and final tax calculations for the entire FY for all employees.
+                                    Ensure all proofs are verified before generation.
+                                </p>
+                            </div>
+                            <Button variant="secondary" size="sm" href="/tax/proof-review">Review Final Proofs</Button>
+                        </div>
+                    </Card>
                 )}
-            </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24, marginBottom: 24 }}>
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 20 }}>
-                    <h4 style={{ fontSize: 13, color: "#8899AA", margin: 0, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}><CreditCard size={16} /> Challan Count</h4>
-                    <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>12</div>
-                    <div style={{ fontSize: 12, color: "#00E5A0", marginTop: 4 }}>All fully mapped</div>
-                </div>
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 20 }}>
-                    <h4 style={{ fontSize: 13, color: "#8899AA", margin: 0, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}><Users size={16} /> Total Deductees</h4>
-                    <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>345</div>
-                </div>
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 20 }}>
-                    <h4 style={{ fontSize: 13, color: "#8899AA", margin: 0, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}><span style={{ color: "#FFFFFF", fontWeight: "bold" }}>₹</span> Total TDS Deposited</h4>
-                    <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>14,50,000</div>
-                </div>
-            </div>
-
-            {/* Annexure II specifically for Q4 */}
-            {qStr === "Q4" && (
-                <div style={{ background: "rgba(255,184,0,0.05)", border: "1px solid rgba(255,184,0,0.2)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <div>
-                            <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFB800", margin: 0, marginBottom: 8 }}>Annexure II Required</h3>
-                            <div style={{ fontSize: 13, color: "#FFB800", maxWidth: 600, lineHeight: 1.5 }}>
-                                Q4 return includes Annexure II, which requires the complete salary breakdown, exemptions, deductions under Chapter VI-A, and final tax calculations for the entire FY for all employees. Ensure all proofs are verified before generation.
+                {/* Pre-flight Validations */}
+                {!isFiled && (
+                    <Card padding="lg">
+                        <h3 className="text-base font-semibold text-white mb-5">Pre-flight Validations</h3>
+                        <div className="space-y-3">
+                            {[
+                                { label: "Valid Company TAN & PAN", pass: true },
+                                { label: "Responsible Person Details Updated", pass: true },
+                                { label: "No negative TDS/Salary entries", pass: true },
+                            ].map((item) => (
+                                <div key={item.label} className="flex items-center gap-3">
+                                    <CheckCircle2 size={16} className="text-[#00E5A0]" aria-hidden="true" />
+                                    <span className="text-sm text-white">{item.label}</span>
+                                </div>
+                            ))}
+                            <div className="flex items-center gap-3">
+                                <div className="w-4 h-4 rounded-full bg-[#FFB800] flex items-center justify-center" aria-hidden="true">
+                                    <span className="text-[#060B14] text-[10px] font-bold">!</span>
+                                </div>
+                                <span className="text-sm text-[#FFB800]">3 Deductees missing valid PAN</span>
+                                <Button variant="ghost" size="sm" className="ml-auto">View List</Button>
                             </div>
                         </div>
-                        <Link href="/tax/proof-review">
-                            <button style={{ height: 36, padding: "0 16px", background: "transparent", border: "1px solid rgba(255,184,0,0.4)", borderRadius: 8, color: "#FFB800", fontSize: 13, fontWeight: 600, cursor: "pointer" }} className="hover:bg-[rgba(255,184,0,0.1)]">
-                                Review Final Proofs
-                            </button>
-                        </Link>
-                    </div>
-                </div>
-            )}
+                    </Card>
+                )}
 
-            {/* Missing Info warnings */}
-            {!isFiled && (
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-                    <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: 0, marginBottom: 16 }}>Pre-flight Validations</h3>
-
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                        <CheckCircle2 size={16} color="#00E5A0" />
-                        <div style={{ fontSize: 14, color: "#FFFFFF" }}>Valid Company TAN & PAN</div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                        <CheckCircle2 size={16} color="#00E5A0" />
-                        <div style={{ fontSize: 14, color: "#FFFFFF" }}>Responsible Person Details Updated</div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                        <CheckCircle2 size={16} color="#00E5A0" />
-                        <div style={{ fontSize: 14, color: "#FFFFFF" }}>No negative TDS/Salary entries</div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                        <div style={{ width: 16, height: 16, borderRadius: "50%", background: "#FFB800", display: "flex", alignItems: "center", justifyContent: "center" }}><span style={{ color: "#060B14", fontSize: 10, fontWeight: "bold" }}>!</span></div>
-                        <div style={{ fontSize: 14, color: "#FFB800" }}>3 Deductees missing valid PAN</div>
-                        <button style={{ marginLeft: "auto", background: "transparent", border: "1px solid #1A2A3A", color: "#FFFFFF", fontSize: 12, padding: "4px 12px", borderRadius: 4, cursor: "pointer" }}>View List</button>
-                    </div>
-                </div>
-            )}
-
-            <div style={{ fontSize: 13, color: "#8899AA", textAlign: "center", marginTop: 40 }}>
-                To file the TXT output, use the official NSDL e-Gov FVU Utility. <br />
-                <a href="#" style={{ color: "#0066FF", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, marginTop: 8 }}>Download latest FVU version from TIN-NSDL <ExternalLink size={12} /></a>
+                {/* Footer */}
+                <p className="text-sm text-[#8899AA] text-center">
+                    To file the TXT output, use the official NSDL e-Gov FVU Utility.{" "}
+                    <a
+                        href="https://www.tin-nsdl.com/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[#0066FF] hover:underline inline-flex items-center gap-1"
+                    >
+                        Download latest FVU version from TIN-NSDL <ExternalLink size={12} aria-hidden="true" />
+                    </a>
+                </p>
             </div>
-
-        </div>
+        </Page>
     );
 }

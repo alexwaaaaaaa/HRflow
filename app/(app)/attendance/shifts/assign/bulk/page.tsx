@@ -1,12 +1,19 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Users, Calendar, ChevronRight, Save, Clock, HelpCircle, UserCheck
+import Page from "@/components/ui/Page";
+
+import React from 'react';
+import { ChevronRight, UserCheck
 } from 'lucide-react';
 
 export default function BulkShiftAssign() {
     return (
+        <Page
+            title="Bulk Shift Assignment"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Shifts", href: "/attendance/shifts" }, { label: "Assign", href: "/attendance/shifts/assign" }, { label: "Bulk" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto space-y-6">
 
@@ -131,5 +138,7 @@ export default function BulkShiftAssign() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

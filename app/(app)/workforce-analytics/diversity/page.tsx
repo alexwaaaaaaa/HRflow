@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { HeartHandshake, Download, Users, Briefcase, ChevronRight } from 'lucide-react';
+import { HeartHandshake, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DiversityInclusionScreen() {
     return (
+        <Page
+            title="Diversity & Inclusion (D&I) Metrics"
+            subtitle="Track gender representation, generational diversity, and leadership composition."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Diversity" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -120,5 +129,7 @@ export default function DiversityInclusionScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

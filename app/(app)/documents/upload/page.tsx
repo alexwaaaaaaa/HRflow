@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
     UploadCloud, File, X, CheckCircle2, AlertCircle, ChevronLeft, Lock
@@ -8,7 +10,7 @@ import Link from 'next/link';
 
 export default function DocumentUploadScreen() {
     const [dragActive, setDragActive] = useState(false);
-    const [files, setFiles] = useState([
+    const [files, _setFiles] = useState([
         { name: 'Offer_Letter_Signed_RahulS.pdf', size: '2.4 MB', status: 'completed', prog: 100 },
         { name: 'Aadhaar_Card_Scan.jpg', size: '850 KB', status: 'uploading', prog: 65 },
         { name: 'Salary_Slips_Archive.zip', size: '15.2 MB', status: 'error', prog: 20 },
@@ -25,6 +27,13 @@ export default function DocumentUploadScreen() {
     };
 
     return (
+        <Page
+            title="Upload Documents"
+            subtitle="Securely upload files to the HR repository. Max size 50MB per file."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Upload" }]}
+            maxWidth="800px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex items-center justify-center">
             <div className="max-w-3xl w-full">
 
@@ -136,5 +145,7 @@ export default function DocumentUploadScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

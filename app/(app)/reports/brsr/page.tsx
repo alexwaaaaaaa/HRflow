@@ -1,149 +1,194 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    Leaf, ChevronRight, Download, Eye, FileText, UploadCloud
-} from "lucide-react";
+import { Download, FileText, UploadCloud } from "lucide-react";
 
-export default function BRSRReportScreen() {
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+// ─── Static data ──────────────────────────────────────────────────────────────
+
+type ReadinessStatus = "Ready" | "Missing";
+
+const STATUS_VARIANT: Record<ReadinessStatus, "success" | "warning"> = {
+    Ready: "success",
+    Missing: "warning",
+};
+
+interface BRSRRow {
+    id: string;
+    principle: string;
+    dataPoints: string[];
+    status: ReadinessStatus;
+    statusLabel: string;
+    actionLabel: string;
+}
+
+const BRSR_ROWS: BRSRRow[] = [
+    {
+        id: "p3",
+        principle: "Principle 3: Employee Well-being",
+        dataPoints: [
+            "Gender & Differently Abled Breakdown",
+            "Minimum Wage & Median Remuneration",
+            "Leave & Maternity/Paternity Benefits",
+        ],
+        status: "Ready",
+        statusLabel: "100% Ready",
+        actionLabel: "Review Data",
+    },
+    {
+        id: "p5",
+        principle: "Principle 5: Human Rights",
+        dataPoints: [
+            "POSH Complaints & Resolutions",
+            "Employees paid min. wage",
+            "Human Rights Training Coverage",
+        ],
+        status: "Missing",
+        statusLabel: "Data Missing (Trg)",
+        actionLabel: "Add Data",
+    },
+    {
+        id: "p8",
+        principle: "Principle 8: Inclusive Growth",
+        dataPoints: ["CSR Job Creation Initiatives", "Vulnerable/Marginalized Hires"],
+        status: "Ready",
+        statusLabel: "100% Ready",
+        actionLabel: "Review Data",
+    },
+];
+
+const BRSR_COLUMNS: Column<BRSRRow>[] = [
+    {
+        key: "principle",
+        label: "Principle",
+        render: (r) => <span className="font-bold text-white">{r.principle}</span>,
+    },
+    {
+        key: "dataPoints",
+        label: "Data Points Auto-Mapped",
+        render: (r) => (
+            <ul className="list-disc list-inside space-y-1 text-xs text-[#8899AA]">
+                {r.dataPoints.map((dp) => (
+                    <li key={dp}>{dp}</li>
+                ))}
+            </ul>
+        ),
+        hideOnMobile: true,
+    },
+    {
+        key: "status",
+        label: "Status",
+        render: (r) => <Badge variant={STATUS_VARIANT[r.status]}>{r.statusLabel}</Badge>,
+    },
+    {
+        key: "action",
+        label: "",
+        align: "right",
+        render: (r) => (
+            <Button variant="ghost" size="sm">
+                {r.actionLabel}
+            </Button>
+        ),
+    },
+];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function BRSRReportPage() {
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-2">
-                        <Link href="/reports/dashboard" className="hover:text-white transition-colors">Reports</Link>
-                        <ChevronRight className="w-4 h-4" />
-                        <span className="text-white">BRSR Reporting</span>
+        <Page
+            title="Business Responsibility & Sustainability Report"
+            subtitle="SEBI prescribed format mapping ESG data points across HR modules."
+            breadcrumbs={[
+                { label: "Reports", href: "/reports/dashboard" },
+                { label: "BRSR Reporting" },
+            ]}
+            maxWidth="1280px"
+            actions={
+                <>
+
+
+
+
+
+
+                    <Button
+                        variant="secondary"
+                        icon={<UploadCloud size={14} aria-hidden="true" />}
+                    >
+                        Import External Data
+                    </Button>
+                    <Button icon={<Download size={14} aria-hidden="true" />}>
+                        Generate SEBI XBRL
+                    </Button>
+                </>
+            }
+        >
+            <div className="space-y-6">
+                {/* KPI strip */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <Card padding="lg" className="border-emerald-500/30">
+                        <p className="text-[#8899AA] text-sm font-medium mb-2">Data Readiness Score</p>
+                        <p className="text-4xl font-black text-emerald-400 mb-1">92%</p>
+                        <p className="text-xs text-[#8899AA]">Ready for FY25-26 Disclosure</p>
+                    </Card>
+                    <Card padding="lg">
+                        <p className="text-[#8899AA] text-sm mb-2">Gender Diversity (Board)</p>
+                        <p className="text-3xl font-bold text-white mb-1">33%</p>
+                        <p className="text-xs text-emerald-400">Above mandated 20%</p>
+                    </Card>
+                    <Card padding="lg">
+                        <p className="text-[#8899AA] text-sm mb-2">POSH Complaints</p>
+                        <p className="text-3xl font-bold text-amber-500 mb-1">2</p>
+                        <p className="text-xs text-[#8899AA]">1 resolved, 1 under investigation</p>
+                    </Card>
+                    <Card padding="lg">
+                        <p className="text-[#8899AA] text-sm mb-2">Training (Safety/Skill)</p>
+                        <p className="text-3xl font-bold text-indigo-400 mb-1">98%</p>
+                        <p className="text-xs text-[#8899AA]">Coverage of permanent workforce</p>
+                    </Card>
+                </div>
+
+                {/* Principle mapping table */}
+                <Card padding="none">
+                    <div className="p-4 border-b border-[#1A2A3A] flex justify-between items-center">
+                        <h2 className="text-sm font-bold text-white">BRSR Principle-wise Data Mapping</h2>
+                        <Badge variant="info">FY 2025-26</Badge>
                     </div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <Leaf className="w-8 h-8 text-emerald-400" />
-                        Business Responsibility & Sustainability Report
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">SEBI prescribed format mapping ESG data points across HR modules.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-6 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-semibold rounded-lg transition-colors">
-                        <UploadCloud className="w-4 h-4" /> Import External Data
-                    </button>
-                    <button className="flex items-center gap-2 px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-[#0B1221] text-sm font-semibold rounded-lg transition-colors shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                        <Download className="w-4 h-4" /> Generate SEBI XBRL
-                    </button>
-                </div>
+                    <DataTable<BRSRRow>
+                        data={BRSR_ROWS}
+                        columns={BRSR_COLUMNS}
+                        rowKey={(r) => r.id}
+                        emptyTitle="No principles mapped"
+                        aria-label="BRSR principle data mapping"
+                    />
+                </Card>
+
+                {/* Info footer */}
+                <Card padding="lg">
+                    <div className="flex items-start gap-4">
+                        <FileText size={32} className="text-emerald-400 flex-shrink-0" aria-hidden="true" />
+                        <div>
+                            <h3 className="text-white font-bold mb-1">About BRSR Mapping</h3>
+                            <p className="text-sm text-[#8899AA]">
+                                HRflow automatically aggregates data points required for the National Guidelines on
+                                Responsible Business Conduct (NGRBC) directly from your live payroll, recruitment, and
+                                attendance data, minimizing manual data entry errors for the Top 1000 listed entities.
+                            </p>
+                        </div>
+                    </div>
+                </Card>
             </div>
+        
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div className="bg-[#0D1928] border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)] rounded-2xl p-6">
-                    <h3 className="text-[#8899AA] text-sm font-medium mb-2">Data Readiness Score</h3>
-                    <div className="text-4xl font-black mb-1 text-emerald-400">92%</div>
-                    <p className="text-xs text-[#8899AA] mt-1">Ready for FY25-26 Disclosure</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 font-medium">
-                    <h3 className="text-[#8899AA] text-sm mb-2">Gender Diversity (Board)</h3>
-                    <div className="text-3xl font-bold mb-1 text-white">33%</div>
-                    <p className="text-xs text-emerald-400 mt-1">Above mandated 20%</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 font-medium">
-                    <h3 className="text-[#8899AA] text-sm mb-2">POSH Complaints</h3>
-                    <div className="text-3xl font-bold mb-1 text-amber-500">2</div>
-                    <p className="text-xs text-[#8899AA] mt-1">1 resolved, 1 under investigation</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 font-medium">
-                    <h3 className="text-[#8899AA] text-sm mb-2">Training (Safety/Skill)</h3>
-                    <div className="text-3xl font-bold mb-1 text-indigo-400">98%</div>
-                    <p className="text-xs text-[#8899AA] mt-1">Coverage of permanent workforce</p>
-                </div>
-            </div>
+        
 
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden flex flex-col">
-                <div className="p-4 border-b border-[#1A2A3A] flex justify-between items-center">
-                    <h2 className="text-sm font-bold text-white">BRSR Principle-wise Data Mapping</h2>
-                    <span className="text-xs text-[#8899AA] px-2 py-1 bg-[#1A2A3A] rounded border border-[#2A3A4A]">FY 2025-26</span>
-                </div>
+        
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-[#1A2A3A]/50 text-[#8899AA] text-xs uppercase tracking-wider">
-                            <tr>
-                                <th className="p-4 font-medium">Principle</th>
-                                <th className="p-4 font-medium">Data Points Auto-Mapped</th>
-                                <th className="p-4 font-medium">Status</th>
-                                <th className="p-4 font-medium text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#1A2A3A] text-sm">
-                            <tr className="hover:bg-[#1A2A3A]/30">
-                                <td className="p-4">
-                                    <div className="font-bold text-white">Principle 3: Employee Well-being</div>
-                                </td>
-                                <td className="p-4 text-[#8899AA]">
-                                    <ul className="list-disc list-inside space-y-1 text-xs">
-                                        <li>Gender & Differently Abled Breakdown</li>
-                                        <li>Minimum Wage & Median Remuneration</li>
-                                        <li>Leave & Maternity/Paternity Benefits</li>
-                                    </ul>
-                                </td>
-                                <td className="p-4">
-                                    <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-md text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                                        100% Ready
-                                    </span>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <button className="text-indigo-400 hover:text-indigo-300 text-xs font-semibold px-3 py-1 bg-indigo-500/10 rounded transition-colors">Review Data</button>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-[#1A2A3A]/30">
-                                <td className="p-4">
-                                    <div className="font-bold text-white">Principle 5: Human Rights</div>
-                                </td>
-                                <td className="p-4 text-[#8899AA]">
-                                    <ul className="list-disc list-inside space-y-1 text-xs">
-                                        <li>POSH Complaints & Resolutions</li>
-                                        <li>Employees paid min. wage</li>
-                                        <li>Human Rights Training Coverage</li>
-                                    </ul>
-                                </td>
-                                <td className="p-4">
-                                    <span className="px-2.5 py-1 bg-amber-500/10 text-amber-500 rounded-md text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">
-                                        Data Missing (Trg)
-                                    </span>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <button className="text-amber-500 hover:text-amber-400 text-xs font-semibold px-3 py-1 bg-amber-500/10 rounded transition-colors">Add Data</button>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-[#1A2A3A]/30">
-                                <td className="p-4">
-                                    <div className="font-bold text-white">Principle 8: Inclusive Growth</div>
-                                </td>
-                                <td className="p-4 text-[#8899AA]">
-                                    <ul className="list-disc list-inside space-y-1 text-xs">
-                                        <li>CSR Job Creation Initiatives</li>
-                                        <li>Vulnerable/Marginalized Hires</li>
-                                    </ul>
-                                </td>
-                                <td className="p-4">
-                                    <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-md text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
-                                        100% Ready
-                                    </span>
-                                </td>
-                                <td className="p-4 text-right">
-                                    <button className="text-indigo-400 hover:text-indigo-300 text-xs font-semibold px-3 py-1 bg-indigo-500/10 rounded transition-colors">Review Data</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div className="mt-6 bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 flex items-start gap-4">
-                <FileText className="w-8 h-8 text-emerald-400 flex-shrink-0" />
-                <div>
-                    <h3 className="text-white font-bold mb-1">About BRSR Mapping</h3>
-                    <p className="text-sm text-[#8899AA]">Kaarya automatically aggregates data points required for the National Guidelines on Responsible Business Conduct (NGRBC) directly from your live payroll, recruitment, and attendance data, minimizing manual data entry errors for the Top 1000 listed entities.</p>
-                </div>
-            </div>
-
-        </div>
+        </Page>
     );
 }

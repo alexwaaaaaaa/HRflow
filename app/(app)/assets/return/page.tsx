@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { RefreshCcw, UserSearch, AlertTriangle, Monitor, PackageCheck } from 'lucide-react';
-import Link from 'next/link';
 
 export default function AssetReturnScreen() {
     const [emp, setEmp] = useState('');
@@ -12,6 +13,13 @@ export default function AssetReturnScreen() {
     ];
 
     return (
+        <Page
+            title="Asset Return / Check-in"
+            subtitle="Receive hardware back from employees due to offboarding or a device refresh."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Return" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -102,5 +110,7 @@ export default function AssetReturnScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

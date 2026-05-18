@@ -1,97 +1,171 @@
 "use client";
-import React from 'react';
-import { Layers, Play, CheckCircle2, ChevronRight, Calculator, PieChart, Info, Download } from 'lucide-react';
-import Link from 'next/link';
 
-export default function ConsolidatedPayrollScreen() {
-    const ENTITIES = [
-        { name: 'Acme Technologies Pvt Ltd', eid: 'ENT-001', state: 'Ready', pct: 100, emp: 342, amt: 24500000, color: 'text-emerald-400' },
-        { name: 'Acme Retail Solutions', eid: 'ENT-002', state: 'Processing', pct: 45, emp: 128, amt: 8400000, color: 'text-blue-400' },
-        { name: 'Acme Logistics India', eid: 'ENT-003', state: 'Pending Input', pct: 0, emp: 85, amt: 0, color: 'text-slate-400' },
-    ];
+import { Play, CheckCircle2, Calculator, Info, PieChart, Download } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ─── Types & static data ──────────────────────────────────────────────────────
+
+type RunState = "Ready" | "Processing" | "Pending Input";
+
+interface EntityRun {
+    name: string;
+    eid: string;
+    state: RunState;
+    pct: number;
+    emp: number;
+    amt: number;
+}
+
+const ENTITIES: EntityRun[] = [
+    { name: "Acme Technologies Pvt Ltd", eid: "ENT-001", state: "Ready", pct: 100, emp: 342, amt: 24500000 },
+    { name: "Acme Retail Solutions", eid: "ENT-002", state: "Processing", pct: 45, emp: 128, amt: 8400000 },
+    { name: "Acme Logistics India", eid: "ENT-003", state: "Pending Input", pct: 0, emp: 85, amt: 0 },
+];
+
+const STATE_BADGE: Record<RunState, "success" | "info" | "neutral"> = {
+    Ready: "success",
+    Processing: "info",
+    "Pending Input": "neutral",
+};
+
+const STATE_BAR_CLS: Record<RunState, string> = {
+    Ready: "bg-emerald-500",
+    Processing: "bg-blue-500",
+    "Pending Input": "bg-[#8899AA]",
+};
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function StateIcon({ state }: { state: RunState }) {
+    if (state === "Ready") return <CheckCircle2 size={18} className="text-emerald-500" aria-hidden="true" />;
+    if (state === "Processing") return <Calculator size={18} className="animate-pulse text-blue-500" aria-hidden="true" />;
+    return <Info size={18} className="text-[#8899AA]" aria-hidden="true" />;
+}
+
+function EntityRunCard({ entity }: { entity: EntityRun }) {
+    const amtLabel =
+        entity.amt > 0 ? `₹${(entity.amt / 100000).toFixed(2)}L` : "—";
 
     return (
-        <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="rounded-xl border border-[#2A3A4A] bg-[#0D1928] p-4">
+            <div className="mb-3 flex items-start justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Layers size={24} className="text-purple-400" /> Consolidated Payroll Run</h1>
-                    <p className="text-[#8899AA] text-sm mt-1">Execute payroll simultaneously across all group entities for the month.</p>
+                    <p className="flex items-center gap-3 font-bold text-white">
+                        <StateIcon state={entity.state} />
+                        {entity.name}
+                    </p>
+                    <p className="ml-7 mt-1 font-mono text-xs text-[#556677]">
+                        {entity.eid} • {entity.emp} Employees
+                    </p>
                 </div>
-                <div className="flex items-center gap-4 bg-[#131B2B] border border-[#2A3A4A] rounded-xl p-2 px-4 shadow-sm">
-                    <span className="text-[#8899AA] text-sm font-bold uppercase tracking-wider">Target Cycle</span>
-                    <div className="text-white font-bold bg-[#1A2A3A] px-3 py-1 rounded border border-[#2A3A4A]">March 2026</div>
+                <div className="text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#556677]">Est. Payout</p>
+                    <p className="font-bold text-white">{amtLabel}</p>
                 </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 space-y-6">
-
-                    <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-32 bg-purple-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-                        <h3 className="text-white font-bold text-lg mb-6 relative z-10 flex items-center justify-between">
-                            Global Run Status
-                            <button className="bg-purple-600 hover:bg-purple-500 text-white font-bold px-5 py-2 rounded-xl text-sm transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-                                <Play fill="currentColor" size={12} /> Run All Pending
-                            </button>
-                        </h3>
-
-                        <div className="space-y-4 relative z-10">
-                            {ENTITIES.map((e, i) => (
-                                <div key={i} className="bg-[#131B2B] border border-[#2A3A4A] rounded-xl p-4">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <div>
-                                            <div className="text-white font-bold flex items-center gap-3">
-                                                {e.state === 'Ready' && <CheckCircle2 size={18} className="text-emerald-500" />}
-                                                {e.state === 'Processing' && <Calculator size={18} className="text-blue-500 animate-pulse" />}
-                                                {e.state === 'Pending Input' && <Info size={18} className="text-slate-500" />}
-                                                {e.name}
-                                            </div>
-                                            <div className="text-[#556677] text-xs mt-1 ml-7 font-mono">{e.eid} • {e.emp} Employees</div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-[#556677] text-[10px] font-bold uppercase tracking-wider mb-0.5">Est. Payout</div>
-                                            <div className="font-bold text-white">₹{e.amt > 0 ? (e.amt / 100000).toFixed(2) + 'L' : '--- '}</div>
-                                        </div>
-                                    </div>
-                                    <div className="ml-7 flex items-center gap-4">
-                                        <div className="flex-1 h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden">
-                                            <div className={`h-full bg-current ${e.color}`} style={{ width: `${e.pct}%` }} />
-                                        </div>
-                                        <span className={`text-[10px] uppercase font-bold ${e.color}`}>{e.state}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+            <div className="ml-7 flex items-center gap-4">
+                <div
+                    className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#1A2A3A]"
+                    role="progressbar"
+                    aria-valuenow={entity.pct}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${entity.name} payroll progress: ${entity.pct}%`}
+                >
+                    <div
+                        className={`h-full transition-all ${STATE_BAR_CLS[entity.state]}`}
+                        style={{ width: `${entity.pct}%` }}
+                    />
                 </div>
-
-                <div className="space-y-6">
-                    <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="text-white font-bold border-b border-[#1A2A3A] pb-3 mb-4 flex items-center gap-2"><PieChart size={16} className="text-[#556677]" /> Liability Overview</h3>
-                        <div className="space-y-6 text-center pt-2">
-                            <div>
-                                <div className="text-[#8899AA] text-xs font-bold uppercase tracking-wider mb-1">Total Processed Gross</div>
-                                <div className="text-3xl font-black text-white">₹3.29 Cr</div>
-                                <div className="text-[#556677] text-[10px] mt-1">From 2 of 3 entities</div>
-                            </div>
-                            <div className="flex gap-4 p-4 bg-[#131B2B] rounded-xl border border-[#2A3A4A]">
-                                <div className="flex-1 border-r border-[#2A3A4A]">
-                                    <div className="text-[#8899AA] text-[10px] uppercase mb-1">Net Pay</div>
-                                    <div className="text-emerald-400 font-bold">₹2.81 Cr</div>
-                                </div>
-                                <div className="flex-1">
-                                    <div className="text-[#8899AA] text-[10px] uppercase mb-1">Taxes (TDS)</div>
-                                    <div className="text-rose-400 font-bold">₹0.48 Cr</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button className="w-full bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm">
-                        <Download size={18} className="text-purple-400" /> Download Consolidated Bank File
-                    </button>
-                </div>
+                <Badge variant={STATE_BADGE[entity.state]}>{entity.state}</Badge>
             </div>
         </div>
+    );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function ConsolidatedPayrollPage() {
+    return (
+        <Page
+            title="Consolidated Payroll Run"
+            subtitle="Execute payroll simultaneously across all group entities for the month"
+            breadcrumbs={[
+                { label: "Multi-Entity", href: "/multi-entity/list" },
+                { label: "Payroll" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <div className="flex items-center gap-3 rounded-xl border border-[#2A3A4A] bg-[#0D1928] px-4 py-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#8899AA]">Target Cycle</span>
+                    <span className="rounded border border-[#2A3A4A] bg-[#1A2A3A] px-3 py-1 text-sm font-bold text-white">
+                        March 2026
+                    </span>
+                </div>
+            }
+        >
+            <div className="grid gap-6 md:grid-cols-3">
+                {/* Run status */}
+                <div className="space-y-6 md:col-span-2">
+                    <Card padding="lg">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="text-lg font-bold text-white">Global Run Status</h2>
+                            <Button icon={<Play size={12} className="fill-current" />}>
+                                Run All Pending
+                            </Button>
+                        </div>
+
+                        <div className="space-y-4">
+                            {ENTITIES.map((entity) => (
+                                <EntityRunCard key={entity.eid} entity={entity} />
+                            ))}
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Liability sidebar */}
+                <div className="space-y-6">
+                    <Card padding="lg">
+                        <h2 className="mb-4 flex items-center gap-2 border-b border-[#1A2A3A] pb-3 text-sm font-bold text-white">
+                            <PieChart size={16} className="text-[#556677]" aria-hidden="true" />
+                            Liability Overview
+                        </h2>
+
+                        <div className="space-y-6 pt-2 text-center">
+                            <div>
+                                <p className="mb-1 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                    Total Processed Gross
+                                </p>
+                                <p className="text-3xl font-black text-white">₹3.29 Cr</p>
+                                <p className="mt-1 text-[10px] text-[#556677]">From 2 of 3 entities</p>
+                            </div>
+
+                            <div className="flex gap-4 rounded-xl border border-[#2A3A4A] bg-[#0D1928] p-4">
+                                <div className="flex-1 border-r border-[#2A3A4A]">
+                                    <p className="mb-1 text-[10px] uppercase text-[#8899AA]">Net Pay</p>
+                                    <p className="font-bold text-emerald-400">₹2.81 Cr</p>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="mb-1 text-[10px] uppercase text-[#8899AA]">Taxes (TDS)</p>
+                                    <p className="font-bold text-red-400">₹0.48 Cr</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <Button
+                        variant="secondary"
+                        icon={<Download size={16} className="text-purple-400" />}
+                        className="w-full justify-center"
+                    >
+                        Download Consolidated Bank File
+                    </Button>
+                </div>
+            </div>
+        </Page>
     );
 }

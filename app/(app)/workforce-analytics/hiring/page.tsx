@@ -1,10 +1,33 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { UserPlus, Calendar, Clock, Download, CheckCircle2, ChevronRight, BarChart } from 'lucide-react';
-import Link from 'next/link';
+import { UserPlus, Download, BarChart2 } from 'lucide-react';
+
+type PaceColor = "emerald" | "rose" | "amber";
+
+const PACE_BADGE_CLASSES: Record<PaceColor, string> = {
+    emerald: "px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+    rose: "px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20",
+    amber: "px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20",
+} as const;
+
+const REQUISITIONS: { role: string; dept: string; days: number; funnel: string; pace: string; color: PaceColor }[] = [
+    { role: 'Senior Frontend Eng', dept: 'Engineering', days: 28, funnel: '3 at Onsite, 1 Offer', pace: 'On Track', color: 'emerald' },
+    { role: 'Product Manager', dept: 'Product', days: 45, funnel: '15 Screen, 0 Onsite', pace: 'Lagging', color: 'rose' },
+    { role: 'Account Executive (x4)', dept: 'Sales', days: 12, funnel: 'Sourcing Phase', pace: 'On Track', color: 'emerald' },
+    { role: 'VP of Marketing', dept: 'Marketing', days: 65, funnel: 'Exec Interview', pace: 'Lagging', color: 'rose' },
+];
 
 export default function HiringPlanScreen() {
     return (
+        <Page
+            title="Hiring Plan & Funnel Velocity"
+            subtitle="Track recruitment pacing against the active operating plan."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Hiring" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -62,12 +85,7 @@ export default function HiringPlanScreen() {
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm">
-                                    {[
-                                        { role: 'Senior Frontend Eng', dept: 'Engineering', days: 28, funnel: '3 at Onsite, 1 Offer', pace: 'On Track', color: 'emerald' },
-                                        { role: 'Product Manager', dept: 'Product', days: 45, funnel: '15 Screen, 0 Onsite', pace: 'Lagging', color: 'rose' },
-                                        { role: 'Account Executive (x4)', dept: 'Sales', days: 12, funnel: 'Sourcing Phase', pace: 'On Track', color: 'emerald' },
-                                        { role: 'VP of Marketing', dept: 'Marketing', days: 65, funnel: 'Exec Interview', pace: 'Lagging', color: 'rose' },
-                                    ].map((row, i) => (
+                                    {REQUISITIONS.map((row, i) => (
                                         <tr key={i} className="border-b border-[#1A2A3A] hover:bg-[#131B2B]/50 transition-colors group cursor-pointer">
                                             <td className="p-4">
                                                 <div className="font-bold text-white group-hover:text-emerald-400 transition-colors">{row.role}</div>
@@ -78,7 +96,7 @@ export default function HiringPlanScreen() {
                                             </td>
                                             <td className="p-4 text-[#AABBCC] text-xs">{row.funnel}</td>
                                             <td className="p-4 text-right">
-                                                <span className={`px-2.5 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-${row.color}-500/10 text-${row.color}-400 border border-${row.color}-500/20`}>
+                                                <span className={PACE_BADGE_CLASSES[row.color]}>
                                                     {row.pace}
                                                 </span>
                                             </td>
@@ -94,7 +112,7 @@ export default function HiringPlanScreen() {
                     <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6">
                         <h3 className="text-white font-bold border-b border-[#1A2A3A] pb-3 mb-6 flex items-center justify-between">
                             Recruitment Funnel
-                            <BarChart size={16} className="text-[#556677]" />
+                            <BarChart2 size={16} className="text-[#556677]" />
                         </h3>
 
                         <div className="space-y-2">
@@ -127,5 +145,7 @@ export default function HiringPlanScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

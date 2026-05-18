@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 
@@ -29,6 +31,12 @@ export default function HolidayCalendar() {
     const [holidays, setHolidays] = useState(HOLIDAYS_2024);
 
     return (
+        <Page
+            title="Holiday Calendar 2024–25"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Holidays" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -128,5 +136,7 @@ export default function HolidayCalendar() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

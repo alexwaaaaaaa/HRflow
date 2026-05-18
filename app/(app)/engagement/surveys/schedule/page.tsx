@@ -1,9 +1,10 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Calendar, Clock, Plus, Settings, CheckCircle2, AlertCircle, Trash2, CalendarDays, Zap
+    Calendar, Clock, Plus, Settings, AlertCircle, Trash2, CalendarDays, Zap
 } from 'lucide-react';
-import Link from 'next/link';
 
 const SCHEDULES = [
     { id: 1, name: "Bi-Annual eNPS", template: "eNPS Baseline Pulse", frequency: "Every 6 Months", nextRun: "Dec 01, 2023", audience: "All Company", status: "Active" },
@@ -15,6 +16,13 @@ export default function SurveyScheduleScreen() {
     const [showModal, setShowModal] = useState(false);
 
     return (
+        <Page
+            title="Survey Automation"
+            subtitle="Schedule recurring surveys and set up event-based pulse triggers."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Schedule" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -165,5 +173,7 @@ export default function SurveyScheduleScreen() {
             )}
 
         </div>
+    
+        </Page>
     );
 }

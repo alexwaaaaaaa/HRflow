@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
     Search, Filter, Clock, MapPin, Monitor, Smartphone,
     Wifi, CheckCircle2, AlertCircle, XCircle, RefreshCw, LogOut
@@ -18,6 +20,12 @@ export default function DailyAttendanceLive() {
     ];
 
     return (
+        <Page
+            title="Live"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Live" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col h-screen overflow-hidden">
             <div className="max-w-7xl mx-auto w-full flex flex-col flex-1">
 
@@ -163,7 +171,9 @@ export default function DailyAttendanceLive() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }
 
 function StatusBadge({ type }: { type: string }) {

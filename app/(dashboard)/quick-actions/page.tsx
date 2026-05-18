@@ -1,7 +1,6 @@
 "use client";
 
 import { X, Search, UserPlus, FileText, Download, Upload, Calculator, Send, Zap, ChevronRight } from "lucide-react";
-import Button from "@/components/ui/Button";
 
 export default function QuickActionsModal() {
     const categories = [

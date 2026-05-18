@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { MapPin, Camera, Download } from "lucide-react";
 
@@ -15,6 +17,13 @@ export default function FieldVisitLog() {
     const [preview, setPreview] = useState<number | null>(null);
 
     return (
+        <Page
+            title="Field Visit Log"
+            subtitle="Location-stamped client/field visits • November 2024"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Field Visit", href: "/attendance/field-visit" }, { label: "Log" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -107,5 +116,7 @@ export default function FieldVisitLog() {
                 </div>
             )}
         </div>
-    );
+    
+        </Page>
+        );
 }

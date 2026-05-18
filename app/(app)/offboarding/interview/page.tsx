@@ -1,12 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { MessageSquare, ThumbsDown, ThumbsUp, Activity, FileText } from 'lucide-react';
-import Link from 'next/link';
+import { MessageSquare, ThumbsDown, ThumbsUp, Activity } from 'lucide-react';
 
 export default function ExitInterviewScreen() {
     const [step, setStep] = useState(1);
 
     return (
+        <Page
+            title="Confidential Exit Survey"
+            subtitle="Your feedback is strictly confidential and critical for organizational improvement."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Interview" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <div className="mb-8 flex items-center justify-between">
                 <div>
@@ -123,5 +131,7 @@ export default function ExitInterviewScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

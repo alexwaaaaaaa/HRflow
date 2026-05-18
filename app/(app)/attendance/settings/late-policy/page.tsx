@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+
+import { useState } from "react";
 import { Save, Clock, AlertTriangle } from "lucide-react";
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
@@ -11,9 +13,51 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
     );
 }
 
+type LateCfg = {
+    lateGraceMins: string;
+    lateAfterTime: string;
+    halfDayIfLateByHrs: string;
+    latesForHalfDay: string;
+    latesForFullDay: string;
+    notifyManagerAfter: string;
+    warningEmailEnabled: boolean;
+    deductHalfDay: boolean;
+    allowSelfCorrect: boolean;
+    selfCorrectWindow: string;
+    habitualThreshold: string;
+    escalateToHR: boolean;
+};
+
+type LateCfgKey = keyof LateCfg;
+
+interface RowProps {
+    label: string;
+    desc?: string;
+    field: LateCfgKey;
+    type?: string;
+    cfg: LateCfg;
+    set: (k: LateCfgKey) => (v: string | boolean) => void;
+}
+
+function Row({ label, desc, field, type = "text", cfg, set }: RowProps) {
+    return (
+        <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+            <div>
+                <p className="text-sm font-medium">{label}</p>
+                {desc && <p className="text-xs text-[#445566] mt-0.5">{desc}</p>}
+            </div>
+            {type === "toggle"
+                ? <Toggle on={!!cfg[field]} onChange={() => set(field)(!cfg[field])} />
+                : <input value={String(cfg[field])} onChange={e => set(field)(e.target.value)} type={type === "time" ? "time" : "text"}
+                    className="w-28 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 py-1.5 text-sm text-white text-right focus:outline-none focus:border-[#00E5A0]" />
+            }
+        </div>
+    );
+}
+
 export default function LatePolicy() {
     const [saved, setSaved] = useState(false);
-    const [cfg, setCfg] = useState({
+    const [cfg, setCfg] = useState<LateCfg>({
         lateGraceMins: "15",
         lateAfterTime: "09:15",
         halfDayIfLateByHrs: "4",
@@ -28,25 +72,16 @@ export default function LatePolicy() {
         escalateToHR: true,
     });
 
-    type K = keyof typeof cfg;
-    const set = (k: K) => (v: string | boolean) => setCfg(p => ({ ...p, [k]: v }));
+    const set = (k: LateCfgKey) => (v: string | boolean) => setCfg(p => ({ ...p, [k]: v }));
     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
 
-    const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
-        <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
-            <div>
-                <p className="text-sm font-medium">{label}</p>
-                {desc && <p className="text-xs text-[#445566] mt-0.5">{desc}</p>}
-            </div>
-            {type === "toggle"
-                ? <Toggle on={!!cfg[field]} onChange={() => set(field)(!cfg[field])} />
-                : <input value={String(cfg[field])} onChange={e => set(field)(e.target.value)} type={type === "time" ? "time" : "text"}
-                    className="w-28 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 py-1.5 text-sm text-white text-right focus:outline-none focus:border-[#00E5A0]" />
-            }
-        </div>
-    );
-
     return (
+        <Page
+            title="Late Policy"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Late Policy" }]}
+            maxWidth="900px"
+        >
+
         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -68,32 +103,34 @@ export default function LatePolicy() {
             <div className="space-y-4">
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Late Definition</h3>
-                    <Row label="Grace period (minutes)" desc="Allowed buffer after shift start before marking late" field="lateGraceMins" />
-                    <Row label="Late after (time)" desc="Fixed time threshold for late detection" field="lateAfterTime" type="time" />
+                    <Row label="Grace period (minutes)" desc="Allowed buffer after shift start before marking late" field="lateGraceMins" cfg={cfg} set={set} />
+                    <Row label="Late after (time)" desc="Fixed time threshold for late detection" field="lateAfterTime" type="time" cfg={cfg} set={set} />
                 </div>
 
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Deduction Rules</h3>
-                    <Row label="Half-day if late by (hours)" desc="Late by this many hours = half-day deduction" field="halfDayIfLateByHrs" />
-                    <Row label="N lates = 1 half-day deduction" desc="Accumulated lates that count as a half-day" field="latesForHalfDay" />
-                    <Row label="N lates = 1 full-day deduction" desc="Accumulated lates that count as a full-day LOP" field="latesForFullDay" />
-                    <Row label="Enable half-day deduction rule" field="deductHalfDay" type="toggle" />
+                    <Row label="Half-day if late by (hours)" desc="Late by this many hours = half-day deduction" field="halfDayIfLateByHrs" cfg={cfg} set={set} />
+                    <Row label="N lates = 1 half-day deduction" desc="Accumulated lates that count as a half-day" field="latesForHalfDay" cfg={cfg} set={set} />
+                    <Row label="N lates = 1 full-day deduction" desc="Accumulated lates that count as a full-day LOP" field="latesForFullDay" cfg={cfg} set={set} />
+                    <Row label="Enable half-day deduction rule" field="deductHalfDay" type="toggle" cfg={cfg} set={set} />
                 </div>
 
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Warnings & Escalation</h3>
-                    <Row label="Notify manager after N lates" field="notifyManagerAfter" />
-                    <Row label="Habitual threshold (lates/month)" desc="Flagged as habitual late comer" field="habitualThreshold" />
-                    <Row label="Send warning email to employee" field="warningEmailEnabled" type="toggle" />
-                    <Row label="Escalate habitual cases to HR" field="escalateToHR" type="toggle" />
+                    <Row label="Notify manager after N lates" field="notifyManagerAfter" cfg={cfg} set={set} />
+                    <Row label="Habitual threshold (lates/month)" desc="Flagged as habitual late comer" field="habitualThreshold" cfg={cfg} set={set} />
+                    <Row label="Send warning email to employee" field="warningEmailEnabled" type="toggle" cfg={cfg} set={set} />
+                    <Row label="Escalate habitual cases to HR" field="escalateToHR" type="toggle" cfg={cfg} set={set} />
                 </div>
 
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Self-Correction</h3>
-                    <Row label="Allow employee to regularize late" field="allowSelfCorrect" type="toggle" />
-                    <Row label="Regularization window (days)" desc="Number of days employee can submit a regularization" field="selfCorrectWindow" />
+                    <Row label="Allow employee to regularize late" field="allowSelfCorrect" type="toggle" cfg={cfg} set={set} />
+                    <Row label="Regularization window (days)" desc="Number of days employee can submit a regularization" field="selfCorrectWindow" cfg={cfg} set={set} />
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,75 +1,107 @@
 "use client";
 
 import { Save, Snowflake } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// migrated: immersive-ui
+
+const FREEZE_TOGGLES = [
+    {
+        id: "basic-da",
+        label: "Basic + DA Formula",
+        desc: "Lock the formula computation (e.g., 50% of CTC).",
+        defaultOn: true,
+    },
+    {
+        id: "statutory",
+        label: "Statutory Deductions (PF/PT/ESI)",
+        desc: "Prevent manual overriding of statutory deduction amounts.",
+        defaultOn: true,
+    },
+    {
+        id: "fbp",
+        label: "Flexible Benefit Plan (FBP)",
+        desc: "Lock FBP declarations outside of the designated declaration window.",
+        defaultOn: false,
+    },
+] as const;
 
 export default function SalaryFreezeSettings() {
     return (
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px", paddingBottom: 80 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
-                <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 8 }}>Salary Structure Freeze</h1>
-                    <div style={{ fontSize: 14, color: "#8899AA" }}>Lock core salary structures to prevent unauthorized modifications across the organization.</div>
-                </div>
-                <button style={{ height: 40, padding: "0 20px", background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                    <Save size={16} /> Save Policy
-                </button>
+        <Page
+            title="Salary Structure Freeze"
+            subtitle="Lock core salary structures to prevent unauthorized modifications across the organization."
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll/dashboard" },
+                { label: "Settings", href: "/payroll-settings" },
+                { label: "Freeze" },
+            ]}
+            maxWidth="800px"
+            actions={
+                <Button icon={<Save size={14} aria-hidden="true" />}>Save Policy</Button>
+            }
+        >
+            {/* Info Banner */}
+            <div className="flex items-start gap-3 p-4 bg-[#0066FF]/5 border border-dashed border-[#0066FF]/30 rounded-xl">
+                <Snowflake size={18} className="text-[#0066FF] shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="text-sm text-[#c8d8e8] leading-relaxed">
+                    When a parameter is frozen, it cannot be modified by HR Managers. Only Admins with &apos;Super Admin&apos; or &apos;Payroll Master&apos; roles can unlock and edit these values.
+                </p>
             </div>
 
-            <div style={{ background: "rgba(0,102,255,0.05)", border: "1px dashed rgba(0,102,255,0.3)", borderRadius: 12, padding: 16, display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 24 }}>
-                <Snowflake size={20} color="#0066FF" style={{ flexShrink: 0 }} />
-                <div style={{ fontSize: 13, color: "#E5E7EB", lineHeight: 1.5 }}>
-                    When a parameter is frozen, it cannot be modified by HR Managers. Only Admins with 'Super Admin' or 'Payroll Master' roles can unlock and edit these values.
+            {/* Component Value Freeze */}
+            <Card padding="lg">
+                <h2 className="text-base font-semibold text-white mb-4">Component Value Freeze</h2>
+                <div className="space-y-4">
+                    {FREEZE_TOGGLES.map((toggle, i) => (
+                        <label
+                            key={toggle.id}
+                            className={`flex items-center justify-between cursor-pointer ${i < FREEZE_TOGGLES.length - 1 ? "pb-4 border-b border-[#1A2A3A]" : ""}`}
+                        >
+                            <div>
+                                <div className="text-sm font-medium text-white mb-1">{toggle.label}</div>
+                                <div className="text-xs text-[#8899AA]">{toggle.desc}</div>
+                            </div>
+                            <div
+                                className={`w-10 h-6 rounded-full flex items-center p-0.5 transition-colors ${toggle.defaultOn ? "bg-[#00E5A0]" : "bg-[#1A2A3A]"}`}
+                                role="switch"
+                                aria-checked={toggle.defaultOn}
+                                aria-label={toggle.label}
+                            >
+                                <div className={`w-5 h-5 rounded-full transition-transform ${toggle.defaultOn ? "bg-[#060B14] translate-x-4" : "bg-[#8899AA]"}`} />
+                            </div>
+                        </label>
+                    ))}
                 </div>
-            </div>
+            </Card>
 
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 16 }}>Component Value Freeze</h2>
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                    <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", paddingBottom: 16, borderBottom: "1px solid #1A2A3A" }}>
-                        <div>
-                            <div style={{ fontSize: 14, fontWeight: 500, color: "#FFFFFF", marginBottom: 4 }}>Basic + DA Formula</div>
-                            <div style={{ fontSize: 13, color: "#8899AA" }}>Lock the formula computation (e.g., 50% of CTC).</div>
-                        </div>
-                        <div style={{ width: 40, height: 24, background: "#00E5A0", borderRadius: 12, display: "flex", alignItems: "center", padding: 2 }}>
-                            <div style={{ width: 20, height: 20, background: "#060B14", borderRadius: "50%", transform: "translateX(16px)" }} />
-                        </div>
-                    </label>
-                    <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", paddingBottom: 16, borderBottom: "1px solid #1A2A3A" }}>
-                        <div>
-                            <div style={{ fontSize: 14, fontWeight: 500, color: "#FFFFFF", marginBottom: 4 }}>Statutory Deductions (PF/PT/ESI)</div>
-                            <div style={{ fontSize: 13, color: "#8899AA" }}>Prevent manual overriding of statutory deduction amounts.</div>
-                        </div>
-                        <div style={{ width: 40, height: 24, background: "#00E5A0", borderRadius: 12, display: "flex", alignItems: "center", padding: 2 }}>
-                            <div style={{ width: 20, height: 20, background: "#060B14", borderRadius: "50%", transform: "translateX(16px)" }} />
-                        </div>
-                    </label>
-                    <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}>
-                        <div>
-                            <div style={{ fontSize: 14, fontWeight: 500, color: "#FFFFFF", marginBottom: 4 }}>Flexible Benefit Plan (FBP)</div>
-                            <div style={{ fontSize: 13, color: "#8899AA" }}>Lock FBP declarations outside of the designated declaration window.</div>
-                        </div>
-                        <div style={{ width: 40, height: 24, background: "#1A2A3A", borderRadius: 12, display: "flex", alignItems: "center", padding: 2 }}>
-                            <div style={{ width: 20, height: 20, background: "#8899AA", borderRadius: "50%" }} />
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                <h2 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 16 }}>CTC Boundary Guardrails</h2>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            {/* CTC Boundary Guardrails */}
+            <Card padding="lg">
+                <h2 className="text-base font-semibold text-white mb-4">CTC Boundary Guardrails</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label style={{ fontSize: 13, color: "#8899AA", display: "block", marginBottom: 8 }}>Minimum Allowed Hike (%)</label>
-                        <input type="number" defaultValue="0" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 12px", color: "#FFFFFF", fontSize: 14, outline: "none" }} />
+                        <label htmlFor="min-hike" className="block text-xs text-[#8899AA] mb-2">Minimum Allowed Hike (%)</label>
+                        <input
+                            id="min-hike"
+                            type="number"
+                            defaultValue="0"
+                            className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 text-white text-sm outline-none focus:border-[#00E5A0]"
+                        />
                     </div>
                     <div>
-                        <label style={{ fontSize: 13, color: "#8899AA", display: "block", marginBottom: 8 }}>Maximum Allowed Hike (%) - Guardrail</label>
-                        <input type="number" defaultValue="30" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 12px", color: "#FFFFFF", fontSize: 14, outline: "none" }} />
-                        <div style={{ fontSize: 12, color: "#FFB800", marginTop: 8 }}>Revisions above 30% require Super Admin approval.</div>
+                        <label htmlFor="max-hike" className="block text-xs text-[#8899AA] mb-2">Maximum Allowed Hike (%) — Guardrail</label>
+                        <input
+                            id="max-hike"
+                            type="number"
+                            defaultValue="30"
+                            className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 text-white text-sm outline-none focus:border-[#00E5A0]"
+                        />
+                        <p className="text-xs text-[#FFB800] mt-2">Revisions above 30% require Super Admin approval.</p>
                     </div>
                 </div>
-            </div>
-        </div>
+            </Card>
+        </Page>
     );
 }

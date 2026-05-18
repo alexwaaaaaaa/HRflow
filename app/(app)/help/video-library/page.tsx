@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Film, ArrowLeft, Play, Clock, Search, BookOpen, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -21,6 +23,13 @@ const FEATURED = [
 export default function VideoLibraryScreen() {
     const [search, setSearch] = useState('');
     return (
+        <Page
+            title="Video Library"
+            subtitle="Full courses, playlists, and on-demand tutorials"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Video Library" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div className="flex items-center justify-between">
@@ -84,5 +93,7 @@ export default function VideoLibraryScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

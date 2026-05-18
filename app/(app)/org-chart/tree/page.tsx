@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
-    Users, ChevronRight, Download, Filter, Share2,
-    ZoomIn, ZoomOut, Target, UserPlus, MoreVertical,
+    Users, ChevronRight, Download, Filter, Target,
     Network, Search, Plus, User
 } from "lucide-react";
 // In a real implementation we would use d3.js or react-d3-tree
@@ -14,6 +15,13 @@ export default function OrgChartTreeScreen() {
     const [viewMode, setViewMode] = useState<"vertical" | "horizontal">("vertical");
 
     return (
+        <Page
+            title="Interactive Org Chart"
+            subtitle="Head of Talent Acq."
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Tree" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-6 flex-shrink-0">
                 <div>
@@ -96,7 +104,7 @@ export default function OrgChartTreeScreen() {
                             <div className="w-64 bg-[#0B1221] border-2 border-indigo-500 rounded-xl p-4 shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all cursor-pointer transform hover:-translate-y-1 z-10">
                                 <div className="flex gap-3 items-center">
                                     <div className="w-12 h-12 rounded-full bg-indigo-500/20 border-2 border-indigo-500 overflow-hidden">
-                                        <img src="https://i.pravatar.cc/150?u=1" alt="CEO" className="w-full h-full object-cover" />
+                                        <Image src="https://i.pravatar.cc/150?u=1" alt="CEO" width={150} height={150} className="w-full h-full object-cover" />
                                     </div>
                                     <div>
                                         <h3 className="text-white font-bold text-sm">Vikram Aditya</h3>
@@ -133,7 +141,7 @@ export default function OrgChartTreeScreen() {
                                 <div className="w-56 bg-[#0B1221] border-2 border-[#2A3A4A] rounded-xl p-3 shadow-lg hover:border-emerald-500 transition-all cursor-pointer z-10">
                                     <div className="flex gap-3 items-center">
                                         <div className="w-10 h-10 rounded-full bg-[#1A2A3A] border-2 border-[#2A3A4A] overflow-hidden">
-                                            <img src="https://i.pravatar.cc/150?u=2" alt="CTO" className="w-full h-full object-cover" />
+                                            <Image src="https://i.pravatar.cc/150?u=2" alt="CTO" width={150} height={150} className="w-full h-full object-cover" />
                                         </div>
                                         <div>
                                             <h3 className="text-white font-bold text-sm">Maya Patel</h3>
@@ -177,7 +185,7 @@ export default function OrgChartTreeScreen() {
                                     <div className="absolute -top-2 -right-2 w-5 h-5 bg-pink-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">!</div>
                                     <div className="flex gap-3 items-center">
                                         <div className="w-10 h-10 rounded-full bg-[#1A2A3A] border-2 border-emerald-500 overflow-hidden">
-                                            <img src="https://i.pravatar.cc/150?u=4" alt="CHRO" className="w-full h-full object-cover" />
+                                            <Image src="https://i.pravatar.cc/150?u=4" alt="CHRO" width={150} height={150} className="w-full h-full object-cover" />
                                         </div>
                                         <div>
                                             <h3 className="text-white font-bold text-sm">Priya Sharma</h3>
@@ -238,5 +246,7 @@ export default function OrgChartTreeScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

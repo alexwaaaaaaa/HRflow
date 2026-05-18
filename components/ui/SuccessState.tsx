@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Check } from 'lucide-react';
+import { seedRandom } from '@/lib/random';
 
 export interface SuccessAction {
     label: string;
@@ -28,27 +29,32 @@ function ConfettiCanvas() {
 
     useEffect(() => {
         const colors = ['#00E5A0', '#6366f1', '#a78bfa', '#f59e0b', '#38bdf8'];
+        // Use seedRandom for deterministic initial positions — React 19 purity contract
+        const rng = seedRandom(0xc0ffee);
         const p = Array.from({ length: 60 }).map(() => ({
-            x: Math.random() * 100, // %
-            y: -10 - Math.random() * 20, // start above
-            r: 3 + Math.random() * 5, // radius
-            c: colors[Math.floor(Math.random() * colors.length)],
-            v: 1 + Math.random() * 3, // velocity
-            a: Math.random() * 360, // angle
-            d: -2 + Math.random() * 4 // drift
+            x: rng() * 100, // %
+            y: -10 - rng() * 20, // start above
+            r: 3 + rng() * 5, // radius
+            c: colors[Math.floor(rng() * colors.length)],
+            v: 1 + rng() * 3, // velocity
+            a: rng() * 360, // angle
+            d: -2 + rng() * 4 // drift
         }));
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot init from random source
         setParticles(p);
 
         let animationFrameId: number;
+        // Use a separate rng for the reset positions during animation (event-driven, not render-time)
+        const resetRng = seedRandom(0xdeadbeef);
 
         const animate = () => {
             setParticles(current => current.map(particle => {
                 let ny = particle.y + particle.v;
                 let nx = particle.x + (particle.d * 0.1);
-                let na = particle.a + 2;
+                const na = particle.a + 2;
                 if (ny > 120) {
                     ny = -10;
-                    nx = Math.random() * 100;
+                    nx = resetRng() * 100;
                 }
                 return { ...particle, y: ny, x: nx, a: na };
             }));

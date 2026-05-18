@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { LogOut, CheckSquare, Clock, Users, ArrowRight, ShieldAlert, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function OffboardingHubScreen() {
     return (
+        <Page
+            title="Lifecycle: Offboarding Hub"
+            subtitle="Manage employee exits, clearances, and compliance from resignation to final settlement."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Dashboard" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -134,5 +143,7 @@ export default function OffboardingHubScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

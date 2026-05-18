@@ -1,9 +1,11 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
     BarChart2, Download, TrendingUp, Users, Star, Gift, Filter, Calendar
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
 
 const MONTHLY_RECOGNITION = [
@@ -33,9 +35,16 @@ const TOP_DEPARTMENTS = [
 ];
 
 export default function RRReportsScreen() {
-    const [dateRange, setDateRange] = useState('Last 6 Months');
+    const [dateRange, _setDateRange] = useState('Last 6 Months');
 
     return (
+        <Page
+            title="Recognition & Rewards Analytics"
+            subtitle="Deep dive into user engagement, recognition trends, and budget utilization."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Reports" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -155,7 +164,7 @@ export default function RRReportsScreen() {
                                 <Tooltip
                                     contentStyle={{ backgroundColor: '#152336', borderColor: '#2A3A4A', borderRadius: '12px', color: '#fff' }}
                                     itemStyle={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}
-                                    formatter={(value: any, name: any, props: any) => [`${value}%`, name]}
+                                    formatter={(value: any, name: any, _props: any) => [`${value}%`, name]}
                                 />
                             </PieChart>
                         </ChartWrapper>
@@ -244,5 +253,7 @@ export default function RRReportsScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

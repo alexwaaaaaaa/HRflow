@@ -1,9 +1,17 @@
 "use client";
-import React, { useState } from 'react';
-import { TerminalSquare, Play, RefreshCw, Send, CheckCircle2, ChevronDown } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { Send, CheckCircle2 } from 'lucide-react';
 
 export default function SandboxTestingPage() {
     return (
+        <Page
+            title="Testing"
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Sandbox", href: "/developer/sandbox" }, { label: "Testing" }]}
+            maxWidth="1200px"
+        >
+
         <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-[#060D1A]">
             {/* Sidebar nav / endpoint list */}
             <div className="w-64 border-r border-[#1A2A3A] bg-[#0A1420] overflow-y-auto shrink-0 flex flex-col">
@@ -118,5 +126,7 @@ export default function SandboxTestingPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

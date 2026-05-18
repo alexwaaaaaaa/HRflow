@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+import React from "react";
 import Link from "next/link";
 import {
     Building2, ChevronRight, Search, Plus, MoreVertical, Edit, Trash2, Users
@@ -19,6 +21,13 @@ const DEPARTMENTS = [
 
 export default function DepartmentListScreen() {
     return (
+        <Page
+            title="Departments"
+            subtitle="FY 2025-26 Target"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Departments" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -107,7 +116,7 @@ export default function DepartmentListScreen() {
                                     <td className="p-4">
                                         <div className="flex items-center gap-2">
                                             {dept.head !== "Open Role" && dept.head !== "--" ? (
-                                                <img src={`https://i.pravatar.cc/150?u=${index}`} className="w-6 h-6 rounded-full" alt="avatar" />
+                                                <Image src={`https://i.pravatar.cc/150?u=${index}`} width={24} height={24} className="w-6 h-6 rounded-full" alt="avatar" />
                                             ) : (
                                                 <div className="w-6 h-6 rounded-full bg-[#1A2A3A] flex items-center justify-center"><Users className="w-3 h-3 text-[#8899AA]" /></div>
                                             )}
@@ -146,5 +155,7 @@ export default function DepartmentListScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

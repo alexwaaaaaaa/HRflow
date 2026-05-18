@@ -1,140 +1,168 @@
 "use client";
 
-import React from 'react';
 import {
-    BarChart3, PieChart, TrendingDown, TrendingUp, Download,
-    Calendar, Filter, ArrowLeft, RefreshCw, FileText, Briefcase, UserX
-} from 'lucide-react';
+    BarChart3, TrendingDown, Download, Calendar, Filter, RefreshCw, UserX,
+} from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+interface KpiCard {
+    label: string;
+    val: string;
+    trend: string;
+    icon: typeof BarChart3;
+    color: string;
+    trendVariant: "success" | "danger";
+}
+
+const KPI_CARDS: KpiCard[] = [
+    { label: "Annual Attrition %", val: "14.2%", trend: "-2.1%", icon: UserX, color: "text-emerald-500", trendVariant: "success" },
+    { label: "Avg Settlement Vol", val: "₹4.8L", trend: "+12%", icon: BarChart3, color: "text-blue-500", trendVariant: "danger" },
+    { label: "Cycle Time (Avg)", val: "8.5d", trend: "-1.2d", icon: RefreshCw, color: "text-violet-500", trendVariant: "success" },
+    { label: "Outstanding Claims", val: "₹12.4L", trend: "High", icon: TrendingDown, color: "text-rose-500", trendVariant: "danger" },
+];
+
+interface BarItem {
+    label: string;
+    val: number;
+    color: string;
+}
+
+const BAR_ITEMS: BarItem[] = [
+    { label: "ENG", val: 80, color: "bg-blue-500" },
+    { label: "SAL", val: 55, color: "bg-indigo-500" },
+    { label: "OPS", val: 40, color: "bg-violet-500" },
+    { label: "HR", val: 20, color: "bg-emerald-500" },
+    { label: "FIN", val: 35, color: "bg-amber-500" },
+    { label: "MKG", val: 65, color: "bg-rose-500" },
+];
+
+interface ExitDriver {
+    reason: string;
+    pct: number;
+    color: string;
+}
+
+const EXIT_DRIVERS: ExitDriver[] = [
+    { reason: "Better Opportunities", pct: 42, color: "bg-blue-500" },
+    { reason: "Personal Reasons", pct: 28, color: "bg-indigo-500" },
+    { reason: "Relocation", pct: 15, color: "bg-rose-500" },
+    { reason: "Higher Education", pct: 10, color: "bg-emerald-500" },
+    { reason: "Other", pct: 5, color: "bg-[#445566]" },
+];
 
 export default function FnFReports() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
-
-                {/* Header */}
-                <div className="flex justify-between items-end">
-                    <div>
-                        <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3 italic">
-                            Attrition & Settlement Analytics <BarChart3 size={28} className="text-blue-500" />
-                        </h1>
-                        <p className="text-slate-400 text-sm font-medium">Strategic insights into employee exit patterns and financial impact.</p>
-                    </div>
-                    <div className="flex gap-3">
-                        <button className="px-5 py-2.5 bg-[#0D1928] border border-[#1A2A3A] rounded-xl text-sm font-bold text-slate-400 hover:text-white transition-all flex items-center shadow-lg italic">
-                            <Calendar size={16} className="mr-2 text-blue-500" /> FY 2023-24
-                        </button>
-                        <button className="px-6 py-2.5 bg-[#0066FF] rounded-xl text-sm font-black text-white hover:bg-blue-700 transition-all shadow-[0_0_20px_rgba(0,102,255,0.3)] italic">
-                            Download Annual Audit
-                        </button>
-                    </div>
-                </div>
-
-                {/* Dashboard Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
-                        { label: 'Annual Attrition %', val: '14.2%', trend: '-2.1%', icon: UserX, color: 'text-emerald-500' },
-                        { label: 'Avg Settlement Vol', val: '₹4.8L', trend: '+12%', icon: BarChart3, color: 'text-blue-500' },
-                        { label: 'Cycle Time (Avg)', val: '8.5d', trend: '-1.2d', icon: RefreshCw, color: 'text-violet-500' },
-                        { label: 'Outstanding Claims', val: '₹12.4L', trend: 'High', icon: TrendingDown, color: 'text-rose-500' },
-                    ].map((m, i) => (
-                        <div key={i} className="bg-[#0D1928] border border-[#1A2A3A] p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-all shadow-xl">
-                            <div className="flex justify-between items-start mb-4 relative z-10">
-                                <div className={`p-2 bg-[#060B14] rounded-xl border border-[#1A2A3A] ${m.color}`}>
-                                    <m.icon size={22} />
-                                </div>
-                                <div className={`text-[10px] font-black uppercase tracking-widest ${m.trend.includes('-') ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                    {m.trend}
-                                </div>
-                            </div>
-                            <div className="relative z-10">
-                                <div className="text-3xl font-black text-white tracking-tighter italic">{m.val}</div>
-                                <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{m.label}</div>
-                            </div>
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
-                        </div>
-                    ))}
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    {/* Primary Chart */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-8 shadow-2xl relative overflow-hidden group h-[450px]">
-                            <div className="flex justify-between items-start mb-10">
-                                <div>
-                                    <h3 className="text-xs font-black text-white uppercase tracking-[0.2em] italic">Exit Volume by Department</h3>
-                                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Cross-departmental resignation distribution</p>
-                                </div>
-                                <button className="p-2 border border-[#1A2A3A] rounded-lg text-slate-500 hover:text-white"><Filter size={16} /></button>
-                            </div>
-
-                            {/* Mock Bar Chart */}
-                            <div className="flex items-end justify-between h-[250px] gap-4">
-                                {[
-                                    { label: 'ENG', val: 80, color: 'bg-blue-500' },
-                                    { label: 'SAL', val: 55, color: 'bg-indigo-500' },
-                                    { label: 'OPS', val: 40, color: 'bg-violet-500' },
-                                    { label: 'HR', val: 20, color: 'bg-emerald-500' },
-                                    { label: 'FIN', val: 35, color: 'bg-amber-500' },
-                                    { label: 'MKG', val: 65, color: 'bg-rose-500' },
-                                ].map((bar, i) => (
-                                    <div key={i} className="flex-1 flex flex-col items-center gap-4 group/bar">
-                                        <div className="w-full relative">
-                                            <div
-                                                className={`w-full ${bar.color} rounded-t-lg transition-all duration-1000 group-hover/bar:brightness-125 shadow-lg shadow-black/20`}
-                                                style={{ height: `${bar.val * 2.5}px` }}
-                                            >
-                                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-black text-white/50 opacity-0 group-hover/bar:opacity-100">
-                                                    {bar.val}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{bar.label}</span>
+        <Page
+            title="Attrition & Settlement Analytics"
+            subtitle="Strategic insights into employee exit patterns and financial impact."
+            breadcrumbs={[
+                { label: "FnF", href: "/fnf/dashboard" },
+                { label: "Reports" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Calendar size={14} aria-hidden="true" />}>
+                        FY 2023-24
+                    </Button>
+                    <Button icon={<Download size={14} aria-hidden="true" />}>
+                        Download Annual Audit
+                    </Button>
+                </>
+            }
+        >
+            <div className="space-y-8">
+                {/* KPI strip */}
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {KPI_CARDS.map((m) => {
+                        const Icon = m.icon;
+                        return (
+                            <Card key={m.label} padding="md">
+                                <div className="mb-4 flex items-start justify-between">
+                                    <div className={`rounded-xl border border-[#1A2A3A] bg-[#060B14] p-2 ${m.color}`}>
+                                        <Icon size={22} aria-hidden="true" />
                                     </div>
-                                ))}
+                                    <Badge variant={m.trendVariant}>{m.trend}</Badge>
+                                </div>
+                                <p className="text-3xl font-black tracking-tight text-white">{m.val}</p>
+                                <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#445566]">{m.label}</p>
+                            </Card>
+                        );
+                    })}
+                </div>
+
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    {/* Primary Chart */}
+                    <div className="lg:col-span-2">
+                        <Card padding="lg">
+                            <div className="mb-8 flex items-start justify-between">
+                                <div>
+                                    <h2 className="text-xs font-bold uppercase tracking-widest text-white">
+                                        Exit Volume by Department
+                                    </h2>
+                                    <p className="mt-1 text-[10px] font-bold uppercase text-[#445566]">
+                                        Cross-departmental resignation distribution
+                                    </p>
+                                </div>
+                                <Button variant="ghost" size="sm" icon={<Filter size={16} aria-hidden="true" />} aria-label="Filter chart" />
                             </div>
-                        </div>
-                    </div>
 
-                    {/* Reasons Distribution */}
-                    <div className="space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-8 shadow-2xl relative overflow-hidden group h-[450px]">
-                            <h3 className="text-xs font-black text-white uppercase tracking-[0.2em] italic mb-8 border-b border-[#1A2A3A] pb-4">Top Exit Drivers</h3>
-
-                            <div className="space-y-6">
-                                {[
-                                    { reason: 'Better Opportunities', pct: 42, color: 'bg-blue-500' },
-                                    { reason: 'Personal Reasons', pct: 28, color: 'bg-indigo-500' },
-                                    { reason: 'Relocation', pct: 15, color: 'bg-rose-500' },
-                                    { reason: 'Higher Education', pct: 10, color: 'bg-emerald-500' },
-                                    { reason: 'Other', pct: 5, color: 'bg-slate-600' },
-                                ].map((row, i) => (
-                                    <div key={i} className="space-y-2">
-                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
-                                            <span className="text-slate-200">{row.reason}</span>
-                                            <span className="text-slate-500">{row.pct}%</span>
-                                        </div>
-                                        <div className="h-1.5 bg-[#060B14] rounded-full overflow-hidden border border-[#1A2A3A]">
+                            {/* Bar chart */}
+                            <div className="flex h-[250px] items-end justify-between gap-4" role="img" aria-label="Exit volume by department bar chart">
+                                {BAR_ITEMS.map((bar) => (
+                                    <div key={bar.label} className="group/bar flex flex-1 flex-col items-center gap-4">
+                                        <div className="w-full">
                                             <div
-                                                className={`h-full ${row.color} rounded-full transition-all duration-1000`}
-                                                style={{ width: `${row.pct}%` }}
+                                                className={`w-full ${bar.color} rounded-t-lg transition-all`}
+                                                style={{ height: `${bar.val * 2.5}px` }}
+                                                aria-label={`${bar.label}: ${bar.val}`}
                                             />
                                         </div>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#445566]">
+                                            {bar.label}
+                                        </span>
                                     </div>
                                 ))}
                             </div>
-
-                            <div className="mt-12 pt-6 border-t border-[#1A2A3A]">
-                                <button className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2 tracking-widest italic">
-                                    <Download size={14} /> Full Demographic Data
-                                </button>
-                            </div>
-                        </div>
+                        </Card>
                     </div>
 
+                    {/* Exit Drivers */}
+                    <div>
+                        <Card padding="lg">
+                            <h2 className="mb-6 border-b border-[#1A2A3A] pb-4 text-xs font-bold uppercase tracking-widest text-white">
+                                Top Exit Drivers
+                            </h2>
+                            <ul className="space-y-4" role="list">
+                                {EXIT_DRIVERS.map((row) => (
+                                    <li key={row.reason} className="space-y-1.5">
+                                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-tight">
+                                            <span className="text-[#8899AA]">{row.reason}</span>
+                                            <span className="text-white">{row.pct}%</span>
+                                        </div>
+                                        <div
+                                            className="h-1.5 overflow-hidden rounded-full border border-[#1A2A3A] bg-[#060B14]"
+                                            role="progressbar"
+                                            aria-valuenow={row.pct}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}
+                                            aria-label={`${row.reason}: ${row.pct}%`}
+                                        >
+                                            <div className={`h-full ${row.color} rounded-full`} style={{ width: `${row.pct}%` }} />
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button variant="outline" size="sm" icon={<Download size={14} aria-hidden="true" />} className="mt-8 w-full">
+                                Full Demographic Data
+                            </Button>
+                        </Card>
+                    </div>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

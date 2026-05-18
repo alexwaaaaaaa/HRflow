@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pre-commit guards (fast checks only — full verify runs in CI).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 1. Casing collision guard for components/ui/ — prevents reintroducing files
+#    whose names differ only by case (silent breakage on Linux CI).
+#    Whitelisted files explicitly listed; anything else with a case-conflicting
+#    name fails the commit.
+allowed='components/ui/ChartWrapper.tsx
+components/ui/ChartMountGate.tsx'
+
+bad=$(git ls-files components/ui/ \
+  | grep -i 'chartwrapper\|chartmountgate\|chart-wrapper\|chart-mount-gate' \
+  | grep -vxF "$allowed" || true)
+
+if [ -n "$bad" ]; then
+  echo ""
+  echo "❌ Pre-commit: casing collision detected in components/ui/"
+  echo ""
+  echo "Tracked files that conflict with the canonical chart wrapper names:"
+  echo "$bad"
+  echo ""
+  echo "Canonical names are:"
+  echo "  - components/ui/ChartWrapper.tsx     (default export, sized)"
+  echo "  - components/ui/ChartMountGate.tsx   (named export, mount-gate only)"
+  echo ""
+  echo "Rename or remove the offending file before committing."
+  exit 1
+fi
+
+# Auto-regenerate migration tracker
+tsx scripts/generate-tracker.ts
+git add docs/frontend-10x-tracker.md
+
+# Future fast checks can be added here. Keep this hook under ~2 seconds —
+# heavy gates (typecheck, lint, tests) run in CI.
+exit 0

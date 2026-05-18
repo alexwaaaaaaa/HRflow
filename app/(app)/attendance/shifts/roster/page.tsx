@@ -1,15 +1,17 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
     Calendar, ChevronLeft, ChevronRight, UserCircle2,
-    MoreHorizontal, Filter, Search, Copy
+    MoreHorizontal, Search, Copy
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function ShiftRosterView() {
     const router = useRouter();
-    const [week, setWeek] = useState('04 Nov - 10 Nov 2024');
+    const [week, _setWeek] = useState('04 Nov - 10 Nov 2024');
 
     const shifts = {
         G: { name: 'General', time: '09:00-18:00', bg: 'bg-[#00E5A0]/10', border: 'border-[#00E5A0]/30', text: 'text-[#00E5A0]' },
@@ -28,6 +30,13 @@ export default function ShiftRosterView() {
     ];
 
     return (
+        <Page
+            title="Shift Roster"
+            subtitle="Manage and assign weekly shift schedules for employees."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Shifts", href: "/attendance/shifts" }, { label: "Roster" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col h-screen">
             <div className="max-w-[1400px] mx-auto w-full flex flex-col flex-1">
 
@@ -159,5 +168,7 @@ export default function ShiftRosterView() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

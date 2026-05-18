@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { CheckCircle2, XOctagon, MapPin } from "lucide-react";
 
@@ -13,6 +15,12 @@ export default function FieldVisitApproval() {
     const [requests, setRequests] = useState(FV_REQUESTS);
 
     return (
+        <Page
+            title="Field Visit Approval"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Field Visit", href: "/attendance/field-visit" }, { label: "Approve" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1000px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -70,5 +78,7 @@ export default function FieldVisitApproval() {
                 )}
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

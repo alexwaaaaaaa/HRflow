@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Webhook, Plus, Power, Edit2, Trash2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WebhookConfigurationPage() {
     return (
+        <Page
+            title="Webhook Subscriptions"
+            subtitle="Receive real-time HTTP POST payloads when state changes occur in Kaarya."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Webhooks" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -81,5 +90,7 @@ export default function WebhookConfigurationPage() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

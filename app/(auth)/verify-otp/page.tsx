@@ -20,7 +20,11 @@ export default function VerifyOtpPage() {
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     useEffect(() => {
-        if (timer <= 0) { setResendActive(true); return; }
+        if (timer <= 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot transition when countdown hits zero
+            setResendActive(true);
+            return;
+        }
         const id = setInterval(() => setTimer((t) => t - 1), 1000);
         return () => clearInterval(id);
     }, [timer]);
@@ -66,34 +70,41 @@ export default function VerifyOtpPage() {
 
     const timerLabel = `${String(Math.floor(timer / 60)).padStart(2, "0")}:${String(timer % 60).padStart(2, "0")}`;
 
+    const OTP_BOX_BASE = "w-14 h-14 text-center text-2xl font-bold bg-[#0D1928] rounded-xl outline-none transition-all duration-150";
+    const otpBorderClass = boxState === "error"
+        ? "border-2 border-[#FF4444] text-[#FF4444]"
+        : boxState === "success"
+        ? "border-2 border-[#00E5A0] text-[#00E5A0]"
+        : "border-2 border-[#1A2A3A] text-white focus:border-[#00E5A0]";
+
     return (
-        <div className="flex min-h-screen" style={{ minWidth: 1440 }}>
+        <div className="flex min-h-screen flex-col lg:flex-row">
             {/* LEFT PANEL */}
-            <div
-                className="flex flex-col"
-                style={{ width: 600, minWidth: 600, background: "#060B14", padding: "40px 80px", position: "relative" }}
-            >
+            <div className="flex w-full flex-col px-6 py-10 sm:px-12 lg:w-[600px] lg:min-w-[600px] lg:px-20 bg-[#060B14]">
                 {/* Back */}
-                <a href="/login" className="flex items-center gap-1.5 w-fit" style={{ color: "#8899AA", fontSize: 14 }}>
-                    <ChevronLeft size={16} /> Back to login
+                <a href="/login" className="flex items-center gap-1.5 w-fit text-[#8899AA] text-sm hover:text-white transition-colors">
+                    <ChevronLeft size={16} aria-hidden="true" /> Back to login
                 </a>
 
                 {/* Centered content */}
                 <div className="flex-1 flex flex-col justify-center items-center text-center">
-                    <div
-                        style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(0,229,160,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    >
-                        <ShieldCheck size={40} color="#00E5A0" />
+                    <div className="w-20 h-20 rounded-full bg-[rgba(0,229,160,0.1)] flex items-center justify-center">
+                        <ShieldCheck size={40} color="#00E5A0" aria-hidden="true" />
                     </div>
 
-                    <h1 style={{ fontSize: 32, fontWeight: 700, color: "#FFFFFF", marginTop: 16, marginBottom: 8 }}>
+                    <h1 className="text-[32px] font-bold text-white mt-4 mb-2">
                         Verify your identity
                     </h1>
-                    <p style={{ fontSize: 14, color: "#8899AA" }}>We sent a 6-digit OTP to</p>
-                    <p style={{ fontSize: 14, color: "#FFFFFF", fontWeight: 600 }}>r***@techcorp.in</p>
+                    <p className="text-sm text-[#8899AA]">We sent a 6-digit OTP to</p>
+                    <p className="text-sm text-white font-semibold">r***@techcorp.in</p>
 
                     {/* OTP Boxes */}
-                    <div className={cn("flex gap-3 mt-8", shake && "animate-shake")} onPaste={handlePaste}>
+                    <div
+                        className={cn("flex gap-3 mt-8", shake && "animate-shake")}
+                        onPaste={handlePaste}
+                        role="group"
+                        aria-label="Enter 6-digit OTP"
+                    >
                         {digits.map((d, i) => (
                             <input
                                 key={i}
@@ -104,46 +115,27 @@ export default function VerifyOtpPage() {
                                 value={d}
                                 onChange={(e) => handleInput(i, e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(i, e)}
-                                style={{
-                                    width: 56,
-                                    height: 56,
-                                    textAlign: "center",
-                                    fontSize: 24,
-                                    fontWeight: 700,
-                                    background: "#0D1928",
-                                    borderRadius: 12,
-                                    outline: "none",
-                                    color: boxState === "error" ? "#FF4444" : boxState === "success" ? "#00E5A0" : "#FFFFFF",
-                                    border: `2px solid ${boxState === "error"
-                                        ? "#FF4444"
-                                        : boxState === "success"
-                                            ? "#00E5A0"
-                                            : d
-                                                ? "#00E5A0"
-                                                : "#1A2A3A"
-                                        }`,
-                                    boxShadow: d ? "0 0 0 3px rgba(0,229,160,0.15)" : "none",
-                                    transition: "all 0.15s",
-                                }}
+                                aria-label={`OTP digit ${i + 1}`}
+                                className={cn(OTP_BOX_BASE, otpBorderClass)}
                             />
                         ))}
                     </div>
 
                     {/* Error message */}
                     {boxState === "error" && (
-                        <p className="mt-3 text-sm" style={{ color: "#FF4444" }}>
+                        <p className="mt-3 text-sm text-[#FF4444]" role="alert">
                             Invalid OTP. 2 attempts left.
                         </p>
                     )}
 
                     {/* Timer / Resend */}
-                    <div className="mt-4" style={{ fontSize: 14, color: "#8899AA" }}>
+                    <div className="mt-4 text-sm text-[#8899AA]">
                         {resendActive ? (
-                            <button onClick={handleResend} style={{ color: "#0066FF", cursor: "pointer", background: "none", border: "none" }}>
+                            <Button variant="ghost" size="sm" onClick={handleResend}>
                                 Resend OTP
-                            </button>
+                            </Button>
                         ) : (
-                            <>Resend OTP in <span style={{ color: "#00E5A0", fontWeight: 600 }}>{timerLabel}</span></>
+                            <>Resend OTP in <span className="text-[#00E5A0] font-semibold">{timerLabel}</span></>
                         )}
                     </div>
 
@@ -158,17 +150,24 @@ export default function VerifyOtpPage() {
                         Verify OTP
                     </Button>
 
-                    <button onClick={() => { }} style={{ fontSize: 14, color: "#0066FF", marginTop: 16, background: "none", border: "none", cursor: "pointer" }}>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-4"
+                        onClick={() => { }}
+                    >
                         Verify via Authenticator App instead
-                    </button>
+                    </Button>
 
-                    <div className="flex items-center gap-1.5 mt-4" style={{ color: "#445566", fontSize: 12 }}>
-                        <Lock size={12} /> OTP valid for 10 minutes only
+                    <div className="flex items-center gap-1.5 mt-4 text-[#445566] text-xs">
+                        <Lock size={12} aria-hidden="true" /> OTP valid for 10 minutes only
                     </div>
                 </div>
             </div>
 
-            <AuthRightPanel />
+            <div className="hidden flex-1 lg:flex">
+                <AuthRightPanel />
+            </div>
         </div>
     );
 }

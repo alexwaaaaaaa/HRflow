@@ -1,8 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+
 import React, { useState } from 'react';
 import {
-    ScanLine, Camera, Smartphone, UploadCloud, RefreshCw, Layers, Crop, CheckCircle2, FileText
+    ScanLine, Camera, UploadCloud, RefreshCw, Layers, Crop, CheckCircle2, FileText
 } from 'lucide-react';
 
 export default function DocumentScannerScreen() {
@@ -15,6 +18,13 @@ export default function DocumentScannerScreen() {
     };
 
     return (
+        <Page
+            title="Mobile/Web Document Scanner"
+            subtitle="Auto-crop, enhance, and digitize physical documents using device camera."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Scanner" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col items-center">
 
             <div className="max-w-4xl w-full text-center mb-8">
@@ -75,7 +85,7 @@ export default function DocumentScannerScreen() {
                             )}
 
                             {scanState === 'review' && (
-                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="scanned document" className="w-full h-full object-cover opacity-80" />
+                                <Image src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" alt="scanned document" className="w-full h-full object-cover opacity-80" width={400} height={300} />
                             )}
                         </div>
                     )}
@@ -135,5 +145,7 @@ export default function DocumentScannerScreen() {
                 }
             `}} />
         </div>
+    
+        </Page>
     );
 }

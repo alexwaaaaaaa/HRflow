@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { FileEdit, Calendar, AlertCircle, ChevronRight, Check } from 'lucide-react';
 
@@ -7,6 +9,13 @@ export default function ResignationPortalScreen() {
     const [lwd, setLwd] = useState('');
 
     return (
+        <Page
+            title="Resignation Portal"
+            subtitle="Submit your formal notice of resignation and begin the offboarding transition."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Resignation" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-white flex items-center gap-3"><FileEdit size={24} className="text-amber-400" /> Resignation Portal</h1>
@@ -121,5 +130,7 @@ export default function ResignationPortalScreen() {
                 )}
             </div>
         </div>
+    
+        </Page>
     );
 }

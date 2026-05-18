@@ -1,143 +1,312 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    Clock, ChevronRight, Search, Play, Calendar, Mail, Edit3, Trash2, Power
-} from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Clock, Play, Mail, Calendar, Edit3, Trash2, Plus } from "lucide-react";
 
-const SCHEDULERS = [
-    { id: "SCH-991", name: "Monthly Payroll Cost Center", frequency: "Monthly (1st Day)", format: "Excel (.xlsx)", recipients: "finance-leadership@acmecorp.com; ceo@acmecorp.com", status: "Active" },
-    { id: "SCH-992", name: "Daily Attendance & Late Comers", frequency: "Daily (09:30 AM)", format: "CSV", recipients: "all-managers@acmecorp.com", status: "Active" },
-    { id: "SCH-993", name: "Q3 Headcount Snapshot", frequency: "Quarterly", format: "PDF Dashboard", recipients: "hr-board@acmecorp.com", status: "Paused" },
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+// ─── Schema ───────────────────────────────────────────────────────────────────
+
+const scheduleSchema = z.object({
+    reportName: z.string().min(1, "Report name required"),
+    frequency: z.enum(["daily", "weekly", "monthly", "quarterly"]),
+    recipients: z.string().min(1, "At least one recipient required"),
+    format: z.enum(["xlsx", "csv", "pdf"]),
+});
+
+type ScheduleForm = z.infer<typeof scheduleSchema>;
+
+// ─── Static data (module scope) ───────────────────────────────────────────────
+
+type ScheduleStatus = "Active" | "Paused";
+
+const STATUS_VARIANT: Record<ScheduleStatus, "success" | "neutral"> = {
+    Active: "success",
+    Paused: "neutral",
+};
+
+interface ScheduleRow {
+    id: string;
+    name: string;
+    frequency: string;
+    format: string;
+    recipients: string;
+    status: ScheduleStatus;
+}
+
+const SCHEDULERS: ScheduleRow[] = [
+    {
+        id: "SCH-991",
+        name: "Monthly Payroll Cost Center",
+        frequency: "Monthly (1st Day)",
+        format: "Excel (.xlsx)",
+        recipients: "finance-leadership@acmecorp.com; ceo@acmecorp.com",
+        status: "Active",
+    },
+    {
+        id: "SCH-992",
+        name: "Daily Attendance & Late Comers",
+        frequency: "Daily (09:30 AM)",
+        format: "CSV",
+        recipients: "all-managers@acmecorp.com",
+        status: "Active",
+    },
+    {
+        id: "SCH-993",
+        name: "Q3 Headcount Snapshot",
+        frequency: "Quarterly",
+        format: "PDF Dashboard",
+        recipients: "hr-board@acmecorp.com",
+        status: "Paused",
+    },
 ];
 
-export default function ReportSchedulerScreen() {
+const SCHEDULE_COLUMNS: Column<ScheduleRow>[] = [
+    {
+        key: "name",
+        label: "Schedule Detail",
+        render: (r) => (
+            <div>
+                <p className="font-bold text-white">{r.name}</p>
+                <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                    <span className="flex items-center gap-1 text-xs text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20">
+                        <Calendar size={10} aria-hidden="true" />
+                        {r.frequency}
+                    </span>
+                    <span className="text-xs text-[#8899AA] border border-[#2A3A4A] px-2 py-0.5 rounded">
+                        {r.format}
+                    </span>
+                </div>
+            </div>
+        ),
+        sortable: true,
+        sortValue: (r) => r.name,
+    },
+    {
+        key: "recipients",
+        label: "Recipients",
+        render: (r) => (
+            <span className="flex items-start gap-2 text-xs text-[#8899AA] max-w-xs">
+                <Mail size={14} className="shrink-0 mt-0.5 text-indigo-400" aria-hidden="true" />
+                <span className="truncate" title={r.recipients}>
+                    {r.recipients}
+                </span>
+            </span>
+        ),
+        hideOnMobile: true,
+    },
+    {
+        key: "status",
+        label: "Status",
+        align: "center",
+        render: (r) => <Badge variant={STATUS_VARIANT[r.status]}>{r.status}</Badge>,
+    },
+    {
+        key: "actions",
+        label: "",
+        align: "right",
+        render: (r) => (
+            <div className="inline-flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Edit schedule ${r.name}`}
+                >
+                    <Edit3 size={14} aria-hidden="true" />
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Delete schedule ${r.name}`}
+                >
+                    <Trash2 size={14} aria-hidden="true" />
+                </Button>
+            </div>
+        ),
+    },
+];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function ReportSchedulerPage() {
+    const { register, handleSubmit, formState: { errors } } = useForm<ScheduleForm>({
+        resolver: zodResolver(scheduleSchema),
+        defaultValues: {
+            reportName: "",
+            frequency: "monthly",
+            recipients: "",
+            format: "xlsx",
+        },
+    });
+
+    const onSubmit = (_data: ScheduleForm) => {
+        // TODO: replace with real mutation
+    };
+
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-2">
-                        <Link href="/reports/dashboard" className="hover:text-white transition-colors">Reports</Link>
-                        <ChevronRight className="w-4 h-4" />
-                        <span className="text-white">Scheduler</span>
-                    </div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <Clock className="w-8 h-8 text-pink-400" />
-                        Report Scheduler
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Automate email delivery of critical reports and dashboards.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-6 py-2 bg-pink-500 hover:bg-pink-600 text-white text-sm font-semibold rounded-lg transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)]">
-                        + New Schedule
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 ring-1 ring-emerald-500/20">
-                            <Play className="w-6 h-6" />
+        <Page
+            title="Report Scheduler"
+            subtitle="Automate email delivery of critical reports and dashboards."
+            breadcrumbs={[
+                { label: "Reports", href: "/reports/dashboard" },
+                { label: "Scheduler" },
+            ]}
+            maxWidth="1280px"
+            actions={
+                <Button icon={<Plus size={14} aria-hidden="true" />}>
+                    New Schedule
+                </Button>
+            }
+        >
+            <div className="space-y-6">
+                {/* KPI strip */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card padding="lg">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
+                                <Play size={24} aria-hidden="true" />
+                            </div>
+                            <span className="text-[#8899AA] text-xs">Active</span>
                         </div>
-                        <span className="text-[#8899AA] text-xs">Active</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-1">12</h3>
-                    <p className="text-xs text-[#8899AA]">Running schedules</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-pink-500/10 rounded-xl text-pink-400 ring-1 ring-pink-500/20">
-                            <Mail className="w-6 h-6" />
+                        <p className="text-2xl font-bold text-white mb-1">12</p>
+                        <p className="text-xs text-[#8899AA]">Running schedules</p>
+                    </Card>
+                    <Card padding="lg">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-3 bg-pink-500/10 rounded-xl text-pink-400">
+                                <Mail size={24} aria-hidden="true" />
+                            </div>
+                            <span className="text-[#8899AA] text-xs">Past 30 Days</span>
                         </div>
-                        <span className="text-[#8899AA] text-xs">Past 30 Days</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-1">1,402</h3>
-                    <p className="text-xs text-[#8899AA]">Emails delivered</p>
-                </div>
-                <div className="bg-gradient-to-br from-[#1A2A3A] to-[#0D1928] border border-[#2A3A4A] rounded-2xl p-6">
-                    <h3 className="text-sm font-bold text-white mb-3">Next Scheduled Run</h3>
-                    <div className="p-3 bg-[#0B1221] border border-[#2A3A4A] rounded-xl">
-                        <p className="text-emerald-400 font-bold text-sm">Daily Attendance & Late Comers</p>
-                        <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs text-[#8899AA]">in 45 mins</span>
-                            <span className="text-xs text-white">09:30 AM</span>
+                        <p className="text-2xl font-bold text-white mb-1">1,402</p>
+                        <p className="text-xs text-[#8899AA]">Emails delivered</p>
+                    </Card>
+                    <Card padding="lg">
+                        <h3 className="text-sm font-bold text-white mb-3">Next Scheduled Run</h3>
+                        <div className="p-3 bg-[#0B1221] border border-[#2A3A4A] rounded-xl">
+                            <p className="text-emerald-400 font-bold text-sm">Daily Attendance &amp; Late Comers</p>
+                            <div className="flex items-center justify-between mt-2">
+                                <span className="text-xs text-[#8899AA]">in 45 mins</span>
+                                <span className="text-xs text-white">09:30 AM</span>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                <div className="p-4 border-b border-[#1A2A3A] flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8899AA] w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Search schedules..."
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-pink-500 transition-colors"
-                        />
-                    </div>
-                    <div className="flex gap-2 text-sm">
-                        <button className="px-4 py-2 bg-[#1A2A3A] text-white border border-[#2A3A4A] rounded-lg">All</button>
-                        <button className="px-4 py-2 bg-transparent text-[#8899AA] hover:text-white rounded-lg">Active</button>
-                        <button className="px-4 py-2 bg-transparent text-[#8899AA] hover:text-white rounded-lg">Paused</button>
-                    </div>
+                    </Card>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-[#1A2A3A]/50 text-[#8899AA] text-xs uppercase tracking-wider">
-                                <th className="p-4 font-medium">Schedule Detail</th>
-                                <th className="p-4 font-medium">Delivery Setup</th>
-                                <th className="p-4 font-medium text-center">Status</th>
-                                <th className="p-4 font-medium text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-sm divide-y divide-[#1A2A3A]">
-                            {SCHEDULERS.map((sch) => (
-                                <tr key={sch.id} className={`hover:bg-[#1A2A3A]/30 transition-colors group ${sch.status === 'Paused' ? 'opacity-60' : ''}`}>
-                                    <td className="p-4">
-                                        <div className="text-white font-bold">{sch.name}</div>
-                                        <div className="text-xs mt-1.5 flex items-center gap-2">
-                                            <span className="text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded flex items-center gap-1">
-                                                <Calendar className="w-3 h-3" /> {sch.frequency}
-                                            </span>
-                                            <span className="text-[#8899AA] border border-[#2A3A4A] px-2 py-0.5 rounded">{sch.format}</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="text-[#8899AA] text-xs flex items-start gap-2 max-w-xs">
-                                            <Mail className="w-4 h-4 flex-shrink-0 mt-0.5 text-indigo-400" />
-                                            <span className="truncate" title={sch.recipients}>{sch.recipients}</span>
-                                        </div>
-                                    </td>
-                                    <td className="p-4 text-center">
-                                        <div className="flex justify-center items-center">
-                                            {/* Toggle switch mockup */}
-                                            <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${sch.status === 'Active' ? 'bg-pink-500' : 'bg-[#2A3A4A]'}`}>
-                                                <div className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] transition-all ${sch.status === 'Active' ? 'left-[22px]' : 'left-1'}`}></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="flex items-center justify-center gap-3">
-                                            <button className="text-[#8899AA] hover:text-white transition-colors" title="Edit Schedule">
-                                                <Edit3 className="w-4 h-4" />
-                                            </button>
-                                            <button className="text-[#8899AA] hover:text-pink-400 transition-colors" title="Delete Schedule">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                {/* New schedule form */}
+                <Card padding="lg">
+                    <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                        <Clock size={16} className="text-pink-400" aria-hidden="true" />
+                        Create New Schedule
+                    </h2>
+                    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label htmlFor="sched-report" className="block text-xs text-[#8899AA] mb-1">
+                                Report Name
+                            </label>
+                            <input
+                                id="sched-report"
+                                {...register("reportName")}
+                                placeholder="e.g. Monthly Payroll MIS"
+                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-[#00e5a0] focus:outline-none"
+                                aria-invalid={!!errors.reportName}
+                            />
+                            {errors.reportName && (
+                                <p className="text-xs text-pink-400 mt-1" role="alert">
+                                    {errors.reportName.message}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label htmlFor="sched-freq" className="block text-xs text-[#8899AA] mb-1">
+                                Frequency
+                            </label>
+                            <select
+                                id="sched-freq"
+                                {...register("frequency")}
+                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-[#00e5a0] focus:outline-none"
+                            >
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="sched-recipients" className="block text-xs text-[#8899AA] mb-1">
+                                Recipients (comma-separated)
+                            </label>
+                            <input
+                                id="sched-recipients"
+                                {...register("recipients")}
+                                placeholder="email@company.com"
+                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-[#00e5a0] focus:outline-none"
+                                aria-invalid={!!errors.recipients}
+                            />
+                            {errors.recipients && (
+                                <p className="text-xs text-pink-400 mt-1" role="alert">
+                                    {errors.recipients.message}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label htmlFor="sched-format" className="block text-xs text-[#8899AA] mb-1">
+                                Format
+                            </label>
+                            <div className="flex gap-2">
+                                <select
+                                    id="sched-format"
+                                    {...register("format")}
+                                    className="flex-1 bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-[#00e5a0] focus:outline-none"
+                                >
+                                    <option value="xlsx">Excel (.xlsx)</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="pdf">PDF</option>
+                                </select>
+                                <Button type="submit" size="sm">
+                                    Save
+                                </Button>
+                            </div>
+                        </div>
+                    </form>
+                </Card>
+
+                {/* Schedules table */}
+                <Card padding="none">
+                    <div className="p-4 border-b border-[#1A2A3A] flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                        <h2 className="text-sm font-bold text-white">Active Schedules</h2>
+                        <div className="flex gap-2" role="tablist" aria-label="Filter schedules">
+                            {(["All", "Active", "Paused"] as const).map((f) => (
+                                <Button
+                                    key={f}
+                                    variant="ghost"
+                                    size="sm"
+                                    role="tab"
+                                    aria-selected={f === "All"}
+                                >
+                                    {f}
+                                </Button>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
+                    </div>
+                    <DataTable<ScheduleRow>
+                        data={SCHEDULERS}
+                        columns={SCHEDULE_COLUMNS}
+                        rowKey={(r) => r.id}
+                        searchable
+                        searchPlaceholder="Search schedules…"
+                        emptyTitle="No schedules yet"
+                        emptyDescription="Create a schedule to automate report delivery."
+                        aria-label="Report schedules"
+                    />
+                </Card>
             </div>
-
-        </div>
+        </Page>
     );
 }

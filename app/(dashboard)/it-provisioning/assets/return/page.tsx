@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw, CheckCircle2, AlertTriangle, Search, Save, X } from "lucide-react";
+import { RefreshCw, CheckCircle2, AlertTriangle, Search } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export default function AssetReturnScreen() {

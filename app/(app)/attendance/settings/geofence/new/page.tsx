@@ -1,8 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    MapPin, Search, Crosshair, ChevronLeft, Plus, Trash2, Shield
+    MapPin, Search, Crosshair, ChevronLeft, Shield
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -12,6 +14,13 @@ export default function GeofenceSetup() {
     const [locationName, setLocationName] = useState("Bengaluru HSR Layout Office");
 
     return (
+        <Page
+            title="Create Geofence Location"
+            subtitle="Define physical boundaries where employees are allowed to check-in."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Geofence", href: "/attendance/settings/geofence" }, { label: "New" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col h-screen">
             <div className="max-w-6xl mx-auto w-full flex flex-col flex-1">
 
@@ -167,5 +176,7 @@ export default function GeofenceSetup() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

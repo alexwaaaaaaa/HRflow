@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -18,6 +20,13 @@ const BUDGET_DATA = [
 
 export default function BudgetVsActualScreen() {
     return (
+        <Page
+            title="Budget vs Actual"
+            subtitle="Allocated for FY25-26"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Budget Vs Actual" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -116,6 +125,8 @@ export default function BudgetVsActualScreen() {
                                     const percent = ((row.actual / row.budget) * 100);
                                     const isOver = row.variance < 0;
                                     return (
+
+
                                         <tr key={idx} className="hover:bg-[#1A2A3A]/20 transition-colors">
                                             <td className="p-4 text-sm font-bold text-white">{row.name}</td>
                                             <td className="p-4 text-sm text-[#8899AA] text-right font-mono">₹{row.budget.toFixed(2)}</td>
@@ -137,7 +148,9 @@ export default function BudgetVsActualScreen() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    );
+                                    
+        
+);
                                 })}
                             </tbody>
                         </table>
@@ -146,5 +159,7 @@ export default function BudgetVsActualScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

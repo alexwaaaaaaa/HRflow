@@ -1,10 +1,40 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { ShieldAlert, Users, Clock, AlertTriangle, Search, Filter, ChevronRight, MessageSquareWarning } from 'lucide-react';
 import Link from 'next/link';
 
+type SeverityColor = "rose" | "amber" | "emerald";
+
+const SEVERITY_TEXT_CLASSES: Record<SeverityColor, string> = {
+    rose: "flex items-center gap-1.5 text-xs font-bold text-rose-400",
+    amber: "flex items-center gap-1.5 text-xs font-bold text-amber-400",
+    emerald: "flex items-center gap-1.5 text-xs font-bold text-emerald-400",
+} as const;
+
+const SEVERITY_DOT_CLASSES: Record<SeverityColor, string> = {
+    rose: "w-2 h-2 rounded-full bg-rose-400",
+    amber: "w-2 h-2 rounded-full bg-amber-400",
+    emerald: "w-2 h-2 rounded-full bg-emerald-400",
+} as const;
+
+const GRIEVANCE_ROWS: { id: string; cat: string; date: string; stage: string; severity: string; color: SeverityColor }[] = [
+    { id: 'GRV-2026-142', cat: 'Workplace Harassment', date: '2 hrs ago', stage: 'Pending Assignment', severity: 'High', color: 'rose' },
+    { id: 'GRV-2026-141', cat: 'Manager Dispute', date: '1 day ago', stage: 'Investigation', severity: 'Medium', color: 'amber' },
+    { id: 'GRV-2026-139', cat: 'Policy Violation', date: '3 days ago', stage: 'Hearing Scheduled', severity: 'High', color: 'rose' },
+    { id: 'GRV-2026-138', cat: 'Payroll Issue', date: '4 days ago', stage: 'Resolution Proposed', severity: 'Low', color: 'emerald' },
+];
+
 export default function GrievanceDashboardScreen() {
     return (
+        <Page
+            title="Grievance & IC Committee"
+            subtitle="Secure, confidential management of workplace issues and POSH cases."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Dashboard" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div>
@@ -99,12 +129,7 @@ export default function GrievanceDashboardScreen() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#1A2A3A]">
-                                {[
-                                    { id: 'GRV-2026-142', cat: 'Workplace Harassment', date: '2 hrs ago', stage: 'Pending Assignment', severity: 'High', color: 'rose' },
-                                    { id: 'GRV-2026-141', cat: 'Manager Dispute', date: '1 day ago', stage: 'Investigation', severity: 'Medium', color: 'amber' },
-                                    { id: 'GRV-2026-139', cat: 'Policy Violation', date: '3 days ago', stage: 'Hearing Scheduled', severity: 'High', color: 'rose' },
-                                    { id: 'GRV-2026-138', cat: 'Payroll Issue', date: '4 days ago', stage: 'Resolution Proposed', severity: 'Low', color: 'emerald' },
-                                ].map((row, i) => (
+                                {GRIEVANCE_ROWS.map((row, i) => (
                                     <tr key={i} className="hover:bg-[#131B2B] transition-colors group">
                                         <td className="px-6 py-4 font-mono text-indigo-400 font-bold">{row.id}</td>
                                         <td className="px-6 py-4 text-white font-medium">{row.cat}</td>
@@ -113,8 +138,8 @@ export default function GrievanceDashboardScreen() {
                                             <span className="bg-[#1A2A3A] px-2.5 py-1 rounded text-xs text-[#CCDDEE] border border-[#2A3A4A]">{row.stage}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`flex items-center gap-1.5 text-xs font-bold text-${row.color}-400`}>
-                                                <div className={`w-2 h-2 rounded-full bg-${row.color}-400`} /> {row.severity}
+                                            <span className={SEVERITY_TEXT_CLASSES[row.color]}>
+                                                <div className={SEVERITY_DOT_CLASSES[row.color]} /> {row.severity}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
@@ -172,5 +197,7 @@ export default function GrievanceDashboardScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

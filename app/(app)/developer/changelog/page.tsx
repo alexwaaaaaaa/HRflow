@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { FileClock, Plus, Calendar } from 'lucide-react';
 
 export default function ApiChangelogPage() {
     return (
+        <Page
+            title="API Changelog & Versions"
+            subtitle="Track updates, deprecations, and new features added to the Kaarya API."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Changelog" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -65,5 +74,7 @@ export default function ApiChangelogPage() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

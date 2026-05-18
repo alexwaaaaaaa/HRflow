@@ -7,7 +7,12 @@ import { useEffect, useState, ReactNode } from "react";
  */
 export default function ClientOnly({ children, fallback }: { children: ReactNode; fallback?: ReactNode }) {
     const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
+    useEffect(() => {
+        // Standard SSR mount-gate; setting state in this effect is intentional
+        // because we MUST re-render after hydration to swap fallback → children.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
+    }, []);
     if (!mounted) return <>{fallback ?? null}</>;
     return <>{children}</>;
 }

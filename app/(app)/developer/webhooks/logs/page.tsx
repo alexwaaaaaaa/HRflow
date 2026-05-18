@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Activity, ChevronDown, ChevronUp, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -12,7 +14,18 @@ export default function WebhookLogsPage() {
         { id: 4, event: 'employee.created', date: 'Oct 13, 09:15:00', status: 200, time: '88ms' },
     ];
 
+    // Stable per-log payload IDs so the JSON preview doesn't flicker on re-render.
+    // Real backend will return real event IDs.
+    const stableEvtId = (id: number) => `evt_${id.toString(36).padStart(9, '0')}`;
+
     return (
+        <Page
+            title="Webhook Delivery Logs"
+            subtitle="Inspect HTTP requests and responses for the last 7 days."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Webhooks", href: "/developer/webhooks" }, { label: "Logs" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -66,7 +79,7 @@ export default function WebhookLogsPage() {
                                             </h4>
                                             <pre className="bg-[#0A1420] border border-[#1A2A3A] p-4 rounded-lg font-mono text-xs text-indigo-300 overflow-x-auto h-48">
                                                 {JSON.stringify({
-                                                    "id": "evt_" + Math.random().toString(36).substr(2, 9),
+                                                    "id": stableEvtId(log.id),
                                                     "event_type": log.event,
                                                     "created_at": "2024-10-14T14:32:01Z",
                                                     "data": {
@@ -115,5 +128,7 @@ export default function WebhookLogsPage() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

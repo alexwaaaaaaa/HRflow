@@ -1,92 +1,205 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    CheckCircle, XCircle, Search, DollarSign, Calendar
-} from 'lucide-react';
+import { useState } from "react";
+import { CheckCircle, XCircle } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+import { useToast } from "@/components/ui/Toast";
 
-export default function LeaveEncashmentApproval() {
-    const requests = [
-        { id: 'ENC-2401', emp: 'Arjun Mehta', dept: 'Product', amount: '₹14,000', days: 8, balanceBefore: 20, reason: 'Personal expenses', appliedOn: '16 Nov 2024' },
-        { id: 'ENC-2422', emp: 'Sneha Patel', dept: 'Engineering', amount: '₹26,500', days: 12, balanceBefore: 18, reason: 'Medical emergency', appliedOn: '18 Nov 2024' },
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & static data
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface EncashmentRequest {
+    id: string;
+    emp: string;
+    dept: string;
+    amount: string;
+    days: number;
+    balanceBefore: number;
+    reason: string;
+    appliedOn: string;
+}
+
+const INITIAL_REQUESTS: EncashmentRequest[] = [
+    { id: "ENC-2401", emp: "Arjun Mehta", dept: "Product", amount: "₹14,000", days: 8, balanceBefore: 20, reason: "Personal expenses", appliedOn: "16 Nov 2024" },
+    { id: "ENC-2422", emp: "Sneha Patel", dept: "Engineering", amount: "₹26,500", days: 12, balanceBefore: 18, reason: "Medical emergency", appliedOn: "18 Nov 2024" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function EmployeeCell({ row }: { row: EncashmentRequest }) {
+    return (
+        <div>
+            <p className="text-base font-bold text-white">{row.emp}</p>
+            <p className="mt-0.5 text-xs text-[#8899AA]">{row.dept} · Req: {row.id}</p>
+        </div>
+    );
+}
+
+function DaysCell({ row }: { row: EncashmentRequest }) {
+    return (
+        <div className="inline-block rounded-lg border border-[#1A2A3A] bg-[#0A1420] px-3 py-1">
+            <span className="text-lg font-black text-[#0066FF]">{row.days}</span>{" "}
+            <span className="text-xs font-bold text-[#556677]">EL</span>
+        </div>
+    );
+}
+
+function PayoutCell({ row }: { row: EncashmentRequest }) {
+    return <span className="text-lg font-black text-[#00E5A0]">{row.amount}</span>;
+}
+
+function BalanceCell({ row }: { row: EncashmentRequest }) {
+    return (
+        <div>
+            <p className="text-sm font-bold text-white">{row.balanceBefore - row.days} Days</p>
+            <p className="text-[10px] text-[#8899AA]">After approval (Current: {row.balanceBefore})</p>
+        </div>
+    );
+}
+
+function ActionsCell({ row, onApprove, onReject, busy }: {
+    row: EncashmentRequest;
+    onApprove: (id: string) => void;
+    onReject: (id: string) => void;
+    busy: string | null;
+}) {
+    return (
+        <div className="flex justify-end gap-2">
+            <Button
+                variant="danger"
+                size="sm"
+                isLoading={busy === row.id}
+                onClick={() => onReject(row.id)}
+            >
+                Reject
+            </Button>
+            <Button
+                size="sm"
+                icon={<CheckCircle size={14} aria-hidden="true" />}
+                isLoading={busy === row.id}
+                onClick={() => onApprove(row.id)}
+            >
+                Approve
+            </Button>
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function LeaveEncashmentApprovalsPage() {
+    const toast = useToast();
+    const [requests, setRequests] = useState(INITIAL_REQUESTS);
+    const [busy, setBusy] = useState<string | null>(null);
+
+    const handleApprove = async (id: string) => {
+        setBusy(id);
+        try {
+            // TODO: replace with real mutation
+            await new Promise((r) => setTimeout(r, 500));
+            setRequests((prev) => prev.filter((r) => r.id !== id));
+            toast.show({ variant: "success", title: "Encashment approved", description: "The leave encashment request has been approved." });
+        } finally {
+            setBusy(null);
+        }
+    };
+
+    const handleReject = async (id: string) => {
+        setBusy(id);
+        try {
+            // TODO: replace with real mutation
+            await new Promise((r) => setTimeout(r, 500));
+            setRequests((prev) => prev.filter((r) => r.id !== id));
+            toast.show({ variant: "warning", title: "Encashment rejected", description: "The leave encashment request has been rejected." });
+        } finally {
+            setBusy(null);
+        }
+    };
+
+    const columns: Column<EncashmentRequest>[] = [
+        {
+            key: "employee",
+            label: "Employee",
+            render: (r) => <EmployeeCell row={r} />,
+            sortable: true,
+            sortValue: (r) => r.emp,
+        },
+        {
+            key: "days",
+            label: "Days Requested",
+            align: "center",
+            render: (r) => <DaysCell row={r} />,
+            sortable: true,
+            sortValue: (r) => r.days,
+        },
+        {
+            key: "amount",
+            label: "Est. Payout",
+            align: "right",
+            render: (r) => <PayoutCell row={r} />,
+        },
+        {
+            key: "balance",
+            label: "Remaining Balance",
+            render: (r) => <BalanceCell row={r} />,
+        },
+        {
+            key: "actions",
+            label: "",
+            align: "right",
+            render: (r) => (
+                <ActionsCell
+                    row={r}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    busy={busy}
+                />
+            ),
+        },
     ];
 
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-[1200px] mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1">Leave Encashment Approvals</h1>
-                        <p className="text-sm text-[#8899AA]">HR / Finance review panel for EL conversion requests.</p>
-                    </div>
+        <Page
+            title="Leave Encashment Approvals"
+            subtitle="HR / Finance review panel for EL conversion requests"
+            breadcrumbs={[
+                { label: "Leave", href: "/leave/dashboard" },
+                { label: "Encashment Approvals" },
+            ]}
+            maxWidth="1200px"
+        >
+            <Card padding="none">
+                <div className="flex items-center justify-between border-b border-[#1A2A3A] bg-[#0A1420] px-5 py-3">
+                    <p className="text-sm font-bold text-[#8899AA]">
+                        {requests.length} Pending Approval{requests.length !== 1 ? "s" : ""}
+                    </p>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        icon={<XCircle size={14} aria-hidden="true" />}
+                    >
+                        Reject All
+                    </Button>
                 </div>
-
-                {/* Queue */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl overflow-hidden shadow-lg">
-                    <div className="p-4 border-b border-[#1A2A3A] flex justify-between items-center bg-[#0A1420]">
-                        <div className="relative w-80">
-                            <Search size={16} className="absolute left-3 top-2.5 text-[#556677]" />
-                            <input
-                                type="text"
-                                placeholder="Search employee..."
-                                className="w-full bg-[#060B14] border border-[#1A2A3A] text-sm text-white rounded-lg pl-9 pr-3 py-2 outline-none focus:border-[#0066FF]"
-                            />
-                        </div>
-                        <div className="text-sm font-bold text-[#8899AA]">
-                            {requests.length} Pending Approvals
-                        </div>
-                    </div>
-
-                    <table className="w-full text-left text-sm whitespace-nowrap">
-                        <thead className="bg-[#0A1420] border-b border-[#1A2A3A]">
-                            <tr>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider">Employee</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider text-center">Days Requested</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider text-right">Est. Payout</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider pl-8">Remaining Balance</th>
-                                <th className="px-6 py-4 font-bold text-xs text-[#8899AA] uppercase tracking-wider text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#1A2A3A]">
-                            {requests.map((req) => (
-                                <tr key={req.id} className="hover:bg-[#1A2A3A]/30 transition-colors">
-                                    <td className="px-6 py-5">
-                                        <div className="font-bold text-white text-base">{req.emp}</div>
-                                        <div className="text-xs text-[#8899AA] mt-0.5">{req.dept} • Req: {req.id}</div>
-                                    </td>
-                                    <td className="px-6 py-5 text-center">
-                                        <div className="inline-block bg-[#0A1420] border border-[#1A2A3A] px-3 py-1 rounded-lg">
-                                            <span className="text-lg font-black text-[#0066FF]">{req.days}</span> <span className="text-xs font-bold text-[#556677]">EL</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-5 text-right">
-                                        <div className="text-lg font-black text-[#00E5A0] flex items-center justify-end">
-                                            {req.amount}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-5 pl-8">
-                                        <div className="text-sm text-white font-bold">{req.balanceBefore - req.days} Days</div>
-                                        <div className="text-[10px] text-[#8899AA]">After approval (Current: {req.balanceBefore})</div>
-                                    </td>
-                                    <td className="px-6 py-5 text-right border-l border-[#1A2A3A]/50">
-                                        <div className="flex justify-end space-x-2">
-                                            <button className="px-4 py-2 border border-[#FF4444]/50 text-[#FF4444] rounded-lg hover:bg-[#FF4444]/10 transition-colors text-xs font-bold font-mono">
-                                                REJECT
-                                            </button>
-                                            <button className="px-4 py-2 bg-[#00E5A0]/10 border border-[#00E5A0]/30 text-[#00E5A0] rounded-lg hover:bg-[#00E5A0]/20 transition-colors text-xs font-bold font-mono flex items-center">
-                                                APPROVE <CheckCircle size={14} className="ml-2" />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
+                <DataTable<EncashmentRequest>
+                    data={requests}
+                    columns={columns}
+                    rowKey={(r) => r.id}
+                    searchable
+                    searchPlaceholder="Search employee…"
+                    aria-label="Leave encashment approval requests"
+                    emptyTitle="No pending approvals"
+                    emptyDescription="All encashment requests have been actioned."
+                />
+            </Card>
+        </Page>
     );
 }

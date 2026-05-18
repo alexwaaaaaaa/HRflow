@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { MapPin, Plus, Edit2, ToggleLeft } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +18,12 @@ export default function GeofenceLocations() {
     const [locs, setLocs] = useState(LOCATIONS);
 
     return (
+        <Page
+            title="Office Locations & Geofences"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Geofence", href: "/attendance/geofence" }, { label: "Locations" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -93,5 +101,7 @@ export default function GeofenceLocations() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

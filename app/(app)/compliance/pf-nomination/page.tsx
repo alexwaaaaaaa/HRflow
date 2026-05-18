@@ -1,152 +1,170 @@
 "use client";
 
-import React from 'react';
 import {
-    Users, Plus, CheckCircle, Clock, Search,
-    FileSignature, ShieldAlert, ArrowRight, XCircle
-} from 'lucide-react';
+    CheckCircle,
+    Clock,
+    ShieldAlert,
+    XCircle,
+} from "lucide-react";
 
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+// ─── Static palette ───────────────────────────────────────────────────────────
+type BlockerType = "critical" | "warning";
+
+const BLOCKER_BADGE: Record<BlockerType, BadgeVariant> = {
+    critical: "danger",
+    warning: "warning",
+};
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+interface NominationRow {
+    id: string;
+    name: string;
+    uan: string;
+    status: string;
+    days: number;
+    type: BlockerType;
+}
+
+const ROWS: NominationRow[] = [
+    { id: "n1", name: "Sanjay Dutt", uan: "100456789020", status: "Aadhar DB Not Seeded", days: 45, type: "critical" },
+    { id: "n2", name: "Karan Singh", uan: "100456789021", status: "Pending e-Sign by Emp", days: 12, type: "warning" },
+    { id: "n3", name: "Sneha Patil", uan: "100456789022", status: "Profile Photo Missing", days: 5, type: "warning" },
+    { id: "n4", name: "Vikram Das", uan: "100456789023", status: "Aadhar Name Mismatch", days: 60, type: "critical" },
+];
+
+const COLUMNS: Column<NominationRow>[] = [
+    {
+        key: "employee",
+        label: "Employee",
+        render: (r) => (
+            <div>
+                <div className="text-xs font-black text-white">{r.name}</div>
+                <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">UAN: {r.uan}</div>
+            </div>
+        ),
+        sortable: true,
+        sortValue: (r) => r.name,
+    },
+    {
+        key: "status",
+        label: "Blocker/Status",
+        render: (r) => <Badge variant={BLOCKER_BADGE[r.type]}>{r.status}</Badge>,
+    },
+    {
+        key: "days",
+        label: "Days Overdue",
+        render: (r) => (
+            <span className={`text-xs font-black tabular-nums ${r.days > 30 ? "text-rose-500" : "text-slate-400"}`}>
+                {r.days} Days
+            </span>
+        ),
+    },
+    {
+        key: "action",
+        label: "Action",
+        align: "center",
+        render: () => <Button variant="outline" size="sm">Notify</Button>,
+    },
+];
+
+const FLOW_STEPS = [
+    "Login to UAN Member Portal.",
+    "Update Profile Photo & Address in View Profile.",
+    "Go to Manage > e-Nomination.",
+    "Add Family Details (Aadhar, Photo mandatory for nominees).",
+    "Allocate PF/EPS share %.",
+    "Authenticate via Aadhar Virtual ID OTP (e-Sign).",
+];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function PFNomination() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
-
-                {/* Header */}
-                <div className="flex justify-between items-end pb-4 border-b border-[#1A2A3A]">
-                    <div>
-                        <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-                            PF e-Nomination Tracker <FileSignature size={24} className="text-rose-500" />
-                        </h1>
-                        <p className="text-slate-400 text-sm font-medium">Track Aadhar-based e-Nomination status across all active UANs.</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] p-6 rounded-2xl flex items-center justify-between group">
+        <Page
+            title="PF e-Nomination Tracker"
+            subtitle="Track Aadhar-based e-Nomination status across all active UANs."
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Compliance", href: "/compliance/dashboard" },
+                { label: "PF Nomination" },
+            ]}
+            maxWidth="1280px"
+        >
+            <div className="space-y-6">
+                {/* KPI strip */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <Card padding="md" className="flex items-center justify-between">
                         <div>
-                            <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">e-Nomination Complete</div>
+                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-emerald-500">e-Nomination Complete</div>
                             <div className="text-3xl font-black text-white">218</div>
                         </div>
-                        <CheckCircle size={32} className="text-emerald-500/50 group-hover:text-emerald-500 transition-colors shadow-lg" />
-                    </div>
-                    <div className="bg-[#0D1928] border border-amber-500/30 p-6 rounded-2xl flex items-center justify-between group shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                        <CheckCircle size={32} className="text-emerald-500/50" aria-hidden="true" />
+                    </Card>
+                    <Card padding="md" className="flex items-center justify-between border-amber-500/30">
                         <div>
-                            <div className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Pending Submission</div>
-                            <div className="text-3xl font-black text-amber-500 tabular-nums">84</div>
+                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-amber-500">Pending Submission</div>
+                            <div className="text-3xl font-black tabular-nums text-amber-500">84</div>
                         </div>
-                        <Clock size={32} className="text-amber-500/50 group-hover:text-amber-500 transition-colors animate-pulse" />
-                    </div>
-                    <div className="bg-[#0D1928] border border-rose-500/30 p-6 rounded-2xl flex items-center justify-between group">
+                        <Clock size={32} className="animate-pulse text-amber-500/50" aria-hidden="true" />
+                    </Card>
+                    <Card padding="md" className="flex items-center justify-between border-rose-500/30">
                         <div>
-                            <div className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Aadhar Profile Mismatch</div>
-                            <div className="text-3xl font-black text-rose-500 tabular-nums">10</div>
+                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-rose-500">Aadhar Profile Mismatch</div>
+                            <div className="text-3xl font-black tabular-nums text-rose-500">10</div>
                         </div>
-                        <XCircle size={32} className="text-rose-500/50 group-hover:text-rose-500 transition-colors" />
-                    </div>
+                        <XCircle size={32} className="text-rose-500/50" aria-hidden="true" />
+                    </Card>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    {/* Defaulters List */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-3xl overflow-hidden shadow-2xl">
-                            <div className="p-6 border-b border-[#1A2A3A] bg-[#060B14]/50 flex justify-between items-center">
-                                <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                                    <ShieldAlert size={16} className="text-amber-500" /> Pending Action List
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    {/* Defaulters list */}
+                    <div className="space-y-6 lg:col-span-2">
+                        <Card padding="none">
+                            <div className="flex items-center justify-between border-b border-[#1A2A3A] bg-[#060B14]/50 p-6">
+                                <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-white">
+                                    <ShieldAlert size={16} className="text-amber-500" aria-hidden="true" /> Pending Action List
                                 </h2>
-                                <div className="flex gap-2">
-                                    <div className="relative">
-                                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                                        <input type="text" placeholder="Search Details..." className="bg-[#060B14] border border-[#1A2A3A] rounded-xl pl-8 pr-3 py-1.5 text-xs text-white outline-none focus:border-rose-500" />
-                                    </div>
-                                    <button className="px-4 py-1.5 bg-[#060B14] border border-[#1A2A3A] rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:border-slate-700 transition-colors">
-                                        Send Reminder
-                                    </button>
-                                </div>
+                                <Button variant="secondary" size="sm">Send Reminder</Button>
                             </div>
-
-                            <table className="w-full text-left">
-                                <thead className="bg-[#060B14]/50 text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] border-b border-[#1A2A3A]">
-                                    <tr>
-                                        <th className="px-6 py-4">Employee</th>
-                                        <th className="px-6 py-4">Blocker/Status</th>
-                                        <th className="px-6 py-4">Days Overdue</th>
-                                        <th className="px-6 py-4 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-[#1A2A3A]">
-                                    {[
-                                        { name: 'Sanjay Dutt', uan: '100456789020', status: 'Aadhar DB Not Seeded', days: 45, type: 'critical' },
-                                        { name: 'Karan Singh', uan: '100456789021', status: 'Pending e-Sign by Emp', days: 12, type: 'warning' },
-                                        { name: 'Sneha Patil', uan: '100456789022', status: 'Profile Photo Missing', days: 5, type: 'warning' },
-                                        { name: 'Vikram Das', uan: '100456789023', status: 'Aadhar Name Mismatch', days: 60, type: 'critical' },
-                                    ].map((row, i) => (
-                                        <tr key={i} className={`group hover:bg-[#1A2A3A]/30 transition-all ${row.type === 'critical' ? 'bg-rose-500/5' : ''}`}>
-                                            <td className="px-6 py-4">
-                                                <div className="text-xs font-black text-white">{row.name}</div>
-                                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">UAN: {row.uan}</div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${row.type === 'critical' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                                    }`}>
-                                                    {row.status}
-                                                </span>
-                                            </td>
-                                            <td className={`px-6 py-4 text-xs font-black tabular-nums ${row.days > 30 ? 'text-rose-500' : 'text-slate-400'}`}>
-                                                {row.days} Days
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <button className="text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-white border border-[#1A2A3A] px-3 py-1 rounded bg-[#060B14] transition-colors">Notify</button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <div className="p-4 bg-[#060B14]/50 border-t border-[#1A2A3A] text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest italic">
+                            <div className="p-4">
+                                <DataTable<NominationRow>
+                                    data={ROWS}
+                                    columns={COLUMNS}
+                                    rowKey={(r) => r.id}
+                                    searchable
+                                    searchPlaceholder="Search Details..."
+                                    aria-label="PF nomination pending actions"
+                                    emptyTitle="No pending nominations"
+                                />
+                            </div>
+                            <div className="border-t border-[#1A2A3A] bg-[#060B14]/50 p-4 text-center text-[10px] font-bold italic uppercase tracking-widest text-slate-500">
                                 Note: Employers cannot file e-nomination. It must be initiated via Member Portal.
                             </div>
-                        </div>
+                        </Card>
                     </div>
 
-                    {/* How-To Guide for employees */}
-                    <div className="space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-3xl p-6 shadow-xl relative overflow-hidden h-full flex flex-col">
-                            <h3 className="text-xs font-black text-rose-500 uppercase tracking-[0.2em] mb-4">Nomination Flow (For Emp)</h3>
-
-                            <div className="flex-1 space-y-4 relative z-10 p-4 border border-[#1A2A3A] bg-[#060B14]/50 rounded-2xl">
-                                <ul className="space-y-4 text-[10px] text-slate-300 font-medium leading-relaxed">
-                                    <li className="flex gap-3">
-                                        <span className="font-black text-rose-500">1.</span> Login to UAN Member Portal.
+                    {/* How-to guide */}
+                    <Card padding="md" className="flex flex-col">
+                        <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-rose-500">Nomination Flow (For Emp)</h3>
+                        <div className="flex-1 rounded-2xl border border-[#1A2A3A] bg-[#060B14]/50 p-4">
+                            <ol className="space-y-4 text-[10px] font-medium leading-relaxed text-slate-300">
+                                {FLOW_STEPS.map((step, i) => (
+                                    <li key={i} className="flex gap-3">
+                                        <span className="font-black text-rose-500">{i + 1}.</span>
+                                        {step}
                                     </li>
-                                    <li className="flex gap-3">
-                                        <span className="font-black text-rose-500">2.</span> Update Profile Photo & Address in View Profile.
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <span className="font-black text-rose-500">3.</span> Go to Manage &gt; e-Nomination.
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <span className="font-black text-rose-500">4.</span> Add Family Details (Aadhar, Photo mandatory for nominees).
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <span className="font-black text-rose-500">5.</span> Allocate PF/EPS share %.
-                                    </li>
-                                    <li className="flex gap-3">
-                                        <span className="font-black text-rose-500">6.</span> Authenticate via Aadhar Virtual ID OTP (e-Sign).
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div className="mt-6">
-                                <button className="w-full py-3 bg-[#060B14] border border-[#1A2A3A] rounded-xl text-slate-300 font-black text-xs uppercase tracking-widest hover:text-white transition-all flex items-center justify-center gap-2">
-                                    Share Guide via Email
-                                </button>
-                            </div>
+                                ))}
+                            </ol>
                         </div>
-                    </div>
-
+                        <Button variant="outline" className="mt-6 w-full">Share Guide via Email</Button>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

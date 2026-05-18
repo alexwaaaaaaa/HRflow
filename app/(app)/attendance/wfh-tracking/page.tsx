@@ -1,16 +1,23 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { ChartWrapper } from "@/components/ui/chart-wrapper";
+import ChartWrapper from "@/components/ui/ChartWrapper";
 import { Tooltip as RechartsTooltip } from 'recharts';
+import { seededFloats } from "@/lib/random";
 
-const DAILY_DATA = Array.from({ length: 12 }, (_, i) => ({
-    day: i + 1,
-    office: 680 + Math.floor(Math.random() * 80),
-    wfh: 60 + Math.floor(Math.random() * 30),
-    absent: 30 + Math.floor(Math.random() * 20),
-}));
+// Stable decorative data — seeded, not Math.random()
+const DAILY_DATA = Array.from({ length: 12 }, (_, i) => {
+    const [officeRand, wfhRand, absentRand] = seededFloats(1000 + i, 3);
+    return {
+        day: i + 1,
+        office: 680 + Math.floor(officeRand * 80),
+        wfh: 60 + Math.floor(wfhRand * 30),
+        absent: 30 + Math.floor(absentRand * 20),
+    };
+});
 
 const WFH_TABLE = [
     { name: "Rahul Sharma", policy: "3 days/week", used: 6, remaining: 6, status: "ok" },
@@ -22,6 +29,13 @@ const WFH_TABLE = [
 
 export default function WFHTracking() {
     return (
+        <Page
+            title="WFH vs Office Tracking — November 2024"
+            subtitle="Track work modes and hybrid compliance across the organization"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Wfh Tracking" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">WFH vs Office Tracking — November 2024</h2>
             <p className="text-sm text-[#8899AA] mb-6">Track work modes and hybrid compliance across the organization</p>
@@ -105,5 +119,7 @@ export default function WFHTracking() {
                 <p className="text-xs text-[#8899AA]">Priya Mehta (2 excess days) | Suresh Kumar (1 excess day) | Arun Patel (1 excess day)</p>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,12 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { IndianRupee, FileText, CheckCircle2, ChevronDown, Download, AlertTriangle } from 'lucide-react';
-import Link from 'next/link';
 
 export default function FinalSettlementScreen() {
     const [expanded, setExpanded] = useState(true);
 
     return (
+        <Page
+            title="Sarah Jenkins"
+            subtitle="LWD: Oct 24, 2025 • Dept: Engineering • Entity: HRFlow Tech (India) Pvt Ltd"
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Settlement" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -115,5 +123,7 @@ export default function FinalSettlementScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

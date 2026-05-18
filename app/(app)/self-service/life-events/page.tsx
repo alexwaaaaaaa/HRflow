@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { HeartHandshake, ArrowLeft, Home, Baby, Gift, Plane, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
@@ -13,6 +15,13 @@ export default function LifeEventsScreen() {
     ];
 
     return (
+        <Page
+            title="Life Events"
+            subtitle="Easily update your HR, payroll, and benefits when your life circumstances change."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Life Events" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
             <div className="flex items-center justify-between mb-8">
@@ -26,6 +35,8 @@ export default function LifeEventsScreen() {
                 {EVENTS.map((e, i) => {
                     const Icon = e.icon;
                     return (
+
+
                         <div key={i} className={`bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 cursor-pointer transition-colors ${e.border} group`}>
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110 ${e.bg}`}>
                                 <Icon size={28} />
@@ -36,7 +47,9 @@ export default function LifeEventsScreen() {
                                 <span className="text-xs font-bold text-[#556677] group-hover:text-white transition-colors flex items-center gap-1">Start Wizard <ArrowLeft size={12} className="rotate-180" /></span>
                             </div>
                         </div>
-                    );
+                    
+        
+);
                 })}
 
                 <div className="bg-gradient-to-br from-[#131B2B] to-[#0A1420] border border-[#2A3A4A] border-dashed rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-pink-500/50 transition-colors">
@@ -48,5 +61,7 @@ export default function LifeEventsScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

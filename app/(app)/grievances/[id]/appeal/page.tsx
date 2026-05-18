@@ -1,12 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Scale, ArrowLeft, Send, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { Scale, Send, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
-export default function GrievanceAppealScreen({ params }: { params: { id: string } }) {
+export default function GrievanceAppealScreen({ params: _params }: { params: { id: string } }) {
     const defaultId = "GRV-2026-142";
 
     return (
+        <Page
+            title="File an Appeal"
+            subtitle="Appeals must be based on new evidence or procedural irregularities in the original investigation."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Id" }, { label: "Appeal" }]}
+            maxWidth="800px"
+        >
+
         <div className="min-h-screen p-6 max-w-3xl mx-auto flex flex-col justify-center py-12">
 
             <div className="mb-8 text-center">
@@ -82,5 +91,7 @@ export default function GrievanceAppealScreen({ params }: { params: { id: string
 
             </div>
         </div>
+    
+        </Page>
     );
 }

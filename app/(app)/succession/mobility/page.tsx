@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { ArrowRightLeft, Users, Briefcase, Search, Filter, TrendingUp } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowRightLeft, Briefcase, Search, Filter, TrendingUp } from 'lucide-react';
 
 export default function InternalMobilityScreen() {
     const [activeTab, setActiveTab] = useState('openings');
@@ -13,6 +14,13 @@ export default function InternalMobilityScreen() {
     ];
 
     return (
+        <Page
+            title="Internal Talent Mobility"
+            subtitle="Match high-potential employees with internal opportunities, lateral moves, and stretch assignments."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Mobility" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -104,5 +112,7 @@ export default function InternalMobilityScreen() {
                 </div>
             )}
         </div>
+    
+        </Page>
     );
 }

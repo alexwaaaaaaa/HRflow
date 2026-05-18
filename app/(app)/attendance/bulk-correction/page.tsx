@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Upload, CheckCircle2 } from "lucide-react";
 
@@ -19,6 +21,13 @@ export default function BulkCorrection() {
     const removeRow = (i: number) => setRows(r => r.filter((_, j) => j !== i));
 
     return (
+        <Page
+            title="Bulk Attendance Correction"
+            subtitle="Correct multiple attendance records at once"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Bulk Correction" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">Bulk Attendance Correction</h2>
             <p className="text-sm text-[#8899AA] mb-6">Correct multiple attendance records at once</p>
@@ -137,5 +146,7 @@ export default function BulkCorrection() {
                 </div>
             )}
         </div>
-    );
+    
+        </Page>
+        );
 }

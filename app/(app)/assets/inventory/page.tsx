@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Search, Filter, Monitor, Smartphone, Laptop, Download, MoreVertical, QrCode } from 'lucide-react';
 
@@ -16,6 +18,13 @@ export default function AssetInventoryScreen() {
     const [filterType, setFilterType] = useState('All');
 
     return (
+        <Page
+            title="Complete Inventory Register"
+            subtitle="Track all hardware assets, serial numbers, assignments, and lifecycle status."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Inventory" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -110,5 +119,7 @@ export default function AssetInventoryScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

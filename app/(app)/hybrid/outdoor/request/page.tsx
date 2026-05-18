@@ -1,98 +1,147 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Briefcase, Calendar, ChevronRight, FileText, CheckCircle2
-} from 'lucide-react';
+import { Briefcase } from "lucide-react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import FormField from "@/components/ui/FormField";
+import { useToast } from "@/components/ui/Toast";
 
-export default function OutdoorDutyRequest() {
+// ─── Schema ──────────────────────────────────────────────────────────────────
+
+const outdoorDutySchema = z.object({
+    fromDate: z.string().min(1, "From date is required"),
+    toDate: z.string().min(1, "To date is required"),
+    purpose: z.string().min(1, "Please select a purpose"),
+    location: z.string().min(2, "Location / venue is required"),
+    remarks: z.string().optional(),
+});
+
+type OutdoorDutyForm = z.infer<typeof outdoorDutySchema>;
+
+const PURPOSES = [
+    "Client Site Deployment",
+    "Training / Workshop",
+    "Conference / Seminar",
+    "Company Event",
+] as const;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function OutdoorDutyRequestPage() {
+    const toast = useToast();
+    const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm<OutdoorDutyForm>({
+        resolver: zodResolver(outdoorDutySchema),
+        defaultValues: { fromDate: "", toDate: "", purpose: "", location: "", remarks: "" },
+    });
+
+    const onSubmit = async (_data: OutdoorDutyForm) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 600));
+        toast.show({ variant: "success", title: "OD request submitted", description: "Your outdoor duty request has been sent for approval." });
+        reset();
+    };
+
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-4xl mx-auto space-y-6">
+        <Page
+            title="Outdoor Duty Request"
+            subtitle="Apply for On-Duty (OD) marking for off-site training, conferences, or long-term client deployments"
+            breadcrumbs={[
+                { label: "Hybrid", href: "/hybrid/wfh/request" },
+                { label: "Outdoor Duty Request" },
+            ]}
+            maxWidth="1100px"
+        >
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                {/* Form — 2 cols */}
+                <div className="lg:col-span-2">
+                    <Card padding="lg">
+                        <h2 className="mb-6 flex items-center gap-2 border-b border-[#1A2A3A] pb-4 text-base font-semibold text-white">
+                            <Briefcase size={18} className="text-[#3b82f6]" aria-hidden="true" />
+                            Duty Details
+                        </h2>
 
-                {/* Header */}
-                <div className="mb-8 border-b border-[#1A2A3A] pb-6">
-                    <h1 className="text-2xl font-bold text-white mb-2">Outdoor Duty Request</h1>
-                    <p className="text-sm text-[#8899AA]">Apply for On-Duty (OD) marking for off-site training, conferences, or long-term client deployments.</p>
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" aria-label="Outdoor duty request form">
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                                <FormField
+                                    control={control}
+                                    name="fromDate"
+                                    label="From Date"
+                                    inputProps={{ type: "date" }}
+                                />
+                                <FormField
+                                    control={control}
+                                    name="toDate"
+                                    label="To Date"
+                                    inputProps={{ type: "date" }}
+                                />
+                            </div>
+
+                            {/* Purpose select */}
+                            <Controller
+                                control={control}
+                                name="purpose"
+                                render={({ field, fieldState }) => (
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="od-purpose" className="block text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                            Purpose of Duty
+                                        </label>
+                                        <select
+                                            id="od-purpose"
+                                            {...field}
+                                            className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none transition-colors focus:border-[#00e5a0]"
+                                        >
+                                            <option value="">Select Purpose…</option>
+                                            {PURPOSES.map((p) => (
+                                                <option key={p} value={p}>{p}</option>
+                                            ))}
+                                        </select>
+                                        {fieldState.error && (
+                                            <p className="text-xs text-[#ef4444]" role="alert">{fieldState.error.message}</p>
+                                        )}
+                                    </div>
+                                )}
+                            />
+
+                            <FormField
+                                control={control}
+                                name="location"
+                                label="Location / Venue"
+                                inputProps={{ placeholder: "City / specific venue name" }}
+                            />
+
+                            <FormField
+                                control={control}
+                                name="remarks"
+                                label="Additional Remarks"
+                                hint="Optional"
+                                inputProps={{ placeholder: "Any other details…" }}
+                            />
+
+                            <div className="flex justify-end pt-2">
+                                <Button type="submit" isLoading={isSubmitting} loadingText="Submitting…">
+                                    Submit Request
+                                </Button>
+                            </div>
+                        </form>
+                    </Card>
                 </div>
 
-                <div className="grid grid-cols-3 gap-8">
-
-                    {/* Form Component (Left 2 cols) */}
-                    <div className="col-span-2 space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-6">
-                            <h2 className="text-lg font-bold text-white mb-6 border-b border-[#1A2A3A] pb-4 flex items-center">
-                                <Briefcase size={18} className="mr-2 text-[#0066FF]" /> Duty Details
-                            </h2>
-
-                            <div className="space-y-5">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-bold text-[#8899AA] mb-2">From Date</label>
-                                        <input
-                                            type="date"
-                                            className="w-full bg-[#060B14] border border-[#2A3A4A] text-white rounded-lg p-3 outline-none focus:border-[#0066FF] transition-colors"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-[#8899AA] mb-2">To Date</label>
-                                        <input
-                                            type="date"
-                                            className="w-full bg-[#060B14] border border-[#2A3A4A] text-white rounded-lg p-3 outline-none focus:border-[#0066FF] transition-colors"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-bold text-[#8899AA] mb-2">Purpose of Duty</label>
-                                    <select className="w-full bg-[#060B14] border border-[#2A3A4A] text-white rounded-lg p-3 outline-none focus:border-[#0066FF] transition-colors">
-                                        <option>Select Purpose...</option>
-                                        <option>Client Site Deployment</option>
-                                        <option>Training / Workshop</option>
-                                        <option>Conference / Seminar</option>
-                                        <option>Company Event</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-bold text-[#8899AA] mb-2">Location / Venue</label>
-                                    <input
-                                        type="text"
-                                        placeholder="City / specific venue name"
-                                        className="w-full bg-[#060B14] border border-[#2A3A4A] text-white rounded-lg p-3 outline-none focus:border-[#0066FF] transition-colors"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-bold text-[#8899AA] mb-2">Additional Remarks</label>
-                                    <textarea
-                                        rows={3}
-                                        placeholder="Any other details..."
-                                        className="w-full bg-[#060B14] border border-[#2A3A4A] text-white rounded-lg p-3 outline-none focus:border-[#0066FF] transition-colors resize-none"
-                                    ></textarea>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 flex justify-end">
-                                <button className="px-6 py-2.5 bg-[#0066FF] text-white font-bold text-sm rounded-lg hover:bg-[#0052cc] transition-colors shadow-[0_0_15px_rgba(0,102,255,0.3)]">
-                                    Submit Request
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right side panels */}
-                    <div className="col-span-1 space-y-6">
-                        {/* Info card */}
-                        <div className="bg-[#00E5A0]/10 border border-[#00E5A0]/30 rounded-xl p-5">
-                            <h3 className="text-sm font-bold text-[#00E5A0] mb-2">How OD Works</h3>
-                            <p className="text-xs text-[#8899AA] leading-relaxed">
-                                Approved OD requests will automatically mark your attendance as <strong className="text-white">Present (Full Day)</strong> for the specified duration, bypassing biometric and app punch requirements.
-                            </p>
-                        </div>
-                    </div>
+                {/* Info sidebar */}
+                <div>
+                    <Card padding="md" className="border-[rgba(0,229,160,0.3)] bg-[rgba(0,229,160,0.1)]">
+                        <h3 className="mb-2 text-sm font-bold text-[#00e5a0]">How OD Works</h3>
+                        <p className="text-xs leading-relaxed text-[#8899AA]">
+                            Approved OD requests will automatically mark your attendance as{" "}
+                            <strong className="text-white">Present (Full Day)</strong> for the specified duration,
+                            bypassing biometric and app punch requirements.
+                        </p>
+                    </Card>
                 </div>
             </div>
-        </div>
+        </Page>
     );
 }

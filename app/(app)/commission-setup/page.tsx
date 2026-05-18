@@ -1,18 +1,27 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Plus, Trash2, LineChart, ShieldCheck } from "lucide-react";
 
 export default function CommissionSetupPage() {
     const [type, setType] = useState("Tiered");
 
-    const [tiers, setTiers] = useState([
+    const [tiers, _setTiers] = useState([
         { id: 1, min: '0', max: '50', comm: '2' },
         { id: 2, min: '51', max: '100', comm: '5' },
         { id: 3, min: '101', max: '+', comm: '8' },
     ]);
 
     return (
+        <Page
+            title="Commission Structure Setup"
+            subtitle="Define revenue-based commission plans for Sales and Business Development teams."
+            breadcrumbs={[{ label: "Commission Setup" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1200px] mx-auto space-y-6">
 
@@ -174,5 +183,7 @@ export default function CommissionSetupPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

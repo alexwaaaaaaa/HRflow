@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Activity, Search, AlertCircle, ArrowUpRight, ArrowDownRight, Download, SlidersHorizontal } from 'lucide-react';
+import { Activity, AlertCircle, ArrowUpRight, Download, SlidersHorizontal } from 'lucide-react';
 
 export default function UtilizationScreen() {
     const [view, setView] = useState('team');
 
     return (
+        <Page
+            title="Utilization Heatmap"
+            subtitle="Identify over-allocated resources, bench strength, and optimize billable targets."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Utilization" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -127,5 +136,7 @@ export default function UtilizationScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

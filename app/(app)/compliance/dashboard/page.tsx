@@ -1,133 +1,341 @@
 "use client";
 
-import React from 'react';
 import {
-    ShieldCheck, AlertTriangle, Scale, CalendarDays,
-    FileCheck, ExternalLink, Download, Search, Briefcase,
-    TrendingDown, FileSignature, ArrowRight, ShieldAlert, BookOpen
-} from 'lucide-react';
+    ShieldCheck,
+    AlertTriangle,
+    Scale,
+    CalendarDays,
+    FileSignature,
+    ArrowRight,
+    BookOpen,
+} from "lucide-react";
+
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Static palette (module scope)
+//
+// IMPORTANT — Tailwind v4 JIT only compiles class names it can statically see.
+// Template-literal class names like `border-${color}-500/20` are a time bomb:
+// they appear to work in dev (because the bare classes are referenced
+// elsewhere in the codebase) but break in production where the JIT cannot
+// trace them. Every class string below is a literal so the compiler picks it
+// up reliably. Do NOT inline `border-${kpi.color}-500/20` patterns again.
+// ─────────────────────────────────────────────────────────────────────────────
+
+type PaletteKey = "emerald" | "amber" | "blue" | "rose";
+
+const palette: Record<PaletteKey, { ring: string; text: string; chip: string }> = {
+    emerald: {
+        ring: "border-emerald-500/20 hover:border-emerald-500/50",
+        text: "text-emerald-500",
+        chip: "bg-emerald-500/10",
+    },
+    amber: {
+        ring: "border-amber-500/20 hover:border-amber-500/50",
+        text: "text-amber-500",
+        chip: "bg-amber-500/10",
+    },
+    blue: {
+        ring: "border-blue-500/20 hover:border-blue-500/50",
+        text: "text-blue-500",
+        chip: "bg-blue-500/10",
+    },
+    rose: {
+        ring: "border-rose-500/20 hover:border-rose-500/50",
+        text: "text-rose-500",
+        chip: "bg-rose-500/10",
+    },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Static page data
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface KpiTile {
+    label: string;
+    val: string;
+    text: string;
+    color: PaletteKey;
+    icon: typeof ShieldCheck;
+}
+
+const KPI_DATA: KpiTile[] = [
+    {
+        label: "Overall Health Score",
+        val: "94/100",
+        text: "Low Risk",
+        color: "emerald",
+        icon: ShieldCheck,
+    },
+    {
+        label: "Upcoming Deadlines",
+        val: "03",
+        text: "Within 7 Days",
+        color: "amber",
+        icon: CalendarDays,
+    },
+    {
+        label: "Pending Challans",
+        val: "₹14.2L",
+        text: "PF & ESIC",
+        color: "blue",
+        icon: FileSignature,
+    },
+    {
+        label: "Regulatory Alerts",
+        val: "01",
+        text: "New Labour Code",
+        color: "rose",
+        icon: AlertTriangle,
+    },
+];
+
+type FilingStatus = "Pending" | "Upcoming" | "Filed";
+
+interface FilingRow {
+    date: string;
+    act: string;
+    desc: string;
+    status: FilingStatus;
+}
+
+const FILING_ROWS: FilingRow[] = [
+    {
+        date: "15 Apr",
+        act: "EPF & MP Act, 1952",
+        desc: "PF Remittance & Return (ECR)",
+        status: "Pending",
+    },
+    {
+        date: "15 Apr",
+        act: "ESI Act, 1948",
+        desc: "ESIC Contribution Filing",
+        status: "Pending",
+    },
+    {
+        date: "25 Apr",
+        act: "Professional Tax",
+        desc: "PT Return Filing (Maharashtra)",
+        status: "Upcoming",
+    },
+    {
+        date: "30 Apr",
+        act: "Income Tax Act",
+        desc: "TDS Challan (224 / 281)",
+        status: "Upcoming",
+    },
+    {
+        date: "05 Apr",
+        act: "Labour Welfare",
+        desc: "LWF Contribution (Bi-annual)",
+        status: "Filed",
+    },
+];
+
+const STATUS_BADGE: Record<FilingStatus, BadgeVariant> = {
+    Pending: "warning",
+    Upcoming: "info",
+    Filed: "success",
+};
+
+interface ActStatusRow {
+    act: string;
+    pct: number;
+    status: string;
+}
+
+const ACT_STATUS_ROWS: ActStatusRow[] = [
+    { act: "EPFO (Provident Fund)", pct: 85, status: "Action Needed" },
+    { act: "ESIC (State Insurance)", pct: 100, status: "Fully Compliant" },
+    { act: "Income Tax (TDS/Form 16)", pct: 90, status: "On Track" },
+    { act: "PT & LWF", pct: 100, status: "Fully Compliant" },
+    { act: "Shop & Establishment Act", pct: 60, status: "Renewal Due" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pure helpers (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Maps an act-wise compliance percentage to a palette key.
+ *
+ *   pct === 100 → emerald (success / fully compliant)
+ *   pct >   70  → amber   (warning / on track but action needed)
+ *   else        → rose    (danger / overdue or below threshold)
+ */
+function statusKey(pct: number): PaletteKey {
+    if (pct === 100) return "emerald";
+    if (pct > 70) return "amber";
+    return "rose";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function ComplianceDashboard() {
     return (
-        <main className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700">
-
-                {/* Header */}
-                <header className="flex justify-between items-end pb-4 border-b border-[#1A2A3A]">
-                    <div>
-                        <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-                            Statutory &amp; Compliance Control <ShieldCheck size={28} className="text-emerald-500" aria-hidden="true" />
-                        </h1>
-                        <p className="text-slate-400 text-sm font-medium mt-1">Unified command center for Indian labour laws and tax filings.</p>
-                    </div>
-                    <div className="flex gap-3">
-                        <button type="button" className="px-5 py-2.5 bg-[#0D1928] border border-[#1A2A3A] rounded-xl text-sm font-bold text-slate-400 hover:text-white transition-all shadow-lg flex items-center gap-2">
-                            <BookOpen size={16} aria-hidden="true" /> Latest Gazette
-                        </button>
-                        <button type="button" className="px-6 py-2.5 bg-blue-600 rounded-xl text-sm font-black text-white hover:bg-blue-700 transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] flex items-center gap-2">
-                            <Scale size={16} aria-hidden="true" /> Inspector Ready Mode
-                        </button>
-                    </div>
-                </header>
-
-                {/* KPI Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
-                        { label: 'Overall Health Score', val: '94/100', text: 'Low Risk', color: 'emerald', icon: ShieldCheck },
-                        { label: 'Upcoming Deadlines', val: '03', text: 'Within 7 Days', color: 'amber', icon: CalendarDays },
-                        { label: 'Pending Challans', val: '₹14.2L', text: 'PF & ESIC', color: 'blue', icon: FileSignature },
-                        { label: 'Regulatory Alerts', val: '01', text: 'New Labour Code', color: 'rose', icon: AlertTriangle },
-                    ].map((kpi, i) => (
-                        <div key={i} className={`bg-[#0D1928] border border-${kpi.color}-500/20 p-6 rounded-2xl relative overflow-hidden group hover:border-${kpi.color}-500/50 transition-all shadow-xl`}>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className={`p-2.5 bg-[#060B14] rounded-xl border border-${kpi.color}-500/20 text-${kpi.color}-500 shadow-inner`}>
-                                    <kpi.icon size={22} aria-hidden="true" />
+        <Page
+            title="Statutory & compliance control"
+            subtitle="Unified command centre for Indian labour laws and tax filings"
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Compliance", href: "/compliance/dashboard" },
+                { label: "Dashboard" },
+            ]}
+            maxWidth="1280px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<BookOpen size={14} aria-hidden="true" />}>
+                        Latest gazette
+                    </Button>
+                    <Button icon={<Scale size={14} aria-hidden="true" />}>
+                        Inspector ready mode
+                    </Button>
+                </>
+            }
+        >
+            <div className="space-y-6">
+                {/* KPI tiles */}
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {KPI_DATA.map((kpi) => {
+                        const tone = palette[kpi.color];
+                        const Icon = kpi.icon;
+                        return (
+                            <Card
+                                key={kpi.label}
+                                padding="lg"
+                                className={`group relative overflow-hidden transition-all ${tone.ring}`}
+                            >
+                                <div className="mb-4 flex items-start justify-between">
+                                    <div
+                                        className={`rounded-xl border bg-[#060B14] p-2.5 shadow-inner ${tone.ring} ${tone.text}`}
+                                    >
+                                        <Icon size={22} aria-hidden="true" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="text-3xl font-black text-white tracking-tighter shadow-black/50 drop-shadow-md">{kpi.val}</div>
-                                <div className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">{kpi.label}</div>
-                                <div className={`text-[10px] font-bold mt-2 text-${kpi.color}-500/80 uppercase tracking-widest`}>{kpi.text}</div>
-                            </div>
-                            <div className={`absolute -bottom-6 -right-6 w-24 h-24 bg-${kpi.color}-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} aria-hidden="true" />
-                        </div>
-                    ))}
+                                <div>
+                                    <div className="text-3xl font-black tracking-tighter text-white drop-shadow-md">
+                                        {kpi.val}
+                                    </div>
+                                    <div className="mt-1 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                        {kpi.label}
+                                    </div>
+                                    <div
+                                        className={`mt-2 text-[10px] font-bold uppercase tracking-widest ${tone.text}`}
+                                    >
+                                        {kpi.text}
+                                    </div>
+                                </div>
+                                <div
+                                    aria-hidden="true"
+                                    className={`absolute -bottom-6 -right-6 h-24 w-24 rounded-full blur-2xl transition-transform duration-700 group-hover:scale-150 ${tone.chip}`}
+                                />
+                            </Card>
+                        );
+                    })}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Calendar + act-wise status */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    {/* Filing calendar */}
+                    <Card padding="lg" className="flex h-[480px] flex-col lg:col-span-2">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-white">
+                                Filing calendar (April &apos;24)
+                            </h2>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                iconRight={<ArrowRight size={14} aria-hidden="true" />}
+                            >
+                                View full
+                            </Button>
+                        </div>
 
-                    {/* Compliance Calendar */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 shadow-2xl relative overflow-hidden h-[480px] flex flex-col">
-                            <div className="flex justify-between items-center mb-6">
-                                <div>
-                                    <h2 className="text-sm font-black text-white uppercase tracking-widest">Filing Calendar (April '24)</h2>
-                                </div>
-                                <button type="button" className="text-xs font-bold text-blue-500 hover:text-blue-400 flex items-center gap-1">View Full <ArrowRight size={14} aria-hidden="true" /></button>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-                                {[
-                                    { date: '15 Apr', act: 'EPF & MP Act, 1952', desc: 'PF Remittance & Return (ECR)', status: 'Pending', color: 'amber' },
-                                    { date: '15 Apr', act: 'ESI Act, 1948', desc: 'ESIC Contribution Filing', status: 'Pending', color: 'amber' },
-                                    { date: '25 Apr', act: 'Professional Tax', desc: 'PT Return Filing (Maharashtra)', status: 'Upcoming', color: 'blue' },
-                                    { date: '30 Apr', act: 'Income Tax Act', desc: 'TDS Challan (224 / 281)', status: 'Upcoming', color: 'blue' },
-                                    { date: '05 Apr', act: 'Labour Welfare', desc: 'LWF Contribution (Bi-annual)', status: 'Filed', color: 'emerald' },
-                                ].map((item, i) => (
-                                    <div key={i} className="flex gap-4 p-4 bg-[#060B14] border border-[#1A2A3A] rounded-xl hover:border-slate-700 transition-colors group">
-                                        <div className="flex flex-col items-center justify-center min-w-[50px] border-r border-[#1A2A3A] pr-4">
-                                            <span className="text-lg font-black text-white leading-none">{item.date.split(' ')[0]}</span>
-                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{item.date.split(' ')[1]}</span>
+                        <ul
+                            role="list"
+                            aria-label="April 2024 filings"
+                             
+                            tabIndex={0}
+                            className="flex-1 space-y-3 overflow-y-auto pr-2"
+                        >
+                            {FILING_ROWS.map((item) => {
+                                const [day, month] = item.date.split(" ");
+                                return (
+                                    <li
+                                        key={`${item.date}-${item.desc}`}
+                                        className="group flex gap-4 rounded-xl border border-[#1A2A3A] bg-[#060B14] p-4 transition-colors hover:border-slate-700 focus-within:ring-2 focus-within:ring-[#00e5a0]"
+                                    >
+                                        <div className="flex min-w-[50px] flex-col items-center justify-center border-r border-[#1A2A3A] pr-4">
+                                            <span className="text-lg font-black leading-none text-white">
+                                                {day}
+                                            </span>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                {month}
+                                            </span>
                                         </div>
                                         <div className="flex-1">
-                                            <div className="flex justify-between items-start">
-                                                <h3 className="text-xs font-black text-slate-300 uppercase tracking-tighter">{item.desc}</h3>
-                                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border bg-${item.color}-500/10 text-${item.color}-500 border-${item.color}-500/20`}>
+                                            <div className="flex items-start justify-between gap-3">
+                                                <h3 className="text-xs font-black uppercase tracking-tighter text-slate-300">
+                                                    {item.desc}
+                                                </h3>
+                                                <Badge variant={STATUS_BADGE[item.status]}>
                                                     {item.status}
-                                                </span>
+                                                </Badge>
                                             </div>
-                                            <p className="text-[10px] text-slate-500 font-bold tracking-wide mt-1 italic">{item.act}</p>
+                                            <p className="mt-1 text-[10px] font-bold italic tracking-wide text-slate-400">
+                                                {item.act}
+                                            </p>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </Card>
 
-                    {/* Quick Access & Status */}
-                    <div className="space-y-6">
-                        <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col h-[480px]">
-                            <h2 className="text-sm font-black text-white uppercase tracking-widest mb-6 border-b border-[#1A2A3A] pb-4">Act-wise Status</h2>
+                    {/* Act-wise status */}
+                    <Card padding="lg" className="flex h-[480px] flex-col">
+                        <h2 className="mb-6 border-b border-[#1A2A3A] pb-4 text-sm font-black uppercase tracking-widest text-white">
+                            Act-wise status
+                        </h2>
 
-                            <div className="flex-1 space-y-5">
-                                {[
-                                    { act: 'EPFO (Provident Fund)', pct: 85, status: 'Action Needed' },
-                                    { act: 'ESIC (State Insurance)', pct: 100, status: 'Fully Compliant' },
-                                    { act: 'Income Tax (TDS/Form 16)', pct: 90, status: 'On Track' },
-                                    { act: 'PT & LWF', pct: 100, status: 'Fully Compliant' },
-                                    { act: 'Shop & Establishment Act', pct: 60, status: 'Renewal Due' },
-                                ].map((row, i) => (
-                                    <div key={i} className="space-y-2">
+                        <div className="flex-1 space-y-5">
+                            {ACT_STATUS_ROWS.map((row) => {
+                                const tone = palette[statusKey(row.pct)];
+                                return (
+                                    <div key={row.act} className="space-y-2">
                                         <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
                                             <span className="text-slate-300">{row.act}</span>
-                                            <span className={row.pct === 100 ? 'text-emerald-500' : row.pct > 70 ? 'text-amber-500' : 'text-rose-500'}>{row.pct}%</span>
+                                            <span className={tone.text}>{row.pct}%</span>
                                         </div>
-                                        <div className="h-1.5 bg-[#060B14] rounded-full overflow-hidden border border-[#1A2A3A] shadow-inner" role="progressbar" aria-valuenow={row.pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${row.act} compliance: ${row.pct}%`}>
+                                        <div
+                                            className="h-1.5 overflow-hidden rounded-full border border-[#1A2A3A] bg-[#060B14] shadow-inner"
+                                            role="progressbar"
+                                            aria-valuenow={row.pct}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}
+                                            aria-label={`${row.act} compliance: ${row.pct}%`}
+                                        >
                                             <div
-                                                className={`h-full rounded-full transition-all duration-1000 ${row.pct === 100 ? 'bg-emerald-500' : row.pct > 70 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                                                className={`h-full rounded-full bg-current transition-all duration-1000 ${tone.text}`}
                                                 style={{ width: `${row.pct}%` }}
                                             />
                                         </div>
-                                        <div className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em]">{row.status}</div>
+                                        <div className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                            {row.status}
+                                        </div>
                                     </div>
-                                ))}
-                            </div>
+                                );
+                            })}
                         </div>
-                    </div>
-
+                    </Card>
                 </div>
-
             </div>
-        </main>
+        </Page>
     );
 }

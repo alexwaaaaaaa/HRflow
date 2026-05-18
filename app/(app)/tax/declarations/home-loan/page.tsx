@@ -1,244 +1,345 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Home, Building, Hammer, Upload, CheckCircle2, FileText, AlertCircle } from "lucide-react";
+import {
+    Home,
+    Building,
+    Hammer,
+    Upload,
+    CheckCircle2,
+    FileText,
+    AlertCircle,
+    ChevronRight,
+} from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ── Static maps (no template-literal classes) ─────────────────────────────────
+const PROPERTY_TYPE_CLASSES: Record<string, { border: string; bg: string; text: string; icon: string }> = {
+    self: {
+        border: "border-[#0066FF]",
+        bg: "bg-[#0066FF]/10",
+        text: "text-white",
+        icon: "text-[#0066FF]",
+    },
+    letout: {
+        border: "border-[#0066FF]",
+        bg: "bg-[#0066FF]/10",
+        text: "text-white",
+        icon: "text-[#0066FF]",
+    },
+    underconstruction: {
+        border: "border-[#0066FF]",
+        bg: "bg-[#0066FF]/10",
+        text: "text-white",
+        icon: "text-[#0066FF]",
+    },
+};
+
+const PROPERTY_TYPE_INACTIVE = "border-white/10 text-[#445566] hover:border-white/30";
 
 export default function HomeLoanPage() {
-    const [propertyType, setPropertyType] = useState("self"); // self, letout, underconstruction
+    const [propertyType, setPropertyType] = useState("self");
     const [interest, setInterest] = useState(242000);
     const [principal, setPrincipal] = useState(148000);
 
     const sec24Cap = 200000;
 
-    const claimableInterest = propertyType === "self" ? Math.min(interest, sec24Cap) : interest; // Let out has no cap on interest technically but overall loss carry forward is capped at 2L. For simplicity here:
+    // Calculation logic — byte-identical to pre-migration
+    const claimableInterest = propertyType === "self" ? Math.min(interest, sec24Cap) : interest;
     const excessInterest = Math.max(0, interest - sec24Cap);
-
     const taxSaved = claimableInterest * 0.22;
 
+    const activeClasses = PROPERTY_TYPE_CLASSES[propertyType] ?? PROPERTY_TYPE_CLASSES.self;
+
     return (
-        <div className="min-h-screen bg-[#0A1420] text-slate-200 font-sans p-6 pb-24">
-            {/* HEADER */}
-            <div className="mb-8">
-                <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
-                    <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <Link href="/tax/declarations" className="hover:text-white transition-colors">Declarations</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <span className="text-slate-200">Home Loan</span>
-                </div>
-                <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Home Loan — Tax Declaration</h1>
-                <p className="text-slate-400">Section 24b (Interest) | Section 80C (Principal) | Section 80EEA (Additional interest)</p>
-            </div>
-
-            <div className="bg-[#1A2A3A] rounded-xl border border-white/10 p-6 mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h2 className="text-lg font-bold text-white mb-3">What type of property do you have?</h2>
-                    <div className="flex flex-wrap gap-4">
-                        <button
-                            onClick={() => setPropertyType("self")}
-                            className={`flex-1 min-w-[160px] p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 ${propertyType === 'self' ? 'border-[#0066FF] bg-[#0066FF]/10 text-white' : 'border-white/10 text-slate-400 hover:border-white/30'}`}
-                        >
-                            <Home className={`w-6 h-6 ${propertyType === 'self' ? 'text-[#0066FF]' : ''}`} />
-                            <span className="font-bold text-sm text-center">Self-Occupied</span>
-                        </button>
-                        <button
-                            onClick={() => setPropertyType("letout")}
-                            className={`flex-1 min-w-[160px] p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 ${propertyType === 'letout' ? 'border-[#0066FF] bg-[#0066FF]/10 text-white' : 'border-white/10 text-slate-400 hover:border-white/30'}`}
-                        >
-                            <Building className={`w-6 h-6 ${propertyType === 'letout' ? 'text-[#0066FF]' : ''}`} />
-                            <span className="font-bold text-sm text-center">Let-Out / Rented</span>
-                        </button>
-                        <button
-                            onClick={() => setPropertyType("underconstruction")}
-                            className={`flex-1 min-w-[160px] p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 ${propertyType === 'underconstruction' ? 'border-[#0066FF] bg-[#0066FF]/10 text-white' : 'border-white/10 text-slate-400 hover:border-white/30'}`}
-                        >
-                            <Hammer className={`w-6 h-6 ${propertyType === 'underconstruction' ? 'text-[#0066FF]' : ''}`} />
-                            <span className="font-bold text-sm text-center line-clamp-2 leading-tight px-2">Under Construction</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-
-                {/* LEFT PANEL: HOME LOAN DETAILS (700px equivalent) */}
-                <div className="xl:col-span-7 space-y-6">
-
-                    {/* LOAN INFO */}
-                    <div className="bg-[#1A2A3A] rounded-xl border border-white/10 overflow-hidden">
-                        <div className="p-5 border-b border-white/5 bg-[#0A1420]/30">
-                            <h3 className="font-bold text-white text-lg">Loan Details</h3>
+        <Page
+            title="Home Loan — Tax Declaration"
+            subtitle="Section 24b (Interest) | Section 80C (Principal) | Section 80EEA (Additional interest)"
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/declarations" },
+                { label: "Home Loan" },
+            ]}
+            maxWidth="1400px"
+        >
+            <div className="space-y-6">
+                {/* Property Type Selector */}
+                <Card padding="lg">
+                    <h2 className="text-lg font-bold text-white mb-4">What type of property do you have?</h2>
+                    <fieldset role="radiogroup" aria-label="Property type" className="border-0 p-0 m-0">
+                        <legend className="sr-only">Property type</legend>
+                        <div className="flex flex-wrap gap-4">
+                            {[
+                                { id: "self", label: "Self-Occupied", Icon: Home },
+                                { id: "letout", label: "Let-Out / Rented", Icon: Building },
+                                { id: "underconstruction", label: "Under Construction", Icon: Hammer },
+                            ].map(({ id, label, Icon }) => {
+                                const isActive = propertyType === id;
+                                return (
+                                    <label
+                                        key={id}
+                                        className={`flex-1 min-w-[160px] p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer ${
+                                            isActive
+                                                ? `${activeClasses.border} ${activeClasses.bg} ${activeClasses.text}`
+                                                : PROPERTY_TYPE_INACTIVE
+                                        }`}
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="propertyType"
+                                            value={id}
+                                            checked={isActive}
+                                            onChange={() => setPropertyType(id)}
+                                            className="sr-only"
+                                        />
+                                        <Icon
+                                            className={`w-6 h-6 ${isActive ? activeClasses.icon : "text-[#445566]"}`}
+                                            aria-hidden="true"
+                                        />
+                                        <span className="font-bold text-sm text-center">{label}</span>
+                                    </label>
+                                );
+                            })}
                         </div>
-                        <div className="p-6 space-y-6">
+                    </fieldset>
+                </Card>
+
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                    {/* Left Panel */}
+                    <div className="xl:col-span-7 space-y-6">
+                        {/* Loan Details */}
+                        <Card padding="lg">
+                            <h3 className="text-base font-semibold text-white mb-5">Loan Details</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5">Bank Name</label>
-                                    <input type="text" defaultValue="SBI Home Loans" className="w-full bg-[#0A1420] border border-white/10 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-[#0066FF]" />
+                                    <label htmlFor="bank-name" className="block text-xs font-medium text-[#8899AA] mb-1.5">
+                                        Bank Name
+                                    </label>
+                                    <input
+                                        id="bank-name"
+                                        type="text"
+                                        defaultValue="SBI Home Loans"
+                                        className="w-full bg-[#0A1420] border border-white/10 rounded-lg p-2.5 text-sm text-[#c8d8e8] focus:outline-none focus:border-[#0066FF]"
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5">Loan Account No.</label>
-                                    <input type="text" defaultValue="SBIH2024XXXXXX" className="w-full bg-[#0A1420] border border-white/10 rounded-lg p-2.5 text-sm font-mono tracking-wider text-slate-200 focus:outline-none focus:border-[#0066FF]" />
+                                    <label htmlFor="loan-account" className="block text-xs font-medium text-[#8899AA] mb-1.5">
+                                        Loan Account No.
+                                    </label>
+                                    <input
+                                        id="loan-account"
+                                        type="text"
+                                        defaultValue="SBIH2024XXXXXX"
+                                        className="w-full bg-[#0A1420] border border-white/10 rounded-lg p-2.5 text-sm font-mono tracking-wider text-[#c8d8e8] focus:outline-none focus:border-[#0066FF]"
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5">Loan Disbursement Date</label>
-                                    <input type="date" defaultValue="2020-03-15" className="w-full bg-[#0A1420] border border-white/10 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-[#0066FF] [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" />
+                                    <label htmlFor="disbursement-date" className="block text-xs font-medium text-[#8899AA] mb-1.5">
+                                        Loan Disbursement Date
+                                    </label>
+                                    <input
+                                        id="disbursement-date"
+                                        type="date"
+                                        defaultValue="2020-03-15"
+                                        className="w-full bg-[#0A1420] border border-white/10 rounded-lg p-2.5 text-sm text-[#c8d8e8] focus:outline-none focus:border-[#0066FF]"
+                                    />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5">Outstanding Principal</label>
+                                    <label htmlFor="outstanding-principal" className="block text-xs font-medium text-[#8899AA] mb-1.5">
+                                        Outstanding Principal
+                                    </label>
                                     <div className="relative">
-                                        <span className="absolute left-3 top-2.5 text-slate-400">₹</span>
-                                        <input type="text" defaultValue="35,00,000" className="w-full bg-[#0A1420] border border-white/10 rounded-lg pl-8 p-2.5 text-sm text-white focus:outline-none focus:border-[#0066FF]" />
+                                        <span className="absolute left-3 top-2.5 text-[#8899AA]">₹</span>
+                                        <input
+                                            id="outstanding-principal"
+                                            type="text"
+                                            defaultValue="35,00,000"
+                                            className="w-full bg-[#0A1420] border border-white/10 rounded-lg pl-8 p-2.5 text-sm text-white focus:outline-none focus:border-[#0066FF]"
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </Card>
 
-                    {/* INTEREST & PRINCIPAL */}
-                    <div className="bg-[#1A2A3A] rounded-xl border border-white/10 overflow-hidden">
-                        <div className="p-5 border-b border-white/5 bg-[#0A1420]/30 flex justify-between items-center">
-                            <h3 className="font-bold text-white text-lg">Annual Interest Statement (FY 2024-25)</h3>
-                            <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 text-[10px] font-bold uppercase rounded border border-yellow-500/20">Requires Proof</span>
-                        </div>
-                        <div className="p-6 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5">Total Interest Paid</label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-2.5 text-slate-400">₹</span>
-                                        <input type="number" value={interest} onChange={(e) => setInterest(Number(e.target.value))} className="w-full bg-[#0A1420] border border-white/10 rounded-lg pl-8 p-2.5 text-sm text-white focus:outline-none focus:border-[#0066FF]" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5">Total Principal Repaid</label>
-                                    <div className="relative">
-                                        <span className="absolute left-3 top-2.5 text-slate-400">₹</span>
-                                        <input type="number" value={principal} onChange={(e) => setPrincipal(Number(e.target.value))} className="w-full bg-[#0A1420] border border-white/10 rounded-lg pl-8 p-2.5 text-sm text-white focus:outline-none focus:border-[#0066FF]" />
-                                    </div>
-                                </div>
+                        {/* Interest & Principal */}
+                        <Card padding="none">
+                            <div className="flex justify-between items-center px-5 py-4 border-b border-[#1A2A3A] bg-[#0A1420]/30">
+                                <h3 className="font-bold text-white text-base">Annual Interest Statement (FY 2024-25)</h3>
+                                <Badge variant="warning">Requires Proof</Badge>
                             </div>
-
-                            {propertyType === "self" && (
-                                <div className="bg-[#0A1420] rounded-lg p-3 border border-white/5 text-sm">
-                                    <p className="text-slate-400 mb-1">Max claimable interest for self-occupied: <span className="text-white font-bold">₹2,00,000</span></p>
-                                    {excessInterest > 0 && <p className="text-yellow-500 text-xs flex items-center gap-1"><AlertCircle className="w-3 h-3" /> ₹{(excessInterest).toLocaleString('en-IN')} interest cannot be claimed.</p>}
-                                </div>
-                            )}
-                            <div className="bg-[#0A1420] rounded-lg p-3 border border-white/5 text-sm">
-                                <p className="text-slate-400">Principal component (<span className="text-white font-bold">₹{(principal).toLocaleString('en-IN')}</span>) directly added to Section 80C pool.</p>
-                            </div>
-
-                            <div className="mt-4 pt-4 border-t border-white/5">
-                                <h4 className="text-sm font-bold text-slate-300 mb-2">Upload Interest Certificate</h4>
-                                <p className="text-xs text-slate-500 mb-3">Download the format from your bank portal (e.g. SBI → Statement → Interest Certificate)</p>
-                                <div className="flex items-center justify-between p-3 border border-dashed border-[#0066FF]/30 bg-[#0066FF]/5 rounded-lg cursor-pointer hover:bg-[#0066FF]/10 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <FileText className="w-5 h-5 text-[#0066FF]" />
-                                        <div>
-                                            <p className="text-sm text-[#0066FF] font-medium">Upload Certificate</p>
-                                            <p className="text-[10px] text-slate-400">PDF, max 5MB</p>
+                            <div className="p-6 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label htmlFor="interest-paid" className="block text-xs font-medium text-[#8899AA] mb-1.5">
+                                            Total Interest Paid
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-3 top-2.5 text-[#8899AA]">₹</span>
+                                            <input
+                                                id="interest-paid"
+                                                type="number"
+                                                value={interest}
+                                                onChange={(e) => setInterest(Number(e.target.value))}
+                                                className="w-full bg-[#0A1420] border border-white/10 rounded-lg pl-8 p-2.5 text-sm text-white focus:outline-none focus:border-[#0066FF]"
+                                            />
                                         </div>
                                     </div>
-                                    <Upload className="w-4 h-4 text-[#0066FF]" />
+                                    <div>
+                                        <label htmlFor="principal-repaid" className="block text-xs font-medium text-[#8899AA] mb-1.5">
+                                            Total Principal Repaid
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-3 top-2.5 text-[#8899AA]">₹</span>
+                                            <input
+                                                id="principal-repaid"
+                                                type="number"
+                                                value={principal}
+                                                onChange={(e) => setPrincipal(Number(e.target.value))}
+                                                className="w-full bg-[#0A1420] border border-white/10 rounded-lg pl-8 p-2.5 text-sm text-white focus:outline-none focus:border-[#0066FF]"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {propertyType === "self" && (
+                                    <Card variant="bare" className="bg-[#0A1420] rounded-lg p-3 border border-white/5 text-sm">
+                                        <p className="text-[#8899AA] mb-1">
+                                            Max claimable interest for self-occupied:{" "}
+                                            <span className="text-white font-bold">₹2,00,000</span>
+                                        </p>
+                                        {excessInterest > 0 && (
+                                            <p className="text-[#FFB800] text-xs flex items-center gap-1">
+                                                <AlertCircle className="w-3 h-3" aria-hidden="true" />
+                                                ₹{excessInterest.toLocaleString("en-IN")} interest cannot be claimed.
+                                            </p>
+                                        )}
+                                    </Card>
+                                )}
+
+                                <Card variant="bare" className="bg-[#0A1420] rounded-lg p-3 border border-white/5 text-sm">
+                                    <p className="text-[#8899AA]">
+                                        Principal component (
+                                        <span className="text-white font-bold">₹{principal.toLocaleString("en-IN")}</span>)
+                                        directly added to Section 80C pool.
+                                    </p>
+                                </Card>
+
+                                <div className="mt-4 pt-4 border-t border-white/5">
+                                    <h4 className="text-sm font-bold text-[#c8d8e8] mb-2">Upload Interest Certificate</h4>
+                                    <p className="text-xs text-[#445566] mb-3">
+                                        Download the format from your bank portal (e.g. SBI → Statement → Interest Certificate)
+                                    </p>
+                                    <Button variant="secondary" className="w-full" icon={<Upload className="w-4 h-4" />}>
+                                        Upload Certificate
+                                    </Button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </Card>
 
-                    {/* FIRST TIME BUYER */}
-                    <div className="bg-[#1A2A3A] rounded-xl border border-white/10 overflow-hidden">
-                        <div className="p-5 border-b border-white/5 bg-[#0A1420]/30 flex justify-between items-center">
-                            <h3 className="font-bold text-white text-lg">First Time Buyer (80EEA)</h3>
-                        </div>
-                        <div className="p-6">
-                            <p className="text-sm text-slate-300 mb-4">Are you a first-time property buyer and the loan was sanctioned between 01/04/2019 and 31/03/2022?</p>
+                        {/* First Time Buyer */}
+                        <Card padding="lg">
+                            <h3 className="font-bold text-white text-base mb-3">First Time Buyer (80EEA)</h3>
+                            <p className="text-sm text-[#c8d8e8] mb-4">
+                                Are you a first-time property buyer and the loan was sanctioned between 01/04/2019 and 31/03/2022?
+                            </p>
                             <div className="flex gap-4">
-                                <button className="flex-1 p-2 bg-[#0A1420] border border-white/10 rounded-lg text-sm text-slate-400 hover:text-white transition-colors">Yes (Check Eligibility)</button>
-                                <button className="flex-1 p-2 bg-[#0066FF] text-white rounded-lg text-sm font-bold shadow-lg shadow-[#0066FF]/20">No</button>
+                                <Button variant="secondary" className="flex-1">Yes (Check Eligibility)</Button>
+                                <Button className="flex-1">No</Button>
                             </div>
-                            <div className="mt-4 text-xs text-slate-500 p-3 bg-[#0A1420] rounded-lg border border-white/5">
-                                80EEA provides an additional ₹1,50,000 deduction on home loan interest beyond the ₹2,00,000 limit, subject to conditions (e.g. Stamp value ≤ ₹45L).
-                            </div>
-                        </div>
+                            <Card variant="bare" className="mt-4 text-xs text-[#445566] p-3 bg-[#0A1420] rounded-lg border border-white/5">
+                                80EEA provides an additional ₹1,50,000 deduction on home loan interest beyond the ₹2,00,000 limit,
+                                subject to conditions (e.g. Stamp value ≤ ₹45L).
+                            </Card>
+                        </Card>
                     </div>
 
-                </div>
+                    {/* Right Panel: Deduction Tracker */}
+                    <div className="xl:col-span-5">
+                        <Card padding="lg" className="lg:sticky lg:top-6">
+                            <h3 className="font-bold text-white text-lg mb-5">Deduction Tracker</h3>
 
-                {/* RIGHT PANEL: DEDUCTION TRACKER (484px equivalent) */}
-                <div className="xl:col-span-5 space-y-6">
-
-                    {/* TRACKER */}
-                    <div className="bg-[#1A2A3A] rounded-xl border border-white/10 shadow-xl overflow-hidden sticky top-6">
-                        <div className="p-5 border-b border-white/5 bg-[#0A1420]/30">
-                            <h3 className="font-bold text-white text-lg">Deduction Tracker</h3>
-                        </div>
-                        <div className="p-6">
-
-                            <div className="mb-6">
-                                <h4 className="text-sm font-bold text-slate-300 mb-3 flex justify-between">
-                                    <span>Section 24b (Interest)</span>
-                                    <span className="text-[#00E5A0] font-mono font-bold">₹{claimableInterest.toLocaleString('en-IN')}</span>
-                                </h4>
-                                <div className="space-y-2 text-xs text-slate-400 bg-[#0A1420] p-3 rounded-lg border border-white/5">
+                            {/* Section 24b */}
+                            <div className="mb-5">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h4 className="text-sm font-bold text-white">Section 24b (Interest)</h4>
+                                    <span className="text-[#00E5A0] font-mono font-bold">
+                                        ₹{claimableInterest.toLocaleString("en-IN")}
+                                    </span>
+                                </div>
+                                <div className="space-y-2 text-xs text-[#8899AA] bg-[#0A1420] p-3 rounded-lg border border-white/5">
                                     <div className="flex justify-between">
                                         <span>Actual Interest</span>
-                                        <span className="font-mono text-white">₹{interest.toLocaleString('en-IN')}</span>
+                                        <span className="font-mono text-white">₹{interest.toLocaleString("en-IN")}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Max Limit (Self-Occupied)</span>
-                                        <span className="font-mono text-white">₹{sec24Cap.toLocaleString('en-IN')}</span>
+                                        <span className="font-mono text-white">₹{sec24Cap.toLocaleString("en-IN")}</span>
                                     </div>
                                     <div className="flex justify-between border-t border-white/5 pt-2 mt-2">
                                         <span>Excess (Not claimed)</span>
-                                        <span className="font-mono text-white">₹{excessInterest.toLocaleString('en-IN')}</span>
+                                        <span className="font-mono text-white">₹{excessInterest.toLocaleString("en-IN")}</span>
                                     </div>
                                     {claimableInterest === sec24Cap && (
-                                        <div className="mt-2 text-[#00E5A0] font-bold flex items-center justify-end gap-1"><CheckCircle2 className="w-3 h-3" /> Fully Claimed</div>
+                                        <div className="mt-2 text-[#00E5A0] font-bold flex items-center justify-end gap-1">
+                                            <CheckCircle2 className="w-3 h-3" aria-hidden="true" /> Fully Claimed
+                                        </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="mb-6">
-                                <h4 className="text-sm font-bold text-slate-300 mb-3 flex justify-between">
-                                    <span>Section 80C (Principal)</span>
-                                    <span className="text-[#00E5A0] font-mono font-bold">₹{principal.toLocaleString('en-IN')}</span>
-                                </h4>
-                                <div className="space-y-2 text-xs text-slate-400 bg-[#0A1420] p-3 rounded-lg border border-white/5">
+                            <div className="border-t border-[#1A2A3A] my-4" />
+
+                            {/* Section 80C */}
+                            <div className="mb-5">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h4 className="text-sm font-bold text-white">Section 80C (Principal)</h4>
+                                    <span className="text-[#00E5A0] font-mono font-bold">
+                                        ₹{principal.toLocaleString("en-IN")}
+                                    </span>
+                                </div>
+                                <div className="space-y-2 text-xs text-[#8899AA] bg-[#0A1420] p-3 rounded-lg border border-white/5">
                                     <p>This amount is routed to the consolidated 80C pool limit of ₹1,50,000.</p>
-                                    <p className="mt-2 text-[#0066FF] font-medium text-right flex items-center justify-end gap-1">View 80C Status <ChevronRight className="w-3 h-3" /></p>
+                                    <p className="mt-2 text-[#0066FF] font-medium text-right flex items-center justify-end gap-1">
+                                        View 80C Status <ChevronRight className="w-3 h-3" aria-hidden="true" />
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-white/10">
+                            <div className="border-t border-[#1A2A3A] pt-5">
                                 <h4 className="text-sm font-bold text-white mb-4">Tax Impact</h4>
-
                                 <div className="space-y-3 text-sm">
-                                    <div className="flex justify-between text-slate-300">
+                                    <div className="flex justify-between text-[#c8d8e8]">
                                         <span>Without home loan (Tax)</span>
                                         <span className="font-mono">₹55,058</span>
                                     </div>
                                     <div className="flex justify-between text-[#00E5A0] pb-2 border-b border-white/5">
                                         <span>Home loan saves (Section 24b)</span>
-                                        <span className="font-mono">-₹{taxSaved.toLocaleString('en-IN')}</span>
+                                        <span className="font-mono">-₹{taxSaved.toLocaleString("en-IN")}</span>
                                     </div>
                                     <div className="flex justify-between text-white font-bold pt-1">
                                         <span>Effective tax liability</span>
-                                        <span className="font-mono text-lg">₹{Math.max(0, 55058 - taxSaved).toLocaleString('en-IN')}</span>
+                                        <span className="font-mono text-lg">
+                                            ₹{Math.max(0, 55058 - taxSaved).toLocaleString("en-IN")}
+                                        </span>
                                     </div>
                                 </div>
-
-                                <div className="mt-4 bg-[#0A1420] rounded-lg p-3 text-center border border-white/5">
-                                    <p className="text-xs text-slate-400 mb-1">Your monthly in-hand increases by</p>
-                                    <p className="text-xl font-bold text-[#00E5A0]">₹{Math.round(taxSaved / 12).toLocaleString('en-IN')} / mo</p>
-                                </div>
+                                <Card variant="bare" className="mt-4 bg-[#0A1420] rounded-lg p-3 text-center border border-white/5">
+                                    <p className="text-xs text-[#8899AA] mb-1">Your monthly in-hand increases by</p>
+                                    <p className="text-xl font-bold text-[#00E5A0]">
+                                        ₹{Math.round(taxSaved / 12).toLocaleString("en-IN")} / mo
+                                    </p>
+                                </Card>
                             </div>
 
-                        </div>
+                            <Button className="w-full mt-6" icon={<FileText className="w-4 h-4" />}>
+                                Save Home Loan Declaration
+                            </Button>
+                        </Card>
                     </div>
-
                 </div>
             </div>
-        </div>
+        </Page>
     );
 }

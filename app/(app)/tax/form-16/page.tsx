@@ -1,11 +1,38 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-    FileText, CheckCircle2, AlertCircle, Download,
-    RefreshCw, Filter, Search, Eye, ShieldCheck, Mail
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+    FileText,
+    CheckCircle2,
+    Download,
+    RefreshCw,
+    Search,
+    Eye,
+    ShieldCheck,
+    Mail,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ── Sub-components (module-scope) ─────────────────────────────────────────────
+function FilterBtn({ label, active, onClick }: { label: string; active?: boolean; onClick?: () => void }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                active
+                    ? "bg-[#1A2A3A] border-[#2A3A4A] text-white"
+                    : "bg-transparent border-transparent text-[#8899AA] hover:text-[#c8d8e8]"
+            }`}
+        >
+            {label}
+        </button>
+    );
+}
 
 export default function Form16Generation() {
     const router = useRouter();
@@ -19,71 +46,66 @@ export default function Form16Generation() {
     };
 
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 text-slate-200 font-sans">
-            <div className="max-w-7xl mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-2">Form 16 Generation — FY 2024-25</h1>
-                        <p className="text-sm text-[#8899AA]">Generate, merge and publish Form 16 (Part A & Part B) for your employees.</p>
-                    </div>
-                    <div className="flex space-x-3">
-                        <button className="px-4 py-2 bg-[#1A2A3A] border border-[#2A3A4A] text-sm font-semibold rounded-lg hover:bg-[#2A3A4A] transition-colors flex items-center text-white">
-                            <Download size={16} className="mr-2" /> Import Part A (TRACES)
-                        </button>
-                        <button
-                            onClick={() => router.push('/tax/form-16/bulk')}
-                            className="px-4 py-2 bg-[#00E5A0] text-[#060B14] font-bold text-sm rounded-lg hover:bg-[#00c98d] transition-colors flex items-center"
-                        >
-                            Bulk Actions
-                        </button>
-                    </div>
-                </div>
-
+        <Page
+            title="Form 16 Generation — FY 2024-25"
+            subtitle="Generate, merge and publish Form 16 (Part A & Part B) for your employees."
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/dashboard" },
+                { label: "Form 16" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Download size={16} />}>
+                        Import Part A (TRACES)
+                    </Button>
+                    <Button onClick={() => router.push("/tax/form-16/bulk")}>Bulk Actions</Button>
+                </>
+            }
+        >
+            <div className="space-y-6">
                 {/* Status Summary */}
-                <div className="grid grid-cols-4 gap-4">
-                    <div className="p-5 bg-[#0D1928] border border-[#1A2A3A] rounded-xl flex items-center justify-between">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card padding="md" className="flex items-center justify-between">
                         <div>
                             <div className="text-xs text-[#8899AA] font-semibold mb-1 uppercase tracking-wider">Total Eligible</div>
                             <div className="text-2xl font-black text-white">412</div>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-[#1A2A3A] flex items-center justify-center text-[#8899AA]">
-                            <FileText size={20} />
+                            <FileText size={20} aria-hidden="true" />
                         </div>
-                    </div>
-                    <div className="p-5 bg-[#00E5A0]/5 border border-[#00E5A0]/20 rounded-xl flex items-center justify-between">
+                    </Card>
+                    <Card padding="md" className="bg-[#00E5A0]/5 border border-[#00E5A0]/20 flex items-center justify-between">
                         <div>
                             <div className="text-xs text-[#00E5A0] font-semibold mb-1 uppercase tracking-wider">Part A Uploaded</div>
                             <div className="text-2xl font-black text-[#00E5A0]">380</div>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-[#00E5A0]/10 flex items-center justify-center text-[#00E5A0]">
-                            <CheckCircle2 size={20} />
+                            <CheckCircle2 size={20} aria-hidden="true" />
                         </div>
-                    </div>
-                    <div className="p-5 bg-[#0066FF]/5 border border-[#0066FF]/20 rounded-xl flex items-center justify-between">
+                    </Card>
+                    <Card padding="md" className="bg-[#0066FF]/5 border border-[#0066FF]/20 flex items-center justify-between">
                         <div>
                             <div className="text-xs text-[#0066FF] font-semibold mb-1 uppercase tracking-wider">Generated</div>
                             <div className="text-2xl font-black text-[#0066FF]">145</div>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-[#0066FF]/10 flex items-center justify-center text-[#0066FF]">
-                            <RefreshCw size={20} />
+                            <RefreshCw size={20} aria-hidden="true" />
                         </div>
-                    </div>
-                    <div className="p-5 bg-[#FFB800]/5 border border-[#FFB800]/20 rounded-xl flex items-center justify-between">
+                    </Card>
+                    <Card padding="md" className="bg-[#FFB800]/5 border border-[#FFB800]/20 flex items-center justify-between">
                         <div>
                             <div className="text-xs text-[#FFB800] font-semibold mb-1 uppercase tracking-wider">Published to Emp</div>
                             <div className="text-2xl font-black text-[#FFB800]">12</div>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-[#FFB800]/10 flex items-center justify-center text-[#FFB800]">
-                            <Mail size={20} />
+                            <Mail size={20} aria-hidden="true" />
                         </div>
-                    </div>
+                    </Card>
                 </div>
 
                 {/* Table Area */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl overflow-hidden shadow-lg">
-
+                <Card padding="none">
                     <div className="p-4 border-b border-[#1A2A3A] flex justify-between items-center bg-[#0A1420]">
                         <div className="flex space-x-2">
                             <FilterBtn label="All" active />
@@ -95,13 +117,14 @@ export default function Form16Generation() {
                             <input
                                 type="text"
                                 placeholder="Search Name or PAN..."
+                                aria-label="Search employees"
                                 className="bg-[#060B14] border border-[#1A2A3A] px-4 py-1.5 pl-9 rounded-lg text-sm text-white focus:outline-none focus:border-[#0066FF] w-64"
                             />
-                            <Search size={16} className="absolute left-3 top-2.5 text-[#8899AA]" />
+                            <Search size={16} className="absolute left-3 top-2.5 text-[#8899AA]" aria-hidden="true" />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1A2A3A] text-xs font-bold text-[#8899AA] uppercase tracking-wider bg-[#060B14]">
+                    <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1A2A3A] text-xs font-bold text-[#8899AA] uppercase tracking-wider bg-[#060B14]">
                         <div className="col-span-3">Employee</div>
                         <div className="col-span-2">PAN Number</div>
                         <div className="col-span-1 text-center">Part A</div>
@@ -114,103 +137,97 @@ export default function Form16Generation() {
                         {/* Ready to generate */}
                         <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-[#1A2A3A]/30 transition-colors">
                             <div className="col-span-3 flex items-center space-x-3">
-                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-xs font-bold text-white">AM</div>
+                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-xs font-bold text-white" aria-hidden="true">
+                                    AM
+                                </div>
                                 <div>
                                     <div className="text-sm font-bold text-white line-clamp-1">Arjun Mehta</div>
                                     <div className="text-xs text-[#8899AA]">EMP001</div>
                                 </div>
                             </div>
-                            <div className="col-span-2 font-mono text-sm text-slate-300">ASDFG1234H</div>
+                            <div className="col-span-2 font-mono text-sm text-[#c8d8e8]">ASDFG1234H</div>
                             <div className="col-span-1 flex justify-center">
-                                <span className="bg-[#00E5A0]/20 text-[#00E5A0] px-2 py-0.5 rounded text-[10px] font-bold border border-[#00E5A0]/30">Uploaded</span>
+                                <Badge variant="success">Uploaded</Badge>
                             </div>
                             <div className="col-span-1 flex justify-center">
-                                <span className="bg-[#00E5A0]/20 text-[#00E5A0] px-2 py-0.5 rounded text-[10px] font-bold border border-[#00E5A0]/30">Ready</span>
+                                <Badge variant="success">Ready</Badge>
                             </div>
-                            <div className="col-span-2 flex justify-center text-xs text-[#8899AA]">
-                                Pending Gen
-                            </div>
-                            <div className="col-span-3 flex justify-end space-x-2">
-                                <button
-                                    onClick={() => handleGenerate('EMP001')}
+                            <div className="col-span-2 flex justify-center text-xs text-[#8899AA]">Pending Gen</div>
+                            <div className="col-span-3 flex justify-end">
+                                <Button
+                                    onClick={() => handleGenerate("EMP001")}
                                     disabled={generating !== null}
-                                    className="px-3 py-1.5 bg-[#0066FF] text-white text-xs font-bold rounded-lg hover:bg-[#0052cc] transition-colors flex items-center disabled:opacity-50 w-28 justify-center"
+                                    isLoading={generating === "EMP001"}
+                                    loadingText="Generating..."
+                                    size="sm"
                                 >
-                                    {generating === 'EMP001' ? <RefreshCw size={14} className="animate-spin" /> : 'Generate + Sign'}
-                                </button>
+                                    Generate + Sign
+                                </Button>
                             </div>
                         </div>
 
                         {/* Missing Part A */}
                         <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-[#1A2A3A]/30 transition-colors">
                             <div className="col-span-3 flex items-center space-x-3">
-                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-xs font-bold text-white">KI</div>
+                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-xs font-bold text-white" aria-hidden="true">
+                                    KI
+                                </div>
                                 <div>
                                     <div className="text-sm font-bold text-white line-clamp-1">Kavya Iyer</div>
                                     <div className="text-xs text-[#8899AA]">EMP004</div>
                                 </div>
                             </div>
-                            <div className="col-span-2 font-mono text-sm text-slate-300">ZXCVB0987K</div>
-                            <div className="col-span-1 flex justify-center cursor-help" title="Part A missing from TRACES import">
-                                <span className="bg-[#FF4444]/10 text-[#FF4444] px-2 py-0.5 rounded text-[10px] font-bold border border-[#FF4444]/30">Missing</span>
+                            <div className="col-span-2 font-mono text-sm text-[#c8d8e8]">ZXCVB0987K</div>
+                            <div className="col-span-1 flex justify-center">
+                                <Badge variant="danger">Missing</Badge>
                             </div>
                             <div className="col-span-1 flex justify-center">
-                                <span className="bg-[#00E5A0]/20 text-[#00E5A0] px-2 py-0.5 rounded text-[10px] font-bold border border-[#00E5A0]/30">Ready</span>
+                                <Badge variant="success">Ready</Badge>
                             </div>
-                            <div className="col-span-2 flex justify-center text-xs text-[#8899AA]">
-                                Blocked
-                            </div>
-                            <div className="col-span-3 flex justify-end space-x-2">
-                                <button disabled className="px-3 py-1.5 bg-[#1A2A3A] text-[#8899AA] text-xs font-bold rounded-lg cursor-not-allowed border border-[#2A3A4A] w-28">
+                            <div className="col-span-2 flex justify-center text-xs text-[#8899AA]">Blocked</div>
+                            <div className="col-span-3 flex justify-end">
+                                <Button disabled size="sm" variant="secondary">
                                     Generate + Sign
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
                         {/* Generated */}
                         <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center bg-[#00E5A0]/5 hover:bg-[#00E5A0]/10 transition-colors border-l-2 border-[#00E5A0]">
                             <div className="col-span-3 flex items-center space-x-3">
-                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-white">SR</div>
+                                <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center text-xs font-bold text-white" aria-hidden="true">
+                                    SR
+                                </div>
                                 <div>
                                     <div className="text-sm font-bold text-white line-clamp-1">Suresh Roy</div>
                                     <div className="text-xs text-[#8899AA]">EMP015</div>
                                 </div>
                             </div>
-                            <div className="col-span-2 font-mono text-sm text-slate-300">QWERT5678L</div>
+                            <div className="col-span-2 font-mono text-sm text-[#c8d8e8]">QWERT5678L</div>
                             <div className="col-span-1 flex justify-center">
-                                <CheckCircle2 size={16} className="text-[#00E5A0]" />
+                                <CheckCircle2 size={16} className="text-[#00E5A0]" aria-hidden="true" />
                             </div>
                             <div className="col-span-1 flex justify-center">
-                                <CheckCircle2 size={16} className="text-[#00E5A0]" />
+                                <CheckCircle2 size={16} className="text-[#00E5A0]" aria-hidden="true" />
                             </div>
-                            <div className="col-span-2 flex justify-center text-xs text-[#00E5A0] font-bold flex items-center">
-                                <ShieldCheck size={14} className="mr-1" /> Signed
+                            <div className="col-span-2 flex justify-center text-xs text-[#00E5A0] font-bold items-center gap-1">
+                                <ShieldCheck size={14} aria-hidden="true" /> Signed
                             </div>
                             <div className="col-span-3 flex justify-end space-x-2">
-                                <button className="p-1.5 text-[#0066FF] hover:bg-[#0066FF]/10 rounded-lg transition-colors border border-transparent hover:border-[#0066FF]/30" title="Publish over Email">
-                                    <Mail size={16} />
-                                </button>
-                                <button className="p-1.5 text-[#8899AA] hover:text-white hover:bg-[#1A2A3A] rounded-lg transition-colors border border-transparent hover:border-[#2A3A4A]" title="Preview">
-                                    <Eye size={16} />
-                                </button>
-                                <button className="p-1.5 text-[#8899AA] hover:text-[#00E5A0] hover:bg-[#00E5A0]/10 rounded-lg transition-colors border border-transparent hover:border-[#00E5A0]/30" title="Download">
-                                    <Download size={16} />
-                                </button>
+                                <Button variant="ghost" size="sm" aria-label="Email Suresh Roy Form 16">
+                                    <Mail size={16} aria-hidden="true" />
+                                </Button>
+                                <Button variant="ghost" size="sm" aria-label="Preview Suresh Roy Form 16">
+                                    <Eye size={16} aria-hidden="true" />
+                                </Button>
+                                <Button variant="ghost" size="sm" aria-label="Download Suresh Roy Form 16">
+                                    <Download size={16} aria-hidden="true" />
+                                </Button>
                             </div>
                         </div>
-
                     </div>
-                </div>
-
+                </Card>
             </div>
-        </div>
-    );
-}
-
-function FilterBtn({ label, active }: any) {
-    return (
-        <button className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${active ? 'bg-[#1A2A3A] border-[#2A3A4A] text-white' : 'bg-transparent border-transparent text-[#8899AA] hover:text-slate-300'}`}>
-            {label}
-        </button>
+        </Page>
     );
 }

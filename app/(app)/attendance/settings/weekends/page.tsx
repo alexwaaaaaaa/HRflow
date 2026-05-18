@@ -1,81 +1,177 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    CalendarOff, Save, CheckCircle2
-} from 'lucide-react';
+import { CheckCircle2, Save } from "lucide-react";
+
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Static config (module scope — keeps render pure)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] as const;
+type Day = (typeof DAYS)[number];
+
+const DEFAULT_WEEKENDS = new Set<Day>(["Saturday", "Sunday"]);
+
+const WEEK_ORDINALS = ["1st", "2nd", "3rd", "4th", "5th"] as const;
+// Odd Saturdays (2nd, 4th) are working by default; even (1st, 3rd, 5th) are off.
+const DEFAULT_OFF_SATURDAYS = new Set([0, 2, 4]); // indices into WEEK_ORDINALS
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components (module scope — never defined inside render)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface DayTileProps {
+    day: Day;
+    isOff: boolean;
+}
+
+function DayTile({ day, isOff }: DayTileProps) {
+    return (
+        <button
+            type="button"
+            aria-pressed={isOff}
+            className={`relative flex flex-col items-center justify-center rounded-xl border p-4 transition-colors hover:bg-[#1A2A3A]/50 ${
+                isOff
+                    ? "border-[#00E5A0]/50 bg-[#00E5A0]/10"
+                    : "border-[#1A2A3A] bg-[#060B14]"
+            }`}
+        >
+            {isOff && (
+                <span className="absolute right-2 top-2 text-[#00E5A0]">
+                    <CheckCircle2 size={14} aria-hidden="true" />
+                </span>
+            )}
+            <span
+                className={`mt-2 text-sm font-bold ${
+                    isOff ? "text-[#00E5A0]" : "text-[#8899AA]"
+                }`}
+            >
+                {day.substring(0, 3)}
+            </span>
+        </button>
+    );
+}
+
+interface SaturdayToggleProps {
+    ordinal: string;
+    isOff: boolean;
+}
+
+function SaturdayToggle({ ordinal, isOff }: SaturdayToggleProps) {
+    return (
+        <label className="flex cursor-pointer items-center gap-2 rounded border border-[#2A3A4A] bg-[#1A2A3A] px-3 py-1.5">
+            <input
+                type="checkbox"
+                defaultChecked={isOff}
+                className="h-3 w-3 accent-[#0066FF]"
+                aria-label={`${ordinal} Saturday is an off-day`}
+            />
+            <span className="w-3 text-xs font-bold text-white">{ordinal}</span>
+        </label>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function WeekendPolicy() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-4xl mx-auto space-y-6">
+        <Page
+            title="Weekend & Off-Day Policy"
+            subtitle="Set default rest days for the organization. (Shift Roster overrides these settings)."
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Attendance", href: "/attendance" },
+                { label: "Settings", href: "/attendance/settings" },
+                { label: "Weekends" },
+            ]}
+            maxWidth="900px"
+            actions={
+                <Button
+                    variant="primary"
+                    size="md"
+                    icon={<Save size={16} aria-hidden="true" />}
+                >
+                    Save Pattern
+                </Button>
+            }
+        >
+            <div className="space-y-6">
+                <Card padding="lg">
+                    <h2 className="mb-6 text-lg font-bold text-white">
+                        Select Weekly Off Days
+                    </h2>
 
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6 border-b border-[#1A2A3A] pb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1">Weekend & Off-Day Policy</h1>
-                        <p className="text-sm text-[#8899AA]">Set default rest days for the organization. (Shift Roster overrides these settings).</p>
-                    </div>
-                    <button className="px-5 py-2.5 bg-[#0066FF] text-white font-bold text-sm rounded-lg hover:bg-[#0052cc] transition-colors flex items-center shadow-[0_0_15px_rgba(0,102,255,0.3)]">
-                        <Save size={16} className="mr-2" /> Save Pattern
-                    </button>
-                </div>
-
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-8">
-
-                    <h2 className="text-lg font-bold text-white mb-6">Select Weekly Off Days</h2>
-
-                    <div className="grid grid-cols-7 gap-4 mb-8">
-                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, ix) => {
-                            const isWeekend = day === 'Saturday' || day === 'Sunday';
-                            return (
-                                <button
-                                    key={day}
-                                    className={`relative flex flex-col items-center justify-center p-4 border rounded-xl hover:bg-[#1A2A3A]/50 transition-colors ${isWeekend
-                                            ? 'bg-[#00E5A0]/10 border-[#00E5A0]/50' // Selected Mock
-                                            : 'bg-[#060B14] border-[#1A2A3A]' // Unselected Mock
-                                        }`}
-                                >
-                                    {isWeekend && (
-                                        <div className="absolute top-2 right-2 text-[#00E5A0]">
-                                            <CheckCircle2 size={14} />
-                                        </div>
-                                    )}
-                                    <span className={`text-sm font-bold mt-2 ${isWeekend ? 'text-[#00E5A0]' : 'text-[#8899AA]'}`}>{day.substring(0, 3)}</span>
-                                </button>
-                            );
-                        })}
+                    <div className="mb-8 grid grid-cols-4 gap-4 sm:grid-cols-7">
+                        {DAYS.map((day) => (
+                            <DayTile
+                                key={day}
+                                day={day}
+                                isOff={DEFAULT_WEEKENDS.has(day)}
+                            />
+                        ))}
                     </div>
 
-                    <div className="bg-[#060B14] border border-[#2A3A4A] rounded-lg p-5">
-                        <h3 className="text-sm font-bold text-white mb-4">Advanced Exceptions (Odd/Even Saturdays)</h3>
+                    {/* Advanced exceptions */}
+                    <div className="rounded-lg border border-[#2A3A4A] bg-[#060B14] p-5">
+                        <h3 className="mb-4 text-sm font-bold text-white">
+                            Advanced Exceptions (Odd/Even Saturdays)
+                        </h3>
 
-                        <label className="flex items-start space-x-3 cursor-pointer group mb-4">
-                            <div className="relative flex items-center justify-center mt-0.5">
-                                <input type="checkbox" className="peer sr-only" defaultChecked />
-                                <div className="w-4 h-4 rounded bg-[#060B14] border border-[#2A3A4A] peer-checked:bg-[#0066FF] peer-checked:border-[#0066FF] transition-colors flex items-center justify-center">
-                                    <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        <label className="group mb-4 flex cursor-pointer items-start gap-3">
+                            <div className="relative mt-0.5 flex items-center justify-center">
+                                <input
+                                    type="checkbox"
+                                    className="peer sr-only"
+                                    defaultChecked
+                                    aria-label="Enable Alternate Saturday Working"
+                                />
+                                <div className="flex h-4 w-4 items-center justify-center rounded border border-[#2A3A4A] bg-[#060B14] transition-colors peer-checked:border-[#0066FF] peer-checked:bg-[#0066FF]">
+                                    <svg
+                                        className="h-3 w-3 text-white opacity-0 peer-checked:opacity-100"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth={3}
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
                                 </div>
                             </div>
                             <div>
-                                <span className="text-sm font-bold text-white group-hover:text-[#0066FF] transition-colors">Enable Alternate Saturday Working</span>
-                                <p className="text-xs text-[#8899AA]">Certain weeks will override the Saturday Rest-Day.</p>
+                                <span className="text-sm font-bold text-white transition-colors group-hover:text-[#0066FF]">
+                                    Enable Alternate Saturday Working
+                                </span>
+                                <p className="text-xs text-[#8899AA]">
+                                    Certain weeks will override the Saturday Rest-Day.
+                                </p>
                             </div>
                         </label>
 
-                        <div className="pl-7 flex space-x-3">
-                            {['1st', '2nd', '3rd', '4th', '5th'].map((week, ix) => (
-                                <label key={ix} className="flex items-center space-x-2 bg-[#1A2A3A] px-3 py-1.5 rounded border border-[#2A3A4A] cursor-pointer">
-                                    <input type="checkbox" defaultChecked={ix % 2 !== 0} className="w-3 h-3 accent-[#0066FF]" />
-                                    <span className="text-xs font-bold text-white bg-transparent outline-none ring-0 w-3">{week}</span>
-                                </label>
+                        <div className="flex flex-wrap gap-3 pl-7">
+                            {WEEK_ORDINALS.map((ordinal, ix) => (
+                                <SaturdayToggle
+                                    key={ordinal}
+                                    ordinal={ordinal}
+                                    isOff={DEFAULT_OFF_SATURDAYS.has(ix)}
+                                />
                             ))}
                         </div>
-                        <p className="pl-7 text-[10px] text-[#556677] mt-2">Checking the box makes it an **OFF-DAY**. Unchecked means it's a Working Day.</p>
+                        <p className="mt-2 pl-7 text-[10px] text-[#556677]">
+                            Checking the box makes it an OFF-DAY. Unchecked means it&apos;s a Working Day.
+                        </p>
                     </div>
-
-                </div>
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

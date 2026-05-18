@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { ArrowRightLeft, Search, Filter, RefreshCw, Download, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
@@ -14,6 +16,13 @@ export default function ExchangeRateScreen() {
     ];
 
     return (
+        <Page
+            title="FX & Exchange Rates Matrix"
+            subtitle="Live exchange rates and historical conversion logs for cross-border payroll processing."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Exchange Rates" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -112,5 +121,7 @@ export default function ExchangeRateScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

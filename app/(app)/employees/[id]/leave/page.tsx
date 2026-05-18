@@ -1,76 +1,129 @@
 "use client";
 
-import { Card } from "../shared";
+import Card from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+interface LeaveBalanceCardProps {
+  type: string;
+  used: number;
+  total: number;
+  color: string;
+}
+
+function LeaveBalanceCard({ type, used, total, color }: LeaveBalanceCardProps) {
+  return (
+    <div
+      className="relative overflow-hidden rounded-xl border p-4 text-center"
+      style={{
+        // inline-style: dynamic per-leave-type color — cannot express as static Tailwind
+        background: "#0A1420",
+        borderColor: `${color}40`,
+      }}
+    >
+      <div className="mb-2 text-[11px] text-[#8899AA]">{type}</div>
+      <div className="text-[28px] font-bold text-white">
+        {total - used}
+        <span className="text-sm font-medium text-[#445566]"> / {total}</span>
+      </div>
+      <div className="mt-1 text-[11px] text-[#445566]">Available</div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#1A2A3A]">
+        <div
+          className="h-full"
+          style={{
+            // inline-style: dynamic width from data
+            width: `${(used / total) * 100}%`,
+            background: color,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const LEAVE_BALANCES = [
+  { type: "Privilege Leave (PL)", used: 8, total: 15, color: "#00E5A0" },
+  { type: "Sick Leave (SL)", used: 2, total: 7, color: "#0066FF" },
+  { type: "Casual Leave (CL)", used: 5, total: 7, color: "#FFB800" },
+] as const;
+
+const LEAVE_HISTORY = [
+  { type: "PL", dates: "12 Oct - 14 Oct", reason: "Family trip to Goa", duration: "3 Days", status: "Approved" },
+  { type: "SL", dates: "05 Sep", reason: "Viral fever", duration: "1 Day", status: "Approved" },
+  { type: "CL", dates: "15 Aug", reason: "Personal work", duration: "1 Day", status: "Approved" },
+  { type: "CL", dates: "20 Jul", reason: "Bank visit", duration: "0.5 (First Half)", status: "Approved" },
+] as const;
+
+const UPCOMING_HOLIDAYS = [
+  { date: "25 Dec 2024", name: "Christmas Day", day: "Wednesday" },
+  { date: "01 Jan 2025", name: "New Year's Day", day: "Wednesday" },
+  { date: "26 Jan 2025", name: "Republic Day", day: "Sunday" },
+] as const;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LeaveTab() {
-    return (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: 24 }}>
-            <div>
-                <Card title="Leave Balances (2024)">
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-                        {[
-                            { type: "Privilege Leave (PL)", used: 8, total: 15, color: "#00E5A0" },
-                            { type: "Sick Leave (SL)", used: 2, total: 7, color: "#0066FF" },
-                            { type: "Casual Leave (CL)", used: 5, total: 7, color: "#FFB800" },
-                        ].map(({ type, used, total, color }) => (
-                            <div key={type} style={{ background: "#0A1420", border: `1px solid ${color}40`, borderRadius: 12, padding: 16, textAlign: "center", position: "relative", overflow: "hidden" }}>
-                                <div style={{ fontSize: 11, color: "#8899AA", marginBottom: 8 }}>{type}</div>
-                                <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>{total - used}<span style={{ fontSize: 14, color: "#445566", fontWeight: 500 }}> / {total}</span></div>
-                                <div style={{ fontSize: 11, color: "#445566", marginTop: 4 }}>Available</div>
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
+      {/* Left */}
+      <div>
+        <Card padding="md" className="mb-4">
+          <h3 className="mb-4 text-sm font-semibold text-white">Leave Balances (2024)</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {LEAVE_BALANCES.map((b) => (
+              <LeaveBalanceCard key={b.type} {...b} />
+            ))}
+          </div>
+        </Card>
 
-                                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: "#1A2A3A" }}>
-                                    <div style={{ width: `${(used / total) * 100}%`, height: "100%", background: color }} />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </Card>
-
-                <Card title="Leave History">
-                    <div style={{ display: "grid", gridTemplateColumns: "100px 100px 1fr 100px 100px", padding: "0 0 12px 0", borderBottom: "1px solid #1A2A3A", fontSize: 11, color: "#445566", textTransform: "uppercase", fontWeight: 500 }}>
-                        <span>Type</span>
-                        <span>Dates</span>
-                        <span>Reason</span>
-                        <span>Duration</span>
-                        <span>Status</span>
-                    </div>
-                    {[
-                        { type: "PL", dates: "12 Oct - 14 Oct", reason: "Family trip to Goa", duration: "3 Days", status: "Approved", color: "#00E5A0" },
-                        { type: "SL", dates: "05 Sep", reason: "Viral fever", duration: "1 Day", status: "Approved", color: "#00E5A0" },
-                        { type: "CL", dates: "15 Aug", reason: "Personal work", duration: "1 Day", status: "Approved", color: "#00E5A0" },
-                        { type: "CL", dates: "20 Jul", reason: "Bank visit", duration: "0.5 (First Half)", status: "Approved", color: "#00E5A0" },
-                    ].map((row, i) => (
-                        <div key={i} style={{ display: "grid", gridTemplateColumns: "100px 100px 1fr 100px 100px", padding: "14px 0", borderBottom: "1px solid #0A1420", alignItems: "center" }}>
-                            <span style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>{row.type}</span>
-                            <span style={{ fontSize: 13, color: "#8899AA" }}>{row.dates}</span>
-                            <span style={{ fontSize: 13, color: "#8899AA" }}>{row.reason}</span>
-                            <span style={{ fontSize: 13, color: "#8899AA" }}>{row.duration}</span>
-                            <span style={{ fontSize: 12, color: row.color, background: `${row.color}15`, padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{row.status}</span>
-                        </div>
-                    ))}
-                </Card>
+        <Card padding="md">
+          <h3 className="mb-3 text-sm font-semibold text-white">Leave History</h3>
+          <div className="mb-3 grid grid-cols-[100px_100px_1fr_100px_100px] border-b border-[#1A2A3A] pb-3 text-[11px] font-medium uppercase text-[#445566]">
+            <span>Type</span>
+            <span>Dates</span>
+            <span>Reason</span>
+            <span>Duration</span>
+            <span>Status</span>
+          </div>
+          {LEAVE_HISTORY.map((row) => (
+            <div
+              key={`${row.type}-${row.dates}`}
+              className="grid grid-cols-[100px_100px_1fr_100px_100px] items-center border-b border-[#0A1420] py-3.5"
+            >
+              <span className="text-[13px] font-semibold text-white">{row.type}</span>
+              <span className="text-[13px] text-[#8899AA]">{row.dates}</span>
+              <span className="text-[13px] text-[#8899AA]">{row.reason}</span>
+              <span className="text-[13px] text-[#8899AA]">{row.duration}</span>
+              <Badge variant="success">{row.status}</Badge>
             </div>
+          ))}
+        </Card>
+      </div>
 
-            <div>
-                <Card title="Upcoming Holidays">
-                    {[
-                        { date: "25 Dec 2024", name: "Christmas Day", day: "Wednesday" },
-                        { date: "01 Jan 2025", name: "New Year's Day", day: "Wednesday" },
-                        { date: "26 Jan 2025", name: "Republic Day", day: "Sunday" },
-                    ].map((h, i) => (
-                        <div key={i} style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: "1px solid #0A1420", alignItems: "center" }}>
-                            <div style={{ background: "rgba(0,102,255,0.1)", color: "#0066FF", padding: "8px 12px", borderRadius: 8, textAlign: "center", minWidth: 60 }}>
-                                <div style={{ fontSize: 16, fontWeight: 700 }}>{h.date.split(" ")[0]}</div>
-                                <div style={{ fontSize: 10, textTransform: "uppercase" }}>{h.date.split(" ")[1]}</div>
-                            </div>
-                            <div>
-                                <div style={{ fontSize: 14, color: "#FFFFFF", fontWeight: 500 }}>{h.name}</div>
-                                <div style={{ fontSize: 12, color: "#8899AA", marginTop: 2 }}>{h.day}</div>
-                            </div>
-                        </div>
-                    ))}
-                </Card>
+      {/* Right */}
+      <div>
+        <Card padding="md">
+          <h3 className="mb-3 text-sm font-semibold text-white">Upcoming Holidays</h3>
+          {UPCOMING_HOLIDAYS.map((h, i) => (
+            <div
+              key={h.date}
+              className={`flex items-center gap-4 py-3 ${i < UPCOMING_HOLIDAYS.length - 1 ? "border-b border-[#0A1420]" : ""}`}
+            >
+              <div className="min-w-[60px] rounded-lg bg-[rgba(0,102,255,0.1)] px-3 py-2 text-center text-[#0066FF]">
+                <div className="text-base font-bold">{h.date.split(" ")[0]}</div>
+                <div className="text-[10px] uppercase">{h.date.split(" ")[1]}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-white">{h.name}</div>
+                <div className="mt-0.5 text-xs text-[#8899AA]">{h.day}</div>
+              </div>
             </div>
-        </div>
-    );
+          ))}
+        </Card>
+      </div>
+    </div>
+  );
 }

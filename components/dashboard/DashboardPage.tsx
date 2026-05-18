@@ -58,8 +58,8 @@ function KPICard({
       }}
     >
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-600 text-[#3d5166] uppercase tracking-[0.06em]">{label}</span>
-        {href && <ArrowUpRight size={13} className="text-[#2a3a4a] group-hover:text-[#7a8fa6] transition-colors" />}
+        <span className="text-[11px] font-600 text-[#7a8fa6] uppercase tracking-[0.06em]">{label}</span>
+        {href && <ArrowUpRight size={13} className="text-[#445566] group-hover:text-[#7a8fa6] transition-colors" />}
       </div>
       <div className="text-[2rem] font-700 text-[#f0f4f8] leading-none tracking-[-0.03em]">{value}</div>
       {sub && (
@@ -127,15 +127,11 @@ export default function DashboardPage() {
           <h1 className="text-[28px] font-700 text-[#f0f4f8] m-0 tracking-[-0.025em]">
             {greeting}, Priya 👋
           </h1>
-          <p className="text-[13px] text-[#3d5166] mt-1.5">{todayStr} · TechCorp Solutions</p>
+          <p className="text-[13px] text-[#7a8fa6] mt-1.5">{todayStr} · TechCorp Solutions</p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/employees/add">
-            <Button variant="secondary" size="md" icon={<UserPlus size={14} />}>Add Employee</Button>
-          </Link>
-          <Link href="/payroll/run/select-month">
-            <Button variant="primary" size="md" icon={<IndianRupee size={14} />}>Run Payroll</Button>
-          </Link>
+          <Button variant="secondary" size="md" icon={<UserPlus size={14} />} href="/employees/add">Add Employee</Button>
+          <Button variant="primary" size="md" icon={<IndianRupee size={14} />} href="/payroll/run/select-month">Run Payroll</Button>
         </div>
       </div>
 
@@ -225,14 +221,12 @@ export default function DashboardPage() {
                   { l: "Net Payable", v: "₹3.8 Cr", c: "#00e5a0" },
                 ].map(s => (
                   <div key={s.l}>
-                    <div className="text-[11px] text-[#3d5166] mb-1">{s.l}</div>
+                    <div className="text-[11px] text-[#7a8fa6] mb-1">{s.l}</div>
                     <div className="text-[15px] font-600" style={{ color: s.c }}>{s.v}</div>
                   </div>
                 ))}
               </div>
-              <Link href="/payroll/run/approve">
-                <Button variant="primary" size="md">Approve Payroll</Button>
-              </Link>
+              <Button variant="primary" size="md" href="/payroll/run/approve">Approve Payroll</Button>
             </div>
           </SectionCard>
 
@@ -286,7 +280,7 @@ export default function DashboardPage() {
               <thead>
                 <tr style={{ background: "#070d18", borderTop: "1px solid #162030", borderBottom: "1px solid #162030" }}>
                   {["Employee", "Type", "Date", "Details", "Action"].map(h => (
-                    <th key={h} className="px-6 py-2.5 text-left text-[10px] font-600 text-[#2a3a4a] uppercase tracking-[0.06em]">{h}</th>
+                    <th key={h} className="px-6 py-2.5 text-left text-[10px] font-600 text-[#445566] uppercase tracking-[0.06em]">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -305,7 +299,7 @@ export default function DashboardPage() {
                       <Link href={`/employees/${r.n.toLowerCase().replace(" ", "-")}`} className="hover:text-[#00e5a0] transition-colors">{r.n}</Link>
                     </td>
                     <td className="px-6 py-3"><Badge variant={r.type}>{r.t}</Badge></td>
-                    <td className="px-6 py-3 text-[12px] text-[#3d5166]">{r.d}</td>
+                    <td className="px-6 py-3 text-[12px] text-[#7a8fa6]">{r.d}</td>
                     <td className="px-6 py-3 text-[13px] text-[#7a8fa6]">{r.det}</td>
                     <td className="px-6 py-3">
                       <div className="flex gap-2">
@@ -340,7 +334,7 @@ export default function DashboardPage() {
                   onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = "#070d18"}>
                   <div>
                     <div className="text-[13px] font-500 text-[#c8d8e8]">{item.title}</div>
-                    <div className="text-[11px] text-[#3d5166] mt-0.5">{item.sub}</div>
+                    <div className="text-[11px] text-[#7a8fa6] mt-0.5">{item.sub}</div>
                   </div>
                   <Badge variant={item.bv}>{item.badge}</Badge>
                 </div>
@@ -372,7 +366,7 @@ export default function DashboardPage() {
                     style={{ borderBottom: i < 2 ? "1px solid #0e1a28" : "none" }}>
                     <div>
                       <span className="font-500 text-[#c8d8e8]">{emp.n}</span>
-                      <span className="text-[#3d5166] ml-2">{emp.d}</span>
+                      <span className="text-[#7a8fa6] ml-2">{emp.d}</span>
                     </div>
                     <Badge variant={emp.v}>{emp.r}</Badge>
                   </div>
@@ -441,7 +435,7 @@ export default function DashboardPage() {
                 <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: feed.c }} />
                 <div>
                   <div className="text-[12px] text-[#c8d8e8] leading-snug">{feed.t}</div>
-                  <div className="text-[10px] text-[#2a3a4a] mt-0.5">{feed.time}</div>
+                  <div className="text-[10px] text-[#445566] mt-0.5">{feed.time}</div>
                 </div>
               </div>
             ))}
@@ -480,7 +474,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-500 text-[#c8d8e8] truncate">{bd.name} {bd.emoji}</div>
-                  <div className="text-[11px] text-[#3d5166]">{bd.ev}</div>
+                  <div className="text-[11px] text-[#7a8fa6]">{bd.ev}</div>
                 </div>
               </div>
             ))}

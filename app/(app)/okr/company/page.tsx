@@ -1,9 +1,37 @@
 "use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import { Target, ChevronRight, Plus, TrendingUp, BarChart2, Search, Filter, ChevronDown } from "lucide-react";
 
-const OBJECTIVES = [
+import { useState } from "react";
+import { Plus, TrendingUp, Search, Filter, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import Page from "@/components/ui/Page";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & static data
+// ─────────────────────────────────────────────────────────────────────────────
+
+type OkrStatus = "on-track" | "at-risk" | "behind";
+
+interface KeyResult {
+    title: string;
+    progress: number;
+    unit: string;
+    current: number;
+    target: number;
+}
+
+interface Objective {
+    id: string;
+    title: string;
+    owner: string;
+    quarter: string;
+    progress: number;
+    status: OkrStatus;
+    keyResults: KeyResult[];
+}
+
+const OBJECTIVES: Objective[] = [
     {
         id: "obj-1",
         title: "Achieve ₹100 Cr ARR",
@@ -45,42 +73,162 @@ const OBJECTIVES = [
     },
 ];
 
-const STATUS_MAP = {
-    "on-track": { label: "On Track", color: "#00E5A0" },
-    "at-risk": { label: "At Risk", color: "#FFB800" },
-    "behind": { label: "Behind", color: "#FF4444" },
+const STATUS_VARIANT: Record<OkrStatus, "success" | "warning" | "danger"> = {
+    "on-track": "success",
+    "at-risk": "warning",
+    "behind": "danger",
 };
 
-export default function CompanyOKRScreen() {
-    const [expanded, setExpanded] = useState<string | null>("obj-1");
+const STATUS_LABEL: Record<OkrStatus, string> = {
+    "on-track": "On Track",
+    "at-risk": "At Risk",
+    "behind": "Behind",
+};
+
+// Static progress bar color map — no template literals
+const KR_PROGRESS_BAR: Record<"high" | "mid" | "low", string> = {
+    high: "bg-[#00E5A0]",
+    mid: "bg-[#FFB800]",
+    low: "bg-[#FF4444]",
+};
+
+const KR_PROGRESS_TEXT: Record<"high" | "mid" | "low", string> = {
+    high: "text-[#00E5A0]",
+    mid: "text-[#FFB800]",
+    low: "text-[#FF4444]",
+};
+
+const OBJ_PROGRESS_BAR: Record<OkrStatus, string> = {
+    "on-track": "bg-[#00E5A0]",
+    "at-risk": "bg-[#FFB800]",
+    "behind": "bg-[#FF4444]",
+};
+
+function krProgressLevel(progress: number): "high" | "mid" | "low" {
+    if (progress >= 70) return "high";
+    if (progress >= 40) return "mid";
+    return "low";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function KeyResultRow({ kr, index }: { kr: KeyResult; index: number }) {
+    const level = krProgressLevel(kr.progress);
+    return (
+        <li className="px-6 py-4 hover:bg-[#0A1420] transition-colors">
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-[#445566] uppercase tracking-wider">KR {index + 1}</span>
+                    <p className="text-sm text-white font-medium">{kr.title}</p>
+                </div>
+                <span className={`text-xs font-bold ${KR_PROGRESS_TEXT[level]}`}>{kr.progress}%</span>
+            </div>
+            <div className="flex items-center gap-3">
+                <div
+                    className="flex-1 h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden"
+                    role="progressbar"
+                    aria-valuenow={kr.progress}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${kr.title}: ${kr.progress}%`}
+                >
+                    <div className={`h-full rounded-full ${KR_PROGRESS_BAR[level]}`} style={{ width: `${kr.progress}%` }} />
+                </div>
+                <span className="text-[11px] text-[#8899AA] shrink-0">
+                    {kr.current} / {kr.target} {kr.unit}
+                </span>
+            </div>
+        </li>
+    );
+}
+
+function ObjectiveCard({ obj }: { obj: Objective }) {
+    const [isOpen, setIsOpen] = useState(obj.id === "obj-1");
+
+    return (
+        <li className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
+            <button
+                type="button"
+                onClick={() => setIsOpen((v) => !v)}
+                aria-expanded={isOpen}
+                aria-controls={`kr-${obj.id}`}
+                className="w-full text-left px-6 py-5 hover:bg-[#152336] transition-colors"
+            >
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                            <h2 className="text-base font-semibold text-white truncate">{obj.title}</h2>
+                            <Badge variant={STATUS_VARIANT[obj.status]}>{STATUS_LABEL[obj.status]}</Badge>
+                        </div>
+                        <p className="text-xs text-[#8899AA]">Owner: {obj.owner} · {obj.quarter}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-lg font-bold text-white">{obj.progress}%</span>
+                        <ChevronDown
+                            size={16}
+                            className={`text-[#445566] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                            aria-hidden="true"
+                        />
+                    </div>
+                </div>
+                <div
+                    className="mt-3 h-2 bg-[#1A2A3A] rounded-full overflow-hidden"
+                    role="progressbar"
+                    aria-valuenow={obj.progress}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${obj.title}: ${obj.progress}% complete`}
+                >
+                    <div className={`h-full rounded-full ${OBJ_PROGRESS_BAR[obj.status]}`} style={{ width: `${obj.progress}%` }} />
+                </div>
+            </button>
+
+            {isOpen && (
+                <ul id={`kr-${obj.id}`} role="list" className="border-t border-[#1A2A3A] divide-y divide-[#1A2A3A]">
+                    {obj.keyResults.map((kr, i) => (
+                        <KeyResultRow key={i} kr={kr} index={i} />
+                    ))}
+                    <li className="px-6 py-3 flex justify-end">
+                        <Link
+                            href={`/okr/progress?id=${obj.id}`}
+                            className="flex items-center gap-1 text-xs text-[#00E5A0] hover:underline font-medium"
+                        >
+                            <TrendingUp size={12} aria-hidden="true" /> Update Progress
+                        </Link>
+                    </li>
+                </ul>
+            )}
+        </li>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function CompanyOKRPage() {
     const [search, setSearch] = useState("");
 
-    const filtered = OBJECTIVES.filter(o =>
+    const filtered = OBJECTIVES.filter((o) =>
         o.title.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
-        <main className="min-h-screen bg-[#060B14] text-white p-6 pb-16 font-sans">
-            <div className="max-w-5xl mx-auto space-y-6">
-
-                {/* Header */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <nav className="flex items-center gap-1 text-xs text-[#8899AA] mb-1" aria-label="Breadcrumb">
-                            <Link href="/okr/dashboard" className="hover:text-white transition-colors">OKRs</Link>
-                            <ChevronRight size={12} aria-hidden="true" />
-                            <span className="text-white">Company OKRs</span>
-                        </nav>
-                        <h1 className="text-2xl font-bold flex items-center gap-2">
-                            <Target className="text-[#00E5A0]" size={24} aria-hidden="true" /> Company OKRs
-                        </h1>
-                        <p className="text-sm text-[#8899AA] mt-1">Top-level objectives driving company strategy · Q1 2025</p>
-                    </div>
-                    <Link href="/okr/create" className="flex items-center gap-2 bg-[#00E5A0] text-[#060B14] font-bold text-sm px-4 py-2 rounded-lg hover:bg-[#00c98d] transition-colors">
-                        <Plus size={16} aria-hidden="true" /> Add Objective
-                    </Link>
-                </header>
-
+        <Page
+            title="Company OKRs"
+            subtitle="Top-level objectives driving company strategy · Q1 2025"
+            breadcrumbs={[
+                { label: "OKRs", href: "/okr/dashboard" },
+                { label: "Company OKRs" },
+            ]}
+            maxWidth="1100px"
+            actions={
+                <Button icon={<Plus size={16} />} href="/okr/create">Add Objective</Button>
+            }
+        >
+            <div className="space-y-6">
                 {/* Search + Filter */}
                 <div className="flex items-center gap-3">
                     <div className="relative flex-1">
@@ -90,116 +238,27 @@ export default function CompanyOKRScreen() {
                             id="obj-search"
                             type="text"
                             value={search}
-                            onChange={e => setSearch(e.target.value)}
+                            onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search objectives…"
-                            className="w-full bg-[#0D1928] border border-[#1A2A3A] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-[#445566] focus:outline-none focus:border-[#00E5A0]"
+                            className="w-full bg-[#0D1928] border border-[#1A2A3A] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-[#445566] focus:outline-none focus:border-[#00e5a0]"
                         />
                     </div>
-                    <button type="button" className="p-2 bg-[#0D1928] border border-[#1A2A3A] rounded-lg hover:bg-[#1A2A3A] transition-colors" aria-label="Filter objectives">
-                        <Filter size={16} aria-hidden="true" />
-                    </button>
+                    <Button variant="secondary" icon={<Filter size={16} />} aria-label="Filter objectives">Filter</Button>
                 </div>
 
                 {/* Objectives Accordion */}
                 <ul role="list" className="space-y-4">
-                    {filtered.map(obj => {
-                        const cfg = STATUS_MAP[obj.status as keyof typeof STATUS_MAP];
-                        const isOpen = expanded === obj.id;
-                        return (
-                            <li key={obj.id} className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                                {/* Objective Header */}
-                                <button
-                                    type="button"
-                                    onClick={() => setExpanded(isOpen ? null : obj.id)}
-                                    aria-expanded={isOpen}
-                                    aria-controls={`kr-${obj.id}`}
-                                    className="w-full text-left px-6 py-5 hover:bg-[#152336] transition-colors"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h2 className="text-base font-semibold text-white truncate">{obj.title}</h2>
-                                                <span
-                                                    className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold border"
-                                                    style={{ color: cfg.color, borderColor: cfg.color + "40", background: cfg.color + "15" }}
-                                                >
-                                                    {cfg.label}
-                                                </span>
-                                            </div>
-                                            <p className="text-xs text-[#8899AA]">Owner: {obj.owner} · {obj.quarter}</p>
-                                        </div>
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <span className="text-lg font-bold text-white">{obj.progress}%</span>
-                                            <ChevronDown
-                                                size={16}
-                                                className={`text-[#445566] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                    </div>
-                                    {/* Progress bar */}
-                                    <div
-                                        className="mt-3 h-2 bg-[#1A2A3A] rounded-full overflow-hidden"
-                                        role="progressbar"
-                                        aria-valuenow={obj.progress}
-                                        aria-valuemin={0}
-                                        aria-valuemax={100}
-                                        aria-label={`${obj.title}: ${obj.progress}% complete`}
-                                    >
-                                        <div className="h-full rounded-full" style={{ width: `${obj.progress}%`, background: cfg.color }} />
-                                    </div>
-                                </button>
-
-                                {/* Key Results */}
-                                {isOpen && (
-                                    <ul id={`kr-${obj.id}`} role="list" className="border-t border-[#1A2A3A] divide-y divide-[#1A2A3A]">
-                                        {obj.keyResults.map((kr, i) => (
-                                            <li key={i} className="px-6 py-4 hover:bg-[#0A1420] transition-colors">
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-[10px] font-bold text-[#445566] uppercase tracking-wider">KR {i + 1}</span>
-                                                        <p className="text-sm text-white font-medium">{kr.title}</p>
-                                                    </div>
-                                                    <span className="text-xs font-bold" style={{ color: kr.progress >= 70 ? "#00E5A0" : kr.progress >= 40 ? "#FFB800" : "#FF4444" }}>
-                                                        {kr.progress}%
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <div
-                                                        className="flex-1 h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden"
-                                                        role="progressbar"
-                                                        aria-valuenow={kr.progress}
-                                                        aria-valuemin={0}
-                                                        aria-valuemax={100}
-                                                        aria-label={`${kr.title}: ${kr.progress}%`}
-                                                    >
-                                                        <div
-                                                            className="h-full rounded-full"
-                                                            style={{
-                                                                width: `${kr.progress}%`,
-                                                                background: kr.progress >= 70 ? "#00E5A0" : kr.progress >= 40 ? "#FFB800" : "#FF4444"
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    <span className="text-[11px] text-[#8899AA] shrink-0">
-                                                        {kr.current} / {kr.target} {kr.unit}
-                                                    </span>
-                                                </div>
-                                            </li>
-                                        ))}
-                                        <li className="px-6 py-3 flex justify-end">
-                                            <Link href={`/okr/progress?id=${obj.id}`} className="flex items-center gap-1 text-xs text-[#00E5A0] hover:underline font-medium">
-                                                <TrendingUp size={12} aria-hidden="true" /> Update Progress
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                )}
-                            </li>
-                        );
-                    })}
+                    {filtered.map((obj) => (
+                        <ObjectiveCard key={obj.id} obj={obj} />
+                    ))}
                 </ul>
-
             </div>
-        </main>
+        
+
+        
+
+        
+
+        </Page>
     );
 }

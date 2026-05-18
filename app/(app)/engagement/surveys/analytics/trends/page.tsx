@@ -1,9 +1,11 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    LineChart as LineChartIcon, Download, Filter, Calendar, TrendingUp, Presentation
+    LineChart as LineChartIcon, Download, Calendar, TrendingUp, Presentation
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceArea } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceArea } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
 
 const HISTORICAL_DATA = [
@@ -23,7 +25,7 @@ const EVENTS = [
 ];
 
 export default function HistoricalTrendScreen() {
-    const [dateRange, setDateRange] = useState('Last 2 Years');
+    const [dateRange, _setDateRange] = useState('Last 2 Years');
     const [activeMetrics, setActiveMetrics] = useState({
         engagement: true,
         enps: true,
@@ -35,6 +37,13 @@ export default function HistoricalTrendScreen() {
     };
 
     return (
+        <Page
+            title="Historical Trends"
+            subtitle="Track engagement, eNPS, and retention over time alongside key company events."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Analytics", href: "/engagement/surveys/analytics" }, { label: "Trends" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -165,5 +174,7 @@ export default function HistoricalTrendScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

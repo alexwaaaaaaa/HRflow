@@ -1,10 +1,25 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Monitor, Laptop, Server, Smartphone, AlertCircle, ArrowUpRight, Plus, Scan } from 'lucide-react';
 import Link from 'next/link';
 
+const TICKET_STATUS_CLASSES: Record<"amber" | "blue" | "emerald", string> = {
+    amber: "px-2 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20",
+    blue: "px-2 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20",
+    emerald: "px-2 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+} as const;
+
 export default function AssetDashboardScreen() {
     return (
+        <Page
+            title="IT Asset Dashboard"
+            subtitle="Real-time overview of hardware inventory, software licenses, and IT support."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Dashboard" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -30,6 +45,8 @@ export default function AssetDashboardScreen() {
                 ].map((kpi, i) => {
                     const Icon = kpi.icon;
                     return (
+
+
                         <div key={i} className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
                             <div className="flex justify-between items-start mb-4 relative z-10">
                                 <div className={`p-3 rounded-xl bg-[#131B2B] border border-[#2A3A4A] ${kpi.color}`}>
@@ -43,7 +60,9 @@ export default function AssetDashboardScreen() {
                                 <div className="text-[#556677] text-xs">{kpi.sub}</div>
                             </div>
                         </div>
-                    )
+                    
+        
+)
                 })}
             </div>
 
@@ -91,9 +110,9 @@ export default function AssetDashboardScreen() {
                         </div>
                         <div className="space-y-3">
                             {[
-                                { id: 'TKT-902', issue: 'MacBook Battery Draining Fast', user: 'Jason Smith', status: 'Open', color: 'amber' },
-                                { id: 'TKT-901', issue: 'Need Adobe Creative Cloud License', user: 'Emma Wong', status: 'In Progress', color: 'blue' },
-                                { id: 'TKT-895', issue: 'Monitor Not Displaying', user: 'Rahul K', status: 'Resolved', color: 'emerald' },
+                                { id: 'TKT-902', issue: 'MacBook Battery Draining Fast', user: 'Jason Smith', status: 'Open', color: 'amber' as const },
+                                { id: 'TKT-901', issue: 'Need Adobe Creative Cloud License', user: 'Emma Wong', status: 'In Progress', color: 'blue' as const },
+                                { id: 'TKT-895', issue: 'Monitor Not Displaying', user: 'Rahul K', status: 'Resolved', color: 'emerald' as const },
                             ].map((tkt, i) => (
                                 <div key={i} className="flex items-center justify-between p-3 bg-[#131B2B] rounded-xl border border-[#2A3A4A]">
                                     <div>
@@ -103,7 +122,7 @@ export default function AssetDashboardScreen() {
                                             <span>Opened by {tkt.user}</span>
                                         </div>
                                     </div>
-                                    <span className={`px-2 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider bg-${tkt.color}-500/10 text-${tkt.color}-400 border border-${tkt.color}-500/20`}>
+                                    <span className={TICKET_STATUS_CLASSES[tkt.color]}>
                                         {tkt.status}
                                     </span>
                                 </div>
@@ -157,5 +176,7 @@ export default function AssetDashboardScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Scan, AlertCircle, Search, Filter, Play, CheckCircle2, History } from "lucide-react";
+import { Scan, AlertCircle, Search, Play, History } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export default function AssetAuditScreen() {

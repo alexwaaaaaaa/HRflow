@@ -1,10 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
 import {
     Clock, AlertTriangle, Search, Filter, Mail, RefreshCw, FileText
 } from 'lucide-react';
-import Link from 'next/link';
 
 const EXPIRING_DOCS = [
     { id: '1', emp: 'Vikram Batra', type: 'Passport', number: 'Z982****', expiry: '10 Dec 2024', daysLeft: 22, status: 'Warning', bg: 'bg-amber-500/10', color: 'text-amber-500', group: 'ID Proofs' },
@@ -15,6 +16,13 @@ const EXPIRING_DOCS = [
 
 export default function DocumentExpiryTrackerScreen() {
     return (
+        <Page
+            title="Document Expiry Tracker"
+            subtitle="Proactively manage document renewals for IDs, passports, visas, and contracts."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Expiry" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col h-screen">
             <div className="max-w-[1200px] mx-auto w-full flex flex-col flex-1">
 
@@ -141,5 +149,7 @@ export default function DocumentExpiryTrackerScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

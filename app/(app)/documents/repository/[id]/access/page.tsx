@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Users, Shield, ArrowLeft, Lock, Plus, Trash2, Edit2, FileText, CheckCircle2, ChevronDown
+    Users, Shield, ArrowLeft, Lock, Plus, Trash2, FileText, ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -14,6 +16,13 @@ const ACCESS_LIST = [
 
 export default function DocumentAccessControlScreen() {
     return (
+        <Page
+            title="Access Control & Sharing"
+            subtitle="Only explicitly added users can access this file."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Repository", href: "/documents/repository" }, { label: "Id" }, { label: "Access" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto pb-12">
 
@@ -131,5 +140,7 @@ export default function DocumentAccessControlScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

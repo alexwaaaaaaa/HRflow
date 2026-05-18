@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Blocks, Key, Plus, Lock } from 'lucide-react';
+import { Blocks, Plus, Lock } from 'lucide-react';
 
 export default function OauthAppRegistrationPage() {
     return (
+        <Page
+            title="OAuth Applications"
+            subtitle="Register apps to act on behalf of your users via standard OAuth 2.0 flows."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Oauth" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -76,5 +85,7 @@ export default function OauthAppRegistrationPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

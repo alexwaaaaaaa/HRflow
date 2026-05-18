@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
     Calendar, Download, Filter, Search, UserX, AlertTriangle, TrendingUp, ChevronRight
 } from 'lucide-react';
@@ -14,6 +16,13 @@ export default function AbsenteeismReport() {
     ];
 
     return (
+        <Page
+            title="Absenteeism Analytics"
+            subtitle="Track unexplained absences, zero punches, and continuous leaves."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Reports", href: "/attendance/reports" }, { label: "Absenteeism" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -152,5 +161,7 @@ export default function AbsenteeismReport() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

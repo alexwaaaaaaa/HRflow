@@ -1,10 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { FileBarChart, Download, Scale, FolderLock, FileText, Globe } from 'lucide-react';
-import Link from 'next/link';
 
 export default function AuditReportScreen() {
     return (
+        <Page
+            title="Statutory Audit Reports"
+            subtitle="Generate required reports for EU Pay Transparency Directive, UK Gender Pay Gap, and California Fair Pay Act."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Audit" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -66,5 +74,7 @@ export default function AuditReportScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

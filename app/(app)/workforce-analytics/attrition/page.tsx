@@ -1,10 +1,54 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { UserMinus, AlertTriangle, TrendingDown, Eye, Download } from 'lucide-react';
-import Link from 'next/link';
+
+type RiskColor = "rose" | "amber";
+
+const RISK_SCORE_TEXT_CLASSES: Record<RiskColor, string> = {
+    rose: "text-rose-400 font-bold font-mono",
+    amber: "text-amber-400 font-bold font-mono",
+} as const;
+
+const RISK_BAR_CLASSES: Record<RiskColor, string> = {
+    rose: "h-full bg-rose-500",
+    amber: "h-full bg-amber-500",
+} as const;
+
+const RISK_DEPT_TEXT_CLASSES: Record<RiskColor, string> = {
+    rose: "text-rose-400",
+    amber: "text-amber-400",
+} as const;
+
+const RISK_DEPT_BAR_CLASSES: Record<RiskColor, string> = {
+    rose: "absolute left-0 top-0 bottom-0 bg-rose-500",
+    amber: "absolute left-0 top-0 bottom-0 bg-amber-500",
+} as const;
+
+const RISK_EMPLOYEES: { name: string; role: string; dept: string; score: number; drivers: string; color: RiskColor }[] = [
+    { name: 'Sarah Jenkins', role: 'Senior Product Designer', dept: 'Design', score: 92, drivers: 'Low Compa-ratio (0.81)', color: 'rose' },
+    { name: 'Marcus Cole', role: 'Engineering Manager', dept: 'Engineering', score: 88, drivers: 'Stagnant (4yrs in role)', color: 'rose' },
+    { name: 'Priya Patel', role: 'Content Writer', dept: 'Marketing', score: 75, drivers: 'Commute distance', color: 'amber' },
+    { name: 'David Kim', role: 'DevOps Engineer', dept: 'Engineering', score: 72, drivers: 'High PTO balance (Burnout)', color: 'amber' },
+];
+
+const RISK_DEPTS: { d: string; active: number; risk: number; pct: number; color: RiskColor }[] = [
+    { d: 'Engineering', active: 180, risk: 14, pct: 7.8, color: 'rose' },
+    { d: 'Design', active: 25, risk: 4, pct: 16.0, color: 'rose' },
+    { d: 'Sales', active: 85, risk: 4, pct: 4.7, color: 'amber' },
+    { d: 'G&A', active: 30, risk: 2, pct: 6.6, color: 'amber' },
+];
 
 export default function AttritionForecastScreen() {
     return (
+        <Page
+            title="Attrition Risk Forecast"
+            subtitle="Machine Learning model predicting flight risk based on compensation, tenure, and engagement signals."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Attrition" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -59,12 +103,7 @@ export default function AttritionForecastScreen() {
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm">
-                                    {[
-                                        { name: 'Sarah Jenkins', role: 'Senior Product Designer', dept: 'Design', score: 92, drivers: 'Low Compa-ratio (0.81)', color: 'rose' },
-                                        { name: 'Marcus Cole', role: 'Engineering Manager', dept: 'Engineering', score: 88, drivers: 'Stagnant (4yrs in role)', color: 'rose' },
-                                        { name: 'Priya Patel', role: 'Content Writer', dept: 'Marketing', score: 75, drivers: 'Commute distance', color: 'amber' },
-                                        { name: 'David Kim', role: 'DevOps Engineer', dept: 'Engineering', score: 72, drivers: 'High PTO balance (Burnout)', color: 'amber' },
-                                    ].map((row, i) => (
+                                    {RISK_EMPLOYEES.map((row, i) => (
                                         <tr key={i} className="border-b border-[#1A2A3A] hover:bg-[#131B2B]/50 transition-colors group">
                                             <td className="p-4">
                                                 <div className="font-bold text-white">{row.name}</div>
@@ -73,9 +112,10 @@ export default function AttritionForecastScreen() {
                                             <td className="p-4 text-[#AABBCC]">{row.dept}</td>
                                             <td className="p-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className={`text-${row.color}-400 font-bold font-mono`}>{row.score}/100</div>
+                                                    <div className={RISK_SCORE_TEXT_CLASSES[row.color]}>{row.score}/100</div>
                                                     <div className="w-16 h-1 bg-[#1A2A3A] rounded-full overflow-hidden">
-                                                        <div className={`h-full bg-${row.color}-500`} style={{ width: `${row.score}%` }}></div>
+                                                        {/* inline-style: data-driven percentage width cannot be expressed as static Tailwind */}
+                                                        <div className={RISK_BAR_CLASSES[row.color]} style={{ width: `${row.score}%` }}></div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -98,19 +138,15 @@ export default function AttritionForecastScreen() {
                         <h3 className="text-white font-bold border-b border-[#1A2A3A] pb-3 mb-4">Risk by Department</h3>
 
                         <div className="space-y-5 pt-2">
-                            {[
-                                { d: 'Engineering', active: 180, risk: 14, pct: 7.8, color: 'rose' },
-                                { d: 'Design', active: 25, risk: 4, pct: 16.0, color: 'rose' },
-                                { d: 'Sales', active: 85, risk: 4, pct: 4.7, color: 'amber' },
-                                { d: 'G&A', active: 30, risk: 2, pct: 6.6, color: 'amber' },
-                            ].map((dept, i) => (
+                            {RISK_DEPTS.map((dept, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between text-sm mb-1.5 font-bold">
                                         <span className="text-white">{dept.d}</span>
-                                        <span className={`text-${dept.color}-400`}>{dept.risk} at risk ({dept.pct}%)</span>
+                                        <span className={RISK_DEPT_TEXT_CLASSES[dept.color]}>{dept.risk} at risk ({dept.pct}%)</span>
                                     </div>
                                     <div className="w-full h-1.5 bg-[#131B2B] rounded-full overflow-hidden relative">
-                                        <div className={`absolute left-0 top-0 bottom-0 bg-${dept.color}-500`} style={{ width: `${(dept.risk / dept.active) * 100}%` }}></div>
+                                        {/* inline-style: data-driven percentage width cannot be expressed as static Tailwind */}
+                                        <div className={RISK_DEPT_BAR_CLASSES[dept.color]} style={{ width: `${(dept.risk / dept.active) * 100}%` }}></div>
                                     </div>
                                 </div>
                             ))}
@@ -133,5 +169,7 @@ export default function AttritionForecastScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

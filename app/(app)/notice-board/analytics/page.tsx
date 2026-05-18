@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { BarChart3, Eye, MousePointerClick, Clock, ArrowUpRight } from 'lucide-react';
 
 export default function NoticeAnalyticsScreen() {
     return (
+        <Page
+            title="Communications Analytics"
+            subtitle="Measure the reach and impact of internal communications, read-receipts, and engagement."
+            breadcrumbs={[{ label: "Notice Board", href: "/notice-board" }, { label: "Analytics" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -110,5 +119,7 @@ export default function NoticeAnalyticsScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

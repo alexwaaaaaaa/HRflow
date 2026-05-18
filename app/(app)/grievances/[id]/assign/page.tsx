@@ -1,12 +1,20 @@
 "use client";
-import React, { useState } from 'react';
-import { Users, AlertTriangle, ArrowRight, UserPlus, FileText, CheckCircle2, X } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { AlertTriangle, ArrowRight, UserPlus, FileText, X } from 'lucide-react';
 import Link from 'next/link';
 
-export default function GrievanceAssignmentScreen({ params }: { params: { id: string } }) {
+export default function GrievanceAssignmentScreen({ params: _params }: { params: { id: string } }) {
     const defaultId = "GRV-2026-142";
 
     return (
+        <Page
+            title="Assign Investigator"
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Id" }, { label: "Assign" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="mb-6">
                 <Link href="/grievances/dashboard" className="text-[#556677] hover:text-white text-sm font-bold transition-colors">← Back to Queue</Link>
@@ -126,5 +134,7 @@ export default function GrievanceAssignmentScreen({ params }: { params: { id: st
 
             </div>
         </div>
+    
+        </Page>
     );
 }

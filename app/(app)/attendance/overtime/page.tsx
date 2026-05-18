@@ -1,10 +1,12 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Tooltip as RechartsTooltip } from 'recharts';
 import { Download, CheckCircle2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { ChartWrapper } from "@/components/ui/chart-wrapper";
+import ChartWrapper from "@/components/ui/ChartWrapper";
 
 const OT_DATA = [
     { dept: "Engineering", hours: 109 },
@@ -32,6 +34,13 @@ export default function OvertimeReport() {
     };
 
     return (
+        <Page
+            title="Overtime Report — November 2024"
+            subtitle="Track and manage overtime hours & payouts"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Overtime" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -131,5 +140,7 @@ export default function OvertimeReport() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

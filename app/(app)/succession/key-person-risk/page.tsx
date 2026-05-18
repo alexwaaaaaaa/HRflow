@@ -1,10 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { AlertOctagon, TrendingDown, EyeOff, Search, FileText } from 'lucide-react';
-import Link from 'next/link';
 
 export default function KeyPersonRiskScreen() {
     return (
+        <Page
+            title="Key Person Risk Assessment"
+            subtitle="Identify individuals whose departure would pose severe operational, financial, or strategic risk to the business."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Key Person Risk" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -96,5 +104,7 @@ export default function KeyPersonRiskScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

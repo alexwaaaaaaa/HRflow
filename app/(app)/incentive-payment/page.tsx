@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+
+import React from "react";
 import { Zap, CheckCircle2, Split, GitMerge, Download, Search, Banknote } from "lucide-react";
 
 export default function IncentivePaymentPage() {
@@ -13,6 +15,13 @@ export default function IncentivePaymentPage() {
     ];
 
     return (
+        <Page
+            title="Process Incentive: Q3 Delivery Bonus"
+            subtitle="Review the approved list and finalize payout processing."
+            breadcrumbs={[{ label: "Incentive Payment" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -152,5 +161,7 @@ export default function IncentivePaymentPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

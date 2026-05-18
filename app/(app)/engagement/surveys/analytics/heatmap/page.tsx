@@ -1,10 +1,13 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Grid3X3, Download, Filter, TrendingUp, TrendingDown, Users, Calendar
+    Grid3X3, Download, Filter, TrendingUp, TrendingDown
 } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, CartesianGrid } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
+import { seededFloats } from '@/lib/random';
 
 const DEPARTMENTS = ['Engineering', 'Product', 'Sales', 'Marketing', 'Customer Success', 'HR', 'Finance', 'Legal'];
 const DRIVERS = ['Work-Life Balance', 'Career Growth', 'Compensation', 'Manager Support', 'Company Culture', 'Alignment with Goals'];
@@ -18,8 +21,9 @@ const HEATMAP_DATA = DEPARTMENTS.flatMap((dept, yIndex) =>
         if (dept === 'Engineering' && driver === 'Compensation') baseScore = 85;
         if (dept === 'HR' && driver === 'Company Culture') baseScore = 90;
 
-        // clamp between 0-100
-        const score = Math.max(0, Math.min(100, baseScore + Math.floor(Math.random() * 20 - 10)));
+        // clamp between 0-100 — seeded, not Math.random()
+        const [rand] = seededFloats(yIndex * 100 + xIndex, 1);
+        const score = Math.max(0, Math.min(100, baseScore + Math.floor(rand * 20 - 10)));
 
         return {
             x: xIndex,
@@ -54,6 +58,21 @@ export default function HeatmapScreen() {
     };
 
     return (
+        <Page
+            title="Score Heatmap"
+            subtitle="Identify hotspots and problem areas across different demographics."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Analytics", href: "/engagement/surveys/analytics" }, { label: "Heatmap" }]}
+            maxWidth="1400px"
+        >
+
+
+
+
+
+
+
+
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -179,5 +198,14 @@ export default function HeatmapScreen() {
                 </div>
             </div>
         </div>
+    
+        
+
+        
+
+        
+
+            
+        </Page>
     );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { AlertOctagon, UserX, Edit3, PauseCircle, CheckCircle } from "lucide-react";
 
@@ -14,6 +16,13 @@ export default function ZeroPayrollPage() {
     ];
 
     return (
+        <Page
+            title="Zero Payroll Management"
+            subtitle="Review employees with ₹0 net payout before finalizing the payroll run."
+            breadcrumbs={[{ label: "Zero Payroll" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-6xl mx-auto flex flex-col h-[calc(100vh-48px)]">
 
@@ -144,5 +153,7 @@ export default function ZeroPayrollPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +12,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loadingText?: string;
   icon?: React.ReactNode;
   iconRight?: React.ReactNode;
+  /** When provided, renders as a Next.js <Link> (anchor) instead of <button>. */
+  href?: string;
 }
 
 const sizeMap = {
@@ -36,7 +39,7 @@ const variantMap = {
     "active:scale-[0.97]",
   ].join(" "),
   danger: [
-    "bg-[rgba(239,68,68,0.1)] text-[#ef4444] border border-[rgba(239,68,68,0.25)]",
+    "bg-[rgba(239,68,68,0.1)] text-[#f87171] border border-[rgba(239,68,68,0.25)]",
     "hover:bg-[rgba(239,68,68,0.18)] hover:border-[rgba(239,68,68,0.4)]",
     "active:scale-[0.97]",
   ].join(" "),
@@ -48,34 +51,50 @@ const variantMap = {
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, variant = "primary", size = "md", isLoading, loadingText, icon, iconRight, className, disabled, ...props }, ref) => (
-    <button
-      ref={ref}
-      disabled={disabled || isLoading}
-      className={cn(
-        "inline-flex items-center justify-center rounded-[10px] font-medium",
-        "transition-all duration-150 cursor-pointer select-none",
-        "disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none",
-        sizeMap[size],
-        variantMap[variant],
-        className
-      )}
-      {...props}
-    >
-      {isLoading ? (
-        <>
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          {loadingText ?? children}
-        </>
-      ) : (
-        <>
-          {icon && <span className="flex items-center">{icon}</span>}
-          {children}
-          {iconRight && <span className="flex items-center">{iconRight}</span>}
-        </>
-      )}
-    </button>
-  )
+  ({ children, variant = "primary", size = "md", isLoading, loadingText, icon, iconRight, className, disabled, href, ...props }, ref) => {
+    const sharedClassName = cn(
+      "inline-flex items-center justify-center rounded-[10px] font-medium",
+      "transition-all duration-150 cursor-pointer select-none",
+      "disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none",
+      sizeMap[size],
+      variantMap[variant],
+      className
+    );
+
+    const content = isLoading ? (
+      <>
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        {loadingText ?? children}
+      </>
+    ) : (
+      <>
+        {icon && <span className="flex items-center">{icon}</span>}
+        {children}
+        {iconRight && <span className="flex items-center">{iconRight}</span>}
+      </>
+    );
+
+    // When href is provided, render as a Next.js Link (anchor) to avoid
+    // nested-interactive violations (button > a).
+    if (href) {
+      return (
+        <Link href={href} className={sharedClassName} aria-disabled={disabled}>
+          {content}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        ref={ref}
+        disabled={disabled || isLoading}
+        className={sharedClassName}
+        {...props}
+      >
+        {content}
+      </button>
+    );
+  }
 );
 Button.displayName = "Button";
 export default Button;

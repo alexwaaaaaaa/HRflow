@@ -1,109 +1,176 @@
 "use client";
-import React, { useState } from "react";
-import { ArrowLeft, Users, Plus, MoveVertical, Save, Trash2, CheckSquare } from "lucide-react";
+
+import { Plus, MoveVertical, Save, Trash2, CheckSquare } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface StageCardProps {
+    number: number;
+    defaultName: string;
+    interviewers: Array<{ initials: string; name: string; color: string; shadow?: boolean }>;
+    scorecard?: string;
+}
+
+function StageCard({ number, defaultName, interviewers, scorecard }: StageCardProps) {
+    return (
+        <Card padding="none" className="flex overflow-hidden">
+            <div className="flex w-12 cursor-move items-center justify-center border-r border-[#1A2A3A] bg-[#0A1420] text-[#445566] transition-colors hover:text-white">
+                <MoveVertical size={16} aria-hidden="true" />
+            </div>
+            <div className="flex-1 p-5">
+                <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div
+                            aria-hidden="true"
+                            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1A2A3A] text-xs font-bold text-white"
+                        >
+                            {number}
+                        </div>
+                        <input
+                            defaultValue={defaultName}
+                            aria-label={`Stage ${number} name`}
+                            className="border-b border-transparent bg-transparent text-lg font-bold text-white focus:border-[#0066FF] focus:outline-none"
+                        />
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        icon={<Trash2 size={16} aria-hidden="true" />}
+                        aria-label={`Delete stage ${number}`}
+                        className="text-[#8899AA] hover:text-[#FF4444]"
+                    />
+                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                        <p className="mb-2 text-xs font-medium text-[#8899AA]">Assigned Interviewers</p>
+                        <div className="flex flex-wrap gap-2">
+                            {interviewers.map((iv) => (
+                                <div
+                                    key={iv.name}
+                                    className={`flex items-center gap-2 rounded-lg bg-[#1A2A3A] px-3 py-1.5 text-sm ${iv.shadow ? "border border-[#00E5A0]" : ""}`}
+                                >
+                                    <div
+                                        aria-hidden="true"
+                                        className="flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-bold"
+                                        style={{ backgroundColor: iv.color }}
+                                    >
+                                        {iv.initials}
+                                    </div>
+                                    {iv.name}{" "}
+                                    <button
+                                        type="button"
+                                        aria-label={`Remove ${iv.name}`}
+                                        className="ml-1 text-[#445566]"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            ))}
+                            <Button variant="ghost" size="sm" icon={<Plus size={14} aria-hidden="true" />}>
+                                Add
+                            </Button>
+                        </div>
+                    </div>
+                    <div>
+                        {scorecard ? (
+                            <div>
+                                <p className="mb-2 text-xs font-medium text-[#8899AA]">Feedback Scorecard</p>
+                                <div className="flex items-center gap-2">
+                                    <div className="flex h-9 flex-1 items-center gap-2 rounded-lg bg-[#1A2A3A] px-3 text-sm text-white">
+                                        <CheckSquare size={14} className="text-[#00E5A0]" aria-hidden="true" />
+                                        {scorecard}
+                                    </div>
+                                    <Button variant="ghost" size="sm">Change</Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="mb-2 text-xs font-medium text-[#8899AA]">Duration & Tool</p>
+                                <div className="flex gap-2">
+                                    <select
+                                        aria-label="Duration"
+                                        className="h-9 flex-1 rounded-lg border border-[#1A2A3A] bg-[#060B14] px-2 text-sm text-white focus:outline-none"
+                                    >
+                                        <option>30 Minutes</option>
+                                        <option>45 Minutes</option>
+                                        <option>60 Minutes</option>
+                                    </select>
+                                    <select
+                                        aria-label="Meeting tool"
+                                        className="h-9 flex-1 rounded-lg border border-[#1A2A3A] bg-[#060B14] px-2 text-sm text-white focus:outline-none"
+                                    >
+                                        <option>Phone Call</option>
+                                        <option>Google Meet</option>
+                                    </select>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Card>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function InterviewPanelSetup() {
     return (
-        <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <button className="w-10 h-10 bg-[#0D1928] border border-[#1A2A3A] hover:bg-[#1A2A3A] rounded-xl flex items-center justify-center text-[#8899AA] transition-colors"><ArrowLeft size={16} /></button>
-                    <div>
-                        <h1 className="text-2xl font-bold mb-1">Interview Panel Setup</h1>
-                        <p className="text-sm text-[#8899AA]">Define the hiring stages and assign default interviewers for "Senior Frontend Engineer"</p>
-                    </div>
-                </div>
-                <button className="h-10 px-6 bg-[#00E5A0] text-[#060B14] text-sm font-bold rounded-xl hover:bg-[#00c98d] flex items-center gap-2 transition-colors">
-                    <Save size={14} /> Save Template
-                </button>
-            </div>
+        <Page
+            title="Interview Panel Setup"
+            subtitle='Define the hiring stages and assign default interviewers for "Senior Frontend Engineer"'
+            breadcrumbs={[
+                { label: "Recruitment", href: "/recruitment/dashboard" },
+                { label: "Interviews", href: "/recruitment/interviews" },
+                { label: "Panel Setup" },
+            ]}
+            maxWidth="900px"
+            actions={
+                <Button icon={<Save size={14} aria-hidden="true" />
 
+
+
+
+
+}>Save Template</Button>
+            }
+        >
             <div className="space-y-4">
-                {/* Stage 1 */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl flex overflow-hidden">
-                    <div className="w-12 bg-[#0A1420] border-r border-[#1A2A3A] flex items-center justify-center cursor-move text-[#445566] hover:text-white transition-colors">
-                        <MoveVertical size={16} />
-                    </div>
-                    <div className="flex-1 p-5">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-[#1A2A3A] text-xs font-bold text-white flex items-center justify-center">1</div>
-                                <input defaultValue="HR Screening" className="bg-transparent text-lg font-bold text-white focus:outline-none border-b border-transparent focus:border-[#0066FF] transition-colors" />
-                            </div>
-                            <button className="text-[#8899AA] hover:text-[#FF4444] transition-colors"><Trash2 size={16} /></button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-2">Assigned Interviewers</label>
-                                <div className="flex flex-wrap gap-2">
-                                    <div className="bg-[#1A2A3A] text-sm px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-[#0066FF] text-[8px] flex items-center justify-center font-bold">PN</div>
-                                        Priya Nair <span className="text-[#445566] ml-1">×</span>
-                                    </div>
-                                    <button className="bg-transparent border border-dashed border-[#2A3A4A] text-[#8899AA] hover:text-white text-sm px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"><Plus size={14} /> Add User</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-2">Duration & Tool</label>
-                                <div className="flex gap-2">
-                                    <select className="h-9 flex-1 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-2 text-sm text-white focus:outline-none">
-                                        <option>30 Minutes</option><option>45 Minutes</option><option>60 Minutes</option>
-                                    </select>
-                                    <select className="h-9 flex-1 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-2 text-sm text-white focus:outline-none">
-                                        <option>Phone Call</option><option>Google Meet</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <StageCard
+                    number={1}
+                    defaultName="HR Screening"
+                    interviewers={[{ initials: "PN", name: "Priya Nair", color: "#0066FF" }]}
+                />
+                <StageCard
+                    number={2}
+                    defaultName="Technical Round (React.js)"
+                    interviewers={[
+                        { initials: "AS", name: "Ankit Sharma", color: "#9B59B6" },
+                        { initials: "NS", name: "Neha S. (Shadow)", color: "#FFB800", shadow: true },
+                    ]}
+                    scorecard="Frontend Tech Scorecard"
+                />
 
-                {/* Stage 2 */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl flex overflow-hidden">
-                    <div className="w-12 bg-[#0A1420] border-r border-[#1A2A3A] flex items-center justify-center cursor-move text-[#445566] hover:text-white transition-colors">
-                        <MoveVertical size={16} />
-                    </div>
-                    <div className="flex-1 p-5">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-[#1A2A3A] text-xs font-bold text-white flex items-center justify-center">2</div>
-                                <input defaultValue="Technical Round (React.js)" className="bg-transparent text-lg font-bold text-white focus:outline-none border-b border-transparent focus:border-[#0066FF] transition-colors" />
-                            </div>
-                            <button className="text-[#8899AA] hover:text-[#FF4444] transition-colors"><Trash2 size={16} /></button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-2">Assigned Interviewers</label>
-                                <div className="flex flex-wrap gap-2">
-                                    <div className="bg-[#1A2A3A] text-sm px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full bg-[#9B59B6] text-[8px] flex items-center justify-center font-bold">AS</div>
-                                        Ankit Sharma <span className="text-[#445566] ml-1">×</span>
-                                    </div>
-                                    <div className="bg-[#1A2A3A] text-sm px-3 py-1.5 rounded-lg flex items-center gap-2 border border-[#00E5A0]">
-                                        <div className="w-4 h-4 rounded-full bg-[#FFB800] text-[8px] flex items-center justify-center font-bold text-black">NS</div>
-                                        Neha S. (Shadow) <span className="text-[#445566] ml-1">×</span>
-                                    </div>
-                                    <button className="bg-transparent border border-dashed border-[#2A3A4A] text-[#8899AA] hover:text-white text-sm px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"><Plus size={14} /> Add</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-2">Feedback Scorecard</label>
-                                <div className="flex gap-2 items-center">
-                                    <div className="h-9 flex-1 bg-[#1A2A3A] rounded-lg px-3 text-sm text-white flex items-center gap-2">
-                                        <CheckSquare size={14} className="text-[#00E5A0]" /> Frontend Tech Scorecard
-                                    </div>
-                                    <button className="text-[#0066FF] text-xs font-medium hover:underline">Change</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Add Stage Button */}
-                <button className="w-full h-14 border-2 border-dashed border-[#1A2A3A] rounded-2xl flex items-center justify-center text-[#8899AA] font-bold hover:bg-[#1A2A3A]/30 hover:border-[#2A3A4A] hover:text-white transition-colors">
-                    <Plus size={18} className="mr-2" /> Add Interview Stage
+                <button
+                    type="button"
+                    className="flex h-14 w-full items-center justify-center rounded-2xl border-2 border-dashed border-[#1A2A3A] font-bold text-[#8899AA] transition-colors hover:border-[#2A3A4A] hover:bg-[#1A2A3A]/30 hover:text-white"
+                >
+                    <Plus size={18} className="mr-2" aria-hidden="true" /> Add Interview Stage
                 </button>
             </div>
-        </div>
+        
+
+        
+
+        
+
+        </Page>
     );
 }

@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import {
-    BarChart2, PieChart as PieChartIcon, Download, Users, Clock, MessageSquare, ChevronDown, CheckCircle2, TrendingUp, AlertCircle
+import { PieChart as PieChartIcon, Download, Users, Clock, MessageSquare, ChevronDown, AlertCircle
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts';
 import Link from 'next/link';
@@ -41,6 +42,13 @@ export default function SurveyResultsScreen() {
     const [activeTab, setActiveTab] = useState('overview');
 
     return (
+        <Page
+            title="Q3 Employee Engagement Pulse"
+            subtitle="Completion Rate"
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Results" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Title & Actions */}
@@ -269,5 +277,7 @@ export default function SurveyResultsScreen() {
             )}
 
         </div>
+    
+        </Page>
     );
 }

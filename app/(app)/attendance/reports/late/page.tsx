@@ -1,10 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
 import {
-    Clock, Search, Calendar, Download, Filter, TrendingDown, AlertTriangle, UserMinus
+    Clock, Search, Calendar, Download, Filter, AlertTriangle, UserMinus
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 export default function LateArrivalsReport() {
     const records = [
@@ -15,6 +16,13 @@ export default function LateArrivalsReport() {
     ];
 
     return (
+        <Page
+            title="Late Arrivals Tracking"
+            subtitle="Monitor tardiness, grace period violations, and automatic LOP deductions."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Reports", href: "/attendance/reports" }, { label: "Late" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -160,5 +168,7 @@ export default function LateArrivalsReport() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

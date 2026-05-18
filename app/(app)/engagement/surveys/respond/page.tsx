@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
     CheckCircle2, ArrowRight, ArrowLeft, Send
@@ -63,6 +65,13 @@ export default function SurveyResponseScreen() {
     }
 
     return (
+        <Page
+            title="Thank You!"
+            subtitle="Your feedback has been submitted successfully. We appreciate your time and honesty."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Respond" }]}
+            maxWidth="800px"
+        >
+
         <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] font-sans flex flex-col justify-center">
 
             {/* Progress Bar */}
@@ -167,6 +176,8 @@ export default function SurveyResponseScreen() {
                                                         }
 
                                                         return (
+
+
                                                             <button
                                                                 key={num}
                                                                 onClick={() => setAnswers({ ...answers, [q.id]: num })}
@@ -174,7 +185,9 @@ export default function SurveyResponseScreen() {
                                                             >
                                                                 {num}
                                                             </button>
-                                                        )
+                                                        
+        
+)
                                                     })}
                                                 </div>
                                                 <div className="flex justify-between text-xs font-bold text-[#445566] uppercase tracking-wider px-2">
@@ -223,5 +236,7 @@ export default function SurveyResponseScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

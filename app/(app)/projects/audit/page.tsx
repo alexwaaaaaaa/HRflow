@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Search, ShieldAlert, FileSearch, ArrowRightCircle, CheckCircle, AlertOctagon } from 'lucide-react';
+import { ShieldAlert, FileSearch, ArrowRightCircle, AlertOctagon } from 'lucide-react';
 
 export default function TimesheetAuditScreen() {
     return (
+        <Page
+            title="Timesheet Fraud Audit"
+            subtitle="AI-powered detection of phantom hours, overlapping entries, and anomalous work patterns."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Audit" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -114,5 +123,7 @@ export default function TimesheetAuditScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

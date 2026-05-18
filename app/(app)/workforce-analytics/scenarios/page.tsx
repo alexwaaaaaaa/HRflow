@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { GitBranch, Save, Plus, BarChart2, Zap, Copy } from 'lucide-react';
+import { GitBranch, Save, Plus, BarChart2, Zap } from 'lucide-react';
 
 export default function ScenarioPlanningScreen() {
     const [scenario, setScenario] = useState('base');
 
     return (
+        <Page
+            title="Scenario Modeling"
+            subtitle="Simulate what-if situations to see impacts on headcount, budget, and capacity."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Scenarios" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -132,5 +141,7 @@ export default function ScenarioPlanningScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

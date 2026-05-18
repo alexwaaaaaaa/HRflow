@@ -1,0 +1,84 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "back": "Back",
+    "continue": "Continue",
+    "review": "Review",
+    "yes": "Yes",
+    "no": "No",
+    "search": "Search…",
+    "noResults": "No results found",
+    "tryAgain": "Try again",
+    "signOut": "Sign out",
+    "signIn": "Sign in"
+  },
+  "auth": {
+    "login": {
+      "welcomeBack": "Welcome back",
+      "subtitle": "Sign in to your HRFlow workspace",
+      "email": "Work email",
+      "emailPlaceholder": "you@company.com",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign in",
+      "signingIn": "Signing in…",
+      "orContinueWith": "or continue with",
+      "googleSso": "Google Workspace",
+      "microsoftSso": "Microsoft 365",
+      "newToHrflow": "New to HRFlow?",
+      "requestDemo": "Request a Demo"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password.",
+      "tooManyAttempts": "Too many attempts. Try again in {minutes} minutes.",
+      "networkError": "Could not reach server. Check your connection."
+    }
+  },
+  "leave": {
+    "apply": {
+      "title": "Apply for leave",
+      "subtitle": "Submit a new time-off request for manager approval",
+      "leaveType": "Leave type",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "duration": "Duration",
+      "fullDay": "Full day(s)",
+      "firstHalf": "First half",
+      "secondHalf": "Second half",
+      "reason": "Reason for leave",
+      "reasonPlaceholder": "Brief reason for your manager…",
+      "reasonHint": "Min 5 characters. Visible to your manager and HR only.",
+      "supportingDocs": "Supporting documents",
+      "uploadDocument": "Upload document",
+      "fileFormatHint": "PNG, PDF or JPG · max 5 MB",
+      "noDocRequired": "No document required for this leave type. You can skip this step.",
+      "balanceWarning": "You only have {balance} {type} days. Excess will be marked LOP.",
+      "successTitle": "Leave applied",
+      "successDesc": "Your {type} request for {days} day(s) has been sent for approval.",
+      "errorTitle": "Could not submit",
+      "errorDesc": "Please try again. If the problem persists, contact HR."
+    },
+    "types": {
+      "EL": "Privilege Leave",
+      "SL": "Sick Leave",
+      "CL": "Casual Leave"
+    }
+  },
+  "payroll": {
+    "dashboard": {
+      "title": "Payroll dashboard",
+      "subtitle": "Overview of upcoming runs, recent distributions, and compliance alerts.",
+      "runPayroll": "Run Payroll"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "tryAgain": "Try again",
+    "goHome": "Go to dashboard",
+    "contactSupport": "Contact support"
+  }
+}

@@ -1,10 +1,12 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Clock, Lock, TrendingDown, RefreshCw, ChevronRight, AlertCircle, BarChart3, Zap, FileText, Edit3 } from "lucide-react";
 import Link from "next/link";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
-import { ChartWrapper } from "@/components/ui/chart-wrapper";
+import ChartWrapper from "@/components/ui/ChartWrapper";
 import { Tooltip as RechartsTooltip } from 'recharts';
 
 const DEPT_DATA = [
@@ -91,10 +93,17 @@ function pctColor(pct: number) {
 }
 
 export default function AttendanceDashboard() {
-    const [selectedDept, setSelectedDept] = useState<string | null>(null);
+    const [_selectedDept, setSelectedDept] = useState<string | null>(null);
     const today = 12;
 
     return (
+        <Page
+            title="Attendance"
+            subtitle="TechCorp Solutions • November 2024 • 21 working days"
+            breadcrumbs={[{ label: "Attendance" }]}
+            maxWidth="1200px"
+        >
+
         <main className="px-6 md:px-8 py-6 md:py-8 max-w-[1200px] mx-auto text-white">
             {/* HEADER */}
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -362,5 +371,7 @@ export default function AttendanceDashboard() {
                 </div>
             </div>
         </main>
-    );
+    
+        </Page>
+        );
 }

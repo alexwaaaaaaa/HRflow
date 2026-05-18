@@ -1,152 +1,283 @@
 "use client";
-import React, { useState } from "react";
-import { UserPlus, Gift, TrendingUp, Search, UploadCloud, ChevronRight, CheckCircle2, Clock } from "lucide-react";
 
-const MY_REFERRALS = [
+import { UserPlus, Gift, TrendingUp, UploadCloud, CheckCircle2, Clock, Plus } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import FormField from "@/components/ui/FormField";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+import { useToast } from "@/components/ui/Toast";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema (Tier 2 form)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const referralSchema = z.object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    email: z.string().email("Valid email required"),
+    jobId: z.string().min(1, "Please select a job"),
+    relationship: z.string().optional(),
+});
+
+type ReferralValues = z.infer<typeof referralSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & data
+// ─────────────────────────────────────────────────────────────────────────────
+
+type ReferralStatus = "pending" | "paid";
+type ReferralStage = "Interview" | "Hired" | "Screening";
+
+interface Referral {
+    id: number;
+    name: string;
+    role: string;
+    stage: ReferralStage;
+    date: string;
+    bonus: string;
+    status: ReferralStatus;
+}
+
+const MY_REFERRALS: Referral[] = [
     { id: 1, name: "Sneha Reddy", role: "Product Manager", stage: "Interview", date: "12 Mar 2025", bonus: "₹ 50,000", status: "pending" },
     { id: 2, name: "Karan Johar", role: "UX Designer", stage: "Hired", date: "01 Feb 2025", bonus: "₹ 40,000", status: "paid" },
     { id: 3, name: "Varun Dhawan", role: "Backend Engineer", stage: "Screening", date: "15 Mar 2025", bonus: "₹ 50,000", status: "pending" },
 ];
 
-export default function EmployeeReferralPortal() {
+const STAGE_VARIANT: Record<ReferralStage, "purple" | "success" | "info"> = {
+    Interview: "purple",
+    Hired: "success",
+    Screening: "info",
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cell components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ReferralNameCell({ row }: { row: Referral }) {
     return (
-        <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-1">Employee Referral Portal</h1>
-                <p className="text-sm text-[#8899AA]">Refer great talent, help us grow, and earn rewards!</p>
+        <div className="flex items-center gap-3">
+            <div
+                aria-hidden="true"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1A2A3A] text-sm font-bold text-white"
+            >
+                {row.name.split(" ").map((n) => n[0]).join("")}
             </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-gradient-to-br from-[#0066FF] to-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
-                    <UserPlus size={48} className="absolute -right-2 -bottom-2 text-white/5 group-hover:scale-110 transition-transform" />
-                    <p className="text-sm font-medium text-white/80 mb-2">Total Referrals</p>
-                    <p className="text-4xl font-black text-white">8</p>
-                </div>
-                <div className="bg-gradient-to-br from-[#00E5A0] to-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
-                    <TrendingUp size={48} className="absolute -right-2 -bottom-2 text-[#060B14]/10 group-hover:scale-110 transition-transform" />
-                    <p className="text-sm font-medium text-[#060B14]/70 mb-2">Successful Hires</p>
-                    <p className="text-4xl font-black text-[#060B14]">2</p>
-                </div>
-                <div className="bg-gradient-to-br from-[#FFB800] to-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
-                    <Gift size={48} className="absolute -right-2 -bottom-2 text-[#060B14]/10 group-hover:scale-110 transition-transform" />
-                    <p className="text-sm font-medium text-[#060B14]/70 mb-2">Total Bonus Earned</p>
-                    <p className="text-4xl font-black text-[#060B14]">₹ 80,000</p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Submit New Referral Form */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2"><PlusIcon /> Submit a New Referral</h3>
-
-                    <div className="space-y-5">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-1.5">First Name</label>
-                                <input className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF]" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Last Name</label>
-                                <input className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF]" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Email Address</label>
-                            <input type="email" className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none focus:border-[#0066FF]" />
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Applying For (Select Job)</label>
-                            <select className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-xl px-3 text-sm text-white focus:outline-none border-r-8 border-transparent">
-                                <option>Senior Frontend Engineer (₹ 50,000 Bonus)</option>
-                                <option>Product Marketing Manager (₹ 40,000 Bonus)</option>
-                                <option>Backend DevOps Lead (₹ 75,000 Bonus)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-[#8899AA] mb-1.5">Upload Resume</label>
-                            <div className="w-full h-24 bg-[#060B14] border-2 border-dashed border-[#1A2A3A] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#0066FF] transition-colors group">
-                                <UploadCloud size={20} className="text-[#445566] group-hover:text-[#0066FF] mb-2" />
-                                <span className="text-xs text-[#8899AA] font-medium group-hover:text-white">Drag & Drop or Browse (PDF, DOCX)</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-medium text-[#8899AA] mb-1.5">How do you know them? (Optional)</label>
-                            <textarea rows={2} className="w-full bg-[#060B14] border border-[#1A2A3A] rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#0066FF] resize-none" />
-                        </div>
-
-                        <button className="w-full h-12 bg-[#00E5A0] text-[#060B14] font-bold text-sm rounded-xl hover:bg-[#00c98d] transition-colors mt-2">
-                            Submit Referral
-                        </button>
-                    </div>
-                </div>
-
-                {/* My Referrals Tracking */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl flex flex-col">
-                    <div className="p-6 border-b border-[#1A2A3A] flex justify-between items-center">
-                        <h3 className="font-bold text-lg">My Referrals</h3>
-                        <div className="relative">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#445566]" />
-                            <input placeholder="Search..." className="h-9 w-[200px] bg-[#060B14] border border-[#1A2A3A] rounded-lg pl-9 pr-3 text-xs text-white focus:outline-none" />
-                        </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto divide-y divide-[#1A2A3A]">
-                        {MY_REFERRALS.map(ref => (
-                            <div key={ref.id} className="p-6 hover:bg-[#1A2A3A]/30 transition-colors">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-[#1A2A3A] flex items-center justify-center font-bold text-sm text-white">
-                                            {ref.name.split(" ").map(n => n[0]).join("")}
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-white text-base">{ref.name}</h4>
-                                            <p className="text-xs text-[#8899AA]">{ref.role}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-sm font-bold text-[#00E5A0]">{ref.bonus}</p>
-                                        <p className="text-[10px] text-[#8899AA]">Potential Bonus</p>
-                                    </div>
-                                </div>
-
-                                {/* Stage Tracker */}
-                                <div className="mt-4">
-                                    <div className="flex items-center justify-between text-xs mb-2">
-                                        <span className="font-medium text-[#0066FF]">{ref.stage}</span>
-                                        <span className="text-[#445566]">{ref.date}</span>
-                                    </div>
-                                    <div className="w-full h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden flex">
-                                        {/* Extremely basic visual logic for stages */}
-                                        <div className={`h-full ${ref.stage !== 'Applied' ? 'bg-[#0066FF] w-1/4' : 'bg-[#0066FF] w-full'}`} />
-                                        <div className={`h-full ${ref.stage === 'Interview' || ref.stage === 'Hired' ? 'bg-[#0066FF] w-1/4' : 'bg-transparent w-1/4'}`} />
-                                        <div className={`h-full ${ref.stage === 'Hired' ? 'bg-[#00E5A0] w-1/2' : 'bg-transparent w-1/2'}`} />
-                                    </div>
-                                </div>
-
-                                {ref.status === "paid" && (
-                                    <div className="mt-4 flex items-center gap-1.5 text-xs text-[#00E5A0] bg-[#00E5A0]/10 px-3 py-1.5 rounded-lg w-fit font-bold">
-                                        <CheckCircle2 size={14} /> Bonus Paid Out via Payroll (Feb 2025)
-                                    </div>
-                                )}
-                                {ref.status === "pending" && ref.stage === "Hired" && (
-                                    <div className="mt-4 flex items-center gap-1.5 text-xs text-[#FFB800] bg-[#FFB800]/10 px-3 py-1.5 rounded-lg w-fit font-bold">
-                                        <Clock size={14} /> Bonus Pending (Subject to 90-day retention)
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
+            <div>
+                <p className="font-bold text-white">{row.name}</p>
+                <p className="text-xs text-[#8899AA]">{row.role}</p>
             </div>
         </div>
     );
 }
 
-function PlusIcon() {
-    return <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#00E5A0]"><line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" /></svg>;
+function ReferralStatusCell({ row }: { row: Referral }) {
+    if (row.status === "paid") {
+        return (
+            <div className="flex items-center gap-1.5 rounded-lg bg-[#00E5A0]/10 px-3 py-1.5 text-xs font-bold text-[#00E5A0]">
+                <CheckCircle2 size={14} aria-hidden="true" /> Bonus Paid
+            </div>
+        );
+    }
+    if (row.stage === "Hired") {
+        return (
+            <div className="flex items-center gap-1.5 rounded-lg bg-[#FFB800]/10 px-3 py-1.5 text-xs font-bold text-[#FFB800]">
+                <Clock size={14} aria-hidden="true" /> Pending (90-day)
+            </div>
+        );
+    }
+    return <Badge variant="neutral">In Progress</Badge>;
+}
+
+const COLUMNS: Column<Referral>[] = [
+    {
+        key: "name",
+        label: "Candidate",
+        render: (r) => <ReferralNameCell row={r} />,
+        sortable: true,
+        sortValue: (r) => r.name,
+    },
+    {
+        key: "stage",
+        label: "Stage",
+        align: "center",
+        render: (r) => <Badge variant={STAGE_VARIANT[r.stage]}>{r.stage}</Badge>,
+    },
+    {
+        key: "bonus",
+        label: "Potential Bonus",
+        align: "right",
+        render: (r) => <span className="font-bold text-[#00E5A0]">{r.bonus}</span>,
+    },
+    {
+        key: "status",
+        label: "Bonus Status",
+        align: "right",
+        render: (r) => <ReferralStatusCell row={r} />,
+    },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function EmployeeReferralPortal() {
+    const toast = useToast();
+
+    const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm<ReferralValues>({
+        resolver: zodResolver(referralSchema),
+        defaultValues: { firstName: "", lastName: "", email: "", jobId: "", relationship: "" },
+    });
+
+    const onSubmit = async (_data: ReferralValues) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 1000));
+        toast.show({
+            variant: "success",
+            title: "Referral submitted",
+            description: "Your referral has been submitted successfully.",
+        });
+        reset();
+    };
+
+    return (
+        <Page
+            title="Employee Referral Portal"
+            subtitle="Refer great talent, help us grow, and earn rewards!"
+            breadcrumbs={[
+                { label: "Recruitment", href: "/recruitment/dashboard" },
+                { label: "Referrals" },
+            ]}
+            maxWidth="1200px"
+        >
+
+
+
+
+
+
+            {/* Quick Stats */}
+            <dl className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                <Card padding="lg" className="relative overflow-hidden bg-gradient-to-br from-[#0066FF] to-[#0A1420]">
+                    <UserPlus
+                        size={48}
+                        className="absolute -bottom-2 -right-2 text-white/5 transition-transform group-hover:scale-110"
+                        aria-hidden="true"
+                    />
+                    <dt className="mb-2 text-sm font-medium text-white/80">Total Referrals</dt>
+                    <dd className="text-4xl font-black text-white">8</dd>
+                </Card>
+                <Card padding="lg" className="relative overflow-hidden bg-gradient-to-br from-[#00E5A0] to-[#0A1420]">
+                    <TrendingUp
+                        size={48}
+                        className="absolute -bottom-2 -right-2 text-[#060B14]/10"
+                        aria-hidden="true"
+                    />
+                    <dt className="mb-2 text-sm font-medium text-[#060B14]/70">Successful Hires</dt>
+                    <dd className="text-4xl font-black text-[#060B14]">2</dd>
+                </Card>
+                <Card padding="lg" className="relative overflow-hidden bg-gradient-to-br from-[#FFB800] to-[#0A1420]">
+                    <Gift
+                        size={48}
+                        className="absolute -bottom-2 -right-2 text-[#060B14]/10"
+                        aria-hidden="true"
+                    />
+                    <dt className="mb-2 text-sm font-medium text-[#060B14]/70">Total Bonus Earned</dt>
+                    <dd className="text-4xl font-black text-[#060B14]">₹ 80,000</dd>
+                </Card>
+            </dl>
+
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                {/* Submit New Referral Form */}
+                <Card padding="lg">
+                    <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-white">
+                        <Plus size={20} className="text-[#00E5A0]" aria-hidden="true" /> Submit a New Referral
+                    </h3>
+                    <form onSubmit={handleSubmit(onSubmit)} aria-label="Submit referral" className="space-y-5">
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField control={control} name="firstName" label="First Name" />
+                            <FormField control={control} name="lastName" label="Last Name" />
+                        </div>
+                        <FormField
+                            control={control}
+                            name="email"
+                            label="Email Address"
+                            inputProps={{ type: "email" }}
+                        />
+                        <div>
+                            <label htmlFor="job-select" className="mb-1.5 block text-xs font-medium text-[#8899AA]">
+                                Applying For (Select Job)
+                            </label>
+                            <select
+                                id="job-select"
+                                className="h-10 w-full rounded-xl border border-[#1A2A3A] bg-[#060B14] px-3 text-sm text-white focus:border-[#0066FF] focus:outline-none"
+                            >
+                                <option value="">Select a job…</option>
+                                <option>Senior Frontend Engineer (₹ 50,000 Bonus)</option>
+                                <option>Product Marketing Manager (₹ 40,000 Bonus)</option>
+                                <option>Backend DevOps Lead (₹ 75,000 Bonus)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="resume-upload" className="mb-1.5 block text-xs font-medium text-[#8899AA]">
+                                Upload Resume
+                            </label>
+                            <label
+                                htmlFor="resume-upload"
+                                className="flex h-24 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#1A2A3A] bg-[#060B14] transition-colors hover:border-[#0066FF]"
+                            >
+                                <UploadCloud size={20} className="mb-2 text-[#445566]" aria-hidden="true" />
+                                <span className="text-xs font-medium text-[#8899AA]">
+                                    Drag &amp; Drop or Browse (PDF, DOCX)
+                                </span>
+                                <input id="resume-upload" type="file" accept=".pdf,.docx" className="sr-only" />
+                            </label>
+                        </div>
+                        <FormField
+                            control={control}
+                            name="relationship"
+                            label="How do you know them? (Optional)"
+                            inputProps={{ placeholder: "e.g. Former colleague, friend…" }}
+                        />
+                        <Button
+                            type="submit"
+                            isLoading={isSubmitting}
+                            loadingText="Submitting…"
+                            className="mt-2 w-full justify-center"
+                        >
+                            Submit Referral
+                        </Button>
+                    </form>
+                </Card>
+
+                {/* My Referrals Tracking */}
+                <Card padding="none">
+                    <div className="border-b border-[#1A2A3A] p-4">
+                        <h3 className="font-bold text-lg text-white">My Referrals</h3>
+                    </div>
+                    <DataTable<Referral>
+                        data={MY_REFERRALS}
+                        columns={COLUMNS}
+                        rowKey={(r) => r.id}
+                        searchable
+                        searchPlaceholder="Search referrals…"
+                        aria-label="My referrals"
+                        emptyTitle="No referrals yet"
+                        emptyDescription="Submit your first referral using the form on the left."
+                    />
+                </Card>
+            </div>
+        
+
+        
+
+        
+
+        </Page>
+    );
 }

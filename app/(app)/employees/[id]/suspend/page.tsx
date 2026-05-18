@@ -1,87 +1,162 @@
 "use client";
 
 import { use, useState } from "react";
-import Link from "next/link";
 import { ShieldOff } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+type SalaryType = "full" | "half" | "none";
+
+const SALARY_OPTIONS: { val: SalaryType; label: string }[] = [
+  { val: "full", label: "Full Pay" },
+  { val: "half", label: "Half Pay" },
+  { val: "none", label: "No Pay" },
+];
 
 export default function SuspendEmployee({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [salaryType, setSalaryType] = useState("full");
-    const [indefinite, setIndefinite] = useState(false);
+  const { id } = use(params);
+  const [salaryType, setSalaryType] = useState<SalaryType>("full");
+  const [indefinite, setIndefinite] = useState(false);
 
-    return (
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 32px 80px" }}>
-            <Link href={`/employees/${id}`} style={{ color: "#8899AA", textDecoration: "none", fontSize: 13 }}>← Back to Profile</Link>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginTop: 12, marginBottom: 24 }}>Suspend Employee</h2>
+  const handleSubmit = () => {
+    // TODO: replace with real mutation
+    alert("Employee suspended (stub)");
+  };
 
-            <div style={{ background: "rgba(255,68,68,0.05)", border: "1px solid rgba(255,68,68,0.3)", borderRadius: 12, padding: 20, marginBottom: 28, display: "flex", gap: 12, alignItems: "flex-start" }}>
-                <ShieldOff color="#FF4444" size={20} style={{ flexShrink: 0, marginTop: 2 }} />
-                <div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#FF4444", marginBottom: 4 }}>Employee will be suspended</div>
-                    <div style={{ fontSize: 13, color: "#8899AA", lineHeight: 1.5 }}>
-                        Suspension will restrict the employee's system access and mark their attendance days as "Suspended". A suspension order will be sent to the employee via email.
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 32 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 24 }}>Suspension Details</h3>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
-                    <div>
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Suspension Type *</label>
-                        <select style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                            <option>Pending Inquiry / Departmental</option>
-                            <option>Disciplinary Action</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Suspension Start Date *</label>
-                        <input type="date" defaultValue={new Date().toISOString().split("T")[0]} style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", outline: "none" }} />
-                    </div>
-                </div>
-
-                <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, cursor: "pointer" }}>
-                        <input type="checkbox" checked={indefinite} onChange={e => setIndefinite(e.target.checked)} style={{ accentColor: "#FF4444" }} />
-                        <span style={{ fontSize: 14, color: "#FFFFFF" }}>Until further notice (no defined end date)</span>
-                    </label>
-                    {!indefinite && (
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Suspension End Date *</label>
-                            <input type="date" defaultValue="2024-11-30" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", outline: "none" }} />
-                        </div>
-                    )}
-                </div>
-
-                <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 12 }}>Salary During Suspension *</label>
-                    <div style={{ display: "flex", gap: 12 }}>
-                        {[["full", "Full Pay"], ["half", "Half Pay"], ["none", "No Pay"]].map(([v, l]) => (
-                            <button key={v} onClick={() => setSalaryType(v)} style={{ flex: 1, height: 44, background: salaryType === v ? (v === "none" ? "rgba(255,68,68,0.1)" : "rgba(0,229,160,0.1)") : "#060B14", border: `1px solid ${salaryType === v ? (v === "none" ? "#FF4444" : "#00E5A0") : "#1A2A3A"}`, borderRadius: 10, color: salaryType === v ? "#FFFFFF" : "#8899AA", fontSize: 14, fontWeight: salaryType === v ? 600 : 400, cursor: "pointer" }}>
-                                {l}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Reason *</label>
-                    <textarea rows={3} placeholder="State the reason for suspension..." style={{ width: "100%", background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", resize: "none", boxSizing: "border-box" }}></textarea>
-                </div>
-
-                <div style={{ marginBottom: 28, padding: "14px 16px", background: "#060B14", borderRadius: 12, border: "1px solid #1A2A3A" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
-                        <input type="checkbox" defaultChecked style={{ accentColor: "#FF4444" }} />
-                        <span style={{ fontSize: 13, color: "#8899AA" }}>Revoke system access (portal login, email) during suspension period</span>
-                    </label>
-                </div>
-
-                <button style={{ width: "100%", height: 48, background: "#FF4444", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                    Suspend Employee
-                </button>
-            </div>
+  return (
+    <Page
+      title="Suspend Employee"
+      breadcrumbs={[
+        { label: "Employees", href: "/employees" },
+        { label: "Rahul Sharma", href: `/employees/${id}` },
+        { label: "Suspend" },
+      ]}
+      maxWidth="800px"
+    >
+      {/* Warning */}
+      <div className="mb-7 flex items-start gap-3 rounded-xl border border-[rgba(255,68,68,0.3)] bg-[rgba(255,68,68,0.05)] p-5">
+        <ShieldOff size={20} className="mt-0.5 shrink-0 text-[#FF4444]" aria-hidden="true" />
+        <div>
+          <div className="mb-1 text-sm font-semibold text-[#FF4444]">Employee will be suspended</div>
+          <div className="text-[13px] leading-relaxed text-[#8899AA]">
+            Suspension will restrict the employee&apos;s system access and mark their attendance
+            days as &quot;Suspended&quot;. A suspension order will be sent to the employee via
+            email.
+          </div>
         </div>
-    );
+      </div>
+
+      <Card padding="md">
+        <h3 className="mb-6 text-base font-semibold text-white">Suspension Details</h3>
+
+        <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="susp-type" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              Suspension Type *
+            </label>
+            <select
+              id="susp-type"
+              className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            >
+              <option>Pending Inquiry / Departmental</option>
+              <option>Disciplinary Action</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="susp-start" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              Suspension Start Date *
+            </label>
+            <input
+              id="susp-start"
+              type="date"
+              defaultValue={new Date().toISOString().split("T")[0]}
+              className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="mb-4 flex cursor-pointer items-center gap-2.5">
+            <input
+              type="checkbox"
+              checked={indefinite}
+              onChange={(e) => setIndefinite(e.target.checked)}
+              className="accent-[#FF4444]"
+            />
+            <span className="text-sm text-white">Until further notice (no defined end date)</span>
+          </label>
+          {!indefinite && (
+            <div>
+              <label htmlFor="susp-end" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                Suspension End Date *
+              </label>
+              <input
+                id="susp-end"
+                type="date"
+                defaultValue="2024-11-30"
+                className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="mb-6">
+          <div className="mb-3 text-[13px] text-[#8899AA]">Salary During Suspension *</div>
+          <div className="flex gap-3" role="group" aria-label="Salary during suspension">
+            {SALARY_OPTIONS.map(({ val, label }) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => setSalaryType(val)}
+                aria-pressed={salaryType === val}
+                className="flex-1 rounded-[10px] border py-2.5 text-sm transition-colors"
+                style={{
+                  // inline-style: dynamic per-option color
+                  background:
+                    salaryType === val
+                      ? val === "none"
+                        ? "rgba(255,68,68,0.1)"
+                        : "rgba(0,229,160,0.1)"
+                      : "#060B14",
+                  borderColor:
+                    salaryType === val ? (val === "none" ? "#FF4444" : "#00E5A0") : "#1A2A3A",
+                  color: salaryType === val ? "#FFFFFF" : "#8899AA",
+                  fontWeight: salaryType === val ? 600 : 400,
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label htmlFor="susp-reason" className="mb-1.5 block text-[13px] text-[#8899AA]">
+            Reason *
+          </label>
+          <textarea
+            id="susp-reason"
+            rows={3}
+            placeholder="State the reason for suspension..."
+            className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3.5 text-sm text-white outline-none"
+          />
+        </div>
+
+        <div className="mb-7 rounded-xl border border-[#1A2A3A] bg-[#060B14] p-4">
+          <label className="flex cursor-pointer items-center gap-2.5">
+            <input type="checkbox" defaultChecked className="accent-[#FF4444]" />
+            <span className="text-[13px] text-[#8899AA]">
+              Revoke system access (portal login, email) during suspension period
+            </span>
+          </label>
+        </div>
+
+        <Button variant="danger" className="w-full" onClick={handleSubmit}>
+          Suspend Employee
+        </Button>
+      </Card>
+    </Page>
+  );
 }

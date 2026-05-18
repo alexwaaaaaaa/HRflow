@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { CheckCircle2, XOctagon, Paperclip, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -36,6 +38,12 @@ export default function RegularizeApprove() {
     };
 
     return (
+        <Page
+            title="Regularization Approvals"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Regularize", href: "/attendance/regularize" }, { label: "Approve" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
@@ -181,5 +189,7 @@ export default function RegularizeApprove() {
                 </div>
             )}
         </div>
-    );
+    
+        </Page>
+        );
 }

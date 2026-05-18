@@ -1,83 +1,85 @@
 "use client";
-import React, { useState } from 'react';
-import { Landmark, ArrowLeft, Download, Upload, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+
+import { useState } from "react";
+import { Landmark } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// migrated: immersive-ui
+
+type ActiveTab = "PT" | "LWF";
+
+const PT_STATES = [
+    { state: "Karnataka", amount: "₹34,000", employees: "170 employees", period: "March 2026", note: "Total PT deducted across 170 employees" },
+    { state: "Maharashtra", amount: "₹37,000", employees: "148 employees", period: "March 2026", note: "148 employees (+ ₹100 extra for Feb)" },
+    { state: "Tamil Nadu", amount: null, employees: null, period: "Half Yearly", note: "TN deducts PT on a bi-annual basis (Aug & Jan). No deductions this month." },
+] as const;
 
 export default function PtLwfScreen() {
-    const [activeTab, setActiveTab] = useState<'PT' | 'LWF'>('PT');
+    const [activeTab, setActiveTab] = useState<ActiveTab>("PT");
 
     return (
-        <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
-            <Link href="/payroll/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2">
-                <ArrowLeft size={14} /> Payroll Dashboard
-            </Link>
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <Landmark size={22} className="text-amber-400" /> State Taxes (PT & LWF)
-                    </h1>
-                    <p className="text-[#8899AA] text-sm mt-1">Professional Tax and Labour Welfare Fund computations mapped by employee state</p>
-                </div>
-            </div>
-
-            <div className="flex gap-4 border-b border-[#1A2A3A] pb-0">
-                <button onClick={() => setActiveTab('PT')} className={`pb-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'PT' ? 'border-amber-400 text-amber-400' : 'border-transparent text-[#556677] hover:text-white'}`}>
+        <Page
+            title="State Taxes (PT & LWF)"
+            subtitle="Professional Tax and Labour Welfare Fund computations mapped by employee state"
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll/dashboard" },
+                { label: "Reports", href: "/payroll-reports" },
+                { label: "PT & LWF" },
+            ]}
+            maxWidth="1000px"
+        >
+            {/* Tabs */}
+            <div className="flex gap-4 border-b border-[#1A2A3A]" role="tablist" aria-label="State tax type">
+                <button
+                    role="tab"
+                    aria-selected={activeTab === "PT"}
+                    onClick={() => setActiveTab("PT")}
+                    className={`pb-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === "PT" ? "border-amber-400 text-amber-400" : "border-transparent text-[#8899AA] hover:text-white"}`}
+                >
                     Professional Tax (PT)
                 </button>
-                <button onClick={() => setActiveTab('LWF')} className={`pb-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === 'LWF' ? 'border-pink-400 text-pink-400' : 'border-transparent text-[#556677] hover:text-white'}`}>
+                <button
+                    role="tab"
+                    aria-selected={activeTab === "LWF"}
+                    onClick={() => setActiveTab("LWF")}
+                    className={`pb-3 px-4 font-bold text-sm border-b-2 transition-colors ${activeTab === "LWF" ? "border-pink-400 text-pink-400" : "border-transparent text-[#8899AA] hover:text-white"}`}
+                >
                     Labour Welfare Fund (LWF)
                 </button>
             </div>
 
-            {activeTab === 'PT' ? (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="grid grid-cols-3 gap-6">
-                        {/* Karnataka */}
-                        <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-5">
+            {activeTab === "PT" ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {PT_STATES.map((s) => (
+                        <Card key={s.state} padding="lg">
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-white font-bold text-lg">Karnataka</h3>
-                                <span className="text-[#556677] text-xs">March 2026</span>
+                                <h3 className="text-white font-bold text-lg">{s.state}</h3>
+                                <span className="text-[#8899AA] text-xs">{s.period}</span>
                             </div>
-                            <div className="text-amber-400 font-black text-3xl mb-1">₹34,000</div>
-                            <div className="text-[#8899AA] text-xs">Total PT deducted across 170 employees</div>
-                            <div className="mt-5 pt-4 border-t border-[#1A2A3A] flex justify-between gap-2">
-                                <button className="flex-1 bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white font-bold py-2 rounded-lg text-xs transition-colors">Export Return</button>
-                                <button className="flex-1 bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white font-bold py-2 rounded-lg text-xs transition-colors">Mark Paid</button>
-                            </div>
-                        </div>
-
-                        {/* Maharashtra */}
-                        <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-5">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-white font-bold text-lg">Maharashtra</h3>
-                                <span className="text-[#556677] text-xs">March 2026</span>
-                            </div>
-                            <div className="text-amber-400 font-black text-3xl mb-1">₹37,000</div>
-                            <div className="text-[#8899AA] text-xs">148 employees (+ ₹100 extra for Feb)</div>
-                            <div className="mt-5 pt-4 border-t border-[#1A2A3A] flex justify-between gap-2">
-                                <button className="flex-1 bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white font-bold py-2 rounded-lg text-xs transition-colors">Export Return</button>
-                                <button className="flex-1 bg-[#131B2B] hover:bg-[#1A2A3A] border border-[#2A3A4A] text-white font-bold py-2 rounded-lg text-xs transition-colors">Mark Paid</button>
-                            </div>
-                        </div>
-
-                        {/* Tamil Nadu */}
-                        <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-5">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-white font-bold text-lg">Tamil Nadu</h3>
-                                <span className="text-[#556677] text-xs">Half Yearly</span>
-                            </div>
-                            <div className="text-[#556677] font-black text-2xl mb-1">Due Aug 2026</div>
-                            <div className="text-[#8899AA] text-xs">TN deducts PT on a bi-annual basis (Aug & Jan). No deductions this month.</div>
-                        </div>
-                    </div>
+                            {s.amount ? (
+                                <>
+                                    <div className="text-amber-400 font-black text-3xl mb-1">{s.amount}</div>
+                                    <div className="text-[#8899AA] text-xs mb-5">{s.note}</div>
+                                    <div className="flex gap-2 pt-4 border-t border-[#1A2A3A]">
+                                        <Button variant="secondary" size="sm" className="flex-1">Export Return</Button>
+                                        <Button variant="secondary" size="sm" className="flex-1">Mark Paid</Button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-[#8899AA] text-xs">{s.note}</div>
+                            )}
+                        </Card>
+                    ))}
                 </div>
             ) : (
-                <div className="text-center py-24 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-[#0A1420] border border-[#1A2A3A] rounded-2xl">
-                    <Landmark size={48} className="mx-auto mb-4 text-pink-400 opacity-50" />
+                <Card padding="lg" className="text-center py-24">
+                    <Landmark size={48} className="mx-auto mb-4 text-pink-400 opacity-50" aria-hidden="true" />
                     <h3 className="text-white font-bold text-lg mb-2">LWF Deduction Cycle is Bi-Annual</h3>
                     <p className="text-[#8899AA] text-sm max-w-sm mx-auto">Labour Welfare Fund is deducted in June and December for most states. There is no LWF liability for the March 2026 payroll run.</p>
-                </div>
+                </Card>
             )}
-        </div>
+        </Page>
     );
 }

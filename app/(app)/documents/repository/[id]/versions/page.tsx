@@ -1,8 +1,9 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
-import {
-    Clock, History, ArrowLeft, Download, Eye, Undo, CheckCircle2, FileText
+import { History, ArrowLeft, Download, Eye, Undo, CheckCircle2, FileText
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -15,6 +16,13 @@ const VERSIONS = [
 
 export default function DocumentVersionHistoryScreen() {
     return (
+        <Page
+            title="Appointment_Letter_RahulS.pdf"
+            subtitle="Employee Records • Rahul Sharma"
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Repository", href: "/documents/repository" }, { label: "Id" }, { label: "Versions" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-4xl mx-auto pb-12">
 
@@ -100,5 +108,7 @@ export default function DocumentVersionHistoryScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

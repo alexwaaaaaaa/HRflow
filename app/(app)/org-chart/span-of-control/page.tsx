@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import {
-    Network, ChevronRight, Download, Filter, Users, ShieldAlert, ArrowUpRight
+    Network, ChevronRight, Download, Filter, ShieldAlert, ArrowUpRight
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
@@ -18,6 +20,13 @@ const SPAN_DISTRIBUTION = [
 
 export default function SpanOfControlReportScreen() {
     return (
+        <Page
+            title="Span of Control Analysis"
+            subtitle="Potential organizational bloat"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Span Of Control" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -96,7 +105,7 @@ export default function SpanOfControlReportScreen() {
                                     <tr key={idx} className="hover:bg-[#1A2A3A]/20 transition-colors">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
-                                                <img src={`https://i.pravatar.cc/150?u=mgr${idx}`} className="w-8 h-8 rounded-full" alt="mgr" />
+                                                <Image src={`https://i.pravatar.cc/150?u=mgr${idx}`} width={32} height={32} className="w-8 h-8 rounded-full" alt="mgr" />
                                                 <div>
                                                     <div className="text-sm font-bold text-white">{row.name}</div>
                                                     <div className="text-[10px] text-[#8899AA]">{row.role} · {row.dept}</div>
@@ -141,5 +150,7 @@ export default function SpanOfControlReportScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

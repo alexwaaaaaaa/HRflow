@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
     QrCode, Download, Settings, RefreshCw, Printer, AlertCircle, Maximize2
 } from 'lucide-react';
 
 export default function QRCodeAttendance() {
     return (
+        <Page
+            title="QR Code Attendance Kiosk"
+            subtitle="Generate dynamic or static QR codes for employees to scan via the HRflow mobile app."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Qr Kiosk" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-5xl mx-auto space-y-6">
 
@@ -123,5 +132,7 @@ export default function QRCodeAttendance() {
                 }
             `}} />
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Search, Download, Filter, User, Settings, Lock, CheckCircle2 } from "lucide-react";
 
@@ -44,6 +46,12 @@ export default function AuditLogs() {
     );
 
     return (
+        <Page
+            title="Audit Logs"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Audit Logs" }]}
+            maxWidth="900px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -134,5 +142,7 @@ export default function AuditLogs() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

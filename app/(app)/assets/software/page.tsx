@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { KeySquare, Download, Filter, Search, ShieldCheck, AlertCircle, ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
+import { KeySquare, Download, Filter, Search, AlertCircle, ArrowUpRight } from 'lucide-react';
 
 const SOFTWARE = [
     { id: 'SW-001', name: 'Google Workspace Enterprise', total: 500, used: 450, cost: '₹2,50,000', renew: 'Mar 31, 2026', owner: 'IT Dept', status: 'Healthy' },
@@ -15,6 +16,13 @@ export default function SoftwareLicensesScreen() {
     const [search, setSearch] = useState('');
 
     return (
+        <Page
+            title="Software & SaaS Licenses"
+            subtitle="Manage vendor contracts, seat utilization, and upcoming renewals."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Software" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -76,6 +84,8 @@ export default function SoftwareLicensesScreen() {
                             {SOFTWARE.filter(f => !search || f.name.toLowerCase().includes(search.toLowerCase())).map((row, i) => {
                                 const utilization = (row.used / row.total) * 100;
                                 return (
+
+
                                     <tr key={i} className="border-b border-[#1A2A3A] hover:bg-[#131B2B]/50 transition-colors group">
                                         <td className="p-4">
                                             <div className="font-bold text-white group-hover:text-pink-400 transition-colors cursor-pointer">{row.name}</div>
@@ -102,12 +112,16 @@ export default function SoftwareLicensesScreen() {
                                             </span>
                                         </td>
                                     </tr>
-                                )
+                                
+        
+)
                             })}
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

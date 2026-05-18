@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Target, ArrowLeft, Plus, CheckCircle2, Circle } from 'lucide-react';
 import Link from 'next/link';
@@ -12,6 +14,13 @@ export default function MyGoalsScreen() {
     ];
 
     return (
+        <Page
+            title="My Performance Goals"
+            subtitle="Track your objectives, key results, and managerial feedback for FY 2026."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Goals" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2">
                 <ArrowLeft size={14} /> Back to Dashboard
@@ -75,5 +84,7 @@ export default function MyGoalsScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

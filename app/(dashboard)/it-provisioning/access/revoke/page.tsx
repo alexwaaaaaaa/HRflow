@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Search, Lock, UserMinus, ShieldCheck, CheckCircle2 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import Image from "next/image";
 
 // --- Mock Data ---
 const ACTIVE_APPS = [
@@ -46,7 +47,7 @@ export default function AccessRevocationScreen() {
                         {/* Selected Employee Context */}
                         <div className="flex items-center gap-4 p-4 rounded-xl bg-[#0066FF]/5 border border-[#0066FF]/30 ring-1 ring-[#0066FF]/20 shadow-[0_0_15px_rgba(0,102,255,0.05)]" aria-live="polite">
                             <div className="relative flex-shrink-0">
-                                <img src="https://i.pravatar.cc/150?u=sarah" alt="Sarah Connor" className="w-12 h-12 rounded-full border border-[#1A2A3A] object-cover" />
+                                <Image src="https://i.pravatar.cc/150?u=sarah" alt="Sarah Connor" className="w-12 h-12 rounded-full border border-[#1A2A3A] object-cover" width={48} height={48} />
                                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#FF4444] border-2 border-[#060B14] rounded-full flex items-center justify-center text-white" aria-hidden="true">
                                     <UserMinus size={10} />
                                 </div>

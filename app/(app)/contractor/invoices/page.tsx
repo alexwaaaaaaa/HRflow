@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { FileText, ArrowLeft, Upload, Search, CheckCircle2, Clock, Eye, Download } from 'lucide-react';
+import { FileText, ArrowLeft, Upload, Search, Clock, Eye, Download } from 'lucide-react';
 import Link from 'next/link';
 
 const INVOICES = [
@@ -20,6 +22,13 @@ export default function ContractorInvoiceScreen() {
     const [search, setSearch] = useState('');
 
     return (
+        <Page
+            title="Contractor Invoices"
+            subtitle="Upload, review, and approve invoices. TDS is automatically calculated based on contractor profile."
+            breadcrumbs={[{ label: "Contractor", href: "/contractor" }, { label: "Invoices" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <Link href="/contractor/list" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Contractor Payroll</Link>
             <div className="flex items-center justify-between">
@@ -118,5 +127,7 @@ export default function ContractorInvoiceScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

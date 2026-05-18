@@ -1,8 +1,9 @@
 "use client";
 
-import { Monitor, Laptop, Server, Tag, User, MapPin, Calendar, Clock, AlertTriangle, FileText, Settings, History, Wrench, RefreshCw, X } from "lucide-react";
+import { Laptop, Server, Tag, User, MapPin, Calendar, FileText, Settings, History, Wrench, RefreshCw } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
+import Image from "next/image";
 
 // --- Types & Interfaces ---
 interface SpecItem {
@@ -133,7 +134,7 @@ export default function AssetDetailScreen() {
                             {/* Employee Card */}
                             <a href="/it-provisioning/vendors" className="flex items-center gap-4 mb-8 p-4 rounded-xl bg-[#060B14] border border-[#1A2A3A] hover:border-[#334455] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0066FF] group">
                                 <div className="relative flex-shrink-0">
-                                    <img src="https://i.pravatar.cc/150?u=sarah" alt="Profile of Sarah Connor" className="w-12 h-12 rounded-full border border-[#1A2A3A] object-cover" />
+                                    <Image src="https://i.pravatar.cc/150?u=sarah" alt="Profile of Sarah Connor" className="w-12 h-12 rounded-full border border-[#1A2A3A] object-cover" width={48} height={48} />
                                     <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#00E5A0] border-2 border-[#060B14] rounded-full" aria-label="Status: Active"></span>
                                 </div>
                                 <div>

@@ -1,11 +1,13 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
-    LineChart as ChartIcon, ChevronRight, Activity, Users, Filter, Download
+    LineChart as ChartIcon, ChevronRight, Activity, Filter, Download
 } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
 
 const ATTRITION_TREND = [
@@ -25,6 +27,13 @@ const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ec4899'];
 
 export default function WorkforceAnalyticsScreen() {
     return (
+        <Page
+            title="Workforce Analytics"
+            subtitle="Healthy ratio"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Analytics" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -132,5 +141,7 @@ export default function WorkforceAnalyticsScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

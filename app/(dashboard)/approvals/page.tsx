@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight, Filter, Search, Check, X } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Search, Check, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 const tabs = ["All (23)", "Leave (14)", "Overtime (6)", "Regularization (2)", "WFH (1)"];
@@ -166,7 +167,7 @@ export default function PendingApprovals() {
                         <div className="flex flex-col items-end justify-center w-36 gap-2">
                             <Button size="sm" className="w-full h-9 shadow-sm">Approve</Button>
                             <Button variant="ghost" size="sm" className="w-full h-9 text-[#FF4444] border hover:bg-[rgba(255,68,68,0.1)] hover:border-[#FF4444]">Reject</Button>
-                            <a href="/employees" style={{ fontSize: 12, color: "#0066FF", marginTop: 4 }} className="hover:underline">View Profile →</a>
+                            <Link href="/employees" style={{ fontSize: 12, color: "#0066FF", marginTop: 4 }} className="hover:underline">View Profile →</Link>
                         </div>
 
                     </div>

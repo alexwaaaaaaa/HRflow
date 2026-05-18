@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { DollarSign, Search, ArrowRightLeft, RefreshCw, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -7,6 +9,13 @@ export default function CurrencyMgmtScreen() {
     const [base, setBase] = useState('INR');
 
     return (
+        <Page
+            title="Multi-Currency Settings"
+            subtitle="Configure reporting currencies, exchange rate synchronization, and baseline corporate currency."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Currency" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -126,5 +135,7 @@ export default function CurrencyMgmtScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

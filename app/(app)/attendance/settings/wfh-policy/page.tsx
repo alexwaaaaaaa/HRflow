@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Save } from "lucide-react";
 
@@ -39,6 +41,13 @@ export default function WFHPolicy() {
     };
 
     return (
+        <Page
+            title="WFH Policy Settings"
+            subtitle="Configure work-from-home rules for your organization"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Wfh Policy" }]}
+            maxWidth="900px"
+        >
+
         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -109,5 +118,7 @@ export default function WFHPolicy() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

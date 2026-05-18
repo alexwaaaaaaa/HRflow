@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { HardHat, FileCheck, DollarSign, Calendar, Paperclip, ChevronRight } from 'lucide-react';
+import { HardHat, FileCheck, Paperclip, ChevronRight } from 'lucide-react';
 
 export default function ContractorTimesheetScreen() {
     return (
+        <Page
+            title="Contractor Portal"
+            subtitle="Submit billable hours, upload vendor invoices, and track payment status."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Contractor Timesheet" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -108,5 +117,7 @@ export default function ContractorTimesheetScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

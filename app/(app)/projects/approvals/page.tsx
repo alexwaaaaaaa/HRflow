@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Check, X, Search, Filter, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Check, X, Filter, ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export default function ApprovalsScreen() {
     const [activeTab, setActiveTab] = useState('timesheets');
 
     return (
+        <Page
+            title="Approvals Inbox"
+            subtitle="Review and approve timesheets, expenses, and time-off prior to payroll/billing cycles."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Approvals" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -113,5 +122,7 @@ export default function ApprovalsScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

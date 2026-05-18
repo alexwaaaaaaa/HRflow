@@ -1,12 +1,90 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    AlertTriangle, RefreshCw, Upload, Download,
-    FileText, ArrowRight, ShieldCheck, CheckCircle2,
-    XCircle, Database, Search, FileEdit, Info,
-    ShieldAlert, BadgeInfo, Filter
-} from 'lucide-react';
+import React, { useState } from "react";
+import { AlertTriangle, RefreshCw, Download, FileText, CheckCircle2, Info, ShieldAlert, BadgeInfo } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+interface MismatchRow {
+    id: string;
+    name: string;
+    pan: string;
+    panInvalid?: boolean;
+    isNew?: boolean;
+    hrflowGross: string;
+    hrflowTds: string;
+    aisGross?: string;
+    aisTds?: string;
+    diff?: string;
+    diffVariant?: "danger";
+    noRecord?: boolean;
+    action: string;
+}
+
+const MISMATCHES: MismatchRow[] = [
+    { id: "1", name: "Vikram Singh", pan: "AVXPS9876K", hrflowGross: "₹4,50,000", hrflowTds: "₹45,000", aisGross: "₹4,50,000", aisTds: "₹42,500", diff: "-₹2,500", diffVariant: "danger", action: "Investigate" },
+    { id: "2", name: "Sneha Gupta", pan: "SNEHG123X", panInvalid: true, isNew: true, hrflowGross: "₹1,20,000", hrflowTds: "₹12,000", noRecord: true, action: "Verify PAN" },
+];
+
+const COLUMNS: Column<MismatchRow>[] = [
+    {
+        key: "employee",
+        label: "Employee Details",
+        render: (r) => (
+            <div>
+                <div className="flex items-center gap-2 mb-1">
+                    <p className="text-sm font-semibold text-white">{r.name}</p>
+                    {r.isNew && <Badge variant="warning">NEW EMP</Badge>}
+                </div>
+                <p className={`text-xs font-mono ${r.panInvalid ? "text-[#FF4444]" : "text-[#8899AA]"}`}>PAN: {r.pan}</p>
+            </div>
+        ),
+    },
+    {
+        key: "hrflow",
+        label: "HRFlow TDS Booked",
+        render: (r) => (
+            <div>
+                <p className="text-sm text-white">{r.hrflowGross} <span className="text-xs text-[#8899AA]">Gross</span></p>
+                <p className="text-sm font-semibold text-[#FFB800]">{r.hrflowTds} <span className="text-xs text-[#8899AA]">TDS</span></p>
+            </div>
+        ),
+    },
+    {
+        key: "ais",
+        label: "AIS Portal Data",
+        render: (r) => r.noRecord ? (
+            <div className="flex items-center gap-1.5 text-xs text-[#FFB800] font-semibold">
+                <BadgeInfo size={14} aria-hidden="true" /> No records found on TRACES for this PAN.
+            </div>
+        ) : (
+            <div>
+                <p className="text-sm text-[#8899AA]">{r.aisGross} <span className="text-xs">Gross</span></p>
+                <p className="text-sm text-[#c8d8e8]">{r.aisTds} <span className="text-xs">TDS</span></p>
+            </div>
+        ),
+    },
+    {
+        key: "diff",
+        label: "Diff",
+        render: (r) => r.diff ? (
+            <Badge variant="danger">{r.diff}</Badge>
+        ) : (
+            <span className="text-xs text-[#8899AA] font-semibold">N/A</span>
+        ),
+    },
+    {
+        key: "action",
+        label: "Action",
+        align: "right",
+        render: (r) => (
+            <Button variant="secondary" size="sm">{r.action}</Button>
+        ),
+    },
+];
 
 export default function AISReconciliationScreen() {
     const [isReconciling, setIsReconciling] = useState(false);
@@ -17,165 +95,95 @@ export default function AISReconciliationScreen() {
     };
 
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 text-slate-200 font-sans">
-            <div className="max-w-7xl mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-2">AIS Reconciliation</h1>
-                        <p className="text-sm text-[#8899AA]">Match HRFlow TDS records with Income Tax Dept AIS portal data to catch discrepancies before filing.</p>
-                    </div>
-                    <div className="flex space-x-3">
-                        <button className="px-4 py-2 bg-[#1A2A3A] border border-[#2A3A4A] text-sm font-semibold rounded-lg hover:bg-[#2A3A4A] transition-colors flex items-center text-white">
-                            <Download size={16} className="mr-2" /> Export Mismatch Report
-                        </button>
-                        <button
-                            onClick={handleReconcile}
-                            disabled={isReconciling}
-                            className="px-4 py-2 bg-[#00E5A0] text-[#060B14] font-bold text-sm rounded-lg hover:bg-[#00c98d] transition-colors flex items-center disabled:opacity-50"
-                        >
-                            {isReconciling ? <RefreshCw size={16} className="animate-spin mr-2" /> : <RefreshCw size={16} className="mr-2" />}
-                            {isReconciling ? 'Fetching Data...' : 'Run Auto-Recon (TRACES API)'}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Dashboard Stats */}
-                <div className="grid grid-cols-4 gap-4">
-                    <div className="p-5 bg-[#0D1928] border border-[#1A2A3A] rounded-xl flex items-center justify-between">
+        <Page
+            title="AIS Reconciliation"
+            subtitle="Match HRFlow TDS records with Income Tax Dept AIS portal data to catch discrepancies before filing."
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/dashboard" },
+                { label: "AIS Reconciliation" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Download size={16} />}>Export Mismatch Report</Button>
+                    <Button
+                        onClick={handleReconcile}
+                        disabled={isReconciling}
+                        isLoading={isReconciling}
+                        loadingText="Fetching Data..."
+                        icon={<RefreshCw size={16} />}
+                    >
+                        Run Auto-Recon (TRACES API)
+                    </Button>
+                </>
+            }
+        >
+            <div className="space-y-6">
+                {/* Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Card padding="md" className="flex items-center justify-between">
                         <div>
-                            <div className="text-xs text-[#8899AA] font-semibold mb-1 uppercase tracking-wider">Total PANs Checked</div>
-                            <div className="text-2xl font-black text-white">405 / 412</div>
+                            <p className="text-xs text-[#8899AA] font-semibold mb-1 uppercase tracking-wider">Total PANs Checked</p>
+                            <p className="text-2xl font-black text-white">405 / 412</p>
                         </div>
-                        <FileText size={24} className="text-[#8899AA] opacity-50" />
-                    </div>
-                    <div className="p-5 bg-[#00E5A0]/5 border border-[#00E5A0]/20 rounded-xl flex items-center justify-between">
+                        <FileText size={24} className="text-[#8899AA] opacity-50" aria-hidden="true" />
+                    </Card>
+                    <Card padding="md" className="bg-[#00E5A0]/5 border border-[#00E5A0]/20 flex items-center justify-between">
                         <div>
-                            <div className="text-xs text-[#00E5A0] font-semibold mb-1 uppercase tracking-wider">Perfect Match</div>
-                            <div className="text-2xl font-black text-[#00E5A0]">382</div>
+                            <p className="text-xs text-[#00E5A0] font-semibold mb-1 uppercase tracking-wider">Perfect Match</p>
+                            <p className="text-2xl font-black text-[#00E5A0]">382</p>
                         </div>
-                        <CheckCircle2 size={24} className="text-[#00E5A0] opacity-50" />
-                    </div>
-                    <div className="p-5 bg-[#FF4444]/5 border border-[#FF4444]/20 rounded-xl flex items-center justify-between shadow-[0_0_15px_rgba(255,68,68,0.1)]">
+                        <CheckCircle2 size={24} className="text-[#00E5A0] opacity-50" aria-hidden="true" />
+                    </Card>
+                    <Card padding="md" className="bg-[#FF4444]/5 border border-[#FF4444]/20 flex items-center justify-between">
                         <div>
-                            <div className="text-xs text-[#FF4444] font-semibold mb-1 uppercase tracking-wider">Mismatches Found</div>
-                            <div className="text-2xl font-black text-[#FF4444] flex items-center">
-                                14 <span className="text-xs bg-[#FF4444] text-white px-2 py-0.5 rounded-full ml-2">Action Req</span>
+                            <p className="text-xs text-[#FF4444] font-semibold mb-1 uppercase tracking-wider">Mismatches Found</p>
+                            <div className="flex items-center gap-2">
+                                <p className="text-2xl font-black text-[#FF4444]">14</p>
+                                <Badge variant="danger">Action Req</Badge>
                             </div>
                         </div>
-                        <AlertTriangle size={24} className="text-[#FF4444] opacity-50" />
-                    </div>
-                    <div className="p-5 bg-[#FFB800]/5 border border-[#FFB800]/20 rounded-xl flex items-center justify-between">
+                        <AlertTriangle size={24} className="text-[#FF4444] opacity-50" aria-hidden="true" />
+                    </Card>
+                    <Card padding="md" className="bg-[#FFB800]/5 border border-[#FFB800]/20 flex items-center justify-between">
                         <div>
-                            <div className="text-xs text-[#FFB800] font-semibold mb-1 uppercase tracking-wider">Invalid / Unverified PANs</div>
-                            <div className="text-2xl font-black text-[#FFB800]">9</div>
+                            <p className="text-xs text-[#FFB800] font-semibold mb-1 uppercase tracking-wider">Invalid / Unverified PANs</p>
+                            <p className="text-2xl font-black text-[#FFB800]">9</p>
                         </div>
-                        <ShieldAlert size={24} className="text-[#FFB800] opacity-50" />
-                    </div>
+                        <ShieldAlert size={24} className="text-[#FFB800] opacity-50" aria-hidden="true" />
+                    </Card>
                 </div>
 
-                {/* Mismatch Table block */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl overflow-hidden">
-                    <div className="px-6 py-4 border-b border-[#1A2A3A] bg-[#0A1420] flex justify-between items-center">
-                        <h3 className="text-sm font-bold text-white flex items-center">
-                            <AlertTriangle size={16} className="text-[#FF4444] mr-2" /> Discrepancy Queue
+                {/* Discrepancy Queue */}
+                <Card padding="none">
+                    <div className="flex justify-between items-center px-6 py-4 border-b border-[#1A2A3A]">
+                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                            <AlertTriangle size={16} className="text-[#FF4444]" aria-hidden="true" /> Discrepancy Queue
                         </h3>
-                        <div className="flex space-x-2">
-                            <FilterBtn label="All Issues" active />
-                            <FilterBtn label="TDS Mismatch" />
-                            <FilterBtn label="PAN Errors" />
+                        <div className="flex gap-2">
+                            <Button variant="secondary" size="sm">All Issues</Button>
+                            <Button variant="ghost" size="sm">TDS Mismatch</Button>
+                            <Button variant="ghost" size="sm">PAN Errors</Button>
                         </div>
                     </div>
+                    <DataTable<MismatchRow>
+                        data={MISMATCHES}
+                        columns={COLUMNS}
+                        rowKey={(r) => r.id}
+                        aria-label="AIS Discrepancy Queue"
+                        emptyTitle="No discrepancies found"
+                        emptyDescription="All PANs match the AIS portal data"
+                    />
+                </Card>
 
-                    <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1A2A3A] text-xs font-bold text-[#8899AA] uppercase tracking-wider bg-[#060B14]">
-                        <div className="col-span-3">Employee Details</div>
-                        <div className="col-span-3">HRFlow TDS Booked</div>
-                        <div className="col-span-3">AIS Portal Data</div>
-                        <div className="col-span-1 border-l border-[#1A2A3A] pl-4">Diff</div>
-                        <div className="col-span-2 text-right">Action</div>
-                    </div>
-
-                    <div className="divide-y divide-[#1A2A3A]">
-                        {/* Row 1 - TDS Mismatch */}
-                        <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center bg-[#FF4444]/5 hover:bg-[#FF4444]/10 transition-colors">
-                            <div className="col-span-3">
-                                <div className="text-sm font-bold text-white mb-0.5">Vikram Singh</div>
-                                <div className="text-xs text-[#8899AA] font-mono">PAN: AVXPS9876K</div>
-                            </div>
-
-                            <div className="col-span-3">
-                                <div className="text-sm font-medium text-white mb-0.5">₹4,50,000 <span className="text-xs text-[#8899AA]">Gross</span></div>
-                                <div className="text-sm font-bold text-[#FFB800]">₹45,000 <span className="text-xs text-[#8899AA]">TDS</span></div>
-                            </div>
-
-                            <div className="col-span-3 relative">
-                                <div className="absolute -left-3 top-2 text-[#2A3A4A]"><ArrowRight size={16} /></div>
-                                <div className="text-sm font-medium text-slate-400 mb-0.5 xl:pl-4">₹4,50,000 <span className="text-[10px] text-[#8899AA]">Gross</span></div>
-                                <div className="text-sm font-bold text-slate-300 xl:pl-4">₹42,500 <span className="text-[10px] text-[#8899AA]">TDS</span></div>
-                            </div>
-
-                            <div className="col-span-1 border-l border-[#1A2A3A] pl-4 flex items-center">
-                                <span className="inline-block px-2 py-1 bg-[#FF4444]/20 border border-[#FF4444]/30 text-[#FF4444] text-xs font-bold rounded">
-                                    -₹2,500
-                                </span>
-                            </div>
-
-                            <div className="col-span-2 flex justify-end">
-                                <button className="px-3 py-1.5 border border-[#1A2A3A] text-white font-semibold text-xs rounded-lg hover:bg-[#1A2A3A] transition-colors">
-                                    Investigate
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Row 2 - PAN Invalid */}
-                        <div className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-[#1A2A3A]/30 transition-colors">
-                            <div className="col-span-3">
-                                <div className="text-sm font-bold text-white mb-0.5">Sneha Gupta <span className="bg-[#FFB800] text-[#060B14] text-[10px] px-1 py-0.5 rounded ml-1 font-bold">NEW EMP</span></div>
-                                <div className="text-xs text-[#FF4444] font-mono border border-[#FF4444]/30 bg-[#FF4444]/10 inline-block px-1 rounded mt-0.5">PAN: SNEHG123X</div>
-                            </div>
-
-                            <div className="col-span-3">
-                                <div className="text-sm font-medium text-white mb-0.5">₹1,20,000 <span className="text-xs text-[#8899AA]">Gross</span></div>
-                                <div className="text-sm font-bold text-white">₹12,000 <span className="text-xs text-[#8899AA]">TDS</span></div>
-                            </div>
-
-                            <div className="col-span-3">
-                                <div className="text-xs text-[#FFB800] font-semibold flex items-center px-4 h-full border-l border-r border-[#1A2A3A]/0">
-                                    <BadgeInfo size={14} className="mr-1.5" /> No records found on TRACES for this PAN.
-                                </div>
-                            </div>
-
-                            <div className="col-span-1 border-l border-[#1A2A3A] pl-4 flex items-center">
-                                <span className="text-[#8899AA] text-xs font-semibold">N/A</span>
-                            </div>
-
-                            <div className="col-span-2 flex justify-end">
-                                <button className="px-3 py-1.5 border border-[#1A2A3A] text-white font-semibold text-xs rounded-lg hover:bg-[#1A2A3A] transition-colors">
-                                    Verify PAN
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Legend/Info */}
-                <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-lg p-4 flex items-start space-x-3 text-sm">
-                    <Info size={18} className="text-[#0066FF] mt-0.5 flex-shrink-0" />
-                    <div className="text-[#8899AA]">
+                {/* Info */}
+                <Card padding="md" className="flex items-start gap-3">
+                    <Info size={18} className="text-[#0066FF] mt-0.5 shrink-0" aria-hidden="true" />
+                    <p className="text-sm text-[#8899AA]">
                         <strong className="text-white">Why rely on this?</strong> Any mismatch between HRFlow and TRACES AIS can lead to Form 16s generating with wrong amounts, triggering IT notices for employees. Always clear this queue before doing bulk Form 16 generation.
-                    </div>
-                </div>
-
+                    </p>
+                </Card>
             </div>
-        </div>
-    );
-}
-
-function FilterBtn({ label, active }: any) {
-    return (
-        <button className={`px-3 py-1 text-xs font-semibold rounded border transition-colors ${active ? 'bg-[#1A2A3A] border-[#2A3A4A] text-white' : 'bg-transparent border-transparent text-[#8899AA] hover:text-slate-300'}`}>
-            {label}
-        </button>
+        </Page>
     );
 }

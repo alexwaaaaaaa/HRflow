@@ -1,167 +1,220 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowLeft, Calculator, Plus, Save, Settings2 } from "lucide-react";
-import Link from "next/link";
+import { useState } from "react";
+import { Calculator, Plus, Save, Settings2 } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// migrated: immersive-ui
+
+const ELIGIBLE_ROLES = ["Sales Executive", "Account Manager", "BDM"] as const;
+
+const SLABS = [
+    { min: 0, max: 49, payout: 0 },
+    { min: 50, max: 74, payout: 50 },
+    { min: 75, max: 89, payout: 75 },
+    { min: 90, max: 99, payout: 90 },
+    { min: 100, max: 119, payout: 100 },
+    { min: 120, max: null, payout: 120 },
+] as const;
+
+const SIMULATOR_EMPLOYEES = [
+    { name: "Kavya Nair", pct: 124, var: 96000, out: 115200, payPct: 120 },
+    { name: "Rohit Joshi", pct: 85, var: 72000, out: 54000, payPct: 75 },
+    { name: "Meena Iyer", pct: 62, var: 60000, out: 30000, payPct: 50 },
+    { name: "Rahul Gupta", pct: 105, var: 80000, out: 80000, payPct: 100 },
+    { name: "Vikas Tyagi", pct: 45, var: 50000, out: 0, payPct: 0 },
+] as const;
 
 export default function VariablePaySetupPage() {
     const [planName, setPlanName] = useState("Q4 FY24-25 Sales Variable");
 
     return (
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px", display: "flex", gap: 32, flexDirection: "row", color: "#FFFFFF" }}>
+        <Page
+            title="Variable Pay Setup"
+            subtitle="Configure variable pay rules, payout frequencies, and target metrics."
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll/dashboard" },
+                { label: "Settings", href: "/payroll-settings" },
+                { label: "Variable Pay" },
+            ]}
+            maxWidth="1200px"
+        >
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {/* Config Panel */}
+                <div className="xl:col-span-2">
+                    <Card padding="lg">
+                        <div className="space-y-5">
+                            <div>
+                                <label htmlFor="vp-plan-name" className="block text-xs text-[#8899AA] mb-2">Plan Name</label>
+                                <input
+                                    id="vp-plan-name"
+                                    type="text"
+                                    value={planName}
+                                    onChange={(e) => setPlanName(e.target.value)}
+                                    className="w-full h-10 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-3 text-sm outline-none focus:border-[#00E5A0]"
+                                />
+                            </div>
 
-            {/* LEFT PANEL - CONFIG */}
-            <div style={{ flex: "0 0 640px", display: "flex", flexDirection: "column", gap: 24 }}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <p className="text-xs text-[#8899AA] mb-2">Payout Frequency</p>
+                                    <fieldset className="flex gap-4">
+                                        <legend className="sr-only">Payout frequency</legend>
+                                        {["Monthly", "Quarterly", "Annual"].map((freq) => (
+                                            <label key={freq} className="flex items-center gap-2 text-sm cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="vp-freq"
+                                                    defaultChecked={freq === "Quarterly"}
+                                                    className="accent-[#00E5A0]"
+                                                />
+                                                <span className={freq === "Quarterly" ? "text-white" : "text-[#8899AA]"}>{freq}</span>
+                                            </label>
+                                        ))}
+                                    </fieldset>
+                                </div>
+                                <div>
+                                    <label htmlFor="vp-formula" className="block text-xs text-[#8899AA] mb-2">Payout Formula Type</label>
+                                    <select
+                                        id="vp-formula"
+                                        className="w-full h-10 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-3 text-sm outline-none focus:border-[#00E5A0]"
+                                    >
+                                        <option>Target Achievement %</option>
+                                        <option>Linear Multiplier</option>
+                                        <option>Fixed Amount Matrix</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-[#8899AA] mb-2">Eligible Roles</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {ELIGIBLE_ROLES.map((role) => (
+                                        <span key={role} className="bg-[#1A2A3A] text-white px-3 py-1.5 rounded-full text-xs flex items-center gap-2">
+                                            {role}
+                                            <button type="button" className="text-[#8899AA] hover:text-white" aria-label={`Remove ${role}`}>×</button>
+                                        </span>
+                                    ))}
+                                    <Button variant="outline" size="sm" icon={<Plus size={12} aria-hidden="true" />}>Add Role</Button>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-[#1A2A3A] pt-5">
+                                <div className="flex justify-between items-center mb-4">
+                                    <p className="text-sm font-medium text-white">Payout Slabs (Target Achievement %)</p>
+                                    <Button variant="ghost" size="sm">+ Add Slab</Button>
+                                </div>
+                                <div className="space-y-2">
+                                    {SLABS.map((slab, i) => (
+                                        <div key={i} className="flex items-center gap-2 bg-[#0D1928] px-3 py-2 rounded-lg border border-[#1A2A3A] text-xs flex-wrap">
+                                            <span className="text-[#8899AA]">From:</span>
+                                            <input
+                                                type="text"
+                                                defaultValue={slab.min}
+                                                aria-label={`Slab ${i + 1} minimum achievement`}
+                                                className="w-14 h-8 bg-[#1A2A3A] rounded text-white text-center outline-none"
+                                            />
+                                            <span className="text-[#8899AA]">% to</span>
+                                            <input
+                                                type="text"
+                                                defaultValue={slab.max ?? "Max"}
+                                                disabled={slab.max === null}
+                                                aria-label={`Slab ${i + 1} maximum achievement`}
+                                                className="w-14 h-8 bg-[#1A2A3A] rounded text-center outline-none disabled:text-[#8899AA] text-white"
+                                            />
+                                            <span className="text-[#8899AA]">% achieve</span>
+                                            <span className="text-[#00E5A0] font-medium ml-auto">Payout:</span>
+                                            <input
+                                                type="text"
+                                                defaultValue={slab.payout}
+                                                aria-label={`Slab ${i + 1} payout percentage`}
+                                                className="w-14 h-8 bg-[#1A2A3A] border border-[#00E5A0]/40 rounded text-[#00E5A0] text-center outline-none font-semibold"
+                                            />
+                                            <span className="text-[#8899AA]">% of Variable Comp</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#0D1928] p-4 rounded-lg border border-dashed border-[#2A3A4A]">
+                                <div>
+                                    <label htmlFor="max-cap" className="block text-xs text-[#8899AA] mb-2">Max Payout Cap</label>
+                                    <input
+                                        id="max-cap"
+                                        type="text"
+                                        defaultValue="200%"
+                                        className="w-full h-9 bg-[#1A2A3A] border border-[#2A3A4A] rounded-lg text-white px-3 text-sm outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="tds-treatment" className="block text-xs text-[#8899AA] mb-2">TDS Treatment</label>
+                                    <select
+                                        id="tds-treatment"
+                                        className="w-full h-9 bg-[#1A2A3A] border border-[#2A3A4A] rounded-lg text-white px-3 text-sm outline-none"
+                                    >
+                                        <option>Deduct immediately (Lump sum)</option>
+                                        <option>Spread over remaining FY</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <Button className="w-full" icon={<Save size={16} aria-hidden="true" />}>
+                                Save Variable Pay Plan
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Simulator Panel */}
                 <div>
-                    <Link href="/payroll-settings" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#8899AA", textDecoration: "none", fontSize: 14, marginBottom: 16 }}>
-                        <ArrowLeft size={16} /> Back to Settings
-                    </Link>
-                    <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Variable Pay Setup</h2>
-                    <p style={{ color: "#8899AA", fontSize: 14, marginTop: 4 }}>Configure variable pay rules, payout frequencies, and target metrics.</p>
-                </div>
-
-                <div style={{ background: "#0A1420", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
-                    <div>
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Plan Name</label>
-                        <input type="text" value={planName} onChange={(e) => setPlanName(e.target.value)} style={{ width: "100%", height: 40, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }} />
-                    </div>
-
-                    <div style={{ display: "flex", gap: 24 }}>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Payout Frequency</label>
-                            <div style={{ display: "flex", gap: 12 }}>
-                                {["Monthly", "Quarterly", "Annual"].map(freq => (
-                                    <label key={freq} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer", color: freq === "Quarterly" ? "#FFFFFF" : "#8899AA" }}>
-                                        <input type="radio" name="freq" checked={freq === "Quarterly"} readOnly style={{ accentColor: "#00E5A0" }} /> {freq}
-                                    </label>
-                                ))}
+                    <Card padding="lg" className="sticky top-6">
+                        <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[#1A2A3A]">
+                            <div className="w-10 h-10 rounded-lg bg-[#00E5A0]/10 flex items-center justify-center" aria-hidden="true">
+                                <Calculator size={18} className="text-[#00E5A0]" />
+                            </div>
+                            <div>
+                                <h3 className="text-base font-semibold text-white">Formula Live Simulator</h3>
+                                <p className="text-xs text-[#8899AA] mt-0.5">Sample calculations based on active config</p>
                             </div>
                         </div>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Payout Formula Type</label>
-                            <select style={{ width: "100%", height: 40, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }}>
-                                <option>Target Achievement %</option>
-                                <option>Linear Multiplier</option>
-                                <option>Fixed Amount Matrix</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div>
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Eligible Roles</label>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                            {["Sales Executive", "Account Manager", "BDM"].map(role => (
-                                <span key={role} style={{ background: "#1A2A3A", color: "#FFFFFF", padding: "6px 12px", borderRadius: 16, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-                                    {role} <span style={{ color: "#8899AA", cursor: "pointer" }}>×</span>
-                                </span>
-                            ))}
-                            <button style={{ background: "transparent", border: "1px dashed #3A4A5A", color: "#8899AA", padding: "6px 12px", borderRadius: 16, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-                                <Plus size={14} /> Add Role
-                            </button>
-                        </div>
-                    </div>
-
-                    <hr style={{ border: "none", borderTop: "1px solid #1A2A3A", margin: "8px 0" }} />
-
-                    <div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                            <label style={{ fontSize: 14, fontWeight: 500, color: "#FFFFFF" }}>Payout Slabs (Target Achievement %)</label>
-                            <button style={{ background: "transparent", border: "none", color: "#00E5A0", fontSize: 13, cursor: "pointer" }}>+ Add Slab</button>
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                            {[
-                                { min: 0, max: 49, payout: 0 },
-                                { min: 50, max: 74, payout: 50 },
-                                { min: 75, max: 89, payout: 75 },
-                                { min: 90, max: 99, payout: 90 },
-                                { min: 100, max: 119, payout: 100 },
-                                { min: 120, max: "Max", payout: 120 },
-                            ].map((slab, i) => (
-                                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, background: "#0D1928", padding: "8px 12px", borderRadius: 8, border: "1px solid #1A2A3A" }}>
-                                    <span style={{ fontSize: 13, color: "#8899AA", width: 40 }}>From:</span>
-                                    <input type="text" defaultValue={slab.min} style={{ width: 60, height: 32, background: "#1A2A3A", border: "none", borderRadius: 4, color: "#FFF", textAlign: "center", outline: "none" }} />
-                                    <span style={{ fontSize: 13, color: "#8899AA" }}>% to</span>
-                                    <input type="text" defaultValue={slab.max} disabled={slab.max === "Max"} style={{ width: 60, height: 32, background: "#1A2A3A", border: "none", borderRadius: 4, color: slab.max === "Max" ? "#8899AA" : "#FFF", textAlign: "center", outline: "none" }} />
-                                    <span style={{ fontSize: 13, color: "#8899AA" }}>% achieve</span>
-                                    <ArrowLeft size={16} color="#4A5A6A" style={{ transform: "rotate(180deg)", margin: "0 8px" }} />
-                                    <span style={{ fontSize: 13, color: "#00E5A0", fontWeight: 500 }}>Payout:</span>
-                                    <input type="text" defaultValue={slab.payout} style={{ width: 60, height: 32, background: "#1A2A3A", border: "1px solid #00E5A040", borderRadius: 4, color: "#00E5A0", textAlign: "center", outline: "none", fontWeight: 600 }} />
-                                    <span style={{ fontSize: 13, color: "#8899AA" }}>% of Variable Comp</span>
+                        <div className="space-y-3">
+                            {SIMULATOR_EMPLOYEES.map((emp) => (
+                                <div key={emp.name} className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-4">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <span className="text-sm font-medium text-white">{emp.name}</span>
+                                        <span className={`text-xs font-semibold px-2 py-1 rounded ${emp.pct >= 100 ? "text-[#00E5A0] bg-[#00E5A0]/10" : "text-[#FFB800] bg-[#FFB800]/10"}`}>
+                                            {emp.pct}% Achieved
+                                        </span>
+                                    </div>
+                                    <dl className="space-y-1 text-xs text-[#8899AA] mb-3">
+                                        <div className="flex justify-between">
+                                            <dt>Base Variable (100%)</dt>
+                                            <dd>₹{emp.var.toLocaleString()}</dd>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <dt>Slab Applied</dt>
+                                            <dd>{emp.payPct}% Payout</dd>
+                                        </div>
+                                    </dl>
+                                    <div className="flex justify-between items-center bg-[#1A2A3A] px-3 py-2.5 rounded-lg">
+                                        <span className="text-xs text-[#c8d8e8]">Final Payout</span>
+                                        <span className={`text-base font-semibold ${emp.out > emp.var ? "text-[#00E5A0]" : emp.out === emp.var ? "text-white" : "text-[#FFB800]"}`}>
+                                            ₹{emp.out.toLocaleString()}
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
 
-                    <div style={{ display: "flex", gap: 24, background: "#0D1928", padding: 16, borderRadius: 8, border: "1px dashed #2A3A4A" }}>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: "block", fontSize: 12, color: "#8899AA", marginBottom: 6 }}>Max Payout Cap</label>
-                            <input type="text" defaultValue="200%" style={{ width: "100%", height: 36, background: "#1A2A3A", border: "1px solid #2A3A4A", borderRadius: 6, color: "#FFFFFF", padding: "0 12px", outline: "none" }} />
+                        <div className="mt-5 bg-[#1A2A3A] px-3 py-2.5 rounded-lg text-xs text-[#8899AA] text-center flex items-center justify-center gap-2">
+                            <Settings2 size={12} aria-hidden="true" /> View raw JSON calculation log
                         </div>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: "block", fontSize: 12, color: "#8899AA", marginBottom: 6 }}>TDS Treatment</label>
-                            <select style={{ width: "100%", height: 36, background: "#1A2A3A", border: "1px solid #2A3A4A", borderRadius: 6, color: "#FFFFFF", padding: "0 12px", outline: "none" }}>
-                                <option>Deduct immediately (Lump sum)</option>
-                                <option>Spread over remaining FY</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button style={{ height: 48, background: "#00E5A0", color: "#060B14", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 12 }}>
-                        <Save size={18} /> Save Variable Pay Plan
-                    </button>
+                    </Card>
                 </div>
             </div>
-
-            {/* RIGHT PANEL - SIMULATOR */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 24 }}>
-                <div style={{ background: "#0A1420", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, position: "sticky", top: 24 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, borderBottom: "1px solid #1A2A3A", paddingBottom: 16 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: 8, background: "#00E5A020", display: "flex", alignItems: "center", justifyContent: "center", color: "#00E5A0" }}>
-                            <Calculator size={20} />
-                        </div>
-                        <div>
-                            <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Formula Live Simulator</h3>
-                            <div style={{ fontSize: 13, color: "#8899AA", marginTop: 2 }}>Sample calculations based on active config</div>
-                        </div>
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                        {[
-                            { name: "Kavya Nair", pct: 124, var: 96000, out: 115200, payPct: 120, trend: "up" },
-                            { name: "Rohit Joshi", pct: 85, var: 72000, out: 54000, payPct: 75, trend: "down" },
-                            { name: "Meena Iyer", pct: 62, var: 60000, out: 30000, payPct: 50, trend: "down" },
-                            { name: "Rahul Gupta", pct: 105, var: 80000, out: 80000, payPct: 100, trend: "even" },
-                            { name: "Vikas Tyagi", pct: 45, var: 50000, out: 0, payPct: 0, trend: "down" },
-                        ].map((emp, i) => (
-                            <div key={i} style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 16 }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                                    <span style={{ fontSize: 14, fontWeight: 500 }}>{emp.name}</span>
-                                    <span style={{ fontSize: 13, fontWeight: 600, color: emp.pct >= 100 ? "#00E5A0" : "#FFB800", background: emp.pct >= 100 ? "#00E5A020" : "#FFB00020", padding: "4px 8px", borderRadius: 4 }}>
-                                        {emp.pct}% Achieved
-                                    </span>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#8899AA", marginBottom: 4 }}>
-                                    <span>Base Variable (100%)</span>
-                                    <span>₹{emp.var.toLocaleString()}</span>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#8899AA", marginBottom: 12 }}>
-                                    <span>Slab Applied</span>
-                                    <span>{emp.payPct}% Payout</span>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#1A2A3A", padding: "10px 12px", borderRadius: 6 }}>
-                                    <span style={{ fontSize: 13, color: "#CCC" }}>Final Payout</span>
-                                    <span style={{ fontSize: 16, fontWeight: 600, color: emp.out > emp.var ? "#00E5A0" : emp.out === emp.var ? "#FFF" : "#FFB800" }}>₹{emp.out.toLocaleString()}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div style={{ marginTop: 24, background: "#1A2A3A", padding: "12px", borderRadius: 8, fontSize: 12, color: "#8899AA", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                        <Settings2 size={14} /> View raw JSON calculation log
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        </Page>
     );
 }

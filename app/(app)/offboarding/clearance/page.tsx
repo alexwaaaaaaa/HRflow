@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { CheckSquare, ChevronRight, ShieldAlert, Laptop, LockKeyhole, Search } from 'lucide-react';
+import { CheckSquare, ShieldAlert, Laptop, LockKeyhole, Search } from 'lucide-react';
 
 export default function ClearanceChecklistScreen() {
     const [activeDept, setActiveDept] = useState('IT');
 
     return (
+        <Page
+            title="Department Clearances"
+            subtitle="Manage asset recovery and access revocation across organizational boundaries."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Clearance" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -114,5 +123,7 @@ export default function ClearanceChecklistScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

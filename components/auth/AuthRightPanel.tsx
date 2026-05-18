@@ -2,13 +2,19 @@
 
 import { BarChart, Bar } from 'recharts';
 import ClientOnly from "@/components/ui/ClientOnly";
-import ChartWrapper from '@/components/ui/ChartWrapper';
 
 const barData = [
     { v: 60 },
     { v: 80 },
     { v: 100 },
 ];
+
+// Fixed dimensions for the decorative micro-chart inside the floating "Employees"
+// card. Using explicit width/height avoids Recharts' `ResponsiveContainer`
+// measurement race (the parent div isn't laid out yet when the container
+// queries its rect, which produced the width(-1)/height(-1) console warning).
+const MINI_CHART_WIDTH = 200;
+const MINI_CHART_HEIGHT = 40;
 
 export default function AuthRightPanel() {
     return (
@@ -67,13 +73,16 @@ export default function AuthRightPanel() {
                     <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 12 }}>
                         Active this month
                     </div>
-                    <div style={{ height: 40 }}>
-                        <ClientOnly>
-                            <ChartWrapper height="h-full">
-                                <BarChart data={barData} barCategoryGap={4}>
-                                    <Bar dataKey="v" fill="#00E5A0" radius={[2, 2, 0, 0]} />
-                                </BarChart>
-                            </ChartWrapper>
+                    <div style={{ width: MINI_CHART_WIDTH, height: MINI_CHART_HEIGHT }}>
+                        <ClientOnly fallback={<div style={{ width: MINI_CHART_WIDTH, height: MINI_CHART_HEIGHT }} aria-hidden="true" />}>
+                            <BarChart
+                                width={MINI_CHART_WIDTH}
+                                height={MINI_CHART_HEIGHT}
+                                data={barData}
+                                barCategoryGap={4}
+                            >
+                                <Bar dataKey="v" fill="#00E5A0" radius={[2, 2, 0, 0]} />
+                            </BarChart>
                         </ClientOnly>
                     </div>
                 </div>

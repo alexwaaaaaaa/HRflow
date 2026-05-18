@@ -1,88 +1,152 @@
 "use client";
 import React from "react";
 import {
-    Users, BookOpen, GraduationCap, TrendingUp, Plus, Settings, MoreHorizontal, ArrowUpRight
+    Users, BookOpen, GraduationCap, TrendingUp, Plus, Settings, MoreHorizontal, ArrowUpRight,
 } from "lucide-react";
-import Link from "next/link";
-import ChartWrapper from '@/components/ui/ChartWrapper';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, BarChart, Bar } from 'recharts';
+import Page from "@/components/ui/Page";
+import Card, { CardHeader, CardTitle } from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+import ChartWrapper from "@/components/ui/ChartWrapper";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, BarChart, Bar } from "recharts";
 
 const ENROLLMENT_DATA = [
-    { month: 'Jan', enrolls: 400, completions: 240 },
-    { month: 'Feb', enrolls: 300, completions: 139 },
-    { month: 'Mar', enrolls: 550, completions: 380 },
-    { month: 'Apr', enrolls: 480, completions: 390 },
-    { month: 'May', enrolls: 600, completions: 480 },
-    { month: 'Jun', enrolls: 800, completions: 500 },
+    { month: "Jan", enrolls: 400, completions: 240 },
+    { month: "Feb", enrolls: 300, completions: 139 },
+    { month: "Mar", enrolls: 550, completions: 380 },
+    { month: "Apr", enrolls: 480, completions: 390 },
+    { month: "May", enrolls: 600, completions: 480 },
+    { month: "Jun", enrolls: 800, completions: 500 },
 ];
 
-const TOP_COURSES = [
+const ENGAGEMENT_DATA = [
+    { name: "Mon", hours: 420 },
+    { name: "Tue", hours: 510 },
+    { name: "Wed", hours: 640 },
+    { name: "Thu", hours: 410 },
+    { name: "Fri", hours: 680 },
+    { name: "Sat", hours: 250 },
+    { name: "Sun", hours: 290 },
+];
+
+interface TopCourse {
+    id: number;
+    title: string;
+    students: number;
+    rating: number;
+    revenue: string;
+}
+
+const TOP_COURSES: TopCourse[] = [
     { id: 1, title: "Advanced React Patterns", students: 1420, rating: 4.9, revenue: "$42k" },
     { id: 2, title: "Data Security Compliance", students: 3200, rating: 4.7, revenue: "Req" },
     { id: 3, title: "Managerial Leadership", students: 850, rating: 4.8, revenue: "$15k" },
     { id: 4, title: "AWS Cloud Architect", students: 640, rating: 4.6, revenue: "$28k" },
 ];
 
+const _TREND_VARIANT: Record<string, "success" | "danger"> = {
+    up: "success",
+    down: "danger",
+};
+
+interface KpiStat {
+    label: string;
+    value: string;
+    trend: string;
+    trendUp: boolean;
+    icon: React.ElementType;
+    colorClass: string;
+    bgClass: string;
+}
+
+const KPI_STATS: KpiStat[] = [
+    { label: "Active Learners", value: "4,821", trend: "+12%", trendUp: true, icon: Users, colorClass: "text-[#33E6FF]", bgClass: "bg-[#33E6FF]/10" },
+    { label: "Total Courses", value: "156", trend: "+4", trendUp: true, icon: BookOpen, colorClass: "text-[#FFB020]", bgClass: "bg-[#FFB020]/10" },
+    { label: "Completion Rate", value: "78.4%", trend: "+2.1%", trendUp: true, icon: GraduationCap, colorClass: "text-[#00E5A0]", bgClass: "bg-[#00E5A0]/10" },
+    { label: "Avg. Learning Time", value: "4.2h", trend: "-0.5h", trendUp: false, icon: TrendingUp, colorClass: "text-purple-400", bgClass: "bg-purple-500/10" },
+];
+
+const COURSE_COLUMNS: Column<TopCourse>[] = [
+    {
+        key: "title",
+        label: "Course Title",
+        render: (c) => (
+            <span className="font-semibold text-white">{c.title}</span>
+        ),
+        sortable: true,
+        sortValue: (c) => c.title,
+    },
+    {
+        key: "students",
+        label: "Students",
+        render: (c) => <span className="text-[#8899AA]">{c.students.toLocaleString()}</span>,
+        sortable: true,
+        sortValue: (c) => c.students,
+    },
+    {
+        key: "rating",
+        label: "Rating",
+        align: "center",
+        render: (c) => (
+            <Badge variant="warning">{c.rating} ★</Badge>
+        ),
+    },
+    {
+        key: "actions",
+        label: "",
+        align: "right",
+        render: () => (
+            <Button variant="ghost" size="sm" aria-label="More actions">
+                <MoreHorizontal size={16} aria-hidden="true" />
+            </Button>
+        ),
+    },
+];
+
 export default function LMSAdminDashboard() {
     return (
-        <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)]">
-
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">LMS Administration</h1>
-                    <p className="text-[#8899AA]">Manage courses, track enrollments, and monitor learning compliance.</p>
-                </div>
-                <div className="flex gap-3">
-                    <Link href="/lms/reports" className="px-4 py-2 border border-[#2A3A4A] bg-[#0F1C2E] text-white rounded-xl font-medium hover:bg-[#1A2A3A] transition-colors flex items-center gap-2">
-                        <Settings size={18} className="text-[#8899AA]" /> Settings
-                    </Link>
-                    <Link href="/lms/admin/course/create" className="px-5 py-2 bg-[#00E5A0] text-[#0A1420] font-bold rounded-xl hover:bg-[#00c98d] transition-colors flex items-center gap-2 shadow-lg shadow-[#00E5A0]/20">
-                        <Plus size={20} /> Create Course
-                    </Link>
-                </div>
-            </div>
-
+        <Page
+            title="LMS Administration"
+            subtitle="Manage courses, track enrollments, and monitor learning compliance"
+            breadcrumbs={[{ label: "LMS", href: "/lms/dashboard" }, { label: "Admin" }]}
+            maxWidth="1400px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Settings size={16} />} href="/lms/reports">Settings</Button>
+                    <Button variant="primary" icon={<Plus size={16} />} href="/lms/admin/course/create">Create Course</Button>
+                </>
+            }
+        >
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {[
-                    { label: "Active Learners", value: "4,821", trend: "+12%", trendUp: true, icon: Users, color: "text-[#33E6FF]", bg: "bg-[#33E6FF]/10" },
-                    { label: "Total Courses", value: "156", trend: "+4", trendUp: true, icon: BookOpen, color: "text-[#FFB020]", bg: "bg-[#FFB020]/10" },
-                    { label: "Completion Rate", value: "78.4%", trend: "+2.1%", trendUp: true, icon: GraduationCap, color: "text-[#00E5A0]", bg: "bg-[#00E5A0]/10" },
-                    { label: "Avg. Learning Time", value: "4.2h", trend: "-0.5h", trendUp: false, icon: TrendingUp, color: "text-purple-400", bg: "bg-purple-500/10" }
-                ].map((stat, i) => {
+                {KPI_STATS.map((stat) => {
                     const Icon = stat.icon;
                     return (
-                        <div key={i} className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-                            <div className={`absolute -right-6 -bottom-6 w-24 h-24 ${stat.bg} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500`}></div>
-                            <div className="flex justify-between items-start mb-4 relative z-10">
-                                <div className={`p-3 rounded-xl ${stat.bg}`}>
-                                    <Icon size={24} className={stat.color} />
+                        <Card key={stat.label} padding="lg" variant="elevated">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className={`p-3 rounded-xl ${stat.bgClass}`}>
+                                    <Icon size={24} className={stat.colorClass} aria-hidden="true" />
                                 </div>
-                                <span className={`text-xs font-bold px-2 py-1 rounded-full ${stat.trendUp ? 'bg-[#00E5A0]/10 text-[#00E5A0]' : 'bg-[#FF4444]/10 text-[#FF4444]'}`}>
-                                    {stat.trend}
-                                </span>
+                                <Badge variant={stat.trendUp ? "success" : "danger"}>{stat.trend}</Badge>
                             </div>
-                            <div className="relative z-10">
-                                <h3 className="text-3xl font-extrabold text-white mb-1">{stat.value}</h3>
-                                <p className="text-sm font-medium text-[#8899AA]">{stat.label}</p>
-                            </div>
-                        </div>
-                    )
+                            <p className="text-3xl font-extrabold text-white mb-1">{stat.value}</p>
+                            <p className="text-sm font-medium text-[#8899AA]">{stat.label}</p>
+                        </Card>
+                    );
                 })}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                {/* Charts */}
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6 shadow-xl">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold text-white">Enrollment vs Completion</h2>
+                    <Card padding="lg">
+                        <CardHeader>
+                            <CardTitle>Enrollment vs Completion</CardTitle>
                             <select className="bg-[#0A1420] border border-[#2A3A4A] text-sm text-[#8899AA] rounded-lg px-3 py-1.5 outline-none">
                                 <option>Last 6 Months</option>
                                 <option>This Year</option>
                             </select>
-                        </div>
+                        </CardHeader>
                         <div className="h-72">
                             <ChartWrapper height="h-full">
                                 <AreaChart data={ENROLLMENT_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -99,119 +163,71 @@ export default function LMSAdminDashboard() {
                                     <CartesianGrid strokeDasharray="3 3" stroke="#1A2A3A" vertical={false} />
                                     <XAxis dataKey="month" stroke="#8899AA" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} dy={10} />
                                     <YAxis stroke="#8899AA" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                                    <RechartsTooltip
-                                        contentStyle={{ backgroundColor: '#0A1420', borderColor: '#2A3A4A', borderRadius: '12px', color: '#fff' }}
-                                        itemStyle={{ color: '#fff' }}
-                                    />
+                                    <RechartsTooltip contentStyle={{ backgroundColor: "#0A1420", borderColor: "#2A3A4A", borderRadius: "12px", color: "#fff" }} itemStyle={{ color: "#fff" }} />
                                     <Area type="monotone" dataKey="enrolls" stroke="#33E6FF" strokeWidth={3} fillOpacity={1} fill="url(#colorEnrolls)" />
                                     <Area type="monotone" dataKey="completions" stroke="#00E5A0" strokeWidth={3} fillOpacity={1} fill="url(#colorCompletions)" />
                                 </AreaChart>
                             </ChartWrapper>
                         </div>
-                    </div>
+                    </Card>
 
-                    {/* Quick Actions / Course Management Table */}
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6 shadow-xl overflow-hidden">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold text-white">Top Performing Courses</h2>
-                            <button className="text-[#33E6FF] text-sm font-semibold hover:underline">View All Courses</button>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="text-xs uppercase tracking-wider text-[#8899AA] border-b border-[#1A2A3A]">
-                                        <th className="pb-3 font-semibold">Course Title</th>
-                                        <th className="pb-3 font-semibold">Students</th>
-                                        <th className="pb-3 font-semibold">Rating</th>
-                                        <th className="pb-3 font-semibold text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-[#1A2A3A]">
-                                    {TOP_COURSES.map((course) => (
-                                        <tr key={course.id} className="hover:bg-[#152336] transition-colors group">
-                                            <td className="py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-[#2A3A4A] overflow-hidden">
-                                                        <img src={`https://picsum.photos/seed/${course.id}/100/100`} alt="cover" className="w-full h-full object-cover opacity-80" />
-                                                    </div>
-                                                    <span className="font-semibold text-white group-hover:text-[#33E6FF] transition-colors">{course.title}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4 text-[#8899AA]">{course.students.toLocaleString()}</td>
-                                            <td className="py-4">
-                                                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#FFB020] bg-[#FFB020]/10 px-2.5 py-1 rounded-md">
-                                                    {course.rating} ⭐
-                                                </span>
-                                            </td>
-                                            <td className="py-4 text-right">
-                                                <button className="p-2 text-[#8899AA] hover:text-white hover:bg-[#2A3A4A] rounded-lg transition-colors">
-                                                    <MoreHorizontal size={18} />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <Card padding="lg">
+                        <CardHeader>
+                            <CardTitle>Top Performing Courses</CardTitle>
+                            <Button variant="ghost" size="sm">View All Courses</Button>
+                        </CardHeader>
+                        <DataTable<TopCourse>
+                            data={TOP_COURSES}
+                            columns={COURSE_COLUMNS}
+                            rowKey={(c) => c.id}
+                            aria-label="Top performing courses"
+                            emptyTitle="No courses found"
+                        />
+                    </Card>
                 </div>
 
-                {/* Right Sidebar widgets */}
                 <div className="space-y-8">
-
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6 shadow-xl blur-0 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
-                        <h3 className="text-lg font-bold text-white mb-4 relative z-10">Pending Approvals</h3>
-                        <div className="space-y-4 relative z-10">
-                            <div className="flex items-start justify-between p-3 bg-[#152336] border border-[#2A3A4A] rounded-xl flex-col gap-3">
-                                <div>
-                                    <p className="text-sm font-semibold text-white">Course Draft: CyberSec 101</p>
-                                    <p className="text-xs text-[#8899AA]">Submitted by IT Dept • 2 hrs ago</p>
+                    <Card padding="lg" variant="elevated">
+                        <CardTitle className="mb-4">Pending Approvals</CardTitle>
+                        <div className="space-y-4">
+                            {[
+                                { title: "Course Draft: CyberSec 101", sub: "Submitted by IT Dept · 2 hrs ago" },
+                                { title: "Budget Request: AWS Certs", sub: "Requested by Eng Team · 5 hrs ago" },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-start justify-between p-3 bg-[#152336] border border-[#2A3A4A] rounded-xl flex-col gap-3">
+                                    <div>
+                                        <p className="text-sm font-semibold text-white">{item.title}</p>
+                                        <p className="text-xs text-[#8899AA]">{item.sub}</p>
+                                    </div>
+                                    <div className="flex gap-2 w-full">
+                                        <Button variant="primary" size="sm" className="flex-1 justify-center">Approve</Button>
+                                        <Button variant="secondary" size="sm" className="flex-1 justify-center">Review</Button>
+                                    </div>
                                 </div>
-                                <div className="flex gap-2 w-full">
-                                    <button className="flex-1 py-1.5 bg-[#00E5A0] text-black text-xs font-bold rounded hover:bg-[#00c98d] transition-colors">Approve</button>
-                                    <button className="flex-1 py-1.5 bg-[#1A2A3A] text-white text-xs font-bold rounded hover:bg-[#2A3A4A] transition-colors border border-[#2A3A4A]">Review</button>
-                                </div>
-                            </div>
-                            <div className="flex items-start justify-between p-3 bg-[#152336] border border-[#2A3A4A] rounded-xl flex-col gap-3">
-                                <div>
-                                    <p className="text-sm font-semibold text-white">Budget Request: AWS Certs</p>
-                                    <p className="text-xs text-[#8899AA]">Requested by Eng Team • 5 hrs ago</p>
-                                </div>
-                                <div className="flex gap-2 w-full">
-                                    <button className="flex-1 py-1.5 bg-[#00E5A0] text-black text-xs font-bold rounded hover:bg-[#00c98d] transition-colors">Approve</button>
-                                    <button className="flex-1 py-1.5 bg-[#1A2A3A] text-white text-xs font-bold rounded hover:bg-[#2A3A4A] transition-colors border border-[#2A3A4A]">Review</button>
-                                </div>
-                            </div>
+                            ))}
                         </div>
-                        <button className="w-full mt-4 text-xs font-semibold text-[#33E6FF] hover:underline flex justify-center items-center gap-1">
-                            View all 12 requests <ArrowUpRight size={14} />
-                        </button>
-                    </div>
+                        <Button variant="ghost" size="sm" className="w-full mt-4 justify-center" iconRight={<ArrowUpRight size={14} />}>
+                            View all 12 requests
+                        </Button>
+                    </Card>
 
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6 shadow-xl">
-                        <h3 className="text-lg font-bold text-white mb-6">Learning Engagement</h3>
+                    <Card padding="lg">
+                        <CardTitle className="mb-6">Learning Engagement</CardTitle>
                         <div className="h-48">
                             <ChartWrapper height="h-full">
-                                <BarChart data={[
-                                    { name: 'Mon', hours: 420 }, { name: 'Tue', hours: 510 }, { name: 'Wed', hours: 640 },
-                                    { name: 'Thu', hours: 410 }, { name: 'Fri', hours: 680 }, { name: 'Sat', hours: 250 }, { name: 'Sun', hours: 290 }
-                                ]}>
+                                <BarChart data={ENGAGEMENT_DATA}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#1A2A3A" vertical={false} />
                                     <XAxis dataKey="name" stroke="#8899AA" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
-                                    <YAxis hide={true} />
-                                    <RechartsTooltip cursor={{ fill: '#152336' }} contentStyle={{ backgroundColor: '#0A1420', borderColor: '#2A3A4A', borderRadius: '8px', color: '#fff' }} />
+                                    <YAxis hide />
+                                    <RechartsTooltip cursor={{ fill: "#152336" }} contentStyle={{ backgroundColor: "#0A1420", borderColor: "#2A3A4A", borderRadius: "8px", color: "#fff" }} />
                                     <Bar dataKey="hours" fill="#33E6FF" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ChartWrapper>
                         </div>
-                        <p className="text-center text-xs text-[#8899AA] mt-4">Peak learning times: Wed & Fri afternoons</p>
-                    </div>
-
+                        <p className="text-center text-xs text-[#8899AA] mt-4">Peak learning times: Wed &amp; Fri afternoons</p>
+                    </Card>
                 </div>
-
             </div>
-
-        </div>
+        </Page>
     );
 }

@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Book, Code, Search, ChevronRight } from 'lucide-react';
+import { Search, ChevronRight } from 'lucide-react';
 
 export default function ApiDocumentationPage() {
     const [activeTab, setActiveTab] = useState('cURL');
 
     return (
+        <Page
+            title="List all employees"
+            subtitle="Returns a paginated list of all employees in your organization. You can filter the results by department, location, or status."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Docs" }]}
+            maxWidth="800px"
+        >
+
         <div className="flex h-[calc(100vh-80px)] overflow-hidden bg-[#060D1A]">
             {/* Sidebar Navigation */}
             <div className="w-64 border-r border-[#1A2A3A] bg-[#0A1420] overflow-y-auto hidden md:block">
@@ -158,5 +167,7 @@ req.Header.Add("Authorization", "Bearer YOUR_API_KEY")`}
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,111 +1,179 @@
 "use client";
 
 import { use, useState } from "react";
-import Link from "next/link";
 import { UserPlus, History, CheckCircle2, Copy } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 export default function RehireEmployee({ params }: { params: Promise<{ id: string }> }) {
-    const resolvedParams = use(params);
-    const empId = resolvedParams.id;
-    const [step, setStep] = useState(1);
+  const resolvedParams = use(params);
+  const empId = resolvedParams.id;
+  const [step, setStep] = useState(1);
 
+  const handleConfirm = () => {
+    // TODO: replace with real mutation
+    setStep(2);
+  };
+
+  if (step === 2) {
     return (
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 0 80px" }}>
-            <div style={{ marginBottom: 32 }}>
-                <Link href={`/employees/${empId}`} style={{ color: "#8899AA", textDecoration: "none", fontSize: 13 }}>← Back to Profile</Link>
-                <h2 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginTop: 12 }}>Rehire Employee</h2>
-                <div style={{ fontSize: 14, color: "#8899AA", marginTop: 4 }}>Restore a past employee profile with new compensation and job details.</div>
-            </div>
-
-            {/* Employee Mini Card (Past details) */}
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: "20px 24px", display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
-                <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#1A2A3A", color: "#8899AA", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700 }}>RS</div>
-                <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF" }}>Rahul Kumar Sharma</div>
-                    <div style={{ fontSize: 13, color: "#8899AA", marginTop: 2 }}>{empId} • EX-EMPLOYEE</div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 11, color: "#8899AA", marginBottom: 2, textTransform: "uppercase" }}>Previous Tenure</div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#FFFFFF", display: "flex", alignItems: "center", gap: 6 }}><History size={14} /> 2.5 Years</div>
-                </div>
-            </div>
-
-            {step === 1 ? (
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 32 }}>
-                    <h3 style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", marginBottom: 24 }}>New Employment Details</h3>
-
-                    <div style={{ display: "flex", gap: 16, marginBottom: 24, padding: "16px", background: "rgba(0,229,160,0.05)", borderRadius: 12, border: "1px solid rgba(0,229,160,0.2)" }}>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Rejoin Date *</label>
-                            <input type="date" defaultValue="2024-09-01" style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #00E5A0", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }} />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Employee ID Settings</label>
-                            <select style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                                <option>Keep Old ID ({empId})</option>
-                                <option>Generate New ID</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                        <div>
-                            <label style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>
-                                New Designation *
-                                <span style={{ color: "#0066FF", fontSize: 11, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}><Copy size={12} /> Same as before</span>
-                            </label>
-                            <select style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                                <option>Engineering Manager</option>
-                                <option selected>Staff Software Engineer</option>
-                                <option>Senior Software Engineer</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>New Department *</label>
-                            <select style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                                <option>Engineering</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>New Annual CTC (₹) *</label>
-                            <input type="number" defaultValue="2400000" style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 16, fontWeight: 600, outline: "none" }} />
-                            <div style={{ fontSize: 12, color: "#8899AA", marginTop: 6 }}>(Previous CTC: ₹18,00,000)</div>
-                        </div>
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Reporting Manager</label>
-                            <select style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                                <option>Kavya Reddy</option>
-                                <option selected>Anil Kumar</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 32 }}>
-                        <button onClick={() => setStep(2)} style={{ padding: "0 24px", height: 44, background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                            <UserPlus size={18} /> Confirm Rehire
-                        </button>
-                    </div>
-                </div>
-            ) : (
-                <div style={{ textAlign: "center", padding: "60px 0" }}>
-                    <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(0,229,160,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-                        <CheckCircle2 size={40} color="#00E5A0" />
-                    </div>
-                    <h2 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 12 }}>Employee Rehired Successfully!</h2>
-                    <p style={{ fontSize: 15, color: "#8899AA", marginBottom: 32, maxWidth: 500, margin: "0 auto 32px" }}>
-                        Rahul Sharma's profile has been activated with effect from 1st Sep 2024. Welcome email and portal access credentials have been dispatched.
-                    </p>
-
-                    <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
-                        <Link href={`/employees/${empId}`} style={{ padding: "0 24px", height: 48, background: "#00E5A0", color: "#060B14", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer", textDecoration: "none", display: "flex", alignItems: "center" }}>
-                            Go to Active Profile
-                        </Link>
-                    </div>
-                </div>
-            )}
+      <Page
+        title="Employee Rehired Successfully!"
+        breadcrumbs={[
+          { label: "Employees", href: "/employees" },
+          { label: "Rahul Sharma", href: `/employees/${empId}` },
+          { label: "Rehire" },
+        ]}
+        maxWidth="800px"
+      >
+        <div className="flex flex-col items-center py-16 text-center">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[rgba(0,229,160,0.1)]">
+            <CheckCircle2 size={40} className="text-[#00E5A0]" aria-hidden="true" />
+          </div>
+          <p className="mx-auto mb-8 max-w-[500px] text-[15px] text-[#8899AA]">
+            Rahul Sharma&apos;s profile has been activated with effect from 1st Sep 2024. Welcome
+            email and portal access credentials have been dispatched.
+          </p>
+          <Button variant="primary" href={`/employees/${empId}`}>Go to Active Profile</Button>
         </div>
+      </Page>
     );
+  }
+
+  return (
+    <Page
+      title="Rehire Employee"
+      subtitle="Restore a past employee profile with new compensation and job details."
+      breadcrumbs={[
+        { label: "Employees", href: "/employees" },
+        { label: "Rahul Sharma", href: `/employees/${empId}` },
+        { label: "Rehire" },
+      ]}
+      maxWidth="800px"
+    >
+      {/* Employee mini card */}
+      <Card padding="md" className="mb-8">
+        <div className="flex flex-wrap items-center gap-4">
+          <div
+            aria-hidden="true"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1A2A3A] text-lg font-bold text-[#8899AA]"
+          >
+            RS
+          </div>
+          <div className="flex-1">
+            <div className="text-base font-bold text-white">Rahul Kumar Sharma</div>
+            <div className="mt-0.5 text-[13px] text-[#8899AA]">{empId} · EX-EMPLOYEE</div>
+          </div>
+          <div className="text-right">
+            <div className="mb-0.5 text-[11px] uppercase text-[#8899AA]">Previous Tenure</div>
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-white">
+              <History size={14} aria-hidden="true" /> 2.5 Years
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card padding="md">
+        <h3 className="mb-6 text-lg font-semibold text-white">New Employment Details</h3>
+
+        <div className="mb-6 grid grid-cols-1 gap-4 rounded-xl border border-[rgba(0,229,160,0.2)] bg-[rgba(0,229,160,0.05)] p-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="rejoin-date" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              Rejoin Date *
+            </label>
+            <input
+              id="rejoin-date"
+              type="date"
+              defaultValue="2024-09-01"
+              className="h-11 w-full rounded-lg border border-[#00E5A0] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            />
+          </div>
+          <div>
+            <label htmlFor="emp-id-setting" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              Employee ID Settings
+            </label>
+            <select
+              id="emp-id-setting"
+              className="h-11 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            >
+              <option>Keep Old ID ({empId})</option>
+              <option>Generate New ID</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <div className="mb-1.5 flex items-center justify-between text-[13px] text-[#8899AA]">
+              New Designation *
+              <button
+                type="button"
+                className="flex items-center gap-1 text-[11px] text-[#0066FF] hover:underline"
+              >
+                <Copy size={12} aria-hidden="true" /> Same as before
+              </button>
+            </div>
+            <select
+              id="new-desig"
+              aria-label="New designation"
+              className="h-11 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            >
+              <option>Engineering Manager</option>
+              <option>Staff Software Engineer</option>
+              <option>Senior Software Engineer</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="new-dept" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              New Department *
+            </label>
+            <select
+              id="new-dept"
+              className="h-11 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            >
+              <option>Engineering</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <label htmlFor="new-ctc" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              New Annual CTC (₹) *
+            </label>
+            <input
+              id="new-ctc"
+              type="number"
+              defaultValue="2400000"
+              className="h-11 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-base font-semibold text-white outline-none"
+            />
+            <div className="mt-1.5 text-xs text-[#8899AA]">(Previous CTC: ₹18,00,000)</div>
+          </div>
+          <div>
+            <label htmlFor="new-manager" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              Reporting Manager
+            </label>
+            <select
+              id="new-manager"
+              className="h-11 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            >
+              <option>Kavya Reddy</option>
+              <option>Anil Kumar</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button
+            variant="primary"
+            icon={<UserPlus size={18} aria-hidden="true" />}
+            onClick={handleConfirm}
+          >
+            Confirm Rehire
+          </Button>
+        </div>
+      </Card>
+    </Page>
+  );
 }

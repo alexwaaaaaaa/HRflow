@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Briefcase, Search, Filter, CalendarCheck, Gift, Award, MoreHorizontal, CheckCircle2, Zap
+    Briefcase, Search, CalendarCheck, Gift, Award, MoreHorizontal, CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,6 +22,13 @@ export default function WorkAnniversaryScreen() {
     const [activeTab, setActiveTab] = useState('upcoming');
 
     return (
+        <Page
+            title="Work Anniversaries"
+            subtitle="Track and celebrate employee milestones automatically."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Anniversary" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -146,5 +155,7 @@ export default function WorkAnniversaryScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

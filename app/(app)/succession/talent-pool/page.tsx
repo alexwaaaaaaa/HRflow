@@ -1,10 +1,11 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Users, Search, Filter, Star, Briefcase, ChevronRight, TrendingUp } from 'lucide-react';
-import Link from 'next/link';
+import { Users, Search, Star, Briefcase, ChevronRight } from 'lucide-react';
 
 export default function TalentPoolScreen() {
-    const [view, setView] = useState('grid');
+    const [_view, _setView] = useState('grid');
 
     const TALENT = [
         { name: 'Elena Rodriguez', role: 'Sr. Director, Platform', perf: 'Exceeds', pot: 'High', ready: 'Now', pools: ['VP Eng Suite', 'CTO Track'], pic: 'ER' },
@@ -16,6 +17,13 @@ export default function TalentPoolScreen() {
     ];
 
     return (
+        <Page
+            title="High-Potential Talent Pool"
+            subtitle="Manage hi-po employees, track their development, and align them to critical roles."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Talent Pool" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -98,5 +106,7 @@ export default function TalentPoolScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

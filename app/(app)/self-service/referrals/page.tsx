@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { UserPlus, ArrowLeft, Copy, CheckCircle2, IndianRupee } from 'lucide-react';
 import Link from 'next/link';
@@ -14,6 +16,13 @@ export default function ReferralStatusScreen() {
     };
 
     return (
+        <Page
+            title="Employee Referral Hub"
+            subtitle="Track your referred candidates and bonus progress."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Referrals" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
             <div className="flex items-center justify-between">
@@ -93,5 +102,7 @@ export default function ReferralStatusScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

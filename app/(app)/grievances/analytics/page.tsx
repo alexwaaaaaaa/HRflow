@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { BarChart3, PieChart, TrendingUp, AlertCircle } from 'lucide-react';
+import { PieChart, TrendingUp, AlertCircle } from 'lucide-react';
 
 export default function GrievanceAnalyticsScreen() {
     return (
+        <Page
+            title="Grievance Analytics Insights"
+            subtitle="Discover trends, track SLA compliance, and monitor organizational health."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Analytics" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="mb-6">
                 <h1 className="text-2xl font-bold text-white mb-1">Grievance Analytics Insights</h1>
@@ -104,5 +113,7 @@ export default function GrievanceAnalyticsScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

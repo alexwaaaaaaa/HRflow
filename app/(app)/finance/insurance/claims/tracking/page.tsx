@@ -1,45 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    MapPin, ChevronRight, CheckCircle2, Clock, FileText, UploadCloud, AlertCircle, MessageCircle
-} from "lucide-react";
+import { CheckCircle2, Clock, FileText, UploadCloud, AlertCircle, MessageCircle } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function ClaimStatusTrackingScreen() {
+export default function ClaimStatusTrackingPage() {
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col items-center">
-
-            <div className="w-full max-w-4xl text-left mb-6">
-                <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                    <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <Link href="/finance/insurance/claims" className="hover:text-white transition-colors">Claims</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <span className="text-white">Track (CLM-881554)</span>
+        <Page
+            title="Claim Status Tracker"
+            subtitle="Real-time updates directly from your TPA (Third Party Administrator)."
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "Claims", href: "/finance/insurance/claims" },
+                { label: "Track (CLM-881554)" },
+            ]}
+            maxWidth="1000px"
+            actions={
+                <div className="text-right">
+                    <div className="text-sm font-medium text-[#8899AA] mb-1">Claim ID</div>
+                    <div className="font-mono text-xl text-indigo-400 font-bold">CLM-881554</div>
                 </div>
-
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                            <MapPin className="w-8 h-8 text-indigo-400" />
-                            Claim Status Tracker
-                        </h1>
-                        <p className="text-sm text-[#8899AA] mt-1">Real-time updates directly from your TPA (Third Party Administrator).</p>
-                    </div>
-                    <div className="text-right">
-                        <div className="text-sm font-medium text-[#8899AA] mb-1">Claim ID</div>
-                        <div className="font-mono text-xl text-indigo-400 font-bold">CLM-881554</div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
-
+            }
+        >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2 space-y-6">
-
                     {/* Summary Card */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                    <Card padding="lg">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
                                 <p className="text-[#8899AA] text-xs mb-1">Patient</p>
@@ -58,107 +46,84 @@ export default function ClaimStatusTrackingScreen() {
                                 <p className="text-amber-400 text-sm font-bold">₹12,500</p>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
                     {/* Timeline */}
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                    <Card padding="lg">
                         <h2 className="text-lg font-bold text-white mb-8">Live Timeline</h2>
-
-                        <div className="relative border-l-2 border-[#1A2A3A] ml-4 space-y-8">
-
-                            {/* Step 1: Initial */}
-                            <div className="relative pl-8">
-                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center ring-4 ring-[#0D1928]">
-                                    <CheckCircle2 className="w-3 h-3 text-[#0B1221]" />
+                        <ol className="relative border-l-2 border-[#1A2A3A] ml-4 space-y-8" aria-label="Claim progress timeline">
+                            <li className="relative pl-8">
+                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center ring-4 ring-[#0D1928]" aria-hidden="true">
+                                    <CheckCircle2 size={12} className="text-[#0B1221]" />
                                 </div>
-                                <div className="text-xs text-[#8899AA] font-mono mb-1">02 Sep 2025 • 09:14 AM</div>
+                                <div className="text-xs text-[#8899AA] font-mono mb-1">02 Sep 2025 · 09:14 AM</div>
                                 <h3 className="text-sm font-bold text-white mb-1">Claim Initiated</h3>
                                 <p className="text-xs text-[#8899AA]">Reimbursement form and initial bills submitted to TPA via HRFlow portal.</p>
-                            </div>
+                            </li>
 
-                            {/* Step 2: Query */}
-                            <div className="relative pl-8">
-                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center ring-4 ring-[#0D1928]">
-                                    <CheckCircle2 className="w-3 h-3 text-[#0B1221]" />
+                            <li className="relative pl-8">
+                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center ring-4 ring-[#0D1928]" aria-hidden="true">
+                                    <CheckCircle2 size={12} className="text-[#0B1221]" />
                                 </div>
-                                <div className="text-xs text-[#8899AA] font-mono mb-1">04 Sep 2025 • 11:30 AM</div>
+                                <div className="text-xs text-[#8899AA] font-mono mb-1">04 Sep 2025 · 11:30 AM</div>
                                 <h3 className="text-sm font-bold text-white mb-1">Document Verification</h3>
                                 <p className="text-xs text-[#8899AA]">Initial documents verified. Query raised by TPA.</p>
                                 <div className="mt-3 p-3 bg-pink-500/10 border border-pink-500/20 rounded-lg">
                                     <div className="flex items-center gap-2 text-pink-400 text-xs font-medium mb-1 border-b border-pink-500/20 pb-2">
-                                        <AlertCircle className="w-4 h-4" /> TPA Query: Missing Information
+                                        <AlertCircle size={16} aria-hidden="true" /> TPA Query: Missing Information
                                     </div>
-                                    <p className="text-xs text-white/90 mt-2">Please upload the original doctor's prescription indicating the necessity of the diagnostic tests claimed.</p>
-                                    <div className="mt-3 flex gap-2">
-                                        <button className="px-3 py-1.5 bg-pink-500 hover:bg-pink-600 text-white text-xs font-medium rounded transition-colors flex items-center gap-1">
-                                            <UploadCloud className="w-3 h-3" /> Upload PDF Response (Completed)
-                                        </button>
+                                    <p className="text-xs text-white/90 mt-2">Please upload the original doctor&apos;s prescription indicating the necessity of the diagnostic tests claimed.</p>
+                                    <div className="mt-3">
+                                        <Button variant="danger" size="sm" icon={<UploadCloud size={12} />}>Upload PDF Response (Completed)</Button>
                                     </div>
                                 </div>
-                            </div>
+                            </li>
 
-                            {/* Step 3: Current */}
-                            <div className="relative pl-8">
-                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center ring-4 ring-[#0D1928]">
-                                    <div className="w-2 h-2 bg-[#0B1221] rounded-full animate-pulse"></div>
+                            <li className="relative pl-8" aria-current="step">
+                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center ring-4 ring-[#0D1928]" aria-hidden="true">
+                                    <div className="w-2 h-2 bg-[#0B1221] rounded-full animate-pulse" />
                                 </div>
-                                <div className="text-xs text-amber-500 font-medium mb-1">IN PROGRESS</div>
+                                <Badge variant="warning" className="mb-1">In Progress</Badge>
                                 <h3 className="text-sm font-bold text-white mb-1">Medical Assessment</h3>
-                                <p className="text-xs text-[#8899AA]">TPA medical team is reviewing the submitted doctor's prescription against the policy terms and diagnostic bills.</p>
+                                <p className="text-xs text-[#8899AA]">TPA medical team is reviewing the submitted doctor&apos;s prescription against the policy terms and diagnostic bills.</p>
                                 <div className="mt-4 flex items-center gap-2 text-xs text-[#8899AA]">
-                                    <Clock className="w-4 h-4" /> Expected SLA: 3 Working Days
+                                    <Clock size={16} aria-hidden="true" /> Expected SLA: 3 Working Days
                                 </div>
-                            </div>
+                            </li>
 
-                            {/* Step 4: Future */}
-                            <div className="relative pl-8 opacity-40">
-                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-[#1A2A3A] rounded-full flex items-center justify-center ring-4 ring-[#0D1928]">
-                                </div>
-                                <h3 className="text-sm font-bold text-white mb-1">Final Approval & Payout</h3>
+                            <li className="relative pl-8 opacity-40">
+                                <div className="absolute -left-[11px] top-0.5 w-5 h-5 bg-[#1A2A3A] rounded-full ring-4 ring-[#0D1928]" aria-hidden="true" />
+                                <h3 className="text-sm font-bold text-white mb-1">Final Approval &amp; Payout</h3>
                                 <p className="text-xs text-[#8899AA]">Approved amount will be transferred directly to your registered salary bank account via NEFT.</p>
-                            </div>
-
-                        </div>
-                    </div>
+                            </li>
+                        </ol>
+                    </Card>
                 </div>
 
-                <div className="md:col-span-1 space-y-6">
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 sticky top-8">
-                        <h3 className="text-lg font-bold text-white mb-4">Support & Actions</h3>
-
+                {/* Support Sidebar */}
+                <div className="md:col-span-1">
+                    <Card padding="lg" className="sticky top-8">
+                        <h3 className="text-lg font-bold text-white mb-4">Support &amp; Actions</h3>
                         <div className="space-y-3">
-                            <button className="w-full flex items-center justify-between p-3 bg-[#1A2A3A]/40 hover:bg-[#1A2A3A] border border-[#2A3A4A] rounded-lg transition-colors group">
-                                <div className="flex items-center gap-3">
-                                    <FileText className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300" />
-                                    <span className="text-sm font-medium text-white">View Uploaded Docs</span>
-                                </div>
+                            <Button variant="secondary" className="w-full justify-between" icon={<FileText size={20} className="text-indigo-400" />}>
+                                <span className="flex-1 text-left">View Uploaded Docs</span>
                                 <span className="text-xs text-[#8899AA] bg-[#0D1928] px-2 py-1 rounded">3 Files</span>
-                            </button>
-
-                            <button className="w-full flex items-center justify-between p-3 bg-[#1A2A3A]/40 hover:bg-[#1A2A3A] border border-[#2A3A4A] rounded-lg transition-colors group">
-                                <div className="flex items-center gap-3">
-                                    <UploadCloud className="w-5 h-5 text-emerald-400 group-hover:text-emerald-300" />
-                                    <span className="text-sm font-medium text-white">Upload Additional Bill</span>
-                                </div>
-                            </button>
-
-                            <button className="w-full flex items-center justify-between p-3 bg-[#1A2A3A]/40 hover:bg-[#1A2A3A] border border-[#2A3A4A] rounded-lg transition-colors group">
-                                <div className="flex items-center gap-3">
-                                    <MessageCircle className="w-5 h-5 text-pink-400 group-hover:text-pink-300" />
-                                    <span className="text-sm font-medium text-white">Message TPA Agent</span>
-                                </div>
-                            </button>
+                            </Button>
+                            <Button variant="secondary" className="w-full justify-start" icon={<UploadCloud size={20} className="text-emerald-400" />}>
+                                Upload Additional Bill
+                            </Button>
+                            <Button variant="secondary" className="w-full justify-start" icon={<MessageCircle size={20} className="text-pink-400" />}>
+                                Message TPA Agent
+                            </Button>
                         </div>
-
                         <div className="mt-8 pt-6 border-t border-[#1A2A3A] text-center">
                             <p className="text-xs text-[#8899AA] mb-2">TPA Helpline (Star Health)</p>
                             <p className="text-lg font-mono font-bold text-white tracking-widest">1800-425-2255</p>
                             <p className="text-[10px] bg-[#1A2A3A] inline-block px-2 py-1 rounded text-[#8899AA] mt-2">Mention ID: CLM-881554</p>
                         </div>
-                    </div>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

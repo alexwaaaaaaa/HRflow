@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Bell, ArrowLeft, Zap, Shield, Sparkles } from 'lucide-react';
 import Link from 'next/link';
@@ -41,6 +43,13 @@ const TYPE_CONFIG: Record<string, { bg: string; text: string }> = {
 
 export default function ChangelogScreen() {
     return (
+        <Page
+            title="Changelog"
+            subtitle="Every update, fix, and new feature across all releases"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Changelog" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div className="flex items-center justify-between">
@@ -69,12 +78,16 @@ export default function ChangelogScreen() {
                                     const cfg = TYPE_CONFIG[item.type] ?? TYPE_CONFIG['Fixed'];
                                     const Icon = item.icon;
                                     return (
+
+
                                         <div key={i} className="flex items-start gap-3">
                                             <span className={`shrink-0 text-[10px] font-bold px-2 py-1 rounded min-w-16 text-center mt-0.5 ${cfg.bg} ${cfg.text}`}>{item.type}</span>
                                             <p className="text-[#AABBCC] text-sm leading-relaxed">{item.text}</p>
                                             <Icon size={14} className={`${cfg.text} shrink-0 mt-0.5`} />
                                         </div>
-                                    );
+                                    
+        
+);
                                 })}
                             </div>
                         </div>
@@ -82,5 +95,7 @@ export default function ChangelogScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

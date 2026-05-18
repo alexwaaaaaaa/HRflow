@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Users, FileText, IndianRupee, FileCheck, ArrowRight, Wallet, Plus, Search, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
@@ -28,7 +30,13 @@ const NAV = [
 export default function ContractorListScreen() {
     const [search, setSearch] = useState('');
     return (
-        <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
+        <Page
+            title="Contractor Payroll"
+            subtitle="Manage freelancers, agencies, TDS deductions, and invoice payments"
+            breadcrumbs={[{ label: "Contractor", href: "/contractor" }, { label: "List" }]}
+            maxWidth="1400px"
+        >
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Users size={24} className="text-indigo-400" /> Contractor Payroll</h1>
@@ -133,5 +141,6 @@ export default function ContractorListScreen() {
                 </div>
             </div>
         </div>
+        </Page>
     );
 }

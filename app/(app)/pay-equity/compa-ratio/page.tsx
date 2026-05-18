@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Users, Search, Download, BarChart2, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart2 } from 'lucide-react';
 
 export default function CompaRatioScreen() {
     const [view, setView] = useState('dept');
 
     return (
+        <Page
+            title="Compa-Ratio Analytics"
+            subtitle="Analyze employee salaries relative to the midpoint of their assigned pay bands."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Compa Ratio" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -82,6 +91,8 @@ export default function CompaRatioScreen() {
                             const avgPos = mapToPercent(d.avg);
 
                             return (
+
+
                                 <div key={i} className="relative h-full w-16 group flex flex-col items-center justify-end z-10">
                                     {/* Range Box (Min-Max) */}
                                     <div className="absolute w-6 bg-sky-500/20 border-x border-[#2A3A4A] rounded-sm transition-all hover:bg-sky-500/30 cursor-crosshair"
@@ -101,7 +112,9 @@ export default function CompaRatioScreen() {
                                         Range: {d.min.toFixed(2)} - {d.max.toFixed(2)}
                                     </div>
                                 </div>
-                            );
+                            
+        
+);
                         })}
                     </div>
                 </div>
@@ -111,5 +124,7 @@ export default function CompaRatioScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

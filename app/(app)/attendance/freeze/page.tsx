@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -19,6 +21,13 @@ export default function AttendanceFreeze() {
     const anyPending = DEPT_STATUS.some(d => d.status === "Pending");
 
     return (
+        <Page
+            title="Attendance Lock & Freeze"
+            subtitle="Finalize attendance for payroll processing — November 2024"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Freeze" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1000px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">Attendance Lock & Freeze</h2>
             <p className="text-sm text-[#8899AA] mb-6">Finalize attendance for payroll processing — November 2024</p>
@@ -115,5 +124,7 @@ export default function AttendanceFreeze() {
                 </div>
             )}
         </div>
-    );
+    
+        </Page>
+        );
 }

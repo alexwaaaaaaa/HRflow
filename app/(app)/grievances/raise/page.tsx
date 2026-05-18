@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { ShieldAlert, Info, UploadCloud, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
 
@@ -7,6 +9,13 @@ export default function RaiseGrievanceScreen() {
     const [isAnonymous, setIsAnonymous] = useState(false);
 
     return (
+        <Page
+            title="Raise a Grievance"
+            subtitle="We take all reports seriously. This portal is strictly confidential and managed by the central IC committee."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Raise" }]}
+            maxWidth="800px"
+        >
+
         <div className="min-h-screen p-6 max-w-3xl mx-auto flex flex-col justify-center py-12">
 
             <div className="mb-8 text-center">
@@ -150,5 +159,7 @@ export default function RaiseGrievanceScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Heart, MessageSquare, Medal, TrendingUp, Search, Filter, Share2, MoreHorizontal, Zap, Users, Star, Gift
+    Heart, MessageSquare, TrendingUp, Search, Filter, Share2, MoreHorizontal, Zap, Users, Star, Gift
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -16,6 +18,13 @@ export default function RecognitionFeedScreen() {
     ];
 
     return (
+        <Page
+            title="Recognition Feed"
+            subtitle="See who's making an impact and celebrate your colleagues' success."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Feed" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)]">
 
             {/* Header */}
@@ -67,6 +76,8 @@ export default function RecognitionFeedScreen() {
                         {FEED_ITEMS.map((item) => {
                             const Icon = item.icon;
                             return (
+
+
                                 <div key={item.id} className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-3xl p-6 shadow-lg hover:border-[#2A3A4A] transition-colors relative overflow-hidden">
 
                                     {/* Interactive Background Glow based on Badge */}
@@ -134,7 +145,9 @@ export default function RecognitionFeedScreen() {
                                         </button>
                                     </div>
                                 </div>
-                            );
+                            
+        
+);
                         })}
                     </div>
                 </div>
@@ -199,6 +212,8 @@ export default function RecognitionFeedScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }
 

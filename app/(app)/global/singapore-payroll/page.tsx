@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { FileText, CheckCircle2, Building, Banknote, HelpCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Building, Banknote, HelpCircle } from 'lucide-react';
 
 export default function SingaporePayrollScreen() {
     return (
@@ -115,8 +116,17 @@ export default function SingaporePayrollScreen() {
 
 function ChevronRightIcon() {
     return (
+        <Page
+            title="Singapore Payroll"
+            subtitle="Manage localized SI reporting, CPF Board submissions, and SDL contributions."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Singapore Payroll" }]}
+            maxWidth="1400px"
+        >
+
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
         </svg>
+    
+        </Page>
     );
 }

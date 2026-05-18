@@ -1,9 +1,17 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { FileBadge, ArrowRight, Save, Building2, Calendar, FileText, CheckCircle2 } from 'lucide-react';
+import { FileBadge, ArrowRight, Save, Building2, FileText } from 'lucide-react';
 
 export default function ICAnnualReportScreen() {
     return (
+        <Page
+            title="Generate Annual POSH Report"
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Annual Report" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6 py-10">
             <div className="text-center mb-10">
                 <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl mx-auto flex items-center justify-center text-emerald-400 mb-4 shadow-lg shadow-emerald-500/10">
@@ -105,5 +113,7 @@ export default function ICAnnualReportScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

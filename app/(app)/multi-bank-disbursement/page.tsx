@@ -1,10 +1,19 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import { Building2, ArrowRightLeft, CreditCard, Layers, CheckCircle2 } from "lucide-react";
 
 export default function MultiBankDisbursementPage() {
     return (
+        <Page
+            title="Multi-Bank Disbursement Setup"
+            subtitle="Allocate payroll funds across multiple company bank accounts."
+            breadcrumbs={[{ label: "Multi Bank Disbursement" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-7xl mx-auto space-y-6">
 
@@ -249,5 +258,7 @@ export default function MultiBankDisbursementPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

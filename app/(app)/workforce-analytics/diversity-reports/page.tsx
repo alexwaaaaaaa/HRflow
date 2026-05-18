@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Target, Search, Download, FileText, CheckCircle2, ChevronRight } from 'lucide-react';
 
@@ -11,6 +13,13 @@ export default function DiversityReportsScreen() {
     ];
 
     return (
+        <Page
+            title="Statutory D&I Reports"
+            subtitle="Generate compliant data dumps for BRSR, EEOC, and ESG framework submissions."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Diversity Reports" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -69,5 +78,7 @@ export default function DiversityReportsScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

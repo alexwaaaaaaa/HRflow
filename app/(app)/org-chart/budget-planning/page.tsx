@@ -1,13 +1,22 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
-    PiggyBank, ChevronRight, Save, X, Plus, Users, Calculator
+    PiggyBank, ChevronRight, Save, Calculator
 } from "lucide-react";
 
 export default function BudgetPlanningScreen() {
     return (
+        <Page
+            title="Workforce Budget Builder"
+            subtitle="Base Run Rate (Existing)"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Budget Planning" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="max-w-5xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
@@ -91,6 +100,8 @@ export default function BudgetPlanningScreen() {
                                     const meritVal = row.current * (row.merit / 100);
                                     const total = row.current + meritVal + row.newHc;
                                     return (
+
+
                                         <tr key={idx} className="hover:bg-[#1A2A3A]/20 transition-colors">
                                             <td className="p-4 text-sm font-bold text-white">{row.dept}</td>
                                             <td className="p-4 text-sm text-[#8899AA] text-right font-mono">₹{row.current.toFixed(1)} Cr</td>
@@ -114,7 +125,9 @@ export default function BudgetPlanningScreen() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    );
+                                    
+        
+);
                                 })}
                             </tbody>
                         </table>
@@ -122,5 +135,7 @@ export default function BudgetPlanningScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

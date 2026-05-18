@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { ShieldCheck, MessageSquare, Paperclip, Clock, ArrowLeft, CheckCircle2, User, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function GrievanceDetailEmployeeScreen() {
     return (
+        <Page
+            title="Case #GRV-2026-142"
+            subtitle="Reported on Oct 24, 2026 • Category: Workplace Harassment"
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Id" }, { label: "Employee" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center gap-4 border-b border-[#1A2A3A] pb-4 mb-4">
                 <Link href="/grievances/employee-dashboard" className="text-[#556677] hover:text-white transition-colors bg-[#0A1420] border border-[#1A2A3A] p-2 rounded-lg">
@@ -156,5 +165,7 @@ export default function GrievanceDetailEmployeeScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

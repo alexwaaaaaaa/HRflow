@@ -1,9 +1,18 @@
 "use client";
-import React, { useState } from 'react';
-import { UserPlus, Search, Calendar, Check, AlertCircle, Users } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { UserPlus, Search, Calendar, AlertCircle, Users } from 'lucide-react';
 
 export default function ProjectAssignmentScreen() {
     return (
+        <Page
+            title="Team & Assignments"
+            subtitle="Staff projects by searching resource availability, skills, and current bench status."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Assign" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -155,5 +164,7 @@ export default function ProjectAssignmentScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

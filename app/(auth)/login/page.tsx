@@ -1,73 +1,69 @@
+import { Suspense } from "react";
 import AuthRightPanel from "@/components/auth/AuthRightPanel";
 import LoginForm from "./LoginForm";
 
+export const metadata = {
+    title: "Sign in — HRFlow",
+    description: "Sign in to your HRFlow workspace.",
+};
+
 export default function LoginPage() {
     return (
-        <div className="flex min-h-screen" style={{ minWidth: 1440 }}>
-            {/* LEFT PANEL */}
-            <div
-                className="flex flex-col"
-                style={{
-                    width: 600,
-                    minWidth: 600,
-                    background: "#060B14",
-                    padding: "40px 80px",
-                    position: "relative",
-                }}
-            >
+        <div className="flex min-h-screen flex-col lg:flex-row">
+            {/* ── Left panel — form ── */}
+            <div className="flex w-full flex-col px-6 py-10 sm:px-12 lg:w-[520px] lg:min-w-[520px] lg:px-16 xl:w-[600px] xl:min-w-[600px] xl:px-20 bg-[#060B14]">
                 {/* Logo */}
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                        <div
-                            style={{
-                                width: 32,
-                                height: 32,
-                                borderRadius: "50%",
-                                background: "#00E5A0",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#060B14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <div className="w-8 h-8 rounded-full bg-[#00E5A0] flex items-center justify-center flex-shrink-0">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path
+                                    d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                                    stroke="#060B14"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
                             </svg>
                         </div>
-                        <span style={{ fontSize: 24, fontWeight: 700, color: "#00E5A0" }}>HRFlow</span>
+                        <span className="text-2xl font-bold text-[#00E5A0]">HRFlow</span>
                     </div>
-                    <span style={{ fontSize: 12, color: "#8899AA" }}>India&apos;s Most Intelligent HRMS</span>
+                    <span className="text-xs text-[#8899AA]">India&apos;s Most Intelligent HRMS</span>
                 </div>
 
-                {/* Main content — centered vertically */}
-                <div className="flex-1 flex flex-col justify-center">
-                    <h1 style={{ fontSize: 32, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>
-                        Welcome back
-                    </h1>
-                    <p style={{ fontSize: 14, color: "#8899AA", marginTop: 8, marginBottom: 32 }}>
+                {/* Form — vertically centred on large screens */}
+                <div className="flex flex-1 flex-col justify-center py-10">
+                    <h1 className="text-3xl font-bold text-white">Welcome back</h1>
+                    <p className="mt-2 mb-8 text-sm text-[#8899AA]">
                         Sign in to your HRFlow workspace
                     </p>
 
-                    <LoginForm />
+                    <Suspense
+                        fallback={
+                            <div className="h-[280px] w-full animate-pulse rounded-lg bg-[#0D1928]" />
+                        }
+                    >
+                        <LoginForm />
+                    </Suspense>
 
-                    <p style={{ fontSize: 14, color: "#8899AA", marginTop: 24, textAlign: "center" }}>
+                    <p className="mt-6 text-center text-sm text-[#8899AA]">
                         New to HRFlow?{" "}
-                        <a href="/company-setup/start" style={{ color: "#00E5A0" }}>
+                        <a href="/company-setup/start" className="text-[#00E5A0] hover:underline">
                             Request a Demo
                         </a>
                     </p>
                 </div>
 
                 {/* Footer */}
-                <p
-                    className="absolute"
-                    style={{ bottom: 24, left: 0, right: 0, textAlign: "center", fontSize: 12, color: "#445566" }}
-                >
-                    © 2024 HRFlow Technologies Pvt. Ltd.
+                <p className="text-center text-xs text-[#445566]">
+                    © {new Date().getFullYear()} HRFlow Technologies Pvt. Ltd.
                 </p>
             </div>
 
-            {/* RIGHT PANEL */}
-            <AuthRightPanel />
+            {/* ── Right panel — decorative (hidden on mobile) ── */}
+            <div className="hidden flex-1 lg:flex">
+                <AuthRightPanel />
+            </div>
         </div>
     );
 }

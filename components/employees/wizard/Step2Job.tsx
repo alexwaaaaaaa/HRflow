@@ -18,7 +18,7 @@ function Field({ label, hint, required, children, cols }: { label: string; hint?
     );
 }
 
-export default function Step2Job({ data, onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
+export default function Step2Job({ data: _data, onUpdate: _onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
     return (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 32, alignItems: "start" }}>
             {/* LEFT — Form */}

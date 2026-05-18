@@ -1,9 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
 import {
-    Calendar, Download, Filter, Search, MapPin, Home,
-    PieChart, MonitorSmartphone
+    Calendar, Download, Filter, Search, MapPin, Home, MonitorSmartphone
 } from 'lucide-react';
 
 export default function WfhVsOfficeReport() {
@@ -15,6 +16,13 @@ export default function WfhVsOfficeReport() {
     ];
 
     return (
+        <Page
+            title="WFH vs Office Delivery"
+            subtitle="Track hybrid work compliance and location-based attendance metrics."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Reports", href: "/attendance/reports" }, { label: "Wfh Office" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -157,5 +165,7 @@ export default function WfhVsOfficeReport() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

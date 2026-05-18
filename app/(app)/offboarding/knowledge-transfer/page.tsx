@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Share2, FileCode2, Users, CheckCircle2, ChevronRight, Video } from 'lucide-react';
+import { Share2, FileCode2, CheckCircle2, Video } from 'lucide-react';
 
 export default function KnowledgeTransferScreen() {
     return (
+        <Page
+            title="Knowledge Transfer Hub"
+            subtitle="Track handover documentation, recorded walkthroughs, and transition meetings before employee departure."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Knowledge Transfer" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -101,5 +110,7 @@ export default function KnowledgeTransferScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

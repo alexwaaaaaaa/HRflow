@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { UserPlus, ShieldCheck, AlertCircle, RefreshCw, BarChart2 } from 'lucide-react';
 
@@ -16,6 +18,13 @@ export default function FairPayCheckScreen() {
     };
 
     return (
+        <Page
+            title="Pre-Offer Fair Pay Interceptor"
+            subtitle="Validate proposed candidate offers against internal equity models before HR approval."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Fair Pay Check" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -117,5 +126,7 @@ export default function FairPayCheckScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

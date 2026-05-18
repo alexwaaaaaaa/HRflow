@@ -1,168 +1,285 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-    ArrowLeft, Clock, Server, Paperclip, Send, AlertCircle,
-    CheckCircle2, Info, Lock, FastForward, GitMerge, Settings
+    Paperclip, Send, CheckCircle2, Lock, FastForward, GitMerge, Settings, X,
 } from "lucide-react";
-import Link from "next/link";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function HRTicketDetail() {
+interface Message {
+    id: number;
+    sender: string;
+    role: string;
+    time: string;
+    content: string;
+    attachments?: string[];
+    internal: boolean;
+}
+
+const MOCK_MESSAGES: Message[] = [
+    {
+        id: 1,
+        sender: "Arjun Mehta",
+        role: "Employee",
+        time: "Today, 10:30 AM",
+        content: "Hi team, I am unable to access the Jira project boards. It says my license has expired. Could you please provision access? Attached is the screenshot.",
+        attachments: ["jira_error.png"],
+        internal: false,
+    },
+    {
+        id: 2,
+        sender: "System",
+        role: "Bot",
+        time: "Today, 10:31 AM",
+        content: "Ticket auto-routed to IT Support based on keyword 'Jira'. SLA First Response: 2h. SLA Resolution: 8h.",
+        internal: true,
+    },
+    {
+        id: 3,
+        sender: "Amit Verma",
+        role: "IT Agent",
+        time: "Today, 11:15 AM",
+        content: "Hi Arjun, looking into this now. It seems your Atlassian group assignment was missed during onboarding. I am syncing the groups now, it should work in 15 mins. Please confirm once able to access.",
+        internal: false,
+    },
+    {
+        id: 4,
+        sender: "Amit Verma",
+        role: "IT Agent",
+        time: "Today, 11:16 AM",
+        content: "Added to the engineering-jira-users group in Okta. Waiting for sync.",
+        internal: true,
+    },
+];
+
+function MessageBubble({ msg }: { readonly msg: Message }) {
+    if (msg.role === "Bot") {
+        return (
+            <div className="flex justify-center">
+                <div className="flex items-center gap-2 rounded-full border border-[#2A3A4A] bg-[#1A2A3A] px-4 py-2 text-xs text-[#8899AA]">
+                    <Settings size={14} className="text-[#9D00FF]" aria-hidden="true" />
+                    {msg.content}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col">
+            <div className="mb-2 flex items-center gap-3">
+                {msg.role === "Employee" ? (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1A2A3A] text-xs font-bold text-white">
+                        AM
+                    </div>
+                ) : (
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#33E6FF] text-xs font-bold text-[#0A1420]">
+                        AV
+                    </div>
+                )}
+                <span className="text-[15px] font-semibold text-white">{msg.sender}</span>
+                <Badge variant="success">{msg.role}</Badge>
+                {msg.internal && (
+                    <Badge variant="warning">
+                        <Lock size={10} aria-hidden="true" /> Internal Note
+                    </Badge>
+                )}
+                <span className="ml-2 text-xs text-[#445566]">{msg.time}</span>
+            </div>
+            <div
+                className={`ml-11 max-w-[85%] rounded-2xl rounded-tl-sm border p-4 text-sm leading-relaxed ${
+                    msg.internal
+                        ? "border-l-4 border-[#FFB020]/20 border-l-[#FFB020] bg-[#FFB020]/5 text-[#FFB020]"
+                        : msg.role === "Employee"
+                        ? "border-[#2A3A4A] bg-[#1A2A3A] text-white"
+                        : "border-[#33E6FF]/30 bg-[#0A1420] text-white"
+                }`}
+            >
+                {msg.content}
+                {msg.attachments && (
+                    <div className="mt-3 flex gap-2">
+                        {msg.attachments.map((att) => (
+                            <div
+                                key={att}
+                                className="flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-[#2A3A4A] bg-[#0A1420] px-3 py-2 transition-colors hover:border-[#33E6FF]"
+                            >
+                                <Paperclip size={14} className="text-[#8899AA]" aria-hidden="true" />
+                                <span className="text-xs font-medium text-white">{att}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default function HRTicketDetailPage() {
     const [reply, setReply] = useState("");
     const [replyType, setReplyType] = useState<"public" | "internal">("public");
 
-    const MOCK_MESSAGES = [
-        { id: 1, sender: "Arjun Mehta", role: "Employee", time: "Today, 10:30 AM", content: "Hi team, I am unable to access the Jira project boards. It says my license has expired. Could you please provision access? Attached is the screenshot.", attachments: ["jira_error.png"], internal: false },
-        { id: 2, sender: "System", role: "Bot", time: "Today, 10:31 AM", content: "Ticket auto-routed to IT Support based on keyword 'Jira'. SLA First Response: 2h. SLA Resolution: 8h.", internal: true },
-        { id: 3, sender: "Amit Verma", role: "IT Agent", time: "Today, 11:15 AM", content: "Hi Arjun, looking into this now. It seems your Atlassian group assignment was missed during onboarding. I am syncing the groups now, it should work in 15 mins. Please confirm once able to access.", internal: false },
-        { id: 4, sender: "Amit Verma", role: "IT Agent", time: "Today, 11:16 AM", content: "Added to the engineering-jira-users group in Okta. Waiting for sync.", internal: true },
-    ];
-
     return (
-        <div className="p-6 max-w-[1400px] mx-auto h-[calc(100vh-80px)] flex flex-col">
+        <Page
+            title="Cannot access Jira board"
+            subtitle="TKT-4492"
+            breadcrumbs={[
+                { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                { label: "Management", href: "/helpdesk/management" },
+                { label: "TKT-4492" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <>
 
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6 shrink-0">
-                <div className="flex items-center gap-4">
-                    <Link href="/helpdesk/management" className="w-10 h-10 rounded-xl bg-[#1A2A3A] flex items-center justify-center text-[#8899AA] hover:text-white transition-colors border border-[#2A3A4A]">
-                        <ArrowLeft size={20} />
-                    </Link>
-                    <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <span className="text-white font-mono text-sm font-semibold">TKT-4492</span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#FFB020] bg-[#FFB020]/10 border border-[#FFB020]/20 px-2 py-0.5 rounded">In Progress</span>
-                        </div>
-                        <h1 className="text-2xl font-bold text-white">Cannot access Jira board</h1>
-                    </div>
-                </div>
-                <div className="flex gap-3">
-                    <button className="px-4 py-2 bg-[#1A2A3A] text-white rounded-lg border border-[#2A3A4A] hover:bg-[#2A3A4A] transition-colors text-sm font-medium flex items-center gap-2">
-                        <GitMerge size={16} /> Merge
-                    </button>
-                    <button className="px-4 py-2 bg-[#1A2A3A] text-white rounded-lg border border-[#2A3A4A] hover:bg-[#2A3A4A] transition-colors text-sm font-medium flex items-center gap-2">
-                        <FastForward size={16} /> Apply Macro
-                    </button>
-                    <button className="px-5 py-2 bg-[#00E5A0] text-[#0A1420] rounded-lg hover:bg-[#00c98d] transition-colors text-sm font-semibold flex items-center gap-2 shadow-[0_5px_15px_rgba(0,229,160,0.2)]">
-                        <CheckCircle2 size={16} /> Mark Resolved
-                    </button>
-                </div>
-            </div>
 
-            <div className="flex gap-6 flex-1 min-h-0">
 
+
+
+
+                    <Button variant="secondary" icon={<GitMerge size={16} aria-hidden="true" />}>
+                        Merge
+                    </Button>
+                    <Button variant="secondary" icon={<FastForward size={16} aria-hidden="true" />}>
+                        Apply Macro
+                    </Button>
+                    <Button icon={<CheckCircle2 size={16} aria-hidden="true" />}>
+                        Mark Resolved
+                    </Button>
+                </>
+            }
+        >
+            <div className="flex gap-6">
                 {/* Main Chat Thread */}
-                <div className="flex-1 bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl flex flex-col overflow-hidden">
-
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-[#1A2A3A] bg-[#0F1C2E]">
                     {/* Thread Canvas */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div className="flex-1 space-y-6 overflow-y-auto p-6">
                         {MOCK_MESSAGES.map((msg) => (
-                            <div key={msg.id} className="flex flex-col">
-                                <div className="flex items-center gap-3 mb-2">
-                                    {msg.role === "Employee" ? (
-                                        <div className="w-8 h-8 rounded-full bg-[#1A2A3A] flex items-center justify-center font-bold text-xs text-white">AM</div>
-                                    ) : msg.role === "Bot" ? (
-                                        <div className="w-8 h-8 rounded-full bg-[#9D00FF]/20 text-[#9D00FF] flex items-center justify-center border border-[#9D00FF]/30"><Settings size={14} /></div>
-                                    ) : (
-                                        <div className="w-8 h-8 rounded-full bg-[#33E6FF] flex items-center justify-center font-bold text-xs text-[#0A1420]">AV</div>
-                                    )}
-                                    <span className="font-semibold text-white text-[15px]">{msg.sender}</span>
-                                    <span className="text-[10px] text-[#00E5A0] bg-[#00E5A0]/10 px-2 py-0.5 rounded font-mono">{msg.role}</span>
-                                    {msg.internal && <span className="text-[10px] flex items-center gap-1 text-[#FFB020] bg-[#FFB020]/10 border border-[#FFB020]/20 px-2 py-0.5 rounded uppercase font-bold"><Lock size={10} /> Internal Note</span>}
-                                    <span className="text-xs text-[#445566] ml-2">{msg.time}</span>
-                                </div>
-
-                                <div className={`ml-11 max-w-[85%] p-4 rounded-2xl rounded-tl-sm text-sm leading-relaxed border ${msg.internal
-                                        ? 'bg-[#FFB020]/5 text-[#FFB020] border-[#FFB020]/20 border-l-4 border-l-[#FFB020]'
-                                        : msg.role === "Employee"
-                                            ? 'bg-[#1A2A3A] text-white border-[#2A3A4A]'
-                                            : 'bg-[#0A1420] text-white border-[#33E6FF]/30'
-                                    }`}>
-                                    {msg.content}
-
-                                    {/* Attachments */}
-                                    {msg.attachments && (
-                                        <div className="mt-3 flex gap-2">
-                                            {msg.attachments.map(att => (
-                                                <div key={att} className="flex items-center gap-2 bg-[#0A1420] border border-[#2A3A4A] rounded-lg px-3 py-2 cursor-pointer hover:border-[#33E6FF] transition-colors w-fit">
-                                                    <Paperclip size={14} className="text-[#8899AA]" />
-                                                    <span className={`text-xs font-medium ${msg.internal ? 'text-[#FFB020]' : 'text-white'}`}>{att}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <MessageBubble key={msg.id} msg={msg} />
                         ))}
                     </div>
 
                     {/* Reply Box */}
-                    <div className="p-4 bg-[#152336] border-t border-[#1A2A3A]">
-                        {/* Reply mode toggle */}
-                        <div className="flex mb-2 bg-[#1A2A3A] w-fit p-1 rounded-lg border border-[#2A3A4A]">
+                    <div className="border-t border-[#1A2A3A] bg-[#152336] p-4">
+                        <div className="mb-2 flex w-fit rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] p-1">
                             <button
+                                type="button"
                                 onClick={() => setReplyType("public")}
-                                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${replyType === 'public' ? 'bg-[#33E6FF] text-[#0A1420]' : 'text-[#8899AA] hover:text-white'}`}
-                            >Public Reply</button>
+                                className={`rounded-md px-4 py-1.5 text-xs font-bold transition-all ${
+                                    replyType === "public"
+                                        ? "bg-[#33E6FF] text-[#0A1420]"
+                                        : "text-[#8899AA] hover:text-white"
+                                }`}
+                            >
+                                Public Reply
+                            </button>
                             <button
+                                type="button"
                                 onClick={() => setReplyType("internal")}
-                                className={`px-4 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5 transition-all ${replyType === 'internal' ? 'bg-[#FFB020] text-[#0A1420]' : 'text-[#8899AA] hover:text-white'}`}
-                            ><Lock size={12} /> Internal Note</button>
+                                className={`flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-bold transition-all ${
+                                    replyType === "internal"
+                                        ? "bg-[#FFB020] text-[#0A1420]"
+                                        : "text-[#8899AA] hover:text-white"
+                                }`}
+                            >
+                                <Lock size={12} aria-hidden="true" /> Internal Note
+                            </button>
                         </div>
 
-                        <div className={`bg-[#0A1420] border rounded-xl overflow-hidden transition-colors ${replyType === 'public' ? 'border-[#2A3A4A] focus-within:border-[#33E6FF]' : 'border-[#FFB020]/30 focus-within:border-[#FFB020]'}`}>
+                        <div
+                            className={`overflow-hidden rounded-xl border transition-colors ${
+                                replyType === "public"
+                                    ? "border-[#2A3A4A] focus-within:border-[#33E6FF]"
+                                    : "border-[#FFB020]/30 focus-within:border-[#FFB020]"
+                            } bg-[#0A1420]`}
+                        >
                             <textarea
                                 value={reply}
                                 onChange={(e) => setReply(e.target.value)}
-                                placeholder={replyType === 'public' ? "Type your reply to Arjun..." : "Type an internal note (only visible to agents)..."}
-                                className={`w-full bg-transparent p-4 text-sm focus:outline-none resize-none min-h-[100px] ${replyType === 'internal' ? 'text-[#FFB020] placeholder:text-[#FFB020]/50' : 'text-white'}`}
-                            ></textarea>
-                            <div className="bg-[#1A2A3A] px-4 py-2 flex items-center justify-between border-t border-[#2A3A4A]">
-                                <div className="flex items-center gap-2">
-                                    <button className="p-2 text-[#8899AA] hover:text-white hover:bg-[#2A3A4A] rounded-lg transition-colors">
-                                        <Paperclip size={18} />
-                                    </button>
-                                </div>
+                                placeholder={
+                                    replyType === "public"
+                                        ? "Type your reply to Arjun..."
+                                        : "Type an internal note (only visible to agents)..."
+                                }
+                                aria-label={replyType === "public" ? "Public reply" : "Internal note"}
+                                className={`min-h-[100px] w-full resize-none bg-transparent p-4 text-sm outline-none ${
+                                    replyType === "internal"
+                                        ? "text-[#FFB020] placeholder:text-[#FFB020]/50"
+                                        : "text-white"
+                                }`}
+                            />
+                            <div className="flex items-center justify-between border-t border-[#2A3A4A] bg-[#1A2A3A] px-4 py-2">
                                 <button
-                                    disabled={!reply.trim()}
-                                    className={`px-6 py-2 font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 ${replyType === 'public' ? 'bg-[#33E6FF] text-[#0A1420] hover:bg-[#29b8cc]' : 'bg-[#FFB020] text-[#0A1420] hover:bg-[#e09918]'
-                                        }`}
+                                    type="button"
+                                    aria-label="Attach file"
+                                    className="rounded-lg p-2 text-[#8899AA] transition-colors hover:bg-[#2A3A4A] hover:text-white"
                                 >
-                                    {replyType === 'public' ? "Send Publicly" : "Add Note"} <Send size={16} />
+                                    <Paperclip size={18} aria-hidden="true" />
                                 </button>
+                                <Button
+                                    disabled={!reply.trim()}
+                                    icon={<Send size={16} aria-hidden="true" />}
+                                    variant={replyType === "public" ? "primary" : "secondary"}
+                                >
+                                    {replyType === "public" ? "Send Publicly" : "Add Note"}
+                                </Button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Sidebar: Meta Data */}
+                {/* Right Sidebar */}
                 <div className="w-[340px] shrink-0 space-y-6">
-
                     {/* Requester Info */}
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-4 border-b border-[#1A2A3A] pb-2 text-sm uppercase tracking-wider text-[#8899AA]">Requester</h3>
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-[#1A2A3A] text-white flex items-center justify-center font-bold">AM</div>
+                    <Card padding="lg">
+                        <h3 className="mb-4 border-b border-[#1A2A3A] pb-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                            Requester
+                        </h3>
+                        <div className="mb-4 flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1A2A3A] font-bold text-white">
+                                AM
+                            </div>
                             <div>
-                                <h4 className="text-white font-semibold">Arjun Mehta</h4>
+                                <h4 className="font-semibold text-white">Arjun Mehta</h4>
                                 <p className="text-xs text-[#8899AA]">Frontend Dev • Joined Mar 10</p>
                             </div>
                         </div>
                         <div className="space-y-2 text-xs text-[#8899AA]">
-                            <div className="flex justify-between"><span className="font-medium text-[#445566]">Email</span> <span className="text-white">arjun.m@techcorp.com</span></div>
-                            <div className="flex justify-between"><span className="font-medium text-[#445566]">Dept</span> <span className="text-white">Engineering</span></div>
-                            <div className="flex justify-between"><span className="font-medium text-[#445566]">Location</span> <span className="text-white">Bangalore</span></div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-[#445566]">Email</span>
+                                <span className="text-white">arjun.m@techcorp.com</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-[#445566]">Dept</span>
+                                <span className="text-white">Engineering</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="font-medium text-[#445566]">Location</span>
+                                <span className="text-white">Bangalore</span>
+                            </div>
                         </div>
-                        <button className="w-full mt-4 py-1.5 text-xs font-semibold text-[#00E5A0] bg-[#00E5A0]/10 border border-[#00E5A0]/20 rounded-lg hover:bg-[#00E5A0]/20 transition-colors">
-                            View Emloyee Profile
-                        </button>
-                    </div>
+                        <Button variant="ghost" size="sm" className="mt-4 w-full">
+                            View Employee Profile
+                        </Button>
+                    </Card>
 
                     {/* Ticket Properties */}
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-4 border-b border-[#1A2A3A] pb-2 text-sm uppercase tracking-wider text-[#8899AA]">Properties</h3>
+                    <Card padding="lg">
+                        <h3 className="mb-4 border-b border-[#1A2A3A] pb-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                            Properties
+                        </h3>
                         <div className="space-y-4 text-sm">
                             <div>
-                                <span className="text-[#8899AA] block mb-1 text-xs font-semibold">Assignee</span>
-                                <select className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#00E5A0]">
+                                <label
+                                    htmlFor="assignee"
+                                    className="mb-1 block text-xs font-semibold text-[#8899AA]"
+                                >
+                                    Assignee
+                                </label>
+                                <select
+                                    id="assignee"
+                                    className="w-full rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] px-3 py-2 text-sm text-white outline-none focus:border-[#00E5A0]"
+                                >
                                     <option>Amit Verma (Me)</option>
                                     <option>System (Unassigned)</option>
                                     <option>Rahul Deshmukh</option>
@@ -170,8 +287,16 @@ export default function HRTicketDetail() {
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <span className="text-[#8899AA] block mb-1 text-xs font-semibold">Priority</span>
-                                    <select className="w-full bg-[#1A2A3A] border border-[#FF4444]/50 border-l-4 border-l-[#FF4444] text-[#FF4444] rounded-lg px-3 py-2 text-sm font-bold focus:outline-none">
+                                    <label
+                                        htmlFor="priority"
+                                        className="mb-1 block text-xs font-semibold text-[#8899AA]"
+                                    >
+                                        Priority
+                                    </label>
+                                    <select
+                                        id="priority"
+                                        className="w-full rounded-lg border border-[#FF4444]/50 bg-[#1A2A3A] px-3 py-2 text-sm font-bold text-[#FF4444] outline-none"
+                                    >
                                         <option>High</option>
                                         <option>Critical</option>
                                         <option>Medium</option>
@@ -179,53 +304,95 @@ export default function HRTicketDetail() {
                                     </select>
                                 </div>
                                 <div>
-                                    <span className="text-[#8899AA] block mb-1 text-xs font-semibold">Category</span>
-                                    <select className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:outline-none">
+                                    <label
+                                        htmlFor="category"
+                                        className="mb-1 block text-xs font-semibold text-[#8899AA]"
+                                    >
+                                        Category
+                                    </label>
+                                    <select
+                                        id="category"
+                                        className="w-full rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] px-3 py-2 text-sm text-white outline-none"
+                                    >
                                         <option>IT Support</option>
                                         <option>HR Ops</option>
                                     </select>
                                 </div>
                             </div>
                             <div>
-                                <span className="text-[#8899AA] block mb-1 text-xs font-semibold">Tags</span>
+                                <span className="mb-1 block text-xs font-semibold text-[#8899AA]">Tags</span>
                                 <div className="flex flex-wrap gap-2">
-                                    <span className="text-xs bg-[#1A2A3A] text-white px-2 py-1 rounded border border-[#2A3A4A] flex items-center gap-1">jira <X size={12} className="cursor-pointer hover:text-[#FF4444]" /></span>
-                                    <span className="text-xs bg-[#1A2A3A] text-white px-2 py-1 rounded border border-[#2A3A4A] flex items-center gap-1">access <X size={12} className="cursor-pointer hover:text-[#FF4444]" /></span>
-                                    <button className="text-xs text-[#8899AA] hover:text-[#00E5A0] px-2 py-1">+ Add</button>
+                                    <span className="flex items-center gap-1 rounded border border-[#2A3A4A] bg-[#1A2A3A] px-2 py-1 text-xs text-white">
+                                        jira{" "}
+                                        <button type="button" aria-label="Remove jira tag">
+                                            <X size={12} className="cursor-pointer hover:text-[#FF4444]" aria-hidden="true" />
+                                        </button>
+                                    </span>
+                                    <span className="flex items-center gap-1 rounded border border-[#2A3A4A] bg-[#1A2A3A] px-2 py-1 text-xs text-white">
+                                        access{" "}
+                                        <button type="button" aria-label="Remove access tag">
+                                            <X size={12} className="cursor-pointer hover:text-[#FF4444]" aria-hidden="true" />
+                                        </button>
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className="px-2 py-1 text-xs text-[#8899AA] hover:text-[#00E5A0]"
+                                    >
+                                        + Add
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
                     {/* SLAs */}
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-6">
-                        <h3 className="font-bold text-white mb-4 border-b border-[#1A2A3A] pb-2 text-sm uppercase tracking-wider text-[#8899AA]">SLAs</h3>
+                    <Card padding="lg">
+                        <h3 className="mb-4 border-b border-[#1A2A3A] pb-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                            SLAs
+                        </h3>
                         <div className="space-y-4">
                             <div>
-                                <div className="flex justify-between text-xs mb-1">
+                                <div className="mb-1 flex justify-between text-xs">
                                     <span className="text-[#8899AA]">First Response SLA</span>
-                                    <span className="text-[#00E5A0] font-bold">Met (45m ago)</span>
+                                    <span className="font-bold text-[#00E5A0]">Met (45m ago)</span>
                                 </div>
-                                <div className="w-full h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#00E5A0] w-full"></div>
+                                <div
+                                    className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A2A3A]"
+                                    role="progressbar"
+                                    aria-valuenow={100}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label="First response SLA: met"
+                                >
+                                    <div className="h-full w-full bg-[#00E5A0]" />
                                 </div>
                             </div>
                             <div>
-                                <div className="flex justify-between text-xs mb-1">
+                                <div className="mb-1 flex justify-between text-xs">
                                     <span className="text-[#8899AA]">Resolution SLA</span>
-                                    <span className="text-[#FFB020] font-bold">Due in 4h 15m</span>
+                                    <span className="font-bold text-[#FFB020]">Due in 4h 15m</span>
                                 </div>
-                                <div className="w-full h-1.5 bg-[#1A2A3A] rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#FFB020] w-[60%]"></div>
+                                <div
+                                    className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A2A3A]"
+                                    role="progressbar"
+                                    aria-valuenow={60}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label="Resolution SLA: 60% elapsed"
+                                >
+                                    <div className="h-full w-[60%] bg-[#FFB020]" />
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
-        </div>
+        
+
+        
+
+        
+
+        </Page>
     );
 }
-
-// Ensure X is available for the tags
-import { X } from "lucide-react";

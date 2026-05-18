@@ -1,116 +1,231 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Search, Edit2, History, AlertTriangle, Plus, Minus, ArrowRight
-} from 'lucide-react';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { AlertTriangle, ArrowRight, Minus, Plus, Search } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 
-export default function LeaveAdjustmentScreen() {
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema
+// ─────────────────────────────────────────────────────────────────────────────
+
+const adjustmentSchema = z.object({
+    employee: z.string().min(1, "Employee is required"),
+    leaveType: z.enum(["EL", "SL", "CL"]),
+    days: z.number().min(0.5, "Minimum 0.5 days").max(365),
+    reason: z.string().min(5, "Reason must be at least 5 characters"),
+});
+
+type AdjustmentValues = z.infer<typeof adjustmentSchema>;
+
+const CURRENT_BALANCE = 14.5;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function LeaveAdjustmentPage() {
+    const toast = useToast();
+    const [action, setAction] = useState<"credit" | "deduct">("credit");
+
+    const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm<AdjustmentValues>({
+        resolver: zodResolver(adjustmentSchema),
+        defaultValues: {
+            employee: "Arjun Mehta (EMP042)",
+            leaveType: "EL",
+            days: 2,
+            reason: "Correcting missing joining credit",
+        },
+    });
+
+    const [previewDays, setPreviewDays] = useState(2);
+    const newBalance = action === "credit" ? CURRENT_BALANCE + previewDays : CURRENT_BALANCE - previewDays;
+
+    const onSubmit = async (_data: AdjustmentValues) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 800));
+        toast.show({
+            variant: "success",
+            title: "Adjustment applied",
+            description: `Balance updated to ${newBalance.toFixed(1)} days.`,
+        });
+    };
+
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-4xl mx-auto space-y-6">
-
-                {/* Header */}
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white mb-1">Manual Leave Adjustment</h1>
-                        <p className="text-sm text-[#8899AA]">Directly credit or deduct leave balances for an employee outside the normal accrual cycle.</p>
+        <Page
+            title="Manual Leave Adjustment"
+            subtitle="Directly credit or deduct leave balances for an employee outside the normal accrual cycle"
+            breadcrumbs={[
+                { label: "Leave", href: "/leave/dashboard" },
+                { label: "Adjustment" },
+            ]}
+            maxWidth="900px"
+        >
+            <Card padding="lg">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" aria-label="Leave adjustment form">
+                    {/* Employee */}
+                    <div className="space-y-2">
+                        <label htmlFor="employee-search" className="text-sm font-bold text-[#8899AA]">
+                            Select Employee
+                        </label>
+                        <div className="relative">
+                            <Search
+                                size={18}
+                                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#556677]"
+                                aria-hidden="true"
+                            />
+                            <input
+                                id="employee-search"
+                                type="text"
+                                placeholder="Search by name or emp ID…"
+                                {...register("employee")}
+                                className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] py-3 pl-10 pr-3 text-sm text-white outline-none focus:border-[#0066FF]"
+                            />
+                            {errors.employee && (
+                                <p role="alert" className="mt-1 text-xs text-[#FF4444]">{errors.employee.message}</p>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl shadow-lg p-8">
-                    <form className="space-y-8">
+                    {/* Leave type & current balance */}
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div className="space-y-2">
+                            <label htmlFor="leave-type" className="text-sm font-bold text-[#8899AA]">
+                                Leave Type
+                            </label>
+                            <select
+                                id="leave-type"
+                                className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm font-bold text-white outline-none focus:border-[#0066FF]"
+                            >
+                                <option value="EL">Privilege Leave (EL)</option>
+                                <option value="SL">Sick Leave (SL)</option>
+                                <option value="CL">Casual Leave (CL)</option>
+                            </select>
+                        </div>
+                        <div className="flex items-center justify-between rounded-lg border border-[#1A2A3A] bg-[#0A1420] p-3">
+                            <span className="text-sm font-bold text-[#8899AA]">Current Balance:</span>
+                            <span className="text-xl font-black text-white">
+                                {CURRENT_BALANCE}{" "}
+                                <span className="block text-right text-sm font-bold text-[#556677]">days</span>
+                            </span>
+                        </div>
+                    </div>
 
-                        {/* Employee Select */}
-                        <div className="space-y-3">
-                            <label className="text-sm font-bold text-[#8899AA]">Select Employee</label>
-                            <div className="relative">
-                                <Search size={18} className="absolute left-3 top-3 text-[#556677]" />
+                    <hr className="border-[#1A2A3A]" />
+
+                    {/* Action */}
+                    <fieldset>
+                        <legend className="mb-4 text-sm font-bold text-[#8899AA]">Adjustment Action</legend>
+                        <div className="flex gap-6">
+                            <label className="flex cursor-pointer items-center gap-3">
                                 <input
-                                    type="text"
-                                    placeholder="Search by name or emp ID..."
-                                    className="w-full bg-[#060B14] border border-[#1A2A3A] text-white rounded-lg pl-10 pr-3 py-3 outline-none focus:border-[#0066FF] text-sm"
-                                    defaultValue="Arjun Mehta (EMP042)"
+                                    type="radio"
+                                    name="action"
+                                    value="credit"
+                                    checked={action === "credit"}
+                                    onChange={() => setAction("credit")}
+                                    className="sr-only"
                                 />
-                            </div>
-                        </div>
-
-                        {/* Leave Type & Current Bal */}
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-3">
-                                <label className="text-sm font-bold text-[#8899AA]">Leave Type</label>
-                                <select className="w-full bg-[#060B14] border border-[#1A2A3A] text-white font-bold rounded-lg p-3 outline-none focus:border-[#0066FF]">
-                                    <option>Privilege Leave (EL)</option>
-                                    <option>Sick Leave (SL)</option>
-                                    <option>Casual Leave (CL)</option>
-                                </select>
-                            </div>
-                            <div className="bg-[#0A1420] border border-[#1A2A3A] p-3 rounded-lg flex items-center justify-between">
-                                <span className="text-sm font-bold text-[#8899AA]">Current Balance:</span>
-                                <span className="text-xl font-black text-white px-4">14.5 <span className="text-sm text-[#556677] font-bold block -mt-1 text-right">days</span></span>
-                            </div>
-                        </div>
-
-                        <hr className="border-[#1A2A3A]" />
-
-                        {/* Adjustment Action */}
-                        <div>
-                            <label className="text-sm font-bold text-[#8899AA] block mb-4">Adjustment Action</label>
-                            <div className="flex space-x-6">
-                                <label className="flex items-center space-x-3 cursor-pointer group">
-                                    <div className="w-10 h-10 rounded-lg border-2 border-[#00E5A0] bg-[#00E5A0]/10 flex items-center justify-center text-[#00E5A0]">
-                                        <Plus size={20} className="stroke-[3]" />
-                                    </div>
-                                    <span className="font-bold text-white">Credit (+)</span>
-                                </label>
-                                <label className="flex items-center space-x-3 cursor-pointer group opacity-50 hover:opacity-100 transition-opacity">
-                                    <div className="w-10 h-10 rounded-lg border-2 border-[#1A2A3A] bg-[#060B14] flex items-center justify-center text-[#8899AA]">
-                                        <Minus size={20} className="stroke-[3]" />
-                                    </div>
-                                    <span className="font-bold text-[#8899AA]">Deduct (-)</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        {/* Days & Reason */}
-                        <div className="grid grid-cols-3 gap-6">
-                            <div className="space-y-3">
-                                <label className="text-sm font-bold text-[#8899AA]">Days</label>
+                                <div
+                                    className={`flex h-10 w-10 items-center justify-center rounded-lg border-2 transition-colors ${
+                                        action === "credit"
+                                            ? "border-[#00E5A0] bg-[#00E5A0]/10 text-[#00E5A0]"
+                                            : "border-[#1A2A3A] bg-[#060B14] text-[#8899AA]"
+                                    }`}
+                                >
+                                    <Plus size={20} className="stroke-[3]" aria-hidden="true" />
+                                </div>
+                                <span className={`font-bold ${action === "credit" ? "text-white" : "text-[#8899AA]"}`}>
+                                    Credit (+)
+                                </span>
+                            </label>
+                            <label className="flex cursor-pointer items-center gap-3">
                                 <input
-                                    type="number"
-                                    step="0.5"
-                                    defaultValue={2}
-                                    className="w-full bg-[#060B14] border border-[#00E5A0]/50 text-[#00E5A0] font-black text-xl rounded-lg p-3 outline-none focus:border-[#00E5A0] text-center"
+                                    type="radio"
+                                    name="action"
+                                    value="deduct"
+                                    checked={action === "deduct"}
+                                    onChange={() => setAction("deduct")}
+                                    className="sr-only"
                                 />
-                            </div>
-                            <div className="space-y-3 col-span-2">
-                                <label className="text-sm font-bold text-[#8899AA]">Reason / Remarks</label>
-                                <input
-                                    type="text"
-                                    placeholder="E.g., Joining bonus leave credit"
-                                    className="w-full bg-[#060B14] border border-[#1A2A3A] text-white text-sm rounded-lg p-3 outline-none focus:border-[#0066FF]"
-                                    defaultValue="Correcting missing joining credit"
-                                />
-                            </div>
+                                <div
+                                    className={`flex h-10 w-10 items-center justify-center rounded-lg border-2 transition-colors ${
+                                        action === "deduct"
+                                            ? "border-[#FF4444] bg-[#FF4444]/10 text-[#FF4444]"
+                                            : "border-[#1A2A3A] bg-[#060B14] text-[#8899AA]"
+                                    }`}
+                                >
+                                    <Minus size={20} className="stroke-[3]" aria-hidden="true" />
+                                </div>
+                                <span className={`font-bold ${action === "deduct" ? "text-white" : "text-[#8899AA]"}`}>
+                                    Deduct (-)
+                                </span>
+                            </label>
                         </div>
+                    </fieldset>
 
-                        <div className="bg-[#FFB800]/10 border border-[#FFB800]/20 p-4 rounded-lg flex items-start text-sm">
-                            <AlertTriangle size={18} className="text-[#FFB800] mr-3 flex-shrink-0" />
-                            <div className="text-[#FFB800]">
-                                This action will update the balance immediately and will be recorded in the audit logs. The new balance will be <strong className="text-white">16.5 days</strong>.
-                            </div>
+                    {/* Days & reason */}
+                    <div className="grid gap-6 sm:grid-cols-3">
+                        <div className="space-y-2">
+                            <label htmlFor="days-input" className="text-sm font-bold text-[#8899AA]">Days</label>
+                            <input
+                                id="days-input"
+                                type="number"
+                                step="0.5"
+                                min="0.5"
+                                {...register("days", {
+                                    valueAsNumber: true,
+                                    onChange: (e) => setPreviewDays(Number(e.target.value) || 0),
+                                })}
+                                aria-invalid={!!errors.days}
+                                className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none focus:border-[#0066FF]"
+                            />
+                            {errors.days && <p role="alert" className="text-xs text-[#FF4444]">{errors.days.message}</p>}
                         </div>
-
-                        <div className="pt-4 flex justify-end">
-                            <button type="button" className="px-8 py-3 bg-[#00E5A0] text-[#060B14] font-bold rounded-xl hover:bg-[#00cca0] transition-colors shadow-[0_0_15px_rgba(0,229,160,0.4)] flex justify-center items-center">
-                                Confirm Adjustment <ArrowRight size={18} className="ml-2" />
-                            </button>
+                        <div className="space-y-2 sm:col-span-2">
+                            <label htmlFor="reason-input" className="text-sm font-bold text-[#8899AA]">Reason / Remarks</label>
+                            <input
+                                id="reason-input"
+                                type="text"
+                                placeholder="E.g., Joining bonus leave credit"
+                                {...register("reason")}
+                                aria-invalid={!!errors.reason}
+                                className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none focus:border-[#0066FF]"
+                            />
+                            {errors.reason && <p role="alert" className="text-xs text-[#FF4444]">{errors.reason.message}</p>}
                         </div>
+                    </div>
 
-                    </form>
-                </div>
+                    {/* Preview */}
+                    <div
+                        role="status"
+                        className="flex items-start gap-3 rounded-lg border border-[#FFB800]/20 bg-[#FFB800]/10 p-4 text-sm"
+                    >
+                        <AlertTriangle size={18} className="mt-0.5 shrink-0 text-[#FFB800]" aria-hidden="true" />
+                        <p className="text-[#FFB800]">
+                            This action will update the balance immediately and will be recorded in the audit logs.
+                            The new balance will be{" "}
+                            <strong className="text-white">{newBalance.toFixed(1)} days</strong>.
+                        </p>
+                    </div>
 
-            </div>
-        </div>
+                    <div className="flex justify-end pt-2">
+                        <Button
+                            type="submit"
+                            isLoading={isSubmitting}
+                            loadingText="Applying…"
+                            iconRight={<ArrowRight size={18} aria-hidden="true" />}
+                        >
+                            Confirm Adjustment
+                        </Button>
+                    </div>
+                </form>
+            </Card>
+        </Page>
     );
 }

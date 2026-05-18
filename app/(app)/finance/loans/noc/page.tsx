@@ -1,117 +1,102 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    FileSignature, ChevronRight, Search, Download, CheckCircle2, Copy
-} from "lucide-react";
+import { FileSignature, Download, CheckCircle2, Copy } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
 
-export default function LoanNOCScreen() {
+interface NOCRecord {
+    id: string;
+    ref: string;
+    emp: string;
+    empId: string;
+    loanId: string;
+    loanDesc: string;
+    closureDate: string;
+    status: "Emailed to Emp";
+}
+
+const NOC_RECORDS: NOCRecord[] = [
+    { id: "NOC-1", ref: "NOC/LN-6523/2025", emp: "Ananya Sharma", empId: "EMP-042", loanId: "LN-6523", loanDesc: "₹1.5L Medical", closureDate: "16 Oct 2025", status: "Emailed to Emp" },
+    { id: "NOC-2", ref: "NOC/LN-5192/2025", emp: "Rahul Kumar", empId: "EMP-091", loanId: "LN-5192", loanDesc: "₹50k Education", closureDate: "10 Sep 2025", status: "Emailed to Emp" },
+];
+
+const COLUMNS: Column<NOCRecord>[] = [
+    {
+        key: "ref", label: "NOC Reference", render: (n) => (
+            <div>
+                <div className="font-mono text-[#00E5FF] font-medium flex items-center gap-2">
+                    {n.ref}
+                    <Button variant="ghost" size="sm" aria-label={`Copy ${n.ref}`} icon={<Copy size={12} />} />
+                </div>
+                <div className="text-xs text-[#8899AA] mt-1">Issued by System</div>
+            </div>
+        ),
+    },
+    {
+        key: "emp", label: "Employee", render: (n) => (
+            <div>
+                <div className="text-white font-medium">{n.emp}</div>
+                <div className="text-[#8899AA] text-xs mt-0.5">{n.empId}</div>
+            </div>
+        ),
+    },
+    {
+        key: "loanId", label: "Loan Account", render: (n) => (
+            <div>
+                <div className="text-white">{n.loanId}</div>
+                <div className="text-[#8899AA] text-xs mt-0.5">{n.loanDesc}</div>
+            </div>
+        ),
+    },
+    { key: "closureDate", label: "Closure Date", render: (n) => <span className="text-white">{n.closureDate}</span> },
+    {
+        key: "status", label: "Status", align: "center",
+        render: () => <Badge variant="success"><CheckCircle2 size={12} className="inline mr-1" aria-hidden="true" />Emailed to Emp</Badge>,
+    },
+    {
+        key: "actions", label: "Actions", align: "center",
+        render: (n) => (
+            <Button variant="ghost" size="sm" aria-label={`Download NOC for ${n.emp}`} icon={<Download size={20} />} />
+        ),
+    },
+];
+
+export default function LoanNOCPage() {
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <Link href="/finance/loans" className="hover:text-white transition-colors">Loans</Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-white">NOC Ledger</span>
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <FileSignature className="w-8 h-8 text-[#00E5FF]" />
-                        Loan NOC Ledger
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Repository of No Objection Certificates issued for closed loan accounts.</p>
+        <Page
+            title="Loan NOC Ledger"
+            subtitle="Repository of No Objection Certificates issued for closed loan accounts."
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "Loans", href: "/finance/loans" },
+                { label: "NOC Ledger" },
+            ]}
+            maxWidth="1200px"
+        >
+            <Card padding="none">
+                <div className="p-4 border-b border-[#1A2A3A] flex items-center gap-3">
+                    <FileSignature size={18} className="text-[#00E5FF]" aria-hidden="true" />
+                    <input
+                        type="search"
+                        placeholder="Search by Employee, NOC Ref, or Loan ID..."
+                        aria-label="Search NOC records"
+                        className="flex-1 bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#00E5FF] transition-colors"
+                    />
                 </div>
-            </div>
-
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                <div className="p-4 border-b border-[#1A2A3A] flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8899AA] w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Search by Employee, NOC Ref, or Loan ID..."
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-[#00E5FF] transition-colors"
-                        />
-                    </div>
+                <div className="p-4">
+                    <DataTable<NOCRecord>
+                        data={NOC_RECORDS}
+                        columns={COLUMNS}
+                        rowKey={(n) => n.id}
+                        aria-label="Loan NOC ledger"
+                        emptyTitle="No NOCs issued yet"
+                        emptyDescription="NOCs are generated automatically when a loan is closed."
+                    />
                 </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-[#1A2A3A]/50 text-[#8899AA] text-xs uppercase tracking-wider">
-                                <th className="p-4 font-medium">NOC Reference</th>
-                                <th className="p-4 font-medium">Employee</th>
-                                <th className="p-4 font-medium">Loan Account</th>
-                                <th className="p-4 font-medium">Closure Date</th>
-                                <th className="p-4 font-medium text-center">Status</th>
-                                <th className="p-4 font-medium text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-sm divide-y divide-[#1A2A3A]">
-                            <tr className="hover:bg-[#1A2A3A]/30 transition-colors">
-                                <td className="p-4">
-                                    <div className="font-mono text-[#00E5FF] font-medium flex items-center gap-2">
-                                        NOC/LN-6523/2025
-                                        <Copy className="w-3 h-3 text-[#8899AA] cursor-pointer hover:text-white" />
-                                    </div>
-                                    <div className="text-xs text-[#8899AA] mt-1">Issued by System</div>
-                                </td>
-                                <td className="p-4">
-                                    <div className="text-white font-medium">Ananya Sharma</div>
-                                    <div className="text-[#8899AA] text-xs mt-0.5">EMP-042</div>
-                                </td>
-                                <td className="p-4">
-                                    <div className="text-white">LN-6523</div>
-                                    <div className="text-[#8899AA] text-xs mt-0.5">₹1.5L Medical</div>
-                                </td>
-                                <td className="p-4 text-white">16 Oct 2025</td>
-                                <td className="p-4 text-center">
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded text-xs font-medium">
-                                        <CheckCircle2 className="w-3 h-3" /> Emailed to Emp
-                                    </span>
-                                </td>
-                                <td className="p-4 text-center">
-                                    <button className="text-[#8899AA] hover:text-[#00E5FF] transition-colors" title="Download PDF">
-                                        <Download className="w-5 h-5 mx-auto" />
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-[#1A2A3A]/30 transition-colors">
-                                <td className="p-4">
-                                    <div className="font-mono text-[#00E5FF] font-medium flex items-center gap-2">
-                                        NOC/LN-5192/2025
-                                        <Copy className="w-3 h-3 text-[#8899AA] cursor-pointer hover:text-white" />
-                                    </div>
-                                    <div className="text-xs text-[#8899AA] mt-1">Issued by System</div>
-                                </td>
-                                <td className="p-4">
-                                    <div className="text-white font-medium">Rahul Kumar</div>
-                                    <div className="text-[#8899AA] text-xs mt-0.5">EMP-091</div>
-                                </td>
-                                <td className="p-4">
-                                    <div className="text-white">LN-5192</div>
-                                    <div className="text-[#8899AA] text-xs mt-0.5">₹50k Education</div>
-                                </td>
-                                <td className="p-4 text-white">10 Sep 2025</td>
-                                <td className="p-4 text-center">
-                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded text-xs font-medium">
-                                        <CheckCircle2 className="w-3 h-3" /> Emailed to Emp
-                                    </span>
-                                </td>
-                                <td className="p-4 text-center">
-                                    <button className="text-[#8899AA] hover:text-[#00E5FF] transition-colors" title="Download PDF">
-                                        <Download className="w-5 h-5 mx-auto" />
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+            </Card>
+        </Page>
     );
 }

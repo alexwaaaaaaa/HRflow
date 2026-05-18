@@ -1,102 +1,160 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Calendar, Plane, AlertCircle, Plus, ChevronRight, Clock
-} from 'lucide-react';
-import Link from 'next/link';
+import Link from "next/link";
+import { Calendar, Plane, Clock, ChevronRight } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card, { CardHeader, CardTitle } from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function MyLeaveScreenEmployee() {
-    const balances = [
-        { type: 'Privilege Leave', code: 'EL', granted: 15, used: 2, balance: 13, color: 'border-[#0066FF]' },
-        { type: 'Sick Leave', code: 'SL', granted: 12, used: 4, balance: 8, color: 'border-[#FFB800]' },
-        { type: 'Casual Leave', code: 'CL', granted: 7, used: 6, balance: 1, color: 'border-[#00E5A0]' },
-    ];
+interface LeaveBalance {
+    type: string;
+    code: "EL" | "SL" | "CL";
+    granted: number;
+    used: number;
+    balance: number;
+    accent: string;
+}
 
-    const history = [
-        { id: 1, dates: '12 Nov - 14 Nov', duration: '3 Days', type: 'Privilege Leave', status: 'Approved', color: 'bg-[#00E5A0]/10 text-[#00E5A0] border-[#00E5A0]/30' },
-        { id: 2, dates: '24 Oct', duration: '1 Day', type: 'Sick Leave', status: 'Approved', color: 'bg-[#00E5A0]/10 text-[#00E5A0] border-[#00E5A0]/30' },
-        { id: 3, dates: '25 Dec', duration: '1 Day', type: 'Casual Leave', status: 'Pending', color: 'bg-[#FFB800]/10 text-[#FFB800] border-[#FFB800]/30' },
-    ];
+interface LeaveHistory {
+    id: number;
+    dates: string;
+    duration: string;
+    type: string;
+    status: "Approved" | "Pending" | "Rejected";
+}
 
+const BALANCES: LeaveBalance[] = [
+    { type: "Privilege Leave", code: "EL", granted: 15, used: 2, balance: 13, accent: "#3b82f6" },
+    { type: "Sick Leave", code: "SL", granted: 12, used: 4, balance: 8, accent: "#f59e0b" },
+    { type: "Casual Leave", code: "CL", granted: 7, used: 6, balance: 1, accent: "#00e5a0" },
+];
+
+const HISTORY: LeaveHistory[] = [
+    { id: 1, dates: "12 Nov - 14 Nov", duration: "3 Days", type: "Privilege Leave", status: "Approved" },
+    { id: 2, dates: "24 Oct", duration: "1 Day", type: "Sick Leave", status: "Approved" },
+    { id: 3, dates: "25 Dec", duration: "1 Day", type: "Casual Leave", status: "Pending" },
+];
+
+const STATUS_VARIANT: Record<LeaveHistory["status"], "success" | "warning" | "danger"> = {
+    Approved: "success",
+    Pending: "warning",
+    Rejected: "danger",
+};
+
+export default function MyLeaveScreen() {
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
-            <div className="max-w-5xl mx-auto space-y-8">
-
-                {/* Header Section */}
-                <div className="flex justify-between items-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-[#0D1928] border border-[#1A2A3A] p-6 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-                    <div>
-                        <h1 className="text-3xl font-black text-white mb-2 flex items-center">
-                            Hello, Arjun 👋
-                        </h1>
-                        <p className="text-sm text-[#8899AA]">Here's your personal time-off summary for 2024.</p>
-                    </div>
-                    <Link href="/my-leave/apply">
-                        <button className="px-6 py-3 bg-[#0066FF] text-white font-bold rounded-xl hover:bg-[#0052cc] transition-colors flex items-center shadow-[0_0_20px_rgba(0,102,255,0.4)]">
-                            <Plane size={18} className="mr-2" /> Apply Leave
-                        </button>
-                    </Link>
-                </div>
-
-                {/* Balances Grid */}
-                <div>
-                    <h2 className="text-lg font-bold text-white mb-4 flex items-center">
-                        <Calendar size={18} className="mr-2 text-[#00E5A0]" /> Current Balances
+        <Page
+            title="My leave"
+            subtitle="Your personal time-off summary for 2024"
+            breadcrumbs={[{ label: "My Leave" }]}
+            maxWidth="1100px"
+            actions={
+                <Button icon={<Plane size={14} />} href="/my-leave/apply">Apply leave</Button>
+            }
+        >
+            <div className="space-y-6">
+                {/* Balances */}
+                <section aria-labelledby="balances-heading">
+                    <h2
+                        id="balances-heading"
+                        className="mb-3 flex items-center gap-2 text-sm font-semibold text-white"
+                    >
+                        <Calendar size={16} className="text-[#00e5a0]" aria-hidden="true" />
+                        Current balances
                     </h2>
-                    <div className="grid grid-cols-3 gap-6">
-                        {balances.map((item, i) => (
-                            <div key={i} className={`bg-[#0D1928] border-t-4 border-x border-b border-x-[#1A2A3A] border-b-[#1A2A3A] ${item.color} rounded-xl p-5 shadow-lg`}>
-                                <div className="flex justify-between items-start mb-6">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {BALANCES.map((b) => (
+                            <Card
+                                key={b.code}
+                                className="border-t-4"
+                                style={{ borderTopColor: b.accent }}
+                            >
+                                <div className="flex items-start justify-between">
                                     <div>
-                                        <h3 className="font-bold text-white text-base">{item.type}</h3>
-                                        <span className="text-xs font-bold text-[#8899AA] bg-[#060B14] px-2 py-0.5 rounded border border-[#1A2A3A] mt-1 inline-block">{item.code}</span>
+                                        <h3 className="text-base font-semibold text-white">{b.type}</h3>
+                                        <span className="mt-1 inline-block rounded border border-[#1A2A3A] bg-[#060B14] px-2 py-0.5 text-[10px] font-semibold text-[#7a8fa6]">
+                                            {b.code}
+                                        </span>
                                     </div>
-                                    <div className="text-4xl font-black text-white">{item.balance} <span className="text-xs font-bold text-[#556677] uppercase tracking-widest block text-right mt-1">Available</span></div>
+                                    <div className="text-right">
+                                        <div className="text-3xl font-bold text-white tabular-nums">
+                                            {b.balance}
+                                        </div>
+                                        <div className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-[#7a8fa6]">
+                                            Available
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between text-xs font-bold border-t border-[#1A2A3A] pt-4">
-                                    <div className="text-[#8899AA]">Granted: <span className="text-white">{item.granted}</span></div>
-                                    <div className="text-[#8899AA]">Used: <span className="text-white">{item.used}</span></div>
+                                <div className="mt-4 flex justify-between border-t border-[#1A2A3A] pt-3 text-xs">
+                                    <span className="text-[#7a8fa6]">
+                                        Granted: <span className="text-white">{b.granted}</span>
+                                    </span>
+                                    <span className="text-[#7a8fa6]">
+                                        Used: <span className="text-white">{b.used}</span>
+                                    </span>
                                 </div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
-                </div>
+                </section>
 
-                {/* Recent History */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl shadow-lg">
-                    <div className="p-5 border-b border-[#1A2A3A] flex justify-between items-center">
-                        <h2 className="text-base font-bold text-white flex items-center">
-                            <Clock size={18} className="mr-2 text-[#0066FF]" /> Recent Applications
-                        </h2>
-                        <button className="text-xs text-[#0066FF] hover:text-white font-bold transition-colors">View All History</button>
-                    </div>
-                    <div className="p-6">
-                        <div className="space-y-4">
-                            {history.map((req) => (
-                                <div key={req.id} className="flex items-center justify-between p-4 rounded-lg border border-[#1A2A3A] bg-[#0A1420] hover:border-[#2A3A4A] transition-colors">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="bg-[#1A2A3A] w-12 h-12 rounded-lg flex flex-col items-center justify-center border border-[#2A3A4A]">
-                                            <span className="text-[10px] text-[#8899AA] font-bold uppercase">{req.dates.split(' ')[1]}</span>
-                                            <span className="text-sm font-black text-white">{req.dates.split(' ')[0]}</span>
+                {/* History */}
+                <Card padding="none">
+                    <CardHeader className="border-b border-[#1A2A3A] p-5">
+                        <CardTitle className="flex items-center gap-2">
+                            <Clock size={16} className="text-[#3b82f6]" aria-hidden="true" />
+                            Recent applications
+                        </CardTitle>
+                        <Link
+                            href="/leave/reports"
+                            className="text-xs font-semibold text-[#3b82f6] hover:underline"
+                        >
+                            View all history
+                        </Link>
+                    </CardHeader>
+                    <ul className="divide-y divide-[#0e1a28]">
+                        {HISTORY.map((req) => (
+                            <li key={req.id}>
+                                <Link
+                                    href={`/leave/dashboard?id=${req.id}`}
+                                    className="flex items-center justify-between gap-3 p-5 transition-colors hover:bg-[rgba(255,255,255,0.02)]"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-12 w-12 flex-col items-center justify-center rounded-lg border border-[#1A2A3A] bg-[#060B14]">
+                                            <span className="text-[10px] font-semibold uppercase text-[#7a8fa6]">
+                                                {req.dates.split(" ")[1] ?? ""}
+                                            </span>
+                                            <span className="text-sm font-bold text-white">
+                                                {req.dates.split(" ")[0]}
+                                            </span>
                                         </div>
                                         <div>
-                                            <div className="font-bold text-white text-base">{req.type}</div>
-                                            <div className="text-xs text-[#8899AA] mt-1">{req.dates} • <span className="text-white font-bold">{req.duration}</span></div>
+                                            <p className="text-sm font-semibold text-white">{req.type}</p>
+                                            <p className="mt-0.5 text-xs text-[#7a8fa6]">
+                                                {req.dates} ·{" "}
+                                                <span className="font-semibold text-white">
+                                                    {req.duration}
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center space-x-4">
-                                        <span className={`px-3 py-1 text-xs font-black uppercase tracking-wider rounded border ${req.color}`}>
+                                    <div className="flex items-center gap-3">
+                                        <Badge variant={STATUS_VARIANT[req.status]}>
                                             {req.status}
-                                        </span>
-                                        <ChevronRight size={18} className="text-[#556677] cursor-pointer hover:text-white transition-colors" />
+                                        </Badge>
+                                        <ChevronRight
+                                            size={16}
+                                            className="shrink-0 text-[#7a8fa6]"
+                                            aria-hidden="true"
+                                        />
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

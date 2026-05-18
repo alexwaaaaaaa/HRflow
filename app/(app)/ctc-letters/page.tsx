@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { FileText, Download, Mail, PenTool, User, Check } from "lucide-react";
 
@@ -8,6 +10,13 @@ export default function CTCLetterGenerationPage() {
     const [language, setLanguage] = useState("English");
 
     return (
+        <Page
+            title="HRFlow Technologies"
+            subtitle="Generate dynamic offer, revision, and appointment letters with e-signatures."
+            breadcrumbs={[{ label: "Ctc Letters" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -277,5 +286,7 @@ export default function CTCLetterGenerationPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

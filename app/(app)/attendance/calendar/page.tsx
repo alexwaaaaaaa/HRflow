@@ -1,13 +1,15 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    ChevronLeft, ChevronRight, Calendar as CalIcon, Filter, Download,
-    CheckCircle2, Clock, XCircle, AlertTriangle, Fingerprint
+    ChevronLeft, ChevronRight, Calendar as CalIcon, Download,
+    CheckCircle2, Clock, XCircle
 } from 'lucide-react';
 
 export default function MonthlyCalendarView() {
-    const [month, setMonth] = useState('November 2024');
+    const [month, _setMonth] = useState('November 2024');
 
     // Calendar Matrix (Mocked 30 days)
     const days = [
@@ -36,6 +38,13 @@ export default function MonthlyCalendarView() {
     ];
 
     return (
+        <Page
+            title="Monthly Calendar View"
+            subtitle="Attendance calendar for Arjun Mehta (EMP042)"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Calendar" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-7xl mx-auto space-y-6">
 
@@ -135,7 +144,9 @@ export default function MonthlyCalendarView() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }
 
 function SummaryBox({ label, value, color = 'text-white' }: any) {

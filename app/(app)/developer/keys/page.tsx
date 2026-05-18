@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { KeySquare, Plus, Copy, AlertTriangle, EyeOff, Eye, Trash2 } from 'lucide-react';
 
@@ -6,6 +8,13 @@ export default function ApiKeyManagementPage() {
     const [showKey, setShowKey] = useState<number | null>(null);
 
     return (
+        <Page
+            title="API Keys"
+            subtitle="Manage standard API keys for server-to-server integrations."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Keys" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -83,5 +92,7 @@ export default function ApiKeyManagementPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

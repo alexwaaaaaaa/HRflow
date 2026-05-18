@@ -1,6 +1,15 @@
 "use client";
-import React, { useState } from "react";
-import { ArrowLeft, Star, ThumbsUp, ThumbsDown, Save, Send } from "lucide-react";
+
+import { useState } from "react";
+import { Star, ThumbsUp, ThumbsDown, Save, Send } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types & data
+// ─────────────────────────────────────────────────────────────────────────────
 
 const CRITERIA = [
     { id: "c1", label: "React & Next.js Fundamentals", desc: "Hooks, SSR, Routing, Context" },
@@ -8,101 +17,165 @@ const CRITERIA = [
     { id: "c3", label: "Communication & Clarity", desc: "Explaining thought process clearly" },
 ];
 
+type Decision = "Hire" | "No Hire" | "Hold";
+
+const DECISIONS: Array<{ id: Decision; icon: typeof ThumbsUp; colorClass: string; bgClass: string }> = [
+    { id: "Hire", icon: ThumbsUp, colorClass: "text-[#00E5A0]", bgClass: "border-[#00E5A0] bg-[#00E5A0]/15" },
+    { id: "Hold", icon: Star, colorClass: "text-[#FFB800]", bgClass: "border-[#FFB800] bg-[#FFB800]/15" },
+    { id: "No Hire", icon: ThumbsDown, colorClass: "text-[#FF4444]", bgClass: "border-[#FF4444] bg-[#FF4444]/15" },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function InterviewFeedback() {
+    const toast = useToast();
     const [scores, setScores] = useState<Record<string, number>>({});
-    const [decision, setDecision] = useState<"Hire" | "No Hire" | "Hold" | null>(null);
+    const [decision, setDecision] = useState<Decision | null>(null);
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleSubmit = async () => {
+        setSubmitting(true);
+        try {
+            // TODO: replace with real mutation
+            await new Promise((r) => setTimeout(r, 1000));
+            toast.show({
+                variant: "success",
+                title: "Scorecard submitted",
+                description: "Your feedback for Rahul Sharma has been recorded.",
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <div className="p-6 md:p-8 max-w-[800px] mx-auto text-white">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <button className="w-10 h-10 bg-[#0D1928] border border-[#1A2A3A] hover:bg-[#1A2A3A] rounded-xl flex items-center justify-center text-[#8899AA] transition-colors"><ArrowLeft size={16} /></button>
-                    <div>
-                        <h1 className="text-2xl font-bold mb-1">Feedback: Rahul Sharma</h1>
-                        <p className="text-sm text-[#8899AA]">Technical Round · Sr. Frontend Engineer</p>
-                    </div>
-                </div>
-            </div>
-
+        <Page
+            title="Feedback: Rahul Sharma"
+            subtitle="Technical Round · Sr. Frontend Engineer"
+            breadcrumbs={[
+                { label: "Recruitment", href: "/recruitment/dashboard" },
+                { label: "Interviews", href: "/recruitment/interviews" },
+                { label: "Feedback" },
+            ]}
+            maxWidth="800px"
+        >
             <div className="space-y-6">
-
                 {/* Scorecard */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h3 className="font-semibold text-white mb-4">Competency Scorecard</h3>
+                <Card padding="lg">
+                    <h3 className="mb-4 font-semibold text-white">Competency Scorecard</h3>
                     <div className="space-y-6">
-                        {CRITERIA.map(c => (
-                            <div key={c.id} className="flex justify-between items-start">
+                        {CRITERIA.map((c) => (
+                            <div key={c.id} className="flex items-start justify-between gap-4">
                                 <div>
-                                    <p className="text-sm font-medium text-white mb-1">{c.label}</p>
+                                    <p className="mb-1 text-sm font-medium text-white">{c.label}</p>
                                     <p className="text-[11px] text-[#445566]">{c.desc}</p>
                                 </div>
-                                <div className="flex gap-1 shrink-0">
-                                    {[1, 2, 3, 4, 5].map(s => (
-                                        <button key={s} onClick={() => setScores(p => ({ ...p, [c.id]: s }))}
-                                            className="w-10 h-10 border border-[#1A2A3A] rounded-lg flex flex-col items-center justify-center group hover:border-[#00E5A0] transition-all"
-                                            style={scores[c.id] === s ? { background: "#00E5A020", borderColor: "#00E5A0" } : {}}>
-                                            <Star size={12} fill={scores[c.id] >= s ? "#00E5A0" : "transparent"} color={scores[c.id] >= s ? "#00E5A0" : "#445566"} />
-                                            <span className={`text-[9px] mt-1 font-bold ${scores[c.id] >= s ? 'text-[#00E5A0]' : 'text-[#445566]'}`}>{s}</span>
+                                <div className="flex shrink-0 gap-1" role="group" aria-label={`Score for ${c.label}`}>
+                                    {[1, 2, 3, 4, 5].map((s) => (
+                                        <button
+                                            key={s}
+                                            type="button"
+                                            onClick={() => setScores((p) => ({ ...p, [c.id]: s }))}
+                                            aria-label={`${s} star${s !== 1 ? "s" : ""}`}
+                                            aria-pressed={scores[c.id] === s}
+                                            className={`flex h-10 w-10 flex-col items-center justify-center rounded-lg border transition-all hover:border-[#00E5A0] ${
+                                                scores[c.id] === s
+                                                    ? "border-[#00E5A0] bg-[#00E5A0]/20"
+                                                    : "border-[#1A2A3A]"
+                                            }`}
+                                        >
+                                            <Star
+                                                size={12}
+                                                aria-hidden="true"
+                                                fill={(scores[c.id] ?? 0) >= s ? "#00E5A0" : "transparent"}
+                                                color={(scores[c.id] ?? 0) >= s ? "#00E5A0" : "#445566"}
+                                            />
+                                            <span
+                                                className={`mt-1 text-[9px] font-bold ${
+                                                    (scores[c.id] ?? 0) >= s ? "text-[#00E5A0]" : "text-[#445566]"
+                                                }`}
+                                            >
+                                                {s}
+                                            </span>
                                         </button>
                                     ))}
                                 </div>
                             </div>
                         ))}
                     </div>
-                </div>
+                </Card>
 
                 {/* Detailed Notes */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h3 className="font-semibold text-white mb-4">Interview Notes</h3>
-
+                <Card padding="lg">
+                    <h3 className="mb-4 font-semibold text-white">Interview Notes</h3>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium text-[#8899AA] mb-1.5 flex justify-between">
+                            <label htmlFor="strengths" className="mb-1.5 flex justify-between text-xs font-medium text-[#8899AA]">
                                 <span>Strengths</span>
                                 <span className="text-[#00E5A0]">Good to hire</span>
                             </label>
-                            <textarea rows={3} placeholder="What did the candidate do well?" className="w-full bg-[#060B14] border border-[#1A2A3A] rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#00E5A0] resize-none" />
+                            <textarea
+                                id="strengths"
+                                rows={3}
+                                placeholder="What did the candidate do well?"
+                                className="w-full resize-none rounded-xl border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white focus:border-[#00E5A0] focus:outline-none"
+                            />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-[#8899AA] mb-1.5 flex justify-between">
+                            <label htmlFor="concerns" className="mb-1.5 flex justify-between text-xs font-medium text-[#8899AA]">
                                 <span>Areas of Concern</span>
                                 <span className="text-[#FF4444]">Red flags</span>
                             </label>
-                            <textarea rows={3} placeholder="Where did they struggle?" className="w-full bg-[#060B14] border border-[#1A2A3A] rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#FF4444] resize-none" />
+                            <textarea
+                                id="concerns"
+                                rows={3}
+                                placeholder="Where did they struggle?"
+                                className="w-full resize-none rounded-xl border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white focus:border-[#FF4444] focus:outline-none"
+                            />
                         </div>
                     </div>
-                </div>
+                </Card>
 
                 {/* Final Recommendation */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h3 className="font-semibold text-white mb-4">Overall Recommendation</h3>
-                    <div className="grid grid-cols-3 gap-4">
-                        {[
-                            { id: "Hire", icon: ThumbsUp, color: "#00E5A0", bg: "#00E5A0" },
-                            { id: "Hold", icon: Star, color: "#FFB800", bg: "#FFB800" },
-                            { id: "No Hire", icon: ThumbsDown, color: "#FF4444", bg: "#FF4444" }
-                        ].map(r => (
-                            <button key={r.id} onClick={() => setDecision(r.id as any)}
-                                className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${decision === r.id ? '' : 'border-[#1A2A3A] hover:bg-[#1A2A3A]/30'}`}
-                                style={decision === r.id ? { borderColor: r.color, background: r.bg + "15", color: r.color } : { color: "#8899AA" }}>
-                                <r.icon size={24} />
+                <Card padding="lg">
+                    <h3 className="mb-4 font-semibold text-white">Overall Recommendation</h3>
+                    <div className="grid grid-cols-3 gap-4" role="group" aria-label="Hiring recommendation">
+                        {DECISIONS.map((r) => (
+                            <button
+                                key={r.id}
+                                type="button"
+                                onClick={() => setDecision(r.id)}
+                                aria-pressed={decision === r.id}
+                                className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 p-4 transition-all ${
+                                    decision === r.id
+                                        ? `${r.bgClass} ${r.colorClass}`
+                                        : "border-[#1A2A3A] text-[#8899AA] hover:bg-[#1A2A3A]/30"
+                                }`}
+                            >
+                                <r.icon size={24} aria-hidden="true" />
                                 <span className="text-sm font-bold">{r.id}</span>
                             </button>
                         ))}
                     </div>
-                </div>
+                </Card>
 
                 {/* Actions */}
-                <div className="flex gap-3 justify-end pt-4">
-                    <button className="h-12 px-6 bg-[#0D1928] border border-[#1A2A3A] text-white font-medium rounded-xl hover:bg-[#1A2A3A] flex items-center gap-2 transition-colors">
-                        <Save size={16} /> Save Draft
-                    </button>
-                    <button className="h-12 px-8 bg-[#0066FF] text-white font-bold rounded-xl hover:bg-[#0052cc] flex items-center gap-2 transition-colors">
-                        <Send size={16} /> Submit Scorecard
-                    </button>
+                <div className="flex justify-end gap-3 pt-4">
+                    <Button variant="secondary" icon={<Save size={16} aria-hidden="true" />}>
+                        Save Draft
+                    </Button>
+                    <Button
+                        icon={<Send size={16} aria-hidden="true" />}
+                        isLoading={submitting}
+                        loadingText="Submitting…"
+                        onClick={handleSubmit}
+                    >
+                        Submit Scorecard
+                    </Button>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

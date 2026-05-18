@@ -1,124 +1,227 @@
 "use client";
-import React, { useState } from 'react';
-import { FileText, ArrowLeft, Download, Building, Lock } from 'lucide-react';
-import Link from 'next/link';
 
-const PAYSLIPS = [
-    { month: 'March 2026', paidOn: '31 Mar 2026', gross: 219000, tds: 34500, pf: 10250, net: 174250, status: 'Available' },
-    { month: 'February 2026', paidOn: '28 Feb 2026', gross: 219000, tds: 34500, pf: 10250, net: 174250, status: 'Available' },
-    { month: 'January 2026', paidOn: '31 Jan 2026', gross: 219000, tds: 34500, pf: 10250, net: 174250, status: 'Available' },
-    { month: 'December 2025', paidOn: '31 Dec 2025', gross: 219000, tds: 34500, pf: 10250, net: 174250, status: 'Available' },
+import { useState } from "react";
+import { FileText, Download, Lock } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+interface Payslip {
+    month: string;
+    paidOn: string;
+    gross: number;
+    tds: number;
+    pf: number;
+    net: number;
+}
+
+const PAYSLIPS: Payslip[] = [
+    { month: "March 2026", paidOn: "31 Mar 2026", gross: 219000, tds: 34500, pf: 10250, net: 174250 },
+    { month: "February 2026", paidOn: "28 Feb 2026", gross: 219000, tds: 34500, pf: 10250, net: 174250 },
+    { month: "January 2026", paidOn: "31 Jan 2026", gross: 219000, tds: 34500, pf: 10250, net: 174250 },
+    { month: "December 2025", paidOn: "31 Dec 2025", gross: 219000, tds: 34500, pf: 10250, net: 174250 },
 ];
 
-export default function ESSPayslipsScreen() {
-    const [selected, setSelected] = useState(0);
-    const slip = PAYSLIPS[selected];
+const EARNINGS: Array<[string, number]> = [
+    ["Basic Salary", 78400],
+    ["House Rent Allowance (HRA)", 39200],
+    ["Special Allowance", 101400],
+];
+
+const DEDUCTIONS: Array<[string, number]> = [
+    ["Income Tax (TDS)", 34500],
+    ["Provident Fund (EE)", 10250],
+];
+
+const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
+
+export default function MyPayslipsPage() {
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const slip = PAYSLIPS[selectedIndex] ?? PAYSLIPS[0]!;
+    const totalDeductions = slip.tds + slip.pf;
 
     return (
-        <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
-            <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3"><FileText size={22} className="text-indigo-400" /> My Payslips</h1>
-                    <p className="text-[#8899AA] text-sm mt-1">View and download your monthly salary slips.</p>
-                </div>
-                <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors">
-                    <Download size={16} /> Download Selected (PDF)
-                </button>
+        <Page
+            title="My payslips"
+            subtitle="View, verify, and download your monthly salary slips"
+            breadcrumbs={[
+                { label: "Self-Service", href: "/ess/dashboard" },
+                { label: "My Payslips" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <Button variant="primary" size="md" icon={<Download size={14} />}>
+                    Download (PDF)
+                </Button>
+            }
+        >
+            <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+                {/* Archive */}
+                <Card padding="none" aria-label="Payslip archive">
+                    <header className="border-b border-[#1A2A3A] bg-[#070d18] px-4 py-3">
+                        <h2 className="flex items-center gap-2 text-sm font-semibold text-white">
+                            <FileText size={14} className="text-[#3b82f6]" aria-hidden="true" />
+                            Payslip archive
+                        </h2>
+                    </header>
+                    <ul className="max-h-[500px] divide-y divide-[#1A2A3A] overflow-y-auto">
+                        {PAYSLIPS.map((p, i) => {
+                            const active = selectedIndex === i;
+                            return (
+                                <li key={p.month}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setSelectedIndex(i)}
+                                        aria-pressed={active}
+                                        className={`flex w-full flex-col items-start gap-1 border-l-4 px-4 py-3 text-left transition-colors ${
+                                            active
+                                                ? "border-[#3b82f6] bg-[#131B2B]"
+                                                : "border-transparent hover:bg-[#131B2B]"
+                                        }`}
+                                    >
+                                        <span className="text-sm font-semibold text-white">
+                                            {p.month}
+                                        </span>
+                                        <span className="flex w-full justify-between text-xs">
+                                            <span className="text-[#7a8fa6]">
+                                                Paid: {p.paidOn}
+                                            </span>
+                                            <span className="font-semibold text-[#00e5a0]">
+                                                ₹{(p.net / 1000).toFixed(0)}k
+                                            </span>
+                                        </span>
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </Card>
+
+                {/* Payslip preview */}
+                <article
+                    aria-label={`Payslip for ${slip.month}`}
+                    className="relative overflow-hidden rounded-2xl bg-white p-6 text-slate-900 shadow-xl md:p-8"
+                >
+                    <div className="absolute left-0 top-0 h-2 w-full bg-indigo-600" aria-hidden="true" />
+
+                    <header className="mt-4 flex flex-col gap-3 border-b border-slate-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <h2 className="text-2xl font-bold tracking-tight text-indigo-900">
+                                Acme Corporation Ltd.
+                            </h2>
+                            <p className="mt-1 text-sm text-slate-600">
+                                Payslip for{" "}
+                                <strong className="text-slate-700">{slip.month}</strong>
+                            </p>
+                        </div>
+                        <div className="text-left sm:text-right">
+                            <p className="text-sm text-slate-600">Net pay</p>
+                            <p className="text-3xl font-bold text-emerald-600 tabular-nums">
+                                {inr(slip.net)}
+                            </p>
+                            <p className="mt-1 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+                                <Lock size={10} aria-hidden="true" />
+                                Password-protected PDF
+                            </p>
+                        </div>
+                    </header>
+
+                    <dl className="mt-6 grid gap-x-8 gap-y-2 rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm sm:grid-cols-2">
+                        <Row label="Employee Name" value="Anita Kulkarni" />
+                        <Row label="Bank Name" value="HDFC Bank" />
+                        <Row label="Employee ID" value="EMP-001" />
+                        <Row label="Bank A/C No" value="XXXXXX4521" />
+                        <Row label="Designation" value="Senior Engineer" />
+                        <Row label="UAN" value="10098453210" />
+                        <Row label="Days Paid" value="31.0" />
+                        <Row label="PAN" value="ABCDE1234F" />
+                    </dl>
+
+                    <div className="mt-8 grid gap-6 sm:grid-cols-2">
+                        <Section title="Earnings">
+                            <Lines lines={EARNINGS} />
+                            <Total
+                                label="Total Earnings (A)"
+                                value={slip.gross}
+                                tone="indigo"
+                            />
+                        </Section>
+                        <Section title="Deductions">
+                            <Lines lines={DEDUCTIONS} negative />
+                            <Total
+                                label="Total Deductions (B)"
+                                value={totalDeductions}
+                                tone="rose"
+                            />
+                        </Section>
+                    </div>
+
+                    <p className="mt-8 text-center text-xs text-slate-600">
+                        This is a computer-generated document. No signature is required.
+                    </p>
+                </article>
             </div>
+        </Page>
+    );
+}
 
-            <div className="grid md:grid-cols-4 gap-6">
-                {/* Sidebar Selector */}
-                <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl flex flex-col h-[600px] overflow-hidden">
-                    <div className="p-4 border-b border-[#1A2A3A] bg-[#060D1A]">
-                        <h3 className="text-white font-bold text-sm">Payslip Archive</h3>
-                    </div>
-                    <div className="overflow-y-auto divide-y divide-[#1A2A3A]">
-                        {PAYSLIPS.map((p, i) => (
-                            <button key={i} onClick={() => setSelected(i)} className={`w-full text-left p-4 transition-colors ${selected === i ? 'bg-[#131B2B] border-l-4 border-indigo-500' : 'hover:bg-[#131B2B] border-l-4 border-transparent'}`}>
-                                <div className="text-white font-bold text-sm">{p.month}</div>
-                                <div className="text-[#556677] text-xs mt-1 flex justify-between">
-                                    <span>Paid: {p.paidOn}</span>
-                                    <span className="text-emerald-400 font-semibold">₹{(p.net / 1000).toFixed(0)}k</span>
-                                </div>
-                            </button>
-                        ))}
-                    </div>
+function Row({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="flex justify-between border-b border-slate-200/50 pb-1">
+            <dt className="text-slate-600">{label}</dt>
+            <dd className="font-semibold">{value}</dd>
+        </div>
+    );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <div>
+            <h3 className="rounded-t-lg border-b border-slate-200 bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-800">
+                {title}
+            </h3>
+            <div className="rounded-b-lg border border-t-0 border-slate-100">{children}</div>
+        </div>
+    );
+}
+
+function Lines({ lines, negative }: { lines: Array<[string, number]>; negative?: boolean }) {
+    return (
+        <>
+            {lines.map(([label, amt]) => (
+                <div
+                    key={label}
+                    className="flex justify-between border-b border-slate-100 px-3 py-2 text-sm last:border-0 hover:bg-slate-50"
+                >
+                    <span className="text-slate-700">{label}</span>
+                    <span
+                        className={`font-medium tabular-nums ${
+                            negative ? "text-red-600" : ""
+                        }`}
+                    >
+                        {inr(amt)}
+                    </span>
                 </div>
+            ))}
+        </>
+    );
+}
 
-                {/* Payslip Render */}
-                <div className="md:col-span-3 bg-white text-slate-900 rounded-2xl p-8 relative overflow-hidden min-h-[600px] shadow-xl">
-                    <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
-
-                    <div className="flex justify-between items-start border-b border-slate-200 pb-6 mb-6 mt-4">
-                        <div>
-                            <h1 className="text-2xl font-black text-indigo-900 tracking-tight">Acme Corporation Ltd.</h1>
-                            <div className="text-slate-500 text-sm mt-1">Payslip for the month of <strong className="text-slate-700">{slip.month}</strong></div>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-slate-500 text-sm">Net Pay Amount</div>
-                            <div className="text-3xl font-black text-emerald-600">₹{slip.net.toLocaleString()}</div>
-                            <div className="text-slate-400 text-xs mt-1 w-max bg-slate-100 px-2 py-0.5 rounded ml-auto flex items-center gap-1"><Lock size={10} /> Password protected PDF</div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">Employee Name:</span> <span className="font-bold">Anita Kulkarni</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">Bank Name:</span> <span className="font-bold">HDFC Bank</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">Employee ID:</span> <span className="font-bold">EMP-001</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">Bank A/C No:</span> <span className="font-bold">XXXXXX4521</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">Designation:</span> <span className="font-bold">Senior Engineer</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">UAN:</span> <span className="font-bold">10098453210</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">Days Paid:</span> <span className="font-bold">31.0</span></div>
-                        <div className="flex justify-between border-b border-slate-200/50 pb-1"><span className="text-slate-500">PAN:</span> <span className="font-bold">ABCDE1234F</span></div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-8">
-                        <div>
-                            <h3 className="text-slate-800 font-bold bg-slate-100 px-3 py-1.5 rounded-t-lg border-b border-slate-200">Earnings</h3>
-                            <div className="border border-t-0 border-slate-100 rounded-b-lg">
-                                {[
-                                    ['Basic Salary', 78400],
-                                    ['House Rent Allowance (HRA)', 39200],
-                                    ['Special Allowance', 101400],
-                                ].map(([label, amt], i) => (
-                                    <div key={i} className="flex justify-between px-3 py-2 text-sm border-b border-slate-100 last:border-0 hover:bg-slate-50">
-                                        <span className="text-slate-700">{label}</span>
-                                        <span className="font-medium">₹{Number(amt).toLocaleString()}</span>
-                                    </div>
-                                ))}
-                                <div className="flex justify-between px-3 py-2 text-sm font-bold bg-slate-50 rounded-b-lg mt-2">
-                                    <span className="text-slate-800">Total Earnings (A)</span>
-                                    <span className="text-indigo-600 text-base lg:text-lg">₹{slip.gross.toLocaleString()}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 className="text-slate-800 font-bold bg-slate-100 px-3 py-1.5 rounded-t-lg border-b border-slate-200">Deductions</h3>
-                            <div className="border border-t-0 border-slate-100 rounded-b-lg">
-                                {[
-                                    ['Income Tax (TDS)', 34500],
-                                    ['Provident Fund (EE)', 10250],
-                                ].map(([label, amt], i) => (
-                                    <div key={i} className="flex justify-between px-3 py-2 text-sm border-b border-slate-100 last:border-0 hover:bg-slate-50">
-                                        <span className="text-slate-700">{label}</span>
-                                        <span className="font-medium text-red-600">₹{Number(amt).toLocaleString()}</span>
-                                    </div>
-                                ))}
-                                <div className="flex justify-between px-3 py-2 text-sm font-bold bg-slate-50 rounded-b-lg mt-[38px]">
-                                    <span className="text-slate-800">Total Deductions (B)</span>
-                                    <span className="text-red-600 text-base lg:text-lg">₹{(slip.tds + slip.pf).toLocaleString()}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-8 text-center text-xs text-slate-400">
-                        This is a computer generated document. No signature is required.
-                    </div>
-                </div>
-            </div>
+function Total({
+    label,
+    value,
+    tone,
+}: {
+    label: string;
+    value: number;
+    tone: "indigo" | "rose";
+}) {
+    const toneClass =
+        tone === "indigo" ? "text-indigo-600" : "text-red-600";
+    return (
+        <div className="flex justify-between rounded-b-lg bg-slate-50 px-3 py-2 text-sm font-bold">
+            <span className="text-slate-800">{label}</span>
+            <span className={`text-base tabular-nums ${toneClass}`}>{inr(value)}</span>
         </div>
     );
 }

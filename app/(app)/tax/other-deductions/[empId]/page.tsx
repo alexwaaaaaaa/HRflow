@@ -1,103 +1,140 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, Info, Heart, Lightbulb, Save } from "lucide-react";
+import { Info, Heart, Save } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 const OTHER_DEDUCTIONS = [
-    { id: "80e", sec: "80E", name: "Higher Education Loan Interest", desc: "No upper limit on interest paid for 8 years", limit: "No Limit", icon: <Lightbulb size={20} color="#0066FF" /> },
-    { id: "80g", sec: "80G", name: "Donations to Charitable Funds", desc: "Subject to qualifying limit & institution category", limit: "Varies", icon: <Heart size={20} color="#FF4444" /> },
-    { id: "80tta", sec: "80TTA", name: "Savings Bank Interest", desc: "For Non-Senior citizens", limit: "₹10,000", icon: <Info size={20} color="#00E5A0" /> },
-    { id: "80u", sec: "80U", name: "Person with Disability", desc: "Self disability deduction", limit: "₹1,25,000", icon: <Info size={20} color="#FFB800" /> },
+    {
+        id: "80e",
+        sec: "80E",
+        name: "Higher Education Loan Interest",
+        desc: "No upper limit on interest paid for 8 years",
+        limit: "No Limit",
+        iconColor: "text-[#0066FF]",
+    },
+    {
+        id: "80g",
+        sec: "80G",
+        name: "Donations to Charitable Funds",
+        desc: "Subject to qualifying limit & institution category",
+        limit: "Varies",
+        iconColor: "text-red-400",
+    },
+    {
+        id: "80tta",
+        sec: "80TTA",
+        name: "Savings Bank Interest",
+        desc: "For Non-Senior citizens",
+        limit: "₹10,000",
+        iconColor: "text-[#00E5A0]",
+    },
+    {
+        id: "80u",
+        sec: "80U",
+        name: "Person with Disability",
+        desc: "Self disability deduction",
+        limit: "₹1,25,000",
+        iconColor: "text-[#FFB800]",
+    },
 ];
 
 export default function OtherDeductions() {
     const [values, setValues] = useState<Record<string, string>>({
-        "80tta": "8,500"
+        "80tta": "8,500",
     });
 
-    const totalDeductions = Object.values(values).reduce((acc, curr) => acc + (parseInt(curr.replace(/,/g, '')) || 0), 0);
+    const totalDeductions = Object.values(values).reduce(
+        (acc, curr) => acc + (parseInt(curr.replace(/,/g, "")) || 0),
+        0
+    );
 
     return (
-        <div style={{ padding: "24px 32px", maxWidth: 1000, margin: "0 auto", paddingBottom: 100 }}>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Link href="/tax/declaration/EMP-0848" style={{ color: "#8899AA", display: "flex", alignItems: "center" }}>
-                        <ChevronLeft size={20} />
-                    </Link>
-                    <div>
-                        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Other Exemptions & Deductions</h1>
-                        <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Chapter VI-A sections apart from 80C, 80D, etc.</div>
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 32 }}>
-
+        <Page
+            title="Other Exemptions & Deductions"
+            subtitle="Chapter VI-A sections apart from 80C, 80D, etc."
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/declaration/EMP-0848" },
+                { label: "Other Deductions" },
+            ]}
+            maxWidth="1000px"
+        >
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
                 {/* Form Area */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-
-                    {OTHER_DEDUCTIONS.map(item => (
-                        <div key={item.id} style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: "20px 24px", display: "flex", gap: 20 }}>
-                            <div style={{ width: 44, height: 44, borderRadius: 12, background: "#060B14", border: "1px solid #1A2A3A", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                {item.icon}
+                <div className="flex flex-col gap-4">
+                    {OTHER_DEDUCTIONS.map((item) => (
+                        <Card key={item.id} padding="lg" className="flex gap-5">
+                            <div className="w-11 h-11 rounded-xl bg-[#060B14] border border-[#1A2A3A] flex items-center justify-center shrink-0">
+                                {item.id === "80g" ? (
+                                    <Heart size={20} className={item.iconColor} aria-hidden="true" />
+                                ) : (
+                                    <Info size={20} className={item.iconColor} aria-hidden="true" />
+                                )}
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                            <div className="flex-1">
+                                <div className="flex justify-between items-start mb-3">
                                     <div>
-                                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: 0, marginBottom: 4 }}>Section {item.sec} - {item.name}</h3>
-                                        <div style={{ fontSize: 13, color: "#8899AA" }}>{item.desc} | <span style={{ color: "#00E5A0" }}>Max Limit: {item.limit}</span></div>
+                                        <h3 className="text-base font-semibold text-white mb-1">
+                                            Section {item.sec} - {item.name}
+                                        </h3>
+                                        <p className="text-sm text-[#8899AA]">
+                                            {item.desc} |{" "}
+                                            <span className="text-[#00E5A0]">Max Limit: {item.limit}</span>
+                                        </p>
                                     </div>
                                 </div>
-                                <div style={{ width: 220, position: "relative" }}>
-                                    <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#8899AA", fontSize: 14 }}>₹</span>
+                                <div className="w-56 relative">
+                                    <label htmlFor={`input-${item.id}`} className="sr-only">
+                                        {item.name} amount
+                                    </label>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8899AA] text-sm">₹</span>
                                     <input
+                                        id={`input-${item.id}`}
                                         type="text"
                                         value={values[item.id] || ""}
                                         onChange={(e) => setValues({ ...values, [item.id]: e.target.value })}
                                         placeholder="0"
-                                        style={{ width: "100%", height: 44, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 15, paddingLeft: 28, paddingRight: 12, outline: "none" }}
+                                        className="w-full h-11 bg-[#060B14] border border-[#1A2A3A] rounded-lg text-white text-sm pl-7 pr-3 outline-none focus:border-[#00E5A0]"
                                     />
                                 </div>
                             </div>
-                        </div>
+                        </Card>
                     ))}
-
                 </div>
 
                 {/* Sticky Summary */}
-                <div style={{ position: "sticky", top: 24, alignSelf: "start" }}>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: 0, marginBottom: 20 }}>Deduction Totals</h3>
+                <div className="lg:sticky lg:top-6 lg:self-start">
+                    <Card padding="lg">
+                        <h3 className="text-base font-semibold text-white mb-5">Deduction Totals</h3>
 
-                        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
-                            {OTHER_DEDUCTIONS.map(item => {
-                                const val = parseInt(values[item.id] || '0'.replace(/,/g, '')) || 0;
+                        <div className="flex flex-col gap-3 mb-6">
+                            {OTHER_DEDUCTIONS.map((item) => {
+                                const val = parseInt((values[item.id] || "0").replace(/,/g, "")) || 0;
                                 if (val === 0) return null;
                                 return (
-                                    <div key={item.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                                        <span style={{ color: "#8899AA" }}>Sec {item.sec}</span>
-                                        <span style={{ color: "#FFFFFF", fontWeight: 500 }}>₹{val.toLocaleString()}</span>
+                                    <div key={item.id} className="flex justify-between text-sm">
+                                        <span className="text-[#8899AA]">Sec {item.sec}</span>
+                                        <span className="text-white font-medium">₹{val.toLocaleString()}</span>
                                     </div>
-                                )
+                                );
                             })}
                             {totalDeductions === 0 && (
-                                <div style={{ fontSize: 13, color: "#8899AA", fontStyle: "italic" }}>No amounts declared yet.</div>
+                                <p className="text-sm text-[#8899AA] italic">No amounts declared yet.</p>
                             )}
-                            <div style={{ borderTop: "1px solid #1A2A3A", paddingTop: 12, marginTop: 4, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <span style={{ fontSize: 15, color: "#FFFFFF", fontWeight: 600 }}>Total Additional</span>
-                                <span style={{ fontSize: 20, color: "#00E5A0", fontWeight: 700 }}>₹{totalDeductions.toLocaleString()}</span>
+                            <div className="border-t border-[#1A2A3A] pt-3 mt-1 flex justify-between items-center">
+                                <span className="text-sm font-semibold text-white">Total Additional</span>
+                                <span className="text-xl font-bold text-[#00E5A0]">₹{totalDeductions.toLocaleString()}</span>
                             </div>
                         </div>
 
-                        <button style={{ width: "100%", height: 44, background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }} className="hover:opacity-90">
-                            <Save size={16} /> Save Declarations
-                        </button>
-                    </div>
+                        <Button className="w-full" icon={<Save size={16} />}>
+                            Save Declarations
+                        </Button>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

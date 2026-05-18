@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Globe2, Plus, Flag, Settings, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Globe2, Plus, Settings, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function GlobalCountrySetupScreen() {
     const [activeTab, setActiveTab] = useState('active');
@@ -13,6 +15,13 @@ export default function GlobalCountrySetupScreen() {
     ];
 
     return (
+        <Page
+            title="Global Country Configuration"
+            subtitle="Manage active jurisdictions, local compliance frameworks, and geographical expansion."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Country Setup" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -130,5 +139,7 @@ export default function GlobalCountrySetupScreen() {
                 </div>
             )}
         </div>
+    
+        </Page>
     );
 }

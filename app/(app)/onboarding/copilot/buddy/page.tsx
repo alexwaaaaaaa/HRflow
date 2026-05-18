@@ -1,6 +1,9 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { Bot, UserPlus, FileText, CheckCircle2, ChevronRight, Loader2, ArrowRight } from 'lucide-react';
+import React, { useState } from "react";
+import { Bot, UserPlus, FileText, CheckCircle2, ArrowRight } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 export default function BuddyAutoAssignScreen() {
     const [isAssigning, setIsAssigning] = useState(false);
@@ -8,7 +11,6 @@ export default function BuddyAutoAssignScreen() {
 
     const handleAutoAssign = () => {
         setIsAssigning(true);
-        // Simulate API call and AI processing
         setTimeout(() => {
             setIsAssigning(false);
             setAssigned(true);
@@ -16,30 +18,32 @@ export default function BuddyAutoAssignScreen() {
     };
 
     return (
-        <div className="min-h-screen p-6 max-w-4xl mx-auto flex flex-col justify-center">
-
+        <Page
+            title="AI Buddy Assignment"
+            subtitle="Kaarya Copilot matches new hires with experienced peers based on role, location, shared skills, and personality traits."
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Onboarding", href: "/onboarding/dashboard" },
+                { label: "Copilot", href: "/onboarding/copilot/buddy" },
+            ]}
+            maxWidth="900px"
+        >
             <div className="text-center mb-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-indigo-400/30 shadow-xl shadow-indigo-500/20 relative">
-                    <Bot className="text-white z-10" size={28} />
-                    <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <Bot className="text-white z-10" size={28} aria-hidden="true" />
+                    <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-emerald-400 animate-ping" aria-hidden="true" />
                 </div>
-                <h1 className="text-3xl font-black text-white mb-3">AI Buddy Assignment</h1>
-                <p className="text-[#8899AA] text-base max-w-2xl mx-auto">
-                    Kaarya Copilot matches new hires with experienced peers based on role, location, shared skills, and personality traits.
-                </p>
             </div>
 
-            <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-8 relative overflow-hidden shadow-2xl">
-
-                {/* Decorative background grids */}
-                <div className="absolute inset-0 bg-[url('https://transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none" />
-
+            <Card className="relative overflow-hidden shadow-2xl">
                 <div className="flex flex-col md:flex-row gap-12 items-center relative z-10">
 
                     {/* Source Information */}
                     <div className="flex-1 space-y-6 w-full">
-                        <div className="bg-[#060D1A] border border-[#2A3A4A] rounded-xl p-5">
-                            <h3 className="text-sm font-bold text-[#8899AA] uppercase tracking-wider mb-4 flex items-center gap-2"><UserPlus size={16} /> New Hires (This Week)</h3>
+                        <Card variant="elevated">
+                            <h3 className="text-sm font-bold text-[#8899AA] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <UserPlus size={16} aria-hidden="true" /> New Hires (This Week)
+                            </h3>
 
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
@@ -61,45 +65,35 @@ export default function BuddyAutoAssignScreen() {
                                     <div className="text-xs font-bold text-[#556677]">More joining soon</div>
                                 </div>
                             </div>
-                        </div>
+                        </Card>
                     </div>
 
                     {/* Action Center */}
                     <div className="flex flex-col items-center">
-                        <div className="h-full w-px bg-gradient-to-b from-transparent via-[#2A3A4A] to-transparent hidden md:block absolute left-1/2 top-0" />
-
                         {!assigned ? (
-                            <button
+                            <Button
                                 onClick={handleAutoAssign}
                                 disabled={isAssigning}
-                                className={`relative z-10 w-48 py-4 rounded-xl font-bold flex flex-col items-center justify-center gap-2 transition-all shadow-xl
-                                    ${isAssigning ? 'bg-[#131B2B] border border-[#2A3A4A] text-[#8899AA]' : 'bg-indigo-600 border border-indigo-500 text-white hover:bg-indigo-500 hover:shadow-indigo-500/20'}
-                                `}
+                                isLoading={isAssigning}
+                                loadingText="Running Copilot..."
+                                icon={<Bot size={24} aria-hidden="true" />}
+                                size="lg"
+                                className="w-48 flex-col h-auto py-4 gap-2"
                             >
-                                {isAssigning ? (
-                                    <>
-                                        <Loader2 className="animate-spin text-indigo-400" size={24} />
-                                        <span>Running Copilot...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Bot size={24} />
-                                        <span>Auto-Assign Buddies</span>
-                                    </>
-                                )}
-                            </button>
+                                Auto-Assign Buddies
+                            </Button>
                         ) : (
-                            <div className="relative z-10 w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 flex items-center justify-center">
-                                <CheckCircle2 size={32} />
+                            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500/50 text-emerald-400 flex items-center justify-center">
+                                <CheckCircle2 size={32} aria-hidden="true" />
                             </div>
                         )}
                     </div>
 
                     {/* Result Information */}
                     <div className="flex-1 space-y-6 w-full">
-                        <div className={`bg-[#060D1A] border border-[#2A3A4A] rounded-xl p-5 transition-opacity duration-500 ${assigned ? 'opacity-100' : 'opacity-40'}`}>
+                        <Card variant="elevated" className={`transition-opacity duration-500 ${assigned ? "opacity-100" : "opacity-40"}`}>
                             <h3 className="text-sm font-bold text-[#8899AA] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <FileText size={16} /> Copilot Matches
+                                <FileText size={16} aria-hidden="true" /> Copilot Matches
                             </h3>
 
                             {!assigned && !isAssigning && (
@@ -116,41 +110,41 @@ export default function BuddyAutoAssignScreen() {
                             )}
 
                             {assigned && (
-                                <div className="space-y-4 animate-fade-in text-sm">
+                                <div className="space-y-4 text-sm">
                                     <div className="bg-[#131B2B] border border-emerald-500/30 p-3 rounded-lg">
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-white font-bold">Arjun Joshi</span>
-                                            <ArrowRight size={14} className="text-[#556677] mx-2" />
+                                            <ArrowRight size={14} className="text-[#556677] mx-2" aria-hidden="true" />
                                             <span className="text-emerald-400 font-bold">Rahul T. (Sr. SDE)</span>
                                         </div>
-                                        <div className="text-[10px] text-[#8899AA] bg-emerald-500/10 px-2 py-1 rounded inline-block">Matched via: Same Team (Frontend) & Location (BLR)</div>
+                                        <div className="text-[10px] text-[#8899AA] bg-emerald-500/10 px-2 py-1 rounded inline-block">
+                                            Matched via: Same Team (Frontend) &amp; Location (BLR)
+                                        </div>
                                     </div>
                                     <div className="bg-[#131B2B] border border-emerald-500/30 p-3 rounded-lg">
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-white font-bold">Sneha Menon</span>
-                                            <ArrowRight size={14} className="text-[#556677] mx-2" />
+                                            <ArrowRight size={14} className="text-[#556677] mx-2" aria-hidden="true" />
                                             <span className="text-emerald-400 font-bold">Priya K. (Product Lead)</span>
                                         </div>
-                                        <div className="text-[10px] text-[#8899AA] bg-emerald-500/10 px-2 py-1 rounded inline-block">Matched via: Cross-functional interest (Design)</div>
+                                        <div className="text-[10px] text-[#8899AA] bg-emerald-500/10 px-2 py-1 rounded inline-block">
+                                            Matched via: Cross-functional interest (Design)
+                                        </div>
                                     </div>
                                 </div>
                             )}
-
-                        </div>
+                        </Card>
                     </div>
-
                 </div>
-
-            </div>
+            </Card>
 
             {assigned && (
-                <div className="mt-8 text-center animate-fade-in-up">
-                    <button className="text-indigo-400 hover:text-white font-bold text-sm bg-indigo-500/10 hover:bg-indigo-500/20 px-8 py-3 rounded-xl transition-colors">
-                        Approve & Send Emails
-                    </button>
+                <div className="mt-8 text-center">
+                    <Button variant="ghost">
+                        Approve &amp; Send Emails
+                    </Button>
                 </div>
             )}
-
-        </div>
+        </Page>
     );
 }

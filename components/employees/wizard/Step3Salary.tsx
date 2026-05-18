@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import ClientOnly from "@/components/ui/ClientOnly";
 
 const inputStyle = {
     width: "100%", height: 40, background: "#0D1928", border: "1px solid #1A2A3A",
@@ -27,7 +26,7 @@ function fmt(n: number) {
     return n.toLocaleString("en-IN");
 }
 
-export default function Step3Salary({ data, onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
+export default function Step3Salary({ data: _data, onUpdate: _onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
     const [ctc, setCtc] = useState(1800000);
     const scale = ctc / 1800000;
 

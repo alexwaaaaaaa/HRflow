@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Bug, ArrowLeft, Upload, Paperclip, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Bug, ArrowLeft, Upload, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 const SEVERITIES = ['Critical — Platform down', 'High — Major feature broken', 'Medium — Some disruption', 'Low — Minor UI issue'];
@@ -28,6 +30,13 @@ export default function BugReportScreen() {
     );
 
     return (
+        <Page
+            title="Report a Bug"
+            subtitle="Help us fix issues faster by providing detailed reproduction steps."
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Bug Report" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div>
@@ -116,5 +125,7 @@ export default function BugReportScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

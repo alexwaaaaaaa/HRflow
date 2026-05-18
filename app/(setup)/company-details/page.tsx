@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Globe } from "lucide-react";
 import Input from "@/components/ui/Input";
+import Card from "@/components/ui/Card";
 
 export default function CompanyDetailsPage() {
     const [legalName, setLegalName] = useState("");
@@ -12,33 +13,37 @@ export default function CompanyDetailsPage() {
     const [size, setSize] = useState("");
 
     return (
-        <div style={{ padding: "48px 64px" }} className="animate-fade-in flex">
+        <div className="px-16 py-12 animate-fade-in flex gap-8">
             {/* Left Form Area */}
-            <div style={{ flex: 1, maxWidth: 720 }}>
-                <h2 style={{ fontSize: 24, fontWeight: 600, color: "#FFFFFF", margin: 0 }}>Tell us about your company</h2>
-                <p style={{ fontSize: 14, color: "#8899AA", marginTop: 4 }}>This information will appear on payslips, letters and compliance filings.</p>
+            <div className="flex-1 max-w-[720px]">
+                <h2 className="text-2xl font-semibold text-white m-0">Tell us about your company</h2>
+                <p className="text-sm text-[#8899AA] mt-1">This information will appear on payslips, letters and compliance filings.</p>
 
-                <div style={{ marginTop: 32 }}>
+                <div className="mt-8">
                     {/* Section 1 */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-                        <h3 style={{ fontSize: 18, color: "#FFFFFF", margin: 0, whiteSpace: "nowrap" }}>Basic Information</h3>
-                        <div style={{ flex: 1, height: 1, background: "#1A2A3A" }} />
+                    <div className="flex items-center gap-4 mb-6">
+                        <h3 className="text-lg text-white m-0 whitespace-nowrap">Basic Information</h3>
+                        <div className="flex-1 h-px bg-[#1A2A3A]" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
                             <Input label="Company Legal Name *" placeholder="TechCorp Solutions Private Limited" value={legalName} onChange={(e) => setLegalName(e.target.value)} />
-                            <div style={{ fontSize: 12, color: "#445566", marginTop: 4 }}>As registered with MCA / ROC</div>
+                            <div className="text-xs text-[#445566] mt-1">As registered with MCA / ROC</div>
                         </div>
                         <div>
                             <Input label="Company Display Name *" placeholder="TechCorp Solutions" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-                            <div style={{ fontSize: 12, color: "#445566", marginTop: 4 }}>Short name for UI and emails</div>
+                            <div className="text-xs text-[#445566] mt-1">Short name for UI and emails</div>
                         </div>
 
                         <div>
-                            <label style={{ fontSize: 12, fontWeight: 500, color: "#9ca3af", marginBottom: 6, display: "block" }}>Company Type *</label>
-                            <select className="w-full h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
-                                value={companyType} onChange={(e) => setCompanyType(e.target.value)}>
+                            <label htmlFor="company-type" className="block text-xs font-medium text-[#9ca3af] mb-1.5">Company Type *</label>
+                            <select
+                                id="company-type"
+                                className="w-full h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
+                                value={companyType}
+                                onChange={(e) => setCompanyType(e.target.value)}
+                            >
                                 <option value="" disabled>Select Type</option>
                                 <option>Private Limited Company</option>
                                 <option>Public Limited Company</option>
@@ -51,9 +56,13 @@ export default function CompanyDetailsPage() {
                         </div>
 
                         <div>
-                            <label style={{ fontSize: 12, fontWeight: 500, color: "#9ca3af", marginBottom: 6, display: "block" }}>Industry *</label>
-                            <select className="w-full h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
-                                value={industry} onChange={(e) => setIndustry(e.target.value)}>
+                            <label htmlFor="industry" className="block text-xs font-medium text-[#9ca3af] mb-1.5">Industry *</label>
+                            <select
+                                id="industry"
+                                className="w-full h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
+                                value={industry}
+                                onChange={(e) => setIndustry(e.target.value)}
+                            >
                                 <option value="" disabled>Select Industry</option>
                                 <optgroup label="Technology"><option>IT Services</option><option>Software Product</option><option>Startup</option></optgroup>
                                 <optgroup label="Manufacturing"><option>Automotive</option><option>Pharma</option></optgroup>
@@ -64,9 +73,13 @@ export default function CompanyDetailsPage() {
                         <Input type="number" label="Year of Incorporation" placeholder="2015" />
 
                         <div>
-                            <label style={{ fontSize: 12, fontWeight: 500, color: "#9ca3af", marginBottom: 6, display: "block" }}>Company Size *</label>
-                            <select className="w-full h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
-                                value={size} onChange={(e) => setSize(e.target.value)}>
+                            <label htmlFor="company-size" className="block text-xs font-medium text-[#9ca3af] mb-1.5">Company Size *</label>
+                            <select
+                                id="company-size"
+                                className="w-full h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
+                                value={size}
+                                onChange={(e) => setSize(e.target.value)}
+                            >
                                 <option value="" disabled>Select Size</option>
                                 <option>1-10</option><option>11-50</option><option>51-200</option>
                                 <option>201-500</option><option>501-1000</option><option>1000+</option>
@@ -74,33 +87,42 @@ export default function CompanyDetailsPage() {
                         </div>
 
                         <div className="col-span-2 relative">
-                            <Input label="Company Website" placeholder="https://www.techcorp.in" style={{ paddingLeft: 40 }} />
-                            <Globe size={18} color="#8899AA" style={{ position: "absolute", left: 12, top: 35 }} />
+                            <Input label="Company Website" placeholder="https://www.techcorp.in" />
+                            <Globe size={18} color="#8899AA" className="absolute left-3 top-[34px]" aria-hidden="true" />
                         </div>
 
-                        <div className="col-span-2 relative">
-                            <label style={{ fontSize: 12, fontWeight: 500, color: "#9ca3af", marginBottom: 6, display: "block" }}>Company Description (Optional)</label>
-                            <textarea rows={3} placeholder="Brief description of your company..."
-                                className="w-full p-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors resize-none" />
-                            <div style={{ fontSize: 12, color: "#445566", textAlign: "right", marginTop: 4 }}>0 / 500</div>
+                        <div className="col-span-2">
+                            <label htmlFor="company-description" className="block text-xs font-medium text-[#9ca3af] mb-1.5">Company Description (Optional)</label>
+                            <textarea
+                                id="company-description"
+                                rows={3}
+                                placeholder="Brief description of your company..."
+                                className="w-full p-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors resize-none"
+                            />
+                            <div className="text-xs text-[#445566] text-right mt-1">0 / 500</div>
                         </div>
                     </div>
 
                     {/* Section 2 */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 32, marginBottom: 24 }}>
-                        <h3 style={{ fontSize: 18, color: "#FFFFFF", margin: 0, whiteSpace: "nowrap" }}>Contact Information</h3>
-                        <div style={{ flex: 1, height: 1, background: "#1A2A3A" }} />
+                    <div className="flex items-center gap-4 mt-8 mb-6">
+                        <h3 className="text-lg text-white m-0 whitespace-nowrap">Contact Information</h3>
+                        <div className="flex-1 h-px bg-[#1A2A3A]" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 pb-12">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-12">
                         <Input label="Primary Contact Name *" placeholder="Priya Mehta" />
                         <Input label="Designation" placeholder="HR Manager" />
                         <Input label="Work Email *" type="email" placeholder="priya@techcorp.in" />
                         <div>
-                            <label style={{ fontSize: 12, fontWeight: 500, color: "#9ca3af", marginBottom: 6, display: "block" }}>Work Mobile *</label>
+                            <label htmlFor="work-mobile" className="block text-xs font-medium text-[#9ca3af] mb-1.5">Work Mobile *</label>
                             <div className="flex gap-2">
-                                <div className="flex items-center gap-1 px-3 rounded-lg bg-[#0D1928] border border-[#1A2A3A] text-sm text-white" style={{ height: 40 }}>🇮🇳 +91</div>
-                                <input type="tel" placeholder="98765 43210" className="flex-1 h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors" />
+                                <div className="flex items-center gap-1 px-3 rounded-lg bg-[#0D1928] border border-[#1A2A3A] text-sm text-white h-10">🇮🇳 +91</div>
+                                <input
+                                    id="work-mobile"
+                                    type="tel"
+                                    placeholder="98765 43210"
+                                    className="flex-1 h-10 px-3 rounded-lg text-sm bg-[#0D1928] border border-[#1A2A3A] text-white outline-none focus:border-[#00E5A0] transition-colors"
+                                />
                             </div>
                         </div>
                         <Input label="Registered Email (for compliance)" type="email" placeholder="compliance@techcorp.in" />
@@ -111,21 +133,21 @@ export default function CompanyDetailsPage() {
             </div>
 
             {/* Right Sticky Preview Area */}
-            <div style={{ width: 320, marginLeft: 32 }}>
-                <div style={{ position: "sticky", top: 48 }}>
-                    <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 8 }}>Live Preview</div>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                        <div style={{ width: 80, height: 80, borderRadius: "50%", background: "#1A2A3A", border: "1px dashed #445566", display: "flex", alignItems: "center", justifyContent: "center", color: "#8899AA", fontSize: 12, marginBottom: 16 }}>Logo</div>
-                        <div style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", wordBreak: "break-word" }}>
+            <div className="w-[320px] flex-shrink-0">
+                <div className="sticky top-12">
+                    <div className="text-xs text-[#8899AA] mb-2">Live Preview</div>
+                    <Card variant="default" padding="md">
+                        <div className="w-20 h-20 rounded-full bg-[#1A2A3A] border border-dashed border-[#445566] flex items-center justify-center text-[#8899AA] text-xs mb-4">Logo</div>
+                        <div className="text-lg font-semibold text-white break-words">
                             {displayName || legalName || "Company Name"}
                         </div>
                         <div className="flex flex-wrap gap-2 mt-3">
-                            {industry && <span style={{ background: "rgba(0,102,255,0.1)", color: "#0066FF", padding: "4px 12px", borderRadius: 20, fontSize: 12 }}>{industry}</span>}
-                            {size && <span style={{ background: "rgba(136,153,170,0.1)", color: "#8899AA", padding: "4px 12px", borderRadius: 20, fontSize: 12 }}>{size} employees</span>}
-                            {!industry && !size && <span style={{ background: "rgba(136,153,170,0.1)", color: "#8899AA", padding: "4px 12px", borderRadius: 20, fontSize: 12 }}>Industry</span>}
+                            {industry && <span className="bg-[rgba(0,102,255,0.1)] text-[#0066FF] px-3 py-1 rounded-full text-xs">{industry}</span>}
+                            {size && <span className="bg-[rgba(136,153,170,0.1)] text-[#8899AA] px-3 py-1 rounded-full text-xs">{size} employees</span>}
+                            {!industry && !size && <span className="bg-[rgba(136,153,170,0.1)] text-[#8899AA] px-3 py-1 rounded-full text-xs">Industry</span>}
                         </div>
-                        <div style={{ fontSize: 12, color: "#445566", marginTop: 24 }}>This is how your company appears in HRFlow</div>
-                    </div>
+                        <div className="text-xs text-[#445566] mt-6">This is how your company appears in HRFlow</div>
+                    </Card>
                 </div>
             </div>
         </div>

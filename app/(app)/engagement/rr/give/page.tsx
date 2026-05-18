@@ -1,9 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import {
-    Award, Search, Medal, CheckCircle2, Zap, Star, Shield, Users, Heart, Lightbulb, User, MessageSquare, Send, Eye, EyeOff, ArrowRight
+import { Search, Medal, CheckCircle2, Zap, Star, Shield, Users, Heart, Lightbulb, Send, Eye, EyeOff, ArrowRight
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const BADGES = [
@@ -35,6 +35,13 @@ export default function GiveRecognitionScreen() {
     };
 
     return (
+        <Page
+            title="Give Recognition"
+            subtitle="Appreciate your peers, award points, and celebrate their contributions."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Give" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)]">
 
             <div className="mb-8">
@@ -86,6 +93,8 @@ export default function GiveRecognitionScreen() {
                                     const Icon = badge.icon;
                                     const isSelected = selectedBadge === badge.id;
                                     return (
+
+
                                         <label
                                             key={badge.id}
                                             className={`cursor-pointer rounded-2xl flex flex-col items-center justify-center p-6 border-2 transition-all duration-300 relative overflow-hidden ${isSelected ? 'border-[#33E6FF] bg-[#1A2A3A]' : 'border-[#2A3A4A] bg-[#152336] hover:border-[#445566]'}`}
@@ -103,7 +112,8 @@ export default function GiveRecognitionScreen() {
                                             </div>
                                             <span className={`text-sm font-bold text-center ${isSelected ? 'text-white' : 'text-[#8899AA]'}`}>{badge.name}</span>
                                         </label>
-                                    )
+                                    
+            )
                                 })}
                             </div>
                         </div>
@@ -239,5 +249,7 @@ export default function GiveRecognitionScreen() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

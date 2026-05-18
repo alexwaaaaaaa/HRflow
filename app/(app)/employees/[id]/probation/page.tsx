@@ -1,88 +1,198 @@
 "use client";
 
 import { use, useState } from "react";
-import Link from "next/link";
 import { CheckCircle2, Clock, AlertTriangle, Star } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+type Outcome = "confirm" | "extend" | "terminate";
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+interface OutcomeOptionProps {
+  val: Outcome;
+  label: string;
+  desc: string;
+  color: string;
+  icon: React.ReactNode;
+  selected: boolean;
+  onSelect: (v: Outcome) => void;
+}
+
+function OutcomeOption({ val, label, desc, color, icon, selected, onSelect }: OutcomeOptionProps) {
+  return (
+    <label
+      className="flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition-colors"
+      style={{
+        // inline-style: dynamic per-outcome color
+        background: selected ? `${color}08` : "#060B14",
+        borderColor: selected ? color : "#1A2A3A",
+      }}
+    >
+      <input
+        type="radio"
+        name="outcome"
+        value={val}
+        checked={selected}
+        onChange={() => onSelect(val)}
+        className="mt-0.5 shrink-0"
+        style={{ accentColor: color }}
+      />
+      <div style={{ color }}>{icon}</div>
+      <div>
+        <div className="mb-1 text-[15px] font-semibold text-white">{label}</div>
+        <div className="text-[13px] text-[#8899AA]">{desc}</div>
+      </div>
+    </label>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const PROBATION_INFO = [
+  { label: "Joined", val: "15/11/2024" },
+  { label: "Period", val: "6 months" },
+  { label: "Ends On", val: "14/05/2025" },
+  { label: "Remaining", val: "183 days" },
+] as const;
+
+const OUTCOME_OPTIONS: Omit<OutcomeOptionProps, "selected" | "onSelect">[] = [
+  {
+    val: "confirm",
+    label: "Confirm Employment",
+    desc: "End probation and confirm as permanent employee",
+    color: "#00E5A0",
+    icon: <CheckCircle2 size={18} aria-hidden="true" />,
+  },
+  {
+    val: "extend",
+    label: "Extend Probation",
+    desc: "Extend for an additional period (3 or 6 months)",
+    color: "#FFB800",
+    icon: <Clock size={18} aria-hidden="true" />,
+  },
+  {
+    val: "terminate",
+    label: "Terminate (Not Suitable)",
+    desc: "End employment — probation failed",
+    color: "#FF4444",
+    icon: <AlertTriangle size={18} aria-hidden="true" />,
+  },
+];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ProbationReview({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [outcome, setOutcome] = useState("confirm");
-    const [rating, setRating] = useState(4);
+  const { id } = use(params);
+  const [outcome, setOutcome] = useState<Outcome>("confirm");
+  const [rating, setRating] = useState(4);
 
-    return (
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "32px 32px 80px" }}>
-            <Link href={`/employees/${id}`} style={{ color: "#8899AA", textDecoration: "none", fontSize: 13 }}>← Back to Profile</Link>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginTop: 12, marginBottom: 24 }}>Probation Review</h2>
+  const handleSubmit = () => {
+    // TODO: replace with real mutation
+    alert(`Probation outcome: ${outcome} (stub)`);
+  };
 
-            {/* Probation Info */}
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, marginBottom: 24, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 20 }}>
-                {[
-                    { icon: "🗓", label: "Joined", val: "15/11/2024" },
-                    { icon: "⏱", label: "Period", val: "6 months" },
-                    { icon: "📅", label: "Ends On", val: "14/05/2025" },
-                    { icon: "⏳", label: "Remaining", val: "183 days" },
-                ].map(c => (
-                    <div key={c.label} style={{ textAlign: "center", padding: "12px", background: "#0A1420", borderRadius: 12 }}>
-                        <div style={{ fontSize: 24, marginBottom: 6 }}>{c.icon}</div>
-                        <div style={{ fontSize: 11, color: "#8899AA", textTransform: "uppercase", marginBottom: 4 }}>{c.label}</div>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF" }}>{c.val}</div>
-                    </div>
-                ))}
+  return (
+    <Page
+      title="Probation Review"
+      breadcrumbs={[
+        { label: "Employees", href: "/employees" },
+        { label: "Rahul Sharma", href: `/employees/${id}` },
+        { label: "Probation Review" },
+      ]}
+      maxWidth="800px"
+    >
+      {/* Probation info */}
+      <Card padding="md" className="mb-6">
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+          {PROBATION_INFO.map((c) => (
+            <div key={c.label} className="rounded-xl bg-[#0A1420] p-3 text-center">
+              <div className="mb-1.5 text-[11px] uppercase text-[#8899AA]">{c.label}</div>
+              <div className="text-base font-bold text-white">{c.val}</div>
             </div>
-
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 32 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 24 }}>Review Outcome</h3>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
-                    {[
-                        { val: "confirm", label: "Confirm Employment", desc: "End probation and confirm as permanent employee", color: "#00E5A0", icon: <CheckCircle2 size={18} /> },
-                        { val: "extend", label: "Extend Probation", desc: "Extend for an additional period (3 or 6 months)", color: "#FFB800", icon: <Clock size={18} /> },
-                        { val: "terminate", label: "Terminate (Not Suitable)", desc: "End employment — probation failed", color: "#FF4444", icon: <AlertTriangle size={18} /> },
-                    ].map(o => (
-                        <label key={o.val} style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: 16, background: outcome === o.val ? `${o.color}08` : "#060B14", border: `1px solid ${outcome === o.val ? o.color : "#1A2A3A"}`, borderRadius: 12, cursor: "pointer" }}>
-                            <input type="radio" name="outcome" value={o.val} checked={outcome === o.val} onChange={() => setOutcome(o.val)} style={{ accentColor: o.color, marginTop: 2, flexShrink: 0 }} />
-                            <div style={{ color: o.color }}>{o.icon}</div>
-                            <div>
-                                <div style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", marginBottom: 4 }}>{o.label}</div>
-                                <div style={{ fontSize: 13, color: "#8899AA" }}>{o.desc}</div>
-                            </div>
-                        </label>
-                    ))}
-                </div>
-
-                {outcome === "extend" && (
-                    <div style={{ marginBottom: 24 }}>
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Extend By</label>
-                        <select style={{ height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                            <option>3 months</option>
-                            <option>6 months</option>
-                        </select>
-                    </div>
-                )}
-
-                <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 10 }}>Performance Rating during Probation</label>
-                    <div style={{ display: "flex", gap: 8 }}>
-                        {[1, 2, 3, 4, 5].map(s => (
-                            <button key={s} onClick={() => setRating(s)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                                <Star size={28} fill={s <= rating ? "#FFB800" : "none"} color={s <= rating ? "#FFB800" : "#445566"} />
-                            </button>
-                        ))}
-                        <span style={{ fontSize: 14, color: "#8899AA", marginLeft: 8, alignSelf: "center" }}>{rating}/5</span>
-                    </div>
-                </div>
-
-                <div style={{ marginBottom: 24 }}>
-                    <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Manager Feedback *</label>
-                    <textarea rows={4} placeholder="Describe employee performance, strengths, and areas of improvement..." style={{ width: "100%", background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", resize: "none", boxSizing: "border-box" }}></textarea>
-                </div>
-
-                <div style={{ display: "flex", gap: 12 }}>
-                    <button style={{ flex: 1, height: 48, background: outcome === "terminate" ? "#FF4444" : "#00E5A0", border: "none", borderRadius: 8, color: outcome === "terminate" ? "#FFFFFF" : "#060B14", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                        {outcome === "confirm" ? "Confirm Employment & Generate Letter" : outcome === "extend" ? "Extend Probation" : "Terminate Employee"}
-                    </button>
-                </div>
-            </div>
+          ))}
         </div>
-    );
+      </Card>
+
+      <Card padding="md">
+        <h3 className="mb-6 text-base font-semibold text-white">Review Outcome</h3>
+
+        <div className="mb-7 flex flex-col gap-3.5">
+          {OUTCOME_OPTIONS.map((opt) => (
+            <OutcomeOption
+              key={opt.val}
+              {...opt}
+              selected={outcome === opt.val}
+              onSelect={setOutcome}
+            />
+          ))}
+        </div>
+
+        {outcome === "extend" && (
+          <div className="mb-6">
+            <label htmlFor="extend-by" className="mb-1.5 block text-[13px] text-[#8899AA]">
+              Extend By
+            </label>
+            <select
+              id="extend-by"
+              className="h-10 rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+            >
+              <option>3 months</option>
+              <option>6 months</option>
+            </select>
+          </div>
+        )}
+
+        <div className="mb-6">
+          <div className="mb-2.5 text-[13px] text-[#8899AA]">
+            Performance Rating during Probation
+          </div>
+          <div className="flex items-center gap-2" role="group" aria-label="Performance rating">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setRating(s)}
+                aria-label={`${s} star${s !== 1 ? "s" : ""}`}
+                className="cursor-pointer p-0"
+              >
+                <Star
+                  size={28}
+                  fill={s <= rating ? "#FFB800" : "none"}
+                  color={s <= rating ? "#FFB800" : "#445566"}
+                  aria-hidden="true"
+                />
+              </button>
+            ))}
+            <span className="ml-2 self-center text-sm text-[#8899AA]">{rating}/5</span>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label htmlFor="mgr-feedback" className="mb-1.5 block text-[13px] text-[#8899AA]">
+            Manager Feedback *
+          </label>
+          <textarea
+            id="mgr-feedback"
+            rows={4}
+            placeholder="Describe employee performance, strengths, and areas of improvement..."
+            className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3.5 text-sm text-white outline-none"
+          />
+        </div>
+
+        <Button
+          variant={outcome === "terminate" ? "danger" : "primary"}
+          className="w-full"
+          onClick={handleSubmit}
+        >
+          {outcome === "confirm"
+            ? "Confirm Employment & Generate Letter"
+            : outcome === "extend"
+              ? "Extend Probation"
+              : "Terminate Employee"}
+        </Button>
+      </Card>
+    </Page>
+  );
 }

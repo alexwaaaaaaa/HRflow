@@ -1,7 +1,8 @@
+// migrated: immersive-ui — full-screen course assignment UI; Page shell intentionally omitted
 "use client";
 import React, { useState } from "react";
 import {
-    Users, Building2, UserCircle, Calendar, Send, Filter, CheckCircle2, Search, X
+    Users, Building2, UserCircle, Calendar, Send, Search
 } from "lucide-react";
 
 export default function CourseAssignmentScreen() {

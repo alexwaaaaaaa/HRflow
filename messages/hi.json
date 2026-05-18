@@ -1,0 +1,84 @@
+{
+  "common": {
+    "loading": "लोड हो रहा है…",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "submit": "जमा करें",
+    "back": "वापस",
+    "continue": "जारी रखें",
+    "review": "समीक्षा करें",
+    "yes": "हाँ",
+    "no": "नहीं",
+    "search": "खोजें…",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "tryAgain": "पुनः प्रयास करें",
+    "signOut": "साइन आउट",
+    "signIn": "साइन इन"
+  },
+  "auth": {
+    "login": {
+      "welcomeBack": "वापस स्वागत है",
+      "subtitle": "अपने HRFlow खाते में साइन इन करें",
+      "email": "कार्य ईमेल",
+      "emailPlaceholder": "you@company.com",
+      "password": "पासवर्ड",
+      "rememberMe": "मुझे याद रखें",
+      "forgotPassword": "पासवर्ड भूल गए?",
+      "signIn": "साइन इन",
+      "signingIn": "साइन इन हो रहा है…",
+      "orContinueWith": "या इसके साथ जारी रखें",
+      "googleSso": "Google Workspace",
+      "microsoftSso": "Microsoft 365",
+      "newToHrflow": "HRFlow में नए?",
+      "requestDemo": "डेमो का अनुरोध करें"
+    },
+    "errors": {
+      "invalidCredentials": "ईमेल या पासवर्ड अमान्य है।",
+      "tooManyAttempts": "बहुत अधिक प्रयास। {minutes} मिनट में पुनः प्रयास करें।",
+      "networkError": "सर्वर से संपर्क नहीं हो सका। अपना कनेक्शन जाँचें।"
+    }
+  },
+  "leave": {
+    "apply": {
+      "title": "छुट्टी के लिए आवेदन करें",
+      "subtitle": "मैनेजर की मंज़ूरी के लिए नया अवकाश अनुरोध भेजें",
+      "leaveType": "छुट्टी का प्रकार",
+      "startDate": "प्रारंभ तिथि",
+      "endDate": "अंतिम तिथि",
+      "duration": "अवधि",
+      "fullDay": "पूरा दिन",
+      "firstHalf": "पहली पाली",
+      "secondHalf": "दूसरी पाली",
+      "reason": "छुट्टी का कारण",
+      "reasonPlaceholder": "अपने मैनेजर के लिए संक्षिप्त कारण…",
+      "reasonHint": "न्यूनतम 5 अक्षर। केवल आपके मैनेजर और HR को दिखाई देगा।",
+      "supportingDocs": "सहायक दस्तावेज़",
+      "uploadDocument": "दस्तावेज़ अपलोड करें",
+      "fileFormatHint": "PNG, PDF या JPG · अधिकतम 5 MB",
+      "noDocRequired": "इस प्रकार की छुट्टी के लिए दस्तावेज़ की आवश्यकता नहीं है। यह चरण छोड़ सकते हैं।",
+      "balanceWarning": "आपके पास केवल {balance} {type} दिन हैं। अधिक को LOP माना जाएगा।",
+      "successTitle": "छुट्टी आवेदित",
+      "successDesc": "आपका {type} अनुरोध {days} दिनों के लिए मंज़ूरी हेतु भेज दिया गया है।",
+      "errorTitle": "जमा नहीं हो सका",
+      "errorDesc": "कृपया पुनः प्रयास करें। यदि समस्या बनी रहे, तो HR से संपर्क करें।"
+    },
+    "types": {
+      "EL": "विशेषाधिकार अवकाश",
+      "SL": "बीमारी अवकाश",
+      "CL": "आकस्मिक अवकाश"
+    }
+  },
+  "payroll": {
+    "dashboard": {
+      "title": "पेरोल डैशबोर्ड",
+      "subtitle": "आगामी रन, हालिया वितरण और अनुपालन अलर्ट का अवलोकन।",
+      "runPayroll": "पेरोल चलाएँ"
+    }
+  },
+  "errors": {
+    "generic": "कुछ गलत हो गया",
+    "tryAgain": "पुनः प्रयास करें",
+    "goHome": "डैशबोर्ड पर जाएँ",
+    "contactSupport": "सहायता से संपर्क करें"
+  }
+}

@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Search, Download } from "lucide-react";
 
@@ -39,6 +41,13 @@ export default function RequestHistory() {
     );
 
     return (
+        <Page
+            title="Attendance Request History"
+            subtitle="All submitted requests with approval status"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Requests", href: "/attendance/requests" }, { label: "History" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -138,5 +147,7 @@ export default function RequestHistory() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

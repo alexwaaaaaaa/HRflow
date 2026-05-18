@@ -1,12 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Globe, Plane, FileText, AlertTriangle, ShieldCheck, Download, Users } from 'lucide-react';
+import { Globe, Plane, FileText, AlertTriangle, ShieldCheck, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ExpatManagementScreen() {
     const [activeTab, setActiveTab] = useState('visas');
 
     return (
+        <Page
+            title="Expatriate & Mobility Management"
+            subtitle="Track work visas, international tax equivalency, and relocation allowances across your global workforce."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Expat" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -142,5 +151,7 @@ export default function ExpatManagementScreen() {
                 )}
             </div>
         </div>
+    
+        </Page>
     );
 }

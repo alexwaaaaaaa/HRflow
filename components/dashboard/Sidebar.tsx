@@ -4,15 +4,15 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
     LayoutDashboard, Users, IndianRupee, Clock, Calendar,
-    Briefcase, Target, BookOpen, TrendingUp, Wallet, CreditCard,
+    Briefcase, Target, BookOpen, TrendingUp, CreditCard,
     PiggyBank, Shield, FileText, Settings,
-    HelpCircle, LogOut, ChevronDown, ChevronRight, Gift, Monitor,
+    HelpCircle, LogOut, ChevronDown, Gift, Monitor,
     BarChart2, MessageSquare, Landmark, PieChart, ShieldCheck, FolderOpen,
     Bell, Code2, AlertTriangle, Lock, Receipt, Layers, Scale,
     Users2, Globe, GitBranch, LayoutTemplate, Timer, Megaphone,
     Building2, Zap, Search, PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 // ── Sub-Menu Link Data ────────────────────────────────────────────────────────
 
@@ -194,25 +194,22 @@ const FEEDBACK_LINKS = [
 ];
 
 const SUCCESSION_LINKS = [
-    { label: "Succession Dashboard", href: "/succession" },
-    { label: "9-Box Grid", href: "/succession/nine-box" },
+    { label: "Succession Dashboard", href: "/succession/dashboard" },
+    { label: "Succession Plan", href: "/succession/plan" },
     { label: "Talent Pool", href: "/succession/talent-pool" },
-    { label: "Development Plans", href: "/succession/development-plans" },
     { label: "Key Person Risk", href: "/succession/key-person-risk" },
-    { label: "Internal Mobility", href: "/succession/internal-mobility" },
     { label: "Critical Roles", href: "/succession/critical-roles" },
     { label: "Succession Readiness", href: "/succession/readiness" },
-    { label: "Attrition Risk", href: "/attrition-risk" },
+    { label: "Attrition Risk", href: "/ai/attrition-risk" },
 ];
 
 const WORKFORCE_LINKS = [
     { label: "Workforce Planning", href: "/workforce-analytics/planning" },
-    { label: "Headcount Forecast", href: "/workforce-analytics/headcount" },
     { label: "Attrition Forecast", href: "/workforce-analytics/attrition" },
-    { label: "Hiring Plan", href: "/workforce-analytics/hiring-plan" },
-    { label: "Cost Forecast", href: "/workforce-analytics/cost-forecast" },
+    { label: "Cost Forecast", href: "/workforce-analytics/cost" },
     { label: "Scenario Planning", href: "/workforce-analytics/scenarios" },
     { label: "D&I Dashboard", href: "/workforce-analytics/diversity" },
+    { label: "Forecast", href: "/workforce-analytics/forecast" },
 ];
 
 const EMBEDDED_FINANCE_LINKS = [
@@ -230,7 +227,6 @@ const EWA_LINKS = [
     { label: "EWA Dashboard", href: "/finance/ewa" },
     { label: "Apply for EWA", href: "/finance/ewa/withdraw" },
     { label: "EWA History", href: "/finance/ewa/history" },
-    { label: "EWA Admin", href: "/finance/ewa/admin" },
     { label: "Variable Pay Setup", href: "/variable-pay-setup" },
     { label: "Off-cycle Payroll", href: "/off-cycle-payroll" },
 ];
@@ -238,8 +234,7 @@ const EWA_LINKS = [
 const LOANS_LINKS = [
     { label: "Loans & Advances", href: "/payroll-settings/loans" },
     { label: "Loan Application", href: "/finance/loans/apply" },
-    { label: "Loan Approval", href: "/finance/loans/approve" },
-    { label: "Repayment Schedule", href: "/finance/loans/repayment" },
+    { label: "Loan Closure", href: "/finance/loans/closure" },
     { label: "Gratuity", href: "/payroll/gratuity" },
     { label: "Statutory Bonus", href: "/payroll/statutory-bonus" },
     { label: "Leave Encashment", href: "/payroll/leave-encashment" },
@@ -251,15 +246,15 @@ const INSURANCE_LINKS = [
     { label: "Proof Upload", href: "/tax/proofs/upload" },
     { label: "Form 16", href: "/tax/form-16" },
     { label: "Regime Selector", href: "/tax/regime-selector" },
-    { label: "TDS 24Q Filing", href: "/tax/tds-return-24q" },
-    { label: "TDS Challan", href: "/tax/tds-challan" },
+    { label: "TDS 24Q Filing", href: "/compliance/tds-return-24q" },
+    { label: "TDS Challan", href: "/compliance/tds-challan" },
     { label: "Form 26AS", href: "/tax/form-26as" },
 ];
 
 const REIMBURSEMENTS_LINKS = [
-    { label: "My Claims", href: "/reimbursements" },
+    { label: "My Claims", href: "/reimbursements/dashboard" },
     { label: "Raise Claim", href: "/reimbursements/claim" },
-    { label: "Claim Approval", href: "/reimbursements/approve" },
+    { label: "Claim Approvals", href: "/reimbursements/approvals" },
     { label: "LTA Claim", href: "/reimbursements/lta" },
     { label: "Medical Claim", href: "/reimbursements/medical" },
     { label: "Balance Tracker", href: "/reimbursements/balance" },
@@ -268,12 +263,12 @@ const REIMBURSEMENTS_LINKS = [
 ];
 
 const FBP_LINKS = [
-    { label: "FBP Dashboard", href: "/fbp" },
-    { label: "My Declaration", href: "/fbp/declaration" },
-    { label: "FBP Management", href: "/fbp/management" },
-    { label: "Component Setup", href: "/fbp/components" },
-    { label: "Mid-Year Revision", href: "/fbp/revision" },
-    { label: "FBP Reports", href: "/fbp/reports" },
+    { label: "FBP Dashboard", href: "/fbp/dashboard" },
+    { label: "My Declaration", href: "/fbp/declare" },
+    { label: "FBP Management", href: "/fbp/manage" },
+    { label: "Component Setup", href: "/fbp/setup" },
+    { label: "Mid-Year Revision", href: "/fbp/mid-year" },
+    { label: "Annual Report", href: "/fbp/annual-report" },
 ];
 
 const COMPLIANCE_LINKS = [
@@ -336,28 +331,25 @@ const REPORTS_LINKS = [
     { label: "Advanced Analytics", href: "/reports/hr-analytics" },
     { label: "BRSR Report", href: "/reports/brsr" },
     { label: "Data Export", href: "/reports/export-dashboard" },
-    { label: "Scheduled Reports", href: "/reports/scheduled" },
+    { label: "Saved Reports", href: "/reports/saved" },
 ];
 
 const AI_LINKS = [
-    { label: "AI Dashboard", href: "/ai/dashboard" },
-    { label: "HR Copilot", href: "/ai/copilot" },
+    { label: "AI Dashboard", href: "/ai/insights" },
+    { label: "HR Copilot", href: "/ai/hr-copilot" },
     { label: "Natural Language Query", href: "/ai/nl-query" },
     { label: "Attrition Risk", href: "/ai/attrition-risk" },
-    { label: "Pay Anomaly", href: "/ai/pay-anomaly" },
     { label: "Gazette Monitor", href: "/ai/gazette-monitor" },
-    { label: "AI Analytics", href: "/ai/analytics" },
+    { label: "Anomaly Detection", href: "/ai/anomaly-detection" },
+    { label: "AI Settings", href: "/ai/settings" },
 ];
 
 const NOTIFICATIONS_LINKS = [
     { label: "Notification Center", href: "/notifications" },
     { label: "History", href: "/notifications/history" },
-    { label: "Preferences", href: "/notifications/preferences" },
-    { label: "Push Setup", href: "/notifications/push-setup" },
-    { label: "Digest Email", href: "/notifications/digest" },
-    { label: "Escalation Rules", href: "/notifications/escalation" },
-    { label: "Reminders", href: "/notifications/reminders" },
-    { label: "Templates", href: "/notifications/templates" },
+    { label: "Insights", href: "/notifications/insights" },
+    { label: "Escalations", href: "/notifications/escalations" },
+    { label: "Milestones", href: "/notifications/milestones" },
     { label: "Analytics", href: "/notifications/analytics" },
 ];
 
@@ -369,32 +361,24 @@ const SETTINGS_LINKS = [
     { label: "Lock Engine", href: "/payroll-settings/lock" },
     { label: "Bank Verification", href: "/payroll-settings/bank-verify" },
     { label: "Bands & Grades", href: "/payroll-settings/bands" },
-    { label: "Approval Matrix", href: "/settings/approval-workflow" },
+    { label: "Approval Matrix", href: "/settings/approval-matrix" },
     { label: "Role Permissions", href: "/settings/roles" },
-    { label: "Workflow Builder", href: "/settings/workflow-builder" },
     { label: "API Keys", href: "/settings/api-keys" },
 ];
 
 const GRIEVANCE_LINKS = [
     { label: "Grievance Dashboard", href: "/grievances/dashboard" },
     { label: "Raise Grievance", href: "/grievances/raise" },
-    { label: "My Grievances", href: "/grievances/my" },
-    { label: "HR Investigation", href: "/grievances/investigation" },
-    { label: "IC Committee", href: "/grievances/ic-committee" },
-    { label: "Hearing Room", href: "/grievances/hearing" },
+    { label: "IC Committee", href: "/grievances/committee" },
     { label: "Grievance Reports", href: "/grievances/reports" },
-    { label: "IC Annual Report", href: "/grievances/posh-report" },
 ];
 
 const SECURITY_LINKS = [
-    { label: "Security Dashboard", href: "/security" },
+    { label: "Security Dashboard", href: "/security/dashboard" },
     { label: "Active Sessions", href: "/security/sessions" },
     { label: "Failed Logins", href: "/security/failed-logins" },
-    { label: "Data Access Log", href: "/security/data-access" },
     { label: "IP Whitelist", href: "/security/ip-whitelist" },
-    { label: "DPDP Consent", href: "/security/dpdp-consent" },
-    { label: "Data Deletion", href: "/security/data-deletion" },
-    { label: "Permission Audit", href: "/security/permission-audit" },
+    { label: "Permissions", href: "/security/permissions" },
     { label: "Security Incidents", href: "/security/incidents" },
 ];
 
@@ -403,22 +387,21 @@ const HELP_LINKS = [
     { label: "Knowledge Base", href: "/help/knowledge-base" },
     { label: "Video Tutorials", href: "/help/videos" },
     { label: "Chat Support", href: "/help/chat" },
-    { label: "Feature Requests", href: "/help/feature-requests" },
     { label: "Bug Reports", href: "/help/bug-report" },
     { label: "Keyboard Shortcuts", href: "/help/shortcuts" },
     { label: "API Changelog", href: "/help/changelog" },
 ];
 
 const DEVELOPER_LINKS = [
-    { label: "Developer Dashboard", href: "/developer" },
-    { label: "API Documentation", href: "/developer/api-docs" },
-    { label: "API Keys", href: "/developer/api-keys" },
-    { label: "OAuth Apps", href: "/developer/oauth-apps" },
+    { label: "Developer Dashboard", href: "/developer/dashboard" },
+    { label: "API Documentation", href: "/developer/docs" },
+    { label: "API Keys", href: "/developer/keys" },
+    { label: "OAuth Apps", href: "/developer/oauth" },
     { label: "Webhook Config", href: "/developer/webhooks" },
-    { label: "Webhook Logs", href: "/developer/webhook-logs" },
-    { label: "API Usage", href: "/developer/usage" },
+    { label: "Webhook Logs", href: "/developer/webhooks/logs" },
+    { label: "API Usage", href: "/developer/analytics" },
     { label: "Sandbox", href: "/developer/sandbox" },
-    { label: "Integrations", href: "/developer/integrations" },
+    { label: "Changelog", href: "/developer/changelog" },
 ];
 
 const PAY_EQUITY_LINKS = [
@@ -435,20 +418,21 @@ const PAY_EQUITY_LINKS = [
 ];
 
 const GLOBAL_LINKS = [
-    { label: "Country Setup", href: "/global/setup" },
-    { label: "UAE Payroll", href: "/global/uae" },
-    { label: "Singapore Payroll", href: "/global/singapore" },
-    { label: "Currency Management", href: "/global/currencies" },
+    { label: "Country Setup", href: "/global/country-setup" },
+    { label: "UAE Payroll", href: "/global/uae-payroll" },
+    { label: "Singapore Payroll", href: "/global/singapore-payroll" },
+    { label: "Shadow Payroll", href: "/global/shadow-payroll" },
+    { label: "Currency Management", href: "/global/currency" },
     { label: "Exchange Rates", href: "/global/exchange-rates" },
-    { label: "Expat Management", href: "/global/expats" },
+    { label: "Expat Management", href: "/global/expat" },
+    { label: "International Transfer", href: "/global/international-transfer" },
 ];
 
 const MULTI_ENTITY_LINKS = [
-    { label: "Entity List", href: "/multi-entity" },
+    { label: "Entity List", href: "/multi-entity/dashboard" },
     { label: "Add Entity", href: "/multi-entity/add" },
     { label: "Inter-entity Transfer", href: "/multi-entity/transfer" },
     { label: "Consolidated Payroll", href: "/multi-entity/payroll" },
-    { label: "Group Dashboard", href: "/multi-entity/group-dashboard" },
     { label: "Group Reports", href: "/multi-entity/reports" },
 ];
 
@@ -463,20 +447,18 @@ const TIMESHEET_LINKS = [
 ];
 
 const NOTICE_BOARD_LINKS = [
-    { label: "Emergency Alert", href: "/notice-board/alert" },
-    { label: "Department Notice", href: "/notice-board/dept-notice" },
-    { label: "Notice Analytics", href: "/notice-board/analytics" },
-    { label: "Comment Moderation", href: "/notice-board/comments" },
+    { label: "Alerts", href: "/notice-board/alerts" },
+    { label: "Department Notice", href: "/notice-board/dept" },
+    { label: "Archive", href: "/notice-board/archive" },
     { label: "Pinned Announcements", href: "/notice-board/pinned" },
 ];
 
 const SUPER_ADMIN_LINKS = [
-    { label: "Super Admin Home", href: "/super-admin" },
+    { label: "Super Admin Home", href: "/super-admin/dashboard" },
     { label: "Organizations", href: "/super-admin/organizations" },
     { label: "Plan Management", href: "/super-admin/plans" },
     { label: "Feature Toggles", href: "/super-admin/features" },
     { label: "Billing", href: "/super-admin/billing" },
-    { label: "Law Change Mgmt", href: "/super-admin/law-changes" },
     { label: "Announcements", href: "/super-admin/announcements" },
     { label: "Support Tickets", href: "/super-admin/support" },
     { label: "Platform Health", href: "/super-admin/health" },
@@ -499,7 +481,7 @@ const NAV_GROUPS = [
         items: [
             { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, prefix: "/dashboard", links: [] },
             { name: "Employees", href: "/employees", icon: Users, prefix: "/employees", links: EMPLOYEE_LINKS },
-            { name: "Org & Structure", href: "/org-chart", icon: Briefcase, prefix: "/org-chart", links: ORG_CHART_LINKS },
+            { name: "Org & Structure", href: "/org-chart/tree", icon: Briefcase, prefix: "/org-chart", links: ORG_CHART_LINKS },
             { name: "Payroll", href: "/payroll/dashboard", icon: IndianRupee, prefix: "/payroll", links: PAYROLL_LINKS },
             { name: "Attendance", href: "/attendance/dashboard", icon: Clock, prefix: "/attendance", links: ATTENDANCE_LINKS },
             { name: "Leave", href: "/leave/dashboard", icon: Calendar, prefix: "/leave", links: LEAVE_LINKS },
@@ -512,7 +494,7 @@ const NAV_GROUPS = [
             { name: "Performance", href: "/performance/dashboard", icon: Target, prefix: "/performance", links: PERF_LINKS },
             { name: "Learning", href: "/lms/dashboard", icon: BookOpen, prefix: "/lms", links: LMS_LINKS },
             { name: "Engagement", href: "/engagement/rr/dashboard", icon: Gift, prefix: "/engagement", links: ENGAGEMENT_LINKS },
-            { name: "Succession", href: "/succession", icon: TrendingUp, prefix: "/succession", links: SUCCESSION_LINKS },
+            { name: "Succession", href: "/succession/dashboard", icon: TrendingUp, prefix: "/succession", links: SUCCESSION_LINKS },
             { name: "OKRs", href: "/okr/dashboard", icon: BarChart2, prefix: "/okr", links: OKR_LINKS },
             { name: "360° Feedback", href: "/feedback/dashboard", icon: MessageSquare, prefix: "/feedback", links: FEEDBACK_LINKS },
             { name: "Workforce Analytics", href: "/workforce-analytics/planning", icon: Users2, prefix: "/workforce-analytics", links: WORKFORCE_LINKS },
@@ -525,8 +507,8 @@ const NAV_GROUPS = [
             { name: "EWA & Variables", href: "/finance/ewa", icon: CreditCard, prefix: "/finance/ewa", links: EWA_LINKS },
             { name: "Loans & Benefits", href: "/payroll-settings/loans", icon: PiggyBank, prefix: "/payroll-settings/loans", links: LOANS_LINKS },
             { name: "Tax & TDS", href: "/tax/dashboard", icon: Shield, prefix: "/tax", links: INSURANCE_LINKS },
-            { name: "Reimbursements", href: "/reimbursements", icon: Receipt, prefix: "/reimbursements", links: REIMBURSEMENTS_LINKS },
-            { name: "Flexi Benefits (FBP)", href: "/fbp", icon: Layers, prefix: "/fbp", links: FBP_LINKS },
+            { name: "Reimbursements", href: "/reimbursements/dashboard", icon: Receipt, prefix: "/reimbursements", links: REIMBURSEMENTS_LINKS },
+            { name: "Flexi Benefits (FBP)", href: "/fbp/dashboard", icon: Layers, prefix: "/fbp", links: FBP_LINKS },
         ]
     },
     {
@@ -538,24 +520,24 @@ const NAV_GROUPS = [
             { name: "Document Hub", href: "/documents/repository", icon: FolderOpen, prefix: "/documents", links: DOC_LINKS },
             { name: "Pay Equity", href: "/pay-equity/dashboard", icon: Scale, prefix: "/pay-equity", links: PAY_EQUITY_LINKS },
             { name: "Grievances", href: "/grievances/dashboard", icon: AlertTriangle, prefix: "/grievances", links: GRIEVANCE_LINKS },
-            { name: "Security", href: "/security", icon: Lock, prefix: "/security", links: SECURITY_LINKS },
+            { name: "Security", href: "/security/dashboard", icon: Lock, prefix: "/security", links: SECURITY_LINKS },
         ]
     },
     {
         label: "REPORTS & ANALYTICS",
         items: [
             { name: "Reports Center", href: "/reports/dashboard", icon: PieChart, prefix: "/reports", links: REPORTS_LINKS },
-            { name: "AI Insights", href: "/ai/dashboard", icon: Zap, prefix: "/ai", links: AI_LINKS },
+            { name: "AI Insights", href: "/ai/insights", icon: Zap, prefix: "/ai", links: AI_LINKS },
         ]
     },
     {
         label: "ENTERPRISE",
         items: [
-            { name: "Multi-Entity", href: "/multi-entity", icon: Building2, prefix: "/multi-entity", links: MULTI_ENTITY_LINKS },
-            { name: "Global Payroll", href: "/global/setup", icon: Globe, prefix: "/global", links: GLOBAL_LINKS },
+            { name: "Multi-Entity", href: "/multi-entity/dashboard", icon: Building2, prefix: "/multi-entity", links: MULTI_ENTITY_LINKS },
+            { name: "Global Payroll", href: "/global/country-setup", icon: Globe, prefix: "/global", links: GLOBAL_LINKS },
             { name: "Timesheet & Projects", href: "/projects", icon: Timer, prefix: "/projects", links: TIMESHEET_LINKS },
-            { name: "Notice Board", href: "/notice-board/alert", icon: Megaphone, prefix: "/notice-board", links: NOTICE_BOARD_LINKS },
-            { name: "Developer Portal", href: "/developer", icon: Code2, prefix: "/developer", links: DEVELOPER_LINKS },
+            { name: "Notice Board", href: "/notice-board/alerts", icon: Megaphone, prefix: "/notice-board", links: NOTICE_BOARD_LINKS },
+            { name: "Developer Portal", href: "/developer/dashboard", icon: Code2, prefix: "/developer", links: DEVELOPER_LINKS },
         ]
     },
     {
@@ -571,7 +553,7 @@ const NAV_GROUPS = [
     {
         label: "SUPER ADMIN",
         items: [
-            { name: "Super Admin", href: "/super-admin", icon: ShieldCheck, prefix: "/super-admin", links: SUPER_ADMIN_LINKS },
+            { name: "Super Admin", href: "/super-admin/dashboard", icon: ShieldCheck, prefix: "/super-admin", links: SUPER_ADMIN_LINKS },
         ]
     },
 ];
@@ -611,7 +593,7 @@ function SubLink({ href, label, pathname, searchQuery = '' }: { href: string; la
                 "block px-3 py-[5px] rounded-[7px] text-[12px] leading-snug truncate transition-all duration-150",
                 isActive
                     ? "bg-[rgba(0,229,160,0.1)] text-[#00e5a0] font-500"
-                    : "text-[#3d5166] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#7a8fa6]"
+                    : "text-[#7a8fa6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#c8d8e8]"
             ].join(" ")}
         >
             <HighlightText text={label} query={searchQuery} />
@@ -800,6 +782,7 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
                 item => pathname === item.href || pathname.startsWith(item.prefix)
             );
             if (hasActive) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs persisted UI state on route change
                 setCollapsedSections(prev => {
                     if (!prev[group.label]) return prev;
                     const next = { ...prev, [group.label]: false };
@@ -866,7 +849,7 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
                     {!isMini && (
                         <div>
                             <div className="text-[17px] font-700 text-[#f0f4f8] leading-none tracking-[-0.02em]">HRFlow</div>
-                            <div className="mt-[3px] text-[10px] text-[#3d5166] font-500">TechCorp Solutions</div>
+                            <div className="mt-[3px] text-[10px] text-[#7a8fa6] font-500">TechCorp Solutions</div>
                         </div>
                     )}
                 </Link>
@@ -876,7 +859,7 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
             {!isMini && (
                 <div className="px-3 pt-2 pb-1 shrink-0">
                     <div className="relative flex items-center">
-                        <Search size={13} className="absolute left-2.5 text-[#3d5166] pointer-events-none" aria-hidden="true" />
+                        <Search size={13} className="absolute left-2.5 text-[#7a8fa6] pointer-events-none" aria-hidden="true" />
                         <input
                             type="text"
                             placeholder="Search menu..."
@@ -891,7 +874,7 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
             {/* Nav Groups */}
             <div className="flex-1 overflow-y-auto px-2 py-2 pb-4" style={{ scrollbarWidth: "none" }}>
                 {noResults ? (
-                    <p className="px-3 py-4 text-[12px] text-[#3d5166] text-center">
+                    <p className="px-3 py-4 text-[12px] text-[#7a8fa6] text-center">
                         No results for &ldquo;{searchQuery}&rdquo;
                     </p>
                 ) : (
@@ -906,13 +889,13 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
                                         type="button"
                                         onClick={() => toggleSection(group.label)}
                                         aria-expanded={!isCollapsed}
-                                        className="w-full flex items-center justify-between px-3 pb-1 pt-2.5 text-[10px] font-600 uppercase tracking-[0.07em] text-[#2a3a4a] hover:text-[#3d5166] transition-colors"
+                                        className="w-full flex items-center justify-between px-3 pb-1 pt-2.5 text-[10px] font-600 uppercase tracking-[0.07em] text-[#7a8fa6] hover:text-[#c8d8e8] transition-colors"
                                         aria-label={group.label}
                                     >
                                         <span>
                                             {group.label}
                                             {isCollapsed && (
-                                                <span className="ml-1 text-[#3d5166] normal-case tracking-normal">
+                                                <span className="ml-1 text-[#7a8fa6] normal-case tracking-normal">
                                                     ({visibleItemCount})
                                                 </span>
                                             )}
@@ -960,7 +943,7 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
                     type="button"
                     onClick={toggleMini}
                     aria-label={isMini ? "Open panel" : "Collapse panel"}
-                    className="flex h-8 w-full items-center justify-center rounded-[9px] text-[#3d5166] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#7a8fa6] transition-colors"
+                    className="flex h-8 w-full items-center justify-center rounded-[9px] text-[#7a8fa6] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#7a8fa6] transition-colors"
                 >
                     {isMini ? <PanelLeftOpen size={15} aria-hidden="true" /> : <PanelLeftClose size={15} aria-hidden="true" />}
                 </button>
@@ -983,12 +966,12 @@ export default function Sidebar({ role = 'hr_admin' }: { role?: 'hr_admin' | 'ma
                                 className="min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
                             >
                                 <div className="truncate text-[12px] font-600 text-[#c8d8e8]">Priya Mehta</div>
-                                <div className="truncate text-[10px] text-[#3d5166]">HR Admin</div>
+                                <div className="truncate text-[10px] text-[#7a8fa6]">HR Admin</div>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => router.push("/login")}
-                                className="rounded-[7px] p-1.5 text-[#3d5166] transition-all hover:bg-[rgba(239,68,68,0.1)] hover:text-[#ef4444]"
+                                className="rounded-[7px] p-1.5 text-[#7a8fa6] transition-all hover:bg-[rgba(239,68,68,0.1)] hover:text-[#ef4444]"
                                 aria-label="Sign out"
                                 title="Sign out"
                             >

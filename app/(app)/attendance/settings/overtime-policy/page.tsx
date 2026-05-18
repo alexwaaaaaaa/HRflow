@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+
+import { useState } from "react";
 import { Save, BarChart3 } from "lucide-react";
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
@@ -11,9 +13,50 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
     );
 }
 
+type OtCfg = {
+    otStartsAfterHrs: string;
+    otRateMultiplier: string;
+    weekendOtRate: string;
+    holidayOtRate: string;
+    maxOtPerDay: string;
+    maxOtPerMonth: string;
+    otToCompOff: boolean;
+    compOffExpiry: string;
+    otPayoutEnabled: boolean;
+    managerApprovalRequired: boolean;
+    preApprovalRequired: boolean;
+    roundOtToNearest: string;
+};
+
+type OtCfgKey = keyof OtCfg;
+
+interface RowProps {
+    label: string;
+    desc?: string;
+    field: OtCfgKey;
+    type?: string;
+    cfg: OtCfg;
+    set: (k: OtCfgKey) => (v: string | boolean) => void;
+}
+
+function Row({ label, desc, field, type = "text", cfg, set }: RowProps) {
+    return (
+        <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
+            <div>
+                <p className="text-sm font-medium">{label}</p>
+                {desc && <p className="text-xs text-[#445566] mt-0.5">{desc}</p>}
+            </div>
+            {type === "toggle"
+                ? <Toggle on={!!cfg[field]} onChange={() => set(field)(!cfg[field])} />
+                : <input value={String(cfg[field])} onChange={e => set(field)(e.target.value)} type="text"
+                    className="w-28 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 py-1.5 text-sm text-white text-right focus:outline-none focus:border-[#00E5A0]" />}
+        </div>
+    );
+}
+
 export default function OvertimePolicy() {
     const [saved, setSaved] = useState(false);
-    const [cfg, setCfg] = useState({
+    const [cfg, setCfg] = useState<OtCfg>({
         otStartsAfterHrs: "9",
         otRateMultiplier: "1.5",
         weekendOtRate: "2.0",
@@ -28,24 +71,16 @@ export default function OvertimePolicy() {
         roundOtToNearest: "30",
     });
 
-    type K = keyof typeof cfg;
-    const set = (k: K) => (v: string | boolean) => setCfg(p => ({ ...p, [k]: v }));
+    const set = (k: OtCfgKey) => (v: string | boolean) => setCfg(p => ({ ...p, [k]: v }));
     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
 
-    const Row = ({ label, desc, field, type = "text" }: { label: string; desc?: string; field: K; type?: string }) => (
-        <div className="flex justify-between items-center py-4 border-b border-[#1A2A3A] last:border-0">
-            <div>
-                <p className="text-sm font-medium">{label}</p>
-                {desc && <p className="text-xs text-[#445566] mt-0.5">{desc}</p>}
-            </div>
-            {type === "toggle"
-                ? <Toggle on={!!cfg[field]} onChange={() => set(field)(!cfg[field])} />
-                : <input value={String(cfg[field])} onChange={e => set(field)(e.target.value)} type="text"
-                    className="w-28 bg-[#060B14] border border-[#1A2A3A] rounded-lg px-3 py-1.5 text-sm text-white text-right focus:outline-none focus:border-[#00E5A0]" />}
-        </div>
-    );
-
     return (
+        <Page
+            title="Overtime Policy"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Overtime Policy" }]}
+            maxWidth="900px"
+        >
+
         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -75,32 +110,34 @@ export default function OvertimePolicy() {
             <div className="space-y-4">
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">OT Calculation</h3>
-                    <Row label="OT starts after (hours worked)" desc="Hours of regular work before OT kicks in" field="otStartsAfterHrs" />
-                    <Row label="Weekday OT multiplier" desc="e.g. 1.5 means 1.5× basic per OT hour" field="otRateMultiplier" />
-                    <Row label="Weekend OT multiplier" field="weekendOtRate" />
-                    <Row label="Holiday OT multiplier" field="holidayOtRate" />
-                    <Row label="Round OT to nearest (minutes)" desc="e.g. 30 = round to nearest 30 min" field="roundOtToNearest" />
+                    <Row label="OT starts after (hours worked)" desc="Hours of regular work before OT kicks in" field="otStartsAfterHrs" cfg={cfg} set={set} />
+                    <Row label="Weekday OT multiplier" desc="e.g. 1.5 means 1.5× basic per OT hour" field="otRateMultiplier" cfg={cfg} set={set} />
+                    <Row label="Weekend OT multiplier" field="weekendOtRate" cfg={cfg} set={set} />
+                    <Row label="Holiday OT multiplier" field="holidayOtRate" cfg={cfg} set={set} />
+                    <Row label="Round OT to nearest (minutes)" desc="e.g. 30 = round to nearest 30 min" field="roundOtToNearest" cfg={cfg} set={set} />
                 </div>
 
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Caps & Limits</h3>
-                    <Row label="Max OT per day (hours)" field="maxOtPerDay" />
-                    <Row label="Max OT per month (hours)" field="maxOtPerMonth" />
+                    <Row label="Max OT per day (hours)" field="maxOtPerDay" cfg={cfg} set={set} />
+                    <Row label="Max OT per month (hours)" field="maxOtPerMonth" cfg={cfg} set={set} />
                 </div>
 
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Comp-off & Payout</h3>
-                    <Row label="Allow OT → Comp-off conversion" field="otToCompOff" type="toggle" />
-                    <Row label="Comp-off validity (days)" desc="Comp-off expires after this many days" field="compOffExpiry" />
-                    <Row label="OT payout enabled" desc="Pay out unclaimed OT in payroll" field="otPayoutEnabled" type="toggle" />
+                    <Row label="Allow OT → Comp-off conversion" field="otToCompOff" type="toggle" cfg={cfg} set={set} />
+                    <Row label="Comp-off validity (days)" desc="Comp-off expires after this many days" field="compOffExpiry" cfg={cfg} set={set} />
+                    <Row label="OT payout enabled" desc="Pay out unclaimed OT in payroll" field="otPayoutEnabled" type="toggle" cfg={cfg} set={set} />
                 </div>
 
                 <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="font-semibold mb-2">Approval</h3>
-                    <Row label="Manager approval required for OT" field="managerApprovalRequired" type="toggle" />
-                    <Row label="Pre-approval required before OT" desc="Employee must request OT before working it" field="preApprovalRequired" type="toggle" />
+                    <Row label="Manager approval required for OT" field="managerApprovalRequired" type="toggle" cfg={cfg} set={set} />
+                    <Row label="Pre-approval required before OT" desc="Employee must request OT before working it" field="preApprovalRequired" type="toggle" cfg={cfg} set={set} />
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

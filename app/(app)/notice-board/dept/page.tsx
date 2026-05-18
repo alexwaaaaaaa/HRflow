@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Tag, Building, Search, Rss, ArrowUpRight, Pin } from 'lucide-react';
 
@@ -6,6 +8,13 @@ export default function DeptNoticeScreen() {
     const [dept, setDept] = useState('engineering');
 
     return (
+        <Page
+            title="Departmental Notices"
+            subtitle="Publish and consume updates specific to organizational units, squads, or locations."
+            breadcrumbs={[{ label: "Notice Board", href: "/notice-board" }, { label: "Dept" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -91,5 +100,7 @@ export default function DeptNoticeScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

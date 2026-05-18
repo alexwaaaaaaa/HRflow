@@ -2,131 +2,185 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronDown, CheckCircle2, Clock, AlertTriangle, ArrowRight } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, ArrowRight } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+type QuarterStatus = "filed" | "ready" | "upcoming" | "annual";
+
+interface QuarterData {
+    quarter: string;
+    months: string;
+    due: string;
+    status: QuarterStatus;
+    tds: string;
+    employees: number;
+    prn?: string;
+    filedOn?: string;
+    challansMatched?: string;
+    fvuStatus?: string;
+    href: string;
+    actionLabel: string;
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const QUARTERS: QuarterData[] = [
+    {
+        quarter: "Quarter 1",
+        months: "Apr, May, Jun",
+        due: "31 Jul 2024",
+        status: "filed",
+        tds: "₹14,50,000",
+        employees: 345,
+        prn: "012345678X",
+        filedOn: "28 Jul 2024",
+        href: "/tax/form24q/q1",
+        actionLabel: "View Quarter Details",
+    },
+    {
+        quarter: "Quarter 2",
+        months: "Jul, Aug, Sep",
+        due: "31 Oct 2024",
+        status: "ready",
+        tds: "₹15,20,500",
+        employees: 345,
+        challansMatched: "12 / 12",
+        fvuStatus: "Pending",
+        href: "/tax/form24q/q2",
+        actionLabel: "Generate TXT File / FVU",
+    },
+    {
+        quarter: "Quarter 3",
+        months: "Oct, Nov, Dec",
+        due: "31 Jan 2025",
+        status: "upcoming",
+        tds: "—",
+        employees: 0,
+        href: "/tax/form24q/q3",
+        actionLabel: "View",
+    },
+    {
+        quarter: "Quarter 4",
+        months: "Jan, Feb, Mar",
+        due: "31 May 2025",
+        status: "annual",
+        tds: "—",
+        employees: 0,
+        href: "/tax/form24q/q4",
+        actionLabel: "View",
+    },
+];
+
+const STATUS_BADGE: Record<QuarterStatus, { variant: "success" | "info" | "neutral" | "warning"; label: string }> = {
+    filed: { variant: "success", label: "Filed" },
+    ready: { variant: "info", label: "Ready to File" },
+    upcoming: { variant: "neutral", label: "Upcoming" },
+    annual: { variant: "warning", label: "Annual Details Required" },
+};
 
 export default function Form24QDashboard() {
     return (
-        <div style={{ padding: "24px 32px", maxWidth: 1000, margin: "0 auto", paddingBottom: 100 }}>
+        <Page
+            title="Form 24Q (e-TDS Returns)"
+            subtitle="Quarterly statement for deduction of tax on salary"
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/dashboard" },
+                { label: "Form 24Q" },
+            ]}
+            maxWidth="1000px"
+            actions={
+                <select
+                    aria-label="Select financial year"
+                    className="bg-[#0D1928] border border-[#1A2A3A] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#00E5A0]"
+                >
+                    <option>FY 2024-25</option>
+                    <option>FY 2023-24</option>
+                </select>
+            }
+        >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {QUARTERS.map((q) => {
+                    const badgeInfo = STATUS_BADGE[q.status];
+                    const isReady = q.status === "ready";
+                    const isFiled = q.status === "filed";
+                    const isDisabled = q.status === "upcoming" || q.status === "annual";
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-                <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", margin: 0, marginBottom: 8 }}>Form 24Q (e-TDS Returns)</h1>
-                    <div style={{ fontSize: 13, color: "#8899AA" }}>Quarterly statement for deduction of tax on salary</div>
-                </div>
-                <div style={{ display: "flex", gap: 16 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 16px", height: 40, color: "#FFFFFF", fontSize: 14 }}>
-                        FY 2024-25 <ChevronDown size={16} color="#8899AA" />
-                    </div>
-                </div>
+                    return (
+                        <Card
+                            key={q.quarter}
+                            padding="lg"
+                            className={`flex flex-col ${isReady ? "border-[#0066FF]" : ""} ${isDisabled ? "opacity-60" : ""}`}
+                        >
+                            <div className="flex justify-between items-start mb-5">
+                                <div>
+                                    <Badge variant={badgeInfo.variant} className="mb-2">
+                                        {isFiled && <CheckCircle2 size={12} className="mr-1 inline" aria-hidden="true" />}
+                                        {q.status === "ready" && <Clock size={12} className="mr-1 inline" aria-hidden="true" />}
+                                        {q.status === "annual" && <AlertTriangle size={12} className="mr-1 inline" aria-hidden="true" />}
+                                        {badgeInfo.label}
+                                    </Badge>
+                                    <h3 className="text-lg font-bold text-white">{q.quarter}</h3>
+                                    <p className="text-sm text-[#8899AA] mt-1">{q.months}</p>
+                                </div>
+                                <div className={`border rounded-lg p-2 text-right ${isReady ? "bg-[#0066FF]/5 border-[#0066FF]/20" : "bg-[#060B14] border-[#1A2A3A]"}`}>
+                                    <div className={`text-xs mb-1 ${isReady ? "text-[#0066FF]" : "text-[#8899AA]"}`}>Due Date</div>
+                                    <div className="text-sm text-white font-semibold">{q.due}</div>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 border-t border-b border-[#1A2A3A] py-4 mb-5 space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-[#8899AA]">Total TDS Deducted:</span>
+                                    <span className="text-white font-semibold">{q.tds}</span>
+                                </div>
+                                {isFiled && q.prn && (
+                                    <>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-[#8899AA]">PRN / Token Number:</span>
+                                            <span className="text-white font-mono tracking-wider">{q.prn}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-[#8899AA]">Filed On:</span>
+                                            <span className="text-white">{q.filedOn}</span>
+                                        </div>
+                                    </>
+                                )}
+                                {isReady && q.challansMatched && (
+                                    <>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-[#8899AA]">Challans Matched:</span>
+                                            <span className="text-[#00E5A0] font-semibold">{q.challansMatched}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-[#8899AA]">FVU Generation:</span>
+                                            <span className="text-[#0066FF] font-semibold">{q.fvuStatus}</span>
+                                        </div>
+                                    </>
+                                )}
+                                {q.status === "annual" && (
+                                    <p className="text-xs text-[#FFB800]">
+                                        Q4 return must include Annexure II (Salary details mapped to Form 16).
+                                    </p>
+                                )}
+                            </div>
+
+                            <Link href={q.href}>
+                                <Button
+                                    variant={isReady ? "primary" : "secondary"}
+                                    className="w-full"
+                                    iconRight={<ArrowRight size={16} />}
+                                    disabled={isDisabled}
+                                >
+                                    {q.actionLabel}
+                                </Button>
+                            </Link>
+                        </Card>
+                    );
+                })}
             </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-
-                {/* Q1 */}
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-                        <div>
-                            <div style={{ fontSize: 12, color: "#00E5A0", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={14} /> Filed</div>
-                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Quarter 1</h3>
-                            <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Apr, May, Jun</div>
-                        </div>
-                        <div style={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "8px 12px", textAlign: "right" }}>
-                            <div style={{ fontSize: 11, color: "#8899AA", marginBottom: 2 }}>Due Date</div>
-                            <div style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>31 Jul 2024</div>
-                        </div>
-                    </div>
-
-                    <div style={{ flex: 1, borderTop: "1px solid #1A2A3A", borderBottom: "1px solid #1A2A3A", padding: "16px 0", marginBottom: 20 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-                            <span style={{ color: "#8899AA" }}>Total TDS Deducted:</span>
-                            <span style={{ color: "#FFFFFF", fontWeight: 600 }}>₹14,50,000</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-                            <span style={{ color: "#8899AA" }}>PRN / Token Number:</span>
-                            <span style={{ color: "#FFFFFF", fontFamily: "monospace", letterSpacing: 1 }}>012345678X</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                            <span style={{ color: "#8899AA" }}>Filed On:</span>
-                            <span style={{ color: "#FFFFFF" }}>28 Jul 2024</span>
-                        </div>
-                    </div>
-
-                    <Link href="/tax/form24q/q1">
-                        <button style={{ width: "100%", height: 40, background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }} className="hover:bg-[#1A2A3A]">
-                            View Quarter Details <ArrowRight size={16} />
-                        </button>
-                    </Link>
-                </div>
-
-                {/* Q2 */}
-                <div style={{ background: "#0D1928", border: "1px solid #0066FF", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", boxShadow: "0 0 0 1px rgba(0,102,255,0.2) inset" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-                        <div>
-                            <div style={{ fontSize: 12, color: "#0066FF", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><Clock size={14} /> Ready to File</div>
-                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Quarter 2</h3>
-                            <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Jul, Aug, Sep</div>
-                        </div>
-                        <div style={{ background: "rgba(0,102,255,0.05)", border: "1px solid rgba(0,102,255,0.2)", borderRadius: 8, padding: "8px 12px", textAlign: "right" }}>
-                            <div style={{ fontSize: 11, color: "#0066FF", marginBottom: 2 }}>Due Date</div>
-                            <div style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>31 Oct 2024</div>
-                        </div>
-                    </div>
-
-                    <div style={{ flex: 1, borderTop: "1px solid #1A2A3A", borderBottom: "1px solid #1A2A3A", padding: "16px 0", marginBottom: 20 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-                            <span style={{ color: "#8899AA" }}>Total TDS Deducted:</span>
-                            <span style={{ color: "#FFFFFF", fontWeight: 600 }}>₹15,20,500</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
-                            <span style={{ color: "#8899AA" }}>Challans Matched:</span>
-                            <span style={{ color: "#00E5A0", fontWeight: 600 }}>12 / 12</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                            <span style={{ color: "#8899AA" }}>FVU Generation:</span>
-                            <span style={{ color: "#0066FF", fontWeight: 600 }}>Pending</span>
-                        </div>
-                    </div>
-
-                    <Link href="/tax/form24q/q2">
-                        <button style={{ width: "100%", height: 40, background: "#0066FF", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }} className="hover:opacity-90">
-                            Generate TXT File / FVU <ArrowRight size={16} />
-                        </button>
-                    </Link>
-                </div>
-
-                {/* Q3 */}
-                <div style={{ background: "#060B14", border: "1px dashed #1A2A3A", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", opacity: 0.6 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-                        <div>
-                            <div style={{ fontSize: 12, color: "#8899AA", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Upcoming</div>
-                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Quarter 3</h3>
-                            <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Oct, Nov, Dec</div>
-                        </div>
-                        <div style={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "8px 12px", textAlign: "right" }}>
-                            <div style={{ fontSize: 11, color: "#8899AA", marginBottom: 2 }}>Due Date</div>
-                            <div style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>31 Jan 2025</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Q4 */}
-                <div style={{ background: "#060B14", border: "1px dashed #1A2A3A", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", opacity: 0.6 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-                        <div>
-                            <div style={{ fontSize: 12, color: "#FFB800", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={14} /> Annual Details Required</div>
-                            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Quarter 4</h3>
-                            <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Jan, Feb, Mar</div>
-                        </div>
-                        <div style={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "8px 12px", textAlign: "right" }}>
-                            <div style={{ fontSize: 11, color: "#8899AA", marginBottom: 2 }}>Due Date</div>
-                            <div style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600 }}>31 May 2025</div>
-                        </div>
-                    </div>
-                    <div style={{ fontSize: 12, color: "#FFB800", marginTop: "auto" }}>Q4 return must include Annexure II (Salary details mapped to Form 16).</div>
-                </div>
-
-            </div>
-
-        </div>
+        </Page>
     );
 }

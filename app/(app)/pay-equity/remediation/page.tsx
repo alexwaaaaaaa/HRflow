@@ -1,12 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Target, CheckCircle2, ChevronRight, Calculator, RefreshCw, Layers } from 'lucide-react';
-import Link from 'next/link';
+import { Calculator, RefreshCw, Layers } from 'lucide-react';
 
 export default function RemediationPlanScreen() {
     const [budget, setBudget] = useState(420000);
 
     return (
+        <Page
+            title="Gap Remediation Modeler"
+            subtitle="Allocate budget and simulate compensation adjustments to resolve identified equity issues."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Remediation" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -119,5 +127,7 @@ export default function RemediationPlanScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

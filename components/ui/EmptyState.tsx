@@ -15,7 +15,7 @@ interface EmptyStateAction {
 interface EmptyStateProps {
     illustration: React.ReactNode;
     badge?: string;
-    badgeColor?: string;
+    badgeColor?: 'indigo' | 'emerald' | 'amber' | 'rose' | 'sky' | 'purple' | 'slate' | 'violet' | 'orange' | 'pink';
     title: string;
     description: string;
     primaryAction?: EmptyStateAction;
@@ -23,6 +23,20 @@ interface EmptyStateProps {
     tips?: string[];
     accentColor?: string; // tailwind gradient stop e.g. "indigo"
 }
+
+// ─── Static badge color map — avoids template-literal Tailwind classes (Tailwind v4 JIT trap)
+const BADGE_DOT_CLASSES: Record<string, string> = {
+    indigo: 'w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse',
+    emerald: 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse',
+    amber: 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse',
+    rose: 'w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse',
+    sky: 'w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse',
+    purple: 'w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse',
+    slate: 'w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse',
+    violet: 'w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse',
+    orange: 'w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse',
+    pink: 'w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse',
+};
 
 // ─── Dot Grid Background ───────────────────────────────────────────────────────
 function DotGrid() {
@@ -97,7 +111,7 @@ export function EmptyState({
                 {/* Badge */}
                 {badge && (
                     <div className="mb-6 inline-flex items-center gap-2 bg-[#0D1928] border border-[#1A2A3A] px-4 py-1.5 rounded-full text-[11px] font-semibold text-[#8899AA] uppercase tracking-widest">
-                        <span className={`w-1.5 h-1.5 rounded-full bg-${badgeColor}-400 animate-pulse`} />
+                        <span className={BADGE_DOT_CLASSES[badgeColor ?? 'indigo'] ?? BADGE_DOT_CLASSES.indigo} />
                         {badge}
                     </div>
                 )}

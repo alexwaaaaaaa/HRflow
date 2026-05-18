@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Gift, Search, Filter, CheckCircle2, XCircle, Clock
+    Gift, CheckCircle2, XCircle, Clock
 } from 'lucide-react';
 
 export default function CompOffManagement() {
     return (
+        <Page
+            title="Compensatory Off (Comp-off)"
+            subtitle="Manage extra leaves granted for working on holidays or weekly off days."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Comp Off" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-6xl mx-auto space-y-6">
 
@@ -74,5 +83,7 @@ export default function CompOffManagement() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

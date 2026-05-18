@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { DollarSign, FileText, Send, Download, ArrowUpRight, Clock } from 'lucide-react';
+import { DollarSign, FileText, Clock } from 'lucide-react';
 
 export default function BillingScreen() {
     return (
+        <Page
+            title="Invoicing & Billing"
+            subtitle="Convert approved timesheets into client-facing invoices based on project rate cards."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Billing" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -98,5 +107,7 @@ export default function BillingScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Eye, ShieldAlert, CheckCircle2, Search, Filter } from 'lucide-react';
+import { Eye, ShieldAlert, CheckCircle2, Search } from 'lucide-react';
 
 export default function PayTransparencyScreen() {
     const [toggle, setToggle] = useState(true);
 
     return (
+        <Page
+            title="External Pay Transparency Management"
+            subtitle="Manage public salary ranges published to ATS and job boards for compliance with local transparency laws."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Transparency" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -108,5 +117,7 @@ export default function PayTransparencyScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

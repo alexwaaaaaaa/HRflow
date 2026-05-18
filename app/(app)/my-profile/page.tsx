@@ -2,132 +2,324 @@
 
 import { useState } from "react";
 import { Edit2, Download, Lock } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card, { CardHeader, CardTitle } from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-const TABS = ["Overview", "My Payslips", "My Leave", "My Documents", "My Attendance"];
+const TABS = ["Overview", "My Payslips", "My Leave", "My Documents", "My Attendance"] as const;
+type Tab = (typeof TABS)[number];
+
+interface PersonalField {
+    label: string;
+    value: string;
+    editable: boolean;
+}
+
+const PERSONAL_FIELDS: PersonalField[] = [
+    { label: "Personal Email", value: "rahul.sharma@gmail.com", editable: true },
+    { label: "Personal Mobile", value: "+91 98765 43210", editable: true },
+    { label: "Date of Birth", value: "15/03/1996", editable: false },
+    { label: "Blood Group", value: "O+", editable: true },
+    { label: "Emergency Contact", value: "Sunita Sharma — +91 87654 32100", editable: true },
+    { label: "Current Address", value: "123 Koregaon Park, Pune 411001", editable: true },
+];
+
+const JOB_DETAILS: Array<[string, string]> = [
+    ["Department", "Engineering"],
+    ["Designation", "Senior SWE"],
+    ["Grade", "L3"],
+    ["Reports to", "Kavya Reddy"],
+    ["Location", "Pune Office"],
+    ["Work Mode", "Hybrid"],
+    ["Shift", "General (9AM–6PM)"],
+    ["Employment", "Full-time"],
+];
+
+interface Payslip {
+    month: string;
+    gross: string;
+    net: string;
+    status: "Paid" | "Pending";
+}
+
+const PAYSLIPS: Payslip[] = [
+    { month: "November 2024", gross: "₹95,000", net: "₹90,000", status: "Pending" },
+    { month: "October 2024", gross: "₹95,000", net: "₹90,000", status: "Paid" },
+    { month: "September 2024", gross: "₹95,000", net: "₹90,000", status: "Paid" },
+    { month: "August 2024", gross: "₹95,000", net: "₹90,000", status: "Paid" },
+];
 
 export default function MyProfile() {
-    const [activeTab, setActiveTab] = useState("Overview");
+    const [activeTab, setActiveTab] = useState<Tab>("Overview");
     const [editing, setEditing] = useState(false);
 
     return (
-        <div style={{ paddingBottom: 60 }} className="animate-fade-in">
-            {/* Profile Header */}
-            <div style={{ margin: "32px 32px 24px", background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 20, padding: "24px 32px", display: "flex", alignItems: "center", gap: 24 }}>
-                <div style={{ position: "relative", flexShrink: 0 }}>
-                    <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(0,229,160,0.1)", color: "#00E5A0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 700, border: "3px solid #00E5A0" }}>RS</div>
-                    <div style={{ position: "absolute", bottom: 2, right: 2, width: 14, height: 14, borderRadius: "50%", background: "#00E5A0", border: "2px solid #0D1928" }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                    <h1 style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF", margin: "0 0 6px" }}>Rahul Kumar Sharma</h1>
-                    <div style={{ fontSize: 15, color: "#8899AA", marginBottom: 12 }}>Senior Software Engineer · Engineering</div>
-                    <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#8899AA" }}>
-                        <span>📍 Pune Office</span>
-                        <span>🗓 Joined 15/11/2021</span>
-                        <span>🏆 Grade L3</span>
-                        <span>👤 EMP-0848</span>
-                    </div>
-                </div>
-                <div style={{ display: "flex", gap: 12, flexShrink: 0 }}>
-                    <button onClick={() => setEditing(!editing)} style={{ height: 40, padding: "0 16px", background: editing ? "#00E5A0" : "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: editing ? "#060B14" : "#FFFFFF", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                        <Edit2 size={14} /> {editing ? "Save Changes" : "Edit My Details"}
-                    </button>
-                </div>
-            </div>
-
-            {/* Tabs */}
-            <div style={{ margin: "0 32px 24px", display: "flex", gap: 4, borderBottom: "1px solid #1A2A3A", paddingBottom: 0 }}>
-                {TABS.map(t => (
-                    <button key={t} onClick={() => setActiveTab(t)} style={{ padding: "12px 20px", background: "none", border: "none", borderBottom: activeTab === t ? "2px solid #00E5A0" : "2px solid transparent", color: activeTab === t ? "#FFFFFF" : "#8899AA", fontSize: 14, fontWeight: activeTab === t ? 600 : 400, cursor: "pointer", marginBottom: -1 }}>
-                        {t}
-                    </button>
-                ))}
-            </div>
-
-            <div style={{ padding: "0 32px" }}>
-                {activeTab === "Overview" && (
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 32 }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                                    <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: 0 }}>Personal Information</h3>
-                                    {!editing && <div style={{ fontSize: 12, color: "#8899AA", display: "flex", alignItems: "center", gap: 4 }}><Lock size={12} /> Some fields managed by HR</div>}
-                                </div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                                    {[
-                                        { label: "Personal Email", val: "rahul.sharma@gmail.com", editable: true },
-                                        { label: "Personal Mobile", val: "+91 98765 43210", editable: true },
-                                        { label: "Date of Birth", val: "15/03/1996", editable: false },
-                                        { label: "Blood Group", val: "O+", editable: true },
-                                        { label: "Emergency Contact", val: "Sunita Sharma — +91 87654 32100", editable: true },
-                                        { label: "Current Address", val: "123 Koregaon Park, Pune 411001", editable: true },
-                                    ].map(f => (
-                                        <div key={f.label}>
-                                            <div style={{ fontSize: 12, color: "#8899AA", marginBottom: 6 }}>{f.label}</div>
-                                            {editing && f.editable ? (
-                                                <input defaultValue={f.val} style={{ width: "100%", height: 36, background: "#060B14", border: "1px solid #00E5A0", borderRadius: 8, padding: "0 12px", color: "#FFFFFF", fontSize: 13, outline: "none" }} />
-                                            ) : (
-                                                <div style={{ fontSize: 14, color: f.editable ? "#FFFFFF" : "#445566", display: "flex", alignItems: "center", gap: 6 }}>
-                                                    {f.val}
-                                                    {!f.editable && <Lock size={11} color="#445566" />}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                                {editing && (
-                                    <div style={{ marginTop: 16, padding: "12px 16px", background: "rgba(0,102,255,0.05)", borderRadius: 8, border: "1px solid rgba(0,102,255,0.2)", fontSize: 13, color: "#0066FF" }}>
-                                        Need to change locked fields? <button style={{ background: "none", border: "none", color: "#00E5A0", cursor: "pointer", fontWeight: 600, padding: 0 }}>Raise a request to HR →</button>
-                                    </div>
-                                )}
+        <Page
+            title="My profile"
+            subtitle="Personal details, compensation, and self-service shortcuts"
+            breadcrumbs={[{ label: "My Profile" }]}
+            maxWidth="1200px"
+            actions={
+                <Button
+                    variant={editing ? "primary" : "secondary"}
+                    size="md"
+                    icon={<Edit2 size={14} />}
+                    onClick={() => setEditing((v) => !v)}
+                >
+                    {editing ? "Save changes" : "Edit details"}
+                </Button>
+            }
+        >
+            <div className="space-y-6">
+                {/* Profile header card */}
+                <Card>
+                    <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                        <div className="relative shrink-0">
+                            <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-[#00E5A0] bg-[rgba(0,229,160,0.1)] text-2xl font-bold text-[#00E5A0]">
+                                RS
+                            </div>
+                            <span
+                                className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-2 border-[#0D1928] bg-[#00E5A0]"
+                                role="img"
+                                aria-label="Currently active"
+                            />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <h2 className="text-xl font-bold text-white sm:text-2xl">
+                                Rahul Kumar Sharma
+                            </h2>
+                            <p className="mt-1 text-sm text-[#8899AA]">
+                                Senior Software Engineer · Engineering
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-[#8899AA]">
+                                <Meta label="Location" value="Pune Office" />
+                                <Meta label="Joined" value="15/11/2021" />
+                                <Meta label="Grade" value="L3" />
+                                <Meta label="Employee ID" value="EMP-0848" />
                             </div>
                         </div>
+                    </div>
+                </Card>
 
-                        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                                <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 16 }}>Job Details</h3>
-                                {[
-                                    ["Department", "Engineering"], ["Designation", "Senior SWE"],
-                                    ["Grade", "L3"], ["Reports to", "Kavya Reddy"],
-                                    ["Location", "Pune Office"], ["Work Mode", "Hybrid"],
-                                    ["Shift", "General (9AM–6PM)"], ["Employment", "Full-time"],
-                                ].map(([k, v]) => (
-                                    <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #0A1420" }}>
-                                        <span style={{ fontSize: 13, color: "#8899AA" }}>{k}</span>
-                                        <span style={{ fontSize: 13, color: "#FFFFFF" }}>{v}</span>
+                {/* Tabs */}
+                <div
+                    role="tablist"
+                    aria-label="Profile sections"
+                    className="-mx-1 flex gap-1 overflow-x-auto border-b border-[#1A2A3A] pb-px"
+                >
+                    {TABS.map((t) => {
+                        const active = activeTab === t;
+                        return (
+                            <button
+                                key={t}
+                                type="button"
+                                role="tab"
+                                aria-selected={active}
+                                aria-controls={`panel-${t.replace(/\s+/g, "-")}`}
+                                id={`tab-${t.replace(/\s+/g, "-")}`}
+                                onClick={() => setActiveTab(t)}
+                                className={`shrink-0 border-b-2 px-4 py-3 text-sm transition-colors ${
+                                    active
+                                        ? "border-[#00E5A0] font-semibold text-white"
+                                        : "border-transparent text-[#8899AA] hover:text-[#c8d8e8]"
+                                }`}
+                            >
+                                {t}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Overview */}
+                {activeTab === "Overview" && (
+                    <div
+                        id="panel-Overview"
+                        role="tabpanel"
+                        aria-labelledby="tab-Overview"
+                        className="grid gap-6 lg:grid-cols-[1fr_360px]"
+                    >
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Personal information</CardTitle>
+                                {!editing && (
+                                    <span className="flex items-center gap-1 text-xs text-[#8899AA]">
+                                        <Lock size={12} aria-hidden="true" />
+                                        Some fields managed by HR
+                                    </span>
+                                )}
+                            </CardHeader>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                {PERSONAL_FIELDS.map((f) => (
+                                    <div key={f.label}>
+                                        <p className="mb-1.5 text-xs font-medium uppercase tracking-wider text-[#7a8fa6]">
+                                            {f.label}
+                                        </p>
+                                        <p>
+                                            {editing && f.editable ? (
+                                                <input
+                                                    aria-label={f.label}
+                                                    defaultValue={f.value}
+                                                    className="h-9 w-full rounded-lg border border-[#00E5A0] bg-[#060B14] px-3 text-sm text-white outline-none"
+                                                />
+                                            ) : (
+                                                <span
+                                                    className={`flex items-center gap-1.5 text-sm ${
+                                                        f.editable ? "text-white" : "text-[#7a8fa6]"
+                                                    }`}
+                                                >
+                                                    {f.value}
+                                                    {!f.editable && (
+                                                        <Lock
+                                                            size={11}
+                                                            className="text-[#7a8fa6]"
+                                                            aria-label="Read-only"
+                                                        />
+                                                    )}
+                                                </span>
+                                            )}
+                                        </p>
                                     </div>
                                 ))}
                             </div>
+                            {editing && (
+                                <p className="mt-4 rounded-lg border border-[rgba(0,102,255,0.2)] bg-[rgba(0,102,255,0.05)] p-3 text-xs text-[#0066FF]">
+                                    Need to change locked fields?{" "}
+                                    <button
+                                        type="button"
+                                        className="font-semibold text-[#00E5A0] hover:underline"
+                                    >
+                                        Raise a request to HR →
+                                    </button>
+                                </p>
+                            )}
+                        </Card>
 
-                            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24 }}>
-                                <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 16 }}>My Compensation</h3>
-                                <div style={{ fontSize: 13, color: "#8899AA", marginBottom: 12 }}>Annual CTC (visible to you only)</div>
-                                <div style={{ fontSize: 28, fontWeight: 700, color: "#00E5A0", marginBottom: 4 }}>₹12,00,000</div>
-                                <div style={{ fontSize: 13, color: "#8899AA", marginBottom: 16 }}>Monthly In-hand: ~₹90,000</div>
-                                <button style={{ width: "100%", height: 36, background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#0066FF", fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                                    <Download size={14} /> Download Salary Certificate
-                                </button>
-                            </div>
+                        <div className="space-y-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Job details</CardTitle>
+                                </CardHeader>
+                                <dl className="space-y-2">
+                                    {JOB_DETAILS.map(([k, v]) => (
+                                        <div
+                                            key={k}
+                                            className="flex justify-between border-b border-[#0e1a28] py-2 last:border-b-0"
+                                        >
+                                            <dt className="text-xs text-[#7a8fa6]">{k}</dt>
+                                            <dd className="text-xs font-medium text-white">{v}</dd>
+                                        </div>
+                                    ))}
+                                </dl>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Compensation</CardTitle>
+                                </CardHeader>
+                                <p className="text-xs text-[#7a8fa6]">
+                                    Annual CTC (visible to you only)
+                                </p>
+                                <p className="mt-1 text-3xl font-bold text-[#00e5a0] tabular-nums">
+                                    ₹12,00,000
+                                </p>
+                                <p className="mt-1 text-xs text-[#7a8fa6]">
+                                    Monthly in-hand · ₹90,000
+                                </p>
+                                <Button
+                                    variant="secondary"
+                                    size="md"
+                                    icon={<Download size={14} />}
+                                    className="mt-4 w-full"
+                                >
+                                    Salary certificate
+                                </Button>
+                            </Card>
                         </div>
                     </div>
                 )}
 
+                {/* Payslips */}
                 {activeTab === "My Payslips" && (
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, overflow: "hidden" }}>
-                        {["November 2024", "October 2024", "September 2024", "August 2024"].map((m, i) => (
-                            <div key={m} style={{ display: "flex", alignItems: "center", padding: "16px 24px", borderBottom: "1px solid #1A2A3A", gap: 16 }}>
-                                <div style={{ flex: 1, fontSize: 14, fontWeight: 600, color: "#FFFFFF" }}>{m}</div>
-                                <div style={{ fontSize: 13, color: "#8899AA" }}>Gross: ₹95,000 · Net: ₹90,000</div>
-                                <span style={{ fontSize: 11, background: i === 0 ? "rgba(255,184,0,0.1)" : "rgba(0,229,160,0.1)", color: i === 0 ? "#FFB800" : "#00E5A0", padding: "4px 10px", borderRadius: 20, fontWeight: 500 }}>
-                                    {i === 0 ? "Pending" : "Paid"}
-                                </span>
-                                <button style={{ height: 32, padding: "0 12px", background: "transparent", border: "1px solid #1A2A3A", borderRadius: 6, color: "#FFFFFF", fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-                                    <Download size={12} /> Payslip
-                                </button>
-                            </div>
-                        ))}
+                    <div
+                        id="panel-My-Payslips"
+                        role="tabpanel"
+                        aria-labelledby="tab-My-Payslips"
+                    >
+                        <Card padding="none">
+                            <ul className="divide-y divide-[#1A2A3A]">
+                                {PAYSLIPS.map((p) => (
+                                    <li
+                                        key={p.month}
+                                        className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center"
+                                    >
+                                        <div className="flex-1">
+                                            <p className="text-sm font-semibold text-white">
+                                                {p.month}
+                                            </p>
+                                            <p className="mt-0.5 text-xs text-[#7a8fa6]">
+                                                Gross {p.gross} · Net {p.net}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Badge
+                                                variant={p.status === "Paid" ? "success" : "warning"}
+                                            >
+                                                {p.status}
+                                            </Badge>
+                                            <Button
+                                                variant="secondary"
+                                                size="sm"
+                                                icon={<Download size={12} />}
+                                            >
+                                                Payslip
+                                            </Button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </Card>
+                    </div>
+                )}
+
+                {/* Other tabs — placeholders that link to dedicated screens */}
+                {(activeTab === "My Leave" ||
+                    activeTab === "My Documents" ||
+                    activeTab === "My Attendance") && (
+                    <div
+                        id={`panel-${activeTab.replace(/\s+/g, "-")}`}
+                        role="tabpanel"
+                        aria-labelledby={`tab-${activeTab.replace(/\s+/g, "-")}`}
+                    >
+                        <Card>
+                            <p className="text-sm text-[#c8d8e8]">
+                                {activeTab} details live on a dedicated screen for richer interactions.
+                            </p>
+                            <Button
+                                variant="ghost"
+                                size="md"
+                                className="mt-4"
+                                onClick={() => {
+                                    /* Navigation handled in nav components */
+                                }}
+                            >
+                                Open {activeTab.toLowerCase()}
+                            </Button>
+                        </Card>
                     </div>
                 )}
             </div>
+        </Page>
+    );
+}
+
+function Meta({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="flex items-baseline gap-1.5">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-[#7a8fa6]">
+                {label}
+            </p>
+            <p className="text-xs text-white">{value}</p>
         </div>
     );
 }

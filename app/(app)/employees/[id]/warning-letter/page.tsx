@@ -1,104 +1,240 @@
 "use client";
 
 import { use, useState } from "react";
-import Link from "next/link";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
-const INCIDENTS = ["Attendance irregularity", "Insubordination", "Misconduct", "Poor performance", "Policy violation", "Other"];
-const LEVELS = ["Verbal Warning (1st)", "Written Warning (1st)", "Written Warning (2nd)", "Final Warning"];
+const INCIDENTS = [
+  "Attendance irregularity",
+  "Insubordination",
+  "Misconduct",
+  "Poor performance",
+  "Policy violation",
+  "Other",
+] as const;
+
+const LEVELS = [
+  "Verbal Warning (1st)",
+  "Written Warning (1st)",
+  "Written Warning (2nd)",
+  "Final Warning",
+] as const;
+
+type Level = (typeof LEVELS)[number];
+type Incident = (typeof INCIDENTS)[number];
 
 export default function WarningLetter({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [incident, setIncident] = useState(INCIDENTS[0]);
-    const [level, setLevel] = useState(LEVELS[0]);
-    const [desc, setDesc] = useState("");
-    const [improvement, setImprovement] = useState("");
+  const { id } = use(params);
+  const [incident, setIncident] = useState<Incident>(INCIDENTS[0]);
+  const [level, setLevel] = useState<Level>(LEVELS[0]);
+  const [desc, setDesc] = useState("");
+  const [improvement, setImprovement] = useState("");
 
-    return (
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 32px 80px" }}>
-            <Link href={`/employees/${id}`} style={{ color: "#8899AA", textDecoration: "none", fontSize: 13 }}>← Back to Profile</Link>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginTop: 12, marginBottom: 24 }}>Warning Letter</h2>
+  const handleIssue = () => {
+    // TODO: replace with real mutation
+    alert("Warning letter issued (stub)");
+  };
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", gap: 32 }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 28 }}>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", marginBottom: 20 }}>Incident Details</h3>
+  return (
+    <Page
+      title="Warning Letter"
+      breadcrumbs={[
+        { label: "Employees", href: "/employees" },
+        { label: "Rahul Sharma", href: `/employees/${id}` },
+        { label: "Warning Letter" },
+      ]}
+      maxWidth="1100px"
+    >
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_420px]">
+        {/* Left: Form */}
+        <div className="space-y-5">
+          <Card padding="md">
+            <h3 className="mb-5 text-base font-semibold text-white">Incident Details</h3>
 
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
-                            <div>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Incident Type *</label>
-                                <select value={incident} onChange={e => setIncident(e.target.value)} style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 14, outline: "none" }}>
-                                    {INCIDENTS.map(i => <option key={i}>{i}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Incident Date *</label>
-                                <input type="date" defaultValue="2024-11-10" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", outline: "none" }} />
-                            </div>
-                        </div>
-
-                        <div style={{ marginBottom: 20 }}>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Warning Level *</label>
-                            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                                {LEVELS.map(l => (
-                                    <button key={l} onClick={() => setLevel(l)} style={{ padding: "8px 14px", background: level === l ? "rgba(255,68,68,0.1)" : "#060B14", border: `1px solid ${level === l ? "#FF4444" : "#1A2A3A"}`, borderRadius: 8, color: level === l ? "#FF4444" : "#8899AA", fontSize: 13, cursor: "pointer" }}>{l}</button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div style={{ marginBottom: 20 }}>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Incident Description * <span style={{ color: "#445566" }}>(min 50 chars)</span></label>
-                            <textarea rows={4} value={desc} onChange={e => setDesc(e.target.value)} placeholder="Describe what happened, when and how..." style={{ width: "100%", background: "#060B14", border: `1px solid ${desc.length > 0 && desc.length < 50 ? "#FF4444" : "#1A2A3A"}`, borderRadius: 8, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", resize: "none", boxSizing: "border-box" }}></textarea>
-                            {desc.length > 0 && desc.length < 50 && <div style={{ fontSize: 12, color: "#FF4444", marginTop: 4 }}>Minimum 50 characters required ({desc.length}/50)</div>}
-                        </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
-                            <div>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Expected Improvement</label>
-                                <textarea rows={3} value={improvement} onChange={e => setImprovement(e.target.value)} placeholder="What should the employee do differently..." style={{ width: "100%", background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "12px 14px", color: "#FFFFFF", fontSize: 13, outline: "none", resize: "none", boxSizing: "border-box" }}></textarea>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                                <div>
-                                    <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Improvement Deadline</label>
-                                    <input type="date" defaultValue="2024-12-10" style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", outline: "none" }} />
-                                </div>
-                                <div>
-                                    <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Witnessed By (optional)</label>
-                                    <input placeholder="Search employee..." style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px", color: "#FFFFFF", fontSize: 13, outline: "none" }} />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style={{ display: "flex", gap: 12 }}>
-                            <button style={{ flex: 1, height: 44, background: "#FF4444", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>Generate & Issue Warning Letter</button>
-                            <button style={{ height: 44, padding: "0 20px", background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 14, cursor: "pointer" }}>Save Draft</button>
-                        </div>
-                    </div>
-
-                    <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 20 }}>
-                        <h3 style={{ fontSize: 14, fontWeight: 600, color: "#FFFFFF", marginBottom: 12 }}>Previous Warnings</h3>
-                        <div style={{ textAlign: "center", padding: "20px 0", color: "#8899AA", fontSize: 13 }}>
-                            No previous warnings on record ✅
-                        </div>
-                    </div>
-                </div>
-
-                {/* Letter Preview */}
-                <div style={{ background: "#FFFFFF", borderRadius: 12, padding: "40px 32px", color: "#000", fontFamily: "serif", boxShadow: "0 20px 40px rgba(0,0,0,0.3)", fontSize: 13, lineHeight: 1.8, height: "fit-content" }}>
-                    <div style={{ fontWeight: 900, fontSize: 20, letterSpacing: -0.5, marginBottom: 4 }}>TechCorp</div>
-                    <div style={{ fontSize: 12, color: "#666", borderBottom: "1px solid #CCC", paddingBottom: 16, marginBottom: 24 }}>Solutions Pvt. Ltd. · 123 Tech Park, Bengaluru</div>
-                    <div style={{ fontWeight: 700, textAlign: "center", textDecoration: "underline", marginBottom: 24 }}>{level.toUpperCase()}</div>
-                    <div style={{ marginBottom: 16 }}>Date: {new Date().toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</div>
-                    <div style={{ marginBottom: 16 }}><strong>To,</strong><br />Rahul Kumar Sharma<br />Sr. Software Engineer, Engineering</div>
-                    <div style={{ marginBottom: 16 }}><strong>Subject: {level} — {incident}</strong></div>
-                    <div style={{ marginBottom: 16 }}>This is to bring to your notice that on the date of incident, your conduct regarding <strong>{incident.toLowerCase()}</strong> was found to be in violation of company policy.</div>
-                    <div style={{ marginBottom: 16 }}>{desc || "[Incident description will appear here...]"}</div>
-                    <div style={{ marginBottom: 16 }}>You are expected to: {improvement || "[Improvement expectations will appear here...]"}</div>
-                    <div style={{ marginTop: 40 }}>
-                        <div style={{ height: 40, borderBottom: "1px dashed #CCC", width: 200, marginBottom: 4 }} />
-                        <div>Priya Mehta, HR Manager</div>
-                    </div>
-                </div>
+            <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="inc-type" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                  Incident Type *
+                </label>
+                <select
+                  id="inc-type"
+                  value={incident}
+                  onChange={(e) => setIncident(e.target.value as Incident)}
+                  className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+                >
+                  {INCIDENTS.map((i) => (
+                    <option key={i}>{i}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="inc-date" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                  Incident Date *
+                </label>
+                <input
+                  id="inc-date"
+                  type="date"
+                  defaultValue="2024-11-10"
+                  className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+                />
+              </div>
             </div>
+
+            <div className="mb-5">
+              <div className="mb-2 text-[13px] text-[#8899AA]">Warning Level *</div>
+              <div
+                className="flex flex-wrap gap-2.5"
+                role="group"
+                aria-label="Warning level selection"
+              >
+                {LEVELS.map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => setLevel(l)}
+                    aria-pressed={level === l}
+                    className="rounded-lg border px-3.5 py-2 text-[13px] transition-colors"
+                    style={{
+                      // inline-style: dynamic per-level selection color
+                      background: level === l ? "rgba(255,68,68,0.1)" : "#060B14",
+                      borderColor: level === l ? "#FF4444" : "#1A2A3A",
+                      color: level === l ? "#FF4444" : "#8899AA",
+                    }}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <label htmlFor="inc-desc" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                Incident Description *{" "}
+                <span className="text-[#445566]">(min 50 chars)</span>
+              </label>
+              <textarea
+                id="inc-desc"
+                rows={4}
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="Describe what happened, when and how..."
+                className="w-full resize-none rounded-lg border p-3.5 text-sm text-white outline-none"
+                style={{
+                  // inline-style: dynamic validation border color
+                  background: "#060B14",
+                  borderColor: desc.length > 0 && desc.length < 50 ? "#FF4444" : "#1A2A3A",
+                }}
+                aria-invalid={desc.length > 0 && desc.length < 50}
+                aria-describedby={desc.length > 0 && desc.length < 50 ? "desc-error" : undefined}
+              />
+              {desc.length > 0 && desc.length < 50 && (
+                <p id="desc-error" role="alert" className="mt-1 text-xs text-[#FF4444]">
+                  Minimum 50 characters required ({desc.length}/50)
+                </p>
+              )}
+            </div>
+
+            <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="improvement" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                  Expected Improvement
+                </label>
+                <textarea
+                  id="improvement"
+                  rows={3}
+                  value={improvement}
+                  onChange={(e) => setImprovement(e.target.value)}
+                  placeholder="What should the employee do differently..."
+                  className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3.5 text-[13px] text-white outline-none"
+                />
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="imp-deadline" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                    Improvement Deadline
+                  </label>
+                  <input
+                    id="imp-deadline"
+                    type="date"
+                    defaultValue="2024-12-10"
+                    className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-sm text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="witness" className="mb-1.5 block text-[13px] text-[#8899AA]">
+                    Witnessed By (optional)
+                  </label>
+                  <input
+                    id="witness"
+                    placeholder="Search employee..."
+                    className="h-10 w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3.5 text-[13px] text-white outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button variant="danger" className="flex-1" onClick={handleIssue}>
+                Generate &amp; Issue Warning Letter
+              </Button>
+              <Button variant="secondary">Save Draft</Button>
+            </div>
+          </Card>
+
+          <Card padding="md">
+            <h3 className="mb-3 text-sm font-semibold text-white">Previous Warnings</h3>
+            <div className="py-5 text-center text-[13px] text-[#8899AA]">
+              No previous warnings on record ✅
+            </div>
+          </Card>
         </div>
-    );
+
+        {/* Right: Letter preview */}
+        <div
+          className="rounded-xl p-10 font-serif text-[13px] leading-[1.8] text-black shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+          style={{ background: "#FFFFFF" }}
+        >
+          <div className="mb-1 text-xl font-black tracking-tight">TechCorp</div>
+          <div className="mb-6 border-b border-[#CCC] pb-4 text-xs text-[#666]">
+            Solutions Pvt. Ltd. · 123 Tech Park, Bengaluru
+          </div>
+          <div className="mb-6 text-center font-bold underline">{level.toUpperCase()}</div>
+          <div className="mb-4">
+            Date:{" "}
+            {new Date().toLocaleDateString("en-IN", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </div>
+          <div className="mb-4">
+            <strong>To,</strong>
+            <br />
+            Rahul Kumar Sharma
+            <br />
+            Sr. Software Engineer, Engineering
+          </div>
+          <div className="mb-4">
+            <strong>
+              Subject: {level} — {incident}
+            </strong>
+          </div>
+          <div className="mb-4">
+            This is to bring to your notice that on the date of incident, your conduct regarding{" "}
+            <strong>{incident.toLowerCase()}</strong> was found to be in violation of company
+            policy.
+          </div>
+          <div className="mb-4">{desc || "[Incident description will appear here...]"}</div>
+          <div className="mb-4">
+            You are expected to: {improvement || "[Improvement expectations will appear here...]"}
+          </div>
+          <div className="mt-10">
+            <div className="mb-1 h-10 w-[200px] border-b border-dashed border-[#CCC]" />
+            <div>Priya Mehta, HR Manager</div>
+          </div>
+        </div>
+      </div>
+    </Page>
+  );
 }

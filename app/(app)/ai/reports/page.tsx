@@ -1,167 +1,191 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Sparkles, FileText, Download, Filter, MoreVertical, Calendar, TrendingUp, Search, Clock, Plus } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { useState } from "react";
+import { Sparkles, FileText, Download, Filter, MoreVertical, Calendar, TrendingUp, Search, Clock, Plus } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type ReportStatus = "Ready" | "Processing";
+
+interface ReportRow {
+  id: string;
+  name: string;
+  type: string;
+  date: string;
+  status: ReportStatus;
+  views: number;
+  author: string;
+}
+
+const REPORTS: ReportRow[] = [
+  { id: "REP-001", name: "Q3 Attrition Predictor Analysis", type: "Predictive", date: "2 hours ago", status: "Ready", views: 42, author: "Kaarya AI" },
+  { id: "REP-002", name: "Compensation Benchmarking vs Market", type: "Analytical", date: "Yesterday", status: "Ready", views: 18, author: "Kaarya AI" },
+  { id: "REP-003", name: "Diversity & Inclusion Pulse", type: "Sentiment", date: "Oct 12, 2023", status: "Ready", views: 56, author: "Rahul HR" },
+  { id: "REP-004", name: "End of Year Payroll Variance", type: "Audit", date: "Generating…", status: "Processing", views: 0, author: "System" },
+  { id: "REP-005", name: "Tech Hiring Funnel Bottlenecks", type: "Diagnostic", date: "Oct 10, 2023", status: "Ready", views: 12, author: "Kaarya AI" },
+];
+
+const TABS = ["All Reports", "Generated", "Scheduled", "My Library"] as const;
+type TabType = (typeof TABS)[number];
+
+const REPORT_COLUMNS: Column<ReportRow>[] = [
+  {
+    key: "name",
+    label: "Report Name",
+    render: (r) => (
+      <div className="flex items-center gap-3">
+        <div className={`p-2 rounded-lg ${r.status === "Processing" ? "bg-[#1A2A3A] text-[#8899AA]" : "bg-indigo-500/10 text-indigo-400"}`}>
+          {r.status === "Processing" ? <Clock size={16} aria-hidden="true" /> : <FileText size={16} aria-hidden="true" />}
+        </div>
+        <div>
+          <div className="text-sm font-medium text-white mb-0.5">{r.name}</div>
+          <div className="text-xs text-[#8899AA]">By {r.author} • {r.views} views</div>
+        </div>
+      </div>
+    ),
+    sortable: true,
+    sortValue: (r) => r.name,
+  },
+  {
+    key: "type",
+    label: "Type",
+    render: (r) => <Badge variant="neutral">{r.type}</Badge>,
+  },
+  {
+    key: "date",
+    label: "Generated",
+    render: (r) => <span className="text-sm text-[#8899AA]">{r.date}</span>,
+  },
+  {
+    key: "status",
+    label: "Status",
+    render: (r) =>
+      r.status === "Processing" ? (
+        <div className="flex items-center gap-2 text-amber-500 text-sm font-medium">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+          </span>
+          Processing…
+        </div>
+      ) : (
+        <Badge variant="success">Ready</Badge>
+      ),
+  },
+  {
+    key: "actions",
+    label: "",
+    align: "right",
+    render: (r) => (
+      <div className="flex justify-end gap-2">
+        {r.status === "Ready" && (
+          <button type="button" className="text-[#8899AA] hover:text-white p-2 rounded-lg hover:bg-[#2A3A4A] transition-colors" aria-label={`Download ${r.name}`}>
+            <Download size={16} aria-hidden="true" />
+          </button>
+        )}
+        <button type="button" className="text-[#8899AA] hover:text-white p-2 rounded-lg hover:bg-[#2A3A4A] transition-colors" aria-label={`More options for ${r.name}`}>
+          <MoreVertical size={16} aria-hidden="true" />
+        </button>
+      </div>
+    ),
+  },
+];
+
+// ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function AIReportsPage() {
-    const [activeTab, setActiveTab] = useState('All Reports');
-    const tabs = ['All Reports', 'Generated', 'Scheduled', 'My Library'];
+  const [activeTab, setActiveTab] = useState<TabType>("All Reports");
 
-    const reports = [
-        { id: 'REP-001', name: 'Q3 Attrition Predictor Analysis', type: 'Predictive', date: '2 hours ago', status: 'Ready', views: 42, author: 'Kaarya AI' },
-        { id: 'REP-002', name: 'Compensation Benchmarking vs Market', type: 'Analytical', date: 'Yesterday', status: 'Ready', views: 18, author: 'Kaarya AI' },
-        { id: 'REP-003', name: 'Diversity & Inclusion Pulse', type: 'Sentiment', date: 'Oct 12, 2023', status: 'Ready', views: 56, author: 'Rahul HR' },
-        { id: 'REP-004', name: 'End of Year Payroll Variance', type: 'Audit', date: 'Generating...', status: 'Processing', views: 0, author: 'System' },
-        { id: 'REP-005', name: 'Tech Hiring Funnel Bottlenecks', type: 'Diagnostic', date: 'Oct 10, 2023', status: 'Ready', views: 12, author: 'Kaarya AI' },
-    ];
-
-    return (
-        <div className="p-6 md:p-8 animate-fade-in max-w-7xl mx-auto">
-
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight mb-2 flex items-center gap-3">
-                        <FileText size={28} className="text-indigo-400" /> AI Reports Library
-                    </h1>
-                    <p className="text-[#8899AA] text-sm max-w-2xl">
-                        Access dynamically generated insights, predictive models, and comprehensive audits generated by Kaarya AI.
-                    </p>
-                </div>
-                <div className="flex gap-3">
-                    <Button variant="secondary" className="border-[#2A3A4A] text-white">
-                        <Calendar size={16} className="mr-2" /> Schedule Report
-                    </Button>
-                    <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white border-none">
-                        <Plus size={16} className="mr-2" /> Generate New
-                    </Button>
-                </div>
+  return (
+    <Page
+      title="AI Reports Library"
+      subtitle="Access dynamically generated insights, predictive models, and comprehensive audits generated by Kaarya AI."
+      breadcrumbs={[
+        { label: "AI", href: "/ai/smart-onboarding" },
+        { label: "Reports" },
+      ]}
+      maxWidth="1300px"
+      actions={
+        <>
+          <Button variant="secondary" icon={<Calendar size={14} />}>Schedule Report</Button>
+          <Button icon={<Plus size={14} />}>Generate New</Button>
+        </>
+      }
+    >
+      {/* Smart Digest */}
+      <Card padding="lg" className="mb-6 border-indigo-500/20">
+        <div className="flex items-start gap-4">
+          <div className="bg-indigo-500/20 p-3 rounded-xl border border-indigo-500/30">
+            <Sparkles size={24} className="text-indigo-400" aria-hidden="true" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-white mb-2">Weekly Executive Digest</h3>
+            <p className="text-[#8899AA] text-sm leading-relaxed mb-4 max-w-3xl">
+              Kaarya AI has analyzed the past 7 days of HR operations. The most significant finding is a <strong className="text-emerald-400">14% improvement</strong> in Time-to-Fill for Engineering roles, but a concerning <strong className="text-red-400">rise in overtime hours</strong> across Operations which may trigger compliance alerts next payroll cycle.
+            </p>
+            <div className="flex gap-4">
+              <Badge variant="info"><TrendingUp size={12} aria-hidden="true" className="inline mr-1" />4 Insights Generated</Badge>
+              <button type="button" className="text-xs font-medium text-[#8899AA] flex items-center gap-1.5 bg-[#1A2A3A] px-3 py-1.5 rounded-lg border border-[#2A3A4A] hover:border-[#445566] transition-colors">
+                <Download size={14} aria-hidden="true" /> Download Full Summary
+              </button>
             </div>
-
-            {/* Smart Digest Card */}
-            <div className="bg-gradient-to-r from-[#0D1928] to-[#131B2B] border border-indigo-500/20 rounded-2xl p-6 mb-8 relative overflow-hidden shadow-lg">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-                <div className="flex items-start gap-4 relative z-10">
-                    <div className="bg-indigo-500/20 p-3 rounded-xl border border-indigo-500/30">
-                        <Sparkles size={24} className="text-indigo-400" />
-                    </div>
-                    <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white mb-2">Weekly Executive Digest</h3>
-                        <p className="text-[#8899AA] text-sm leading-relaxed mb-4 max-w-3xl">
-                            Kaarya AI has analyzed the past 7 days of HR operations. The most significant finding is a <strong className="text-emerald-400">14% improvement</strong> in Time-to-Fill for Engineering roles, but a concerning <strong className="text-red-400">rise in overtime hours</strong> across Operations which may trigger compliance alerts next payroll cycle.
-                        </p>
-                        <div className="flex gap-4">
-                            <span className="text-xs font-medium text-indigo-400 flex items-center gap-1.5 bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20">
-                                <TrendingUp size={14} /> 4 Insights Generated
-                            </span>
-                            <span className="text-xs font-medium text-[#8899AA] flex items-center gap-1.5 bg-[#1A2A3A] px-3 py-1.5 rounded-lg border border-[#2A3A4A] cursor-pointer hover:border-[#445566] transition-colors">
-                                <Download size={14} /> Download Full Summary
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Search and Filter Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <div className="flex space-x-1 bg-[#1A2A3A] p-1 rounded-xl">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === tab
-                                    ? 'bg-[#0D1928] text-white shadow shadow-black/20'
-                                    : 'text-[#8899AA] hover:text-white hover:bg-[#2A3A4A]'
-                                }`}
-                        >
-                            {tab}
-                        </button>
-                    ))}
-                </div>
-                <div className="flex gap-3 w-full md:w-auto">
-                    <div className="bg-[#0D1928] border border-[#2A3A4A] rounded-xl flex items-center px-3 py-2 flex-1 md:w-64 focus-within:border-indigo-500 transition-colors">
-                        <Search size={16} className="text-[#8899AA]" />
-                        <input
-                            type="text"
-                            placeholder="Search reports..."
-                            className="bg-transparent border-none outline-none text-white text-sm ml-2 w-full placeholder:text-[#445566]"
-                        />
-                    </div>
-                    <Button variant="secondary" className="border-[#2A3A4A] px-3">
-                        <Filter size={16} />
-                    </Button>
-                </div>
-            </div>
-
-            {/* Reports List */}
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="bg-[#0A1420] border-b border-[#1A2A3A]">
-                            <th className="px-6 py-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Report Name</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Type</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Generated</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-[#8899AA] uppercase tracking-wider text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#1A2A3A]">
-                        {reports.map((report, i) => (
-                            <tr key={i} className="hover:bg-[#131B2B] transition-colors group cursor-pointer">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-lg ${report.status === 'Processing' ? 'bg-[#1A2A3A] text-[#8899AA]' : 'bg-indigo-500/10 text-indigo-400'}`}>
-                                            {report.status === 'Processing' ? <Clock size={16} /> : <FileText size={16} />}
-                                        </div>
-                                        <div>
-                                            <div className="text-sm font-medium text-white mb-0.5 group-hover:text-indigo-400 transition-colors">{report.name}</div>
-                                            <div className="text-xs text-[#8899AA]">By {report.author} • {report.views} views</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="text-xs font-medium text-[#8899AA] bg-[#1A2A3A] px-2.5 py-1 rounded-md border border-[#2A3A4A]">
-                                        {report.type}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 text-sm text-[#8899AA]">{report.date}</td>
-                                <td className="px-6 py-4">
-                                    {report.status === 'Processing' ? (
-                                        <div className="flex items-center gap-2 text-amber-500 text-sm font-medium">
-                                            <span className="relative flex h-2 w-2">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                                            </span>
-                                            Processing...
-                                        </div>
-                                    ) : (
-                                        <span className="text-emerald-400 text-sm font-medium">Ready</span>
-                                    )}
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        {report.status === 'Ready' && (
-                                            <button className="text-[#8899AA] hover:text-white p-2 rounded-lg hover:bg-[#2A3A4A] transition-colors">
-                                                <Download size={16} />
-                                            </button>
-                                        )}
-                                        <button className="text-[#8899AA] hover:text-white p-2 rounded-lg hover:bg-[#2A3A4A] transition-colors">
-                                            <MoreVertical size={16} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <div className="px-6 py-4 border-t border-[#1A2A3A] bg-[#0A1420] text-center">
-                    <button className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
-                        View All Reports
-                    </button>
-                </div>
-            </div>
-
+          </div>
         </div>
-    );
+      </Card>
+
+      {/* Tabs + Search */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex space-x-1 bg-[#1A2A3A] p-1 rounded-xl" role="tablist" aria-label="Report filter tabs">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                activeTab === tab
+                  ? "bg-[#0D1928] text-white shadow shadow-black/20"
+                  : "text-[#8899AA] hover:text-white hover:bg-[#2A3A4A]"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-3 w-full md:w-auto">
+          <div className="bg-[#0D1928] border border-[#2A3A4A] rounded-xl flex items-center px-3 py-2 flex-1 md:w-64 focus-within:border-indigo-500 transition-colors">
+            <Search size={16} className="text-[#8899AA]" aria-hidden="true" />
+            <input
+              type="search"
+              placeholder="Search reports…"
+              className="bg-transparent border-none outline-none text-white text-sm ml-2 w-full placeholder:text-[#445566]"
+              aria-label="Search reports"
+            />
+          </div>
+          <Button variant="secondary" icon={<Filter size={16} />} aria-label="Filter reports" />
+        </div>
+      </div>
+
+      {/* Reports Table */}
+      <Card padding="none">
+        <DataTable<ReportRow>
+          data={REPORTS}
+          columns={REPORT_COLUMNS}
+          rowKey={(r) => r.id}
+          aria-label="AI reports library"
+        />
+        <div className="px-6 py-4 border-t border-[#1A2A3A] bg-[#0A1420] text-center">
+          <button type="button" className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
+            View All Reports
+          </button>
+        </div>
+      </Card>
+    </Page>
+  );
 }

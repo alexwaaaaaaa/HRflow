@@ -1,107 +1,119 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, CheckCircle2, Check, X, AlertTriangle } from "lucide-react";
+import React from "react";
+import { CheckCircle2, Check, X, AlertTriangle } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Button from "@/components/ui/Button";
 
 export default function ProofApproveRejectScreen() {
     return (
-        <div style={{ height: "calc(100vh - 64px)", display: "flex", flexDirection: "column" }}>
-
-            <div style={{ padding: "16px 32px", borderBottom: "1px solid #1A2A3A", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Link href="/tax/proof-review" style={{ color: "#8899AA", display: "flex", alignItems: "center" }}>
-                        <ChevronLeft size={20} />
-                    </Link>
-                    <div>
-                        <h1 style={{ fontSize: 18, fontWeight: 600, color: "#FFFFFF", margin: 0 }}>Review: Life Insurance Premium (LIC)</h1>
-                        <div style={{ fontSize: 13, color: "#8899AA", marginTop: 2 }}>Rahul Sharma (EMP-0848) • Section 80C</div>
+        <Page
+            title="Review: Life Insurance Premium (LIC)"
+            subtitle="Rahul Sharma (EMP-0848) • Section 80C"
+            breadcrumbs={[
+                { label: "Tax", href: "/tax/proof-review" },
+                { label: "Proof Review" },
+            ]}
+            maxWidth="1400px"
+            fullBleed
+            actions={
+                <div className="flex items-center gap-4">
+                    <span className="text-sm text-[#8899AA]">Proof 2 of 5 for this employee</span>
+                    <div className="flex gap-2">
+                        <Button variant="secondary" size="sm" aria-label="Previous proof">&lt;</Button>
+                        <Button variant="secondary" size="sm" aria-label="Next proof">&gt;</Button>
                     </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                    <div style={{ fontSize: 13, color: "#8899AA" }}>Proof 2 of 5 for this employee</div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                        <button style={{ width: 32, height: 32, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 6, color: "#8899AA", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>&lt;</button>
-                        <button style={{ width: 32, height: 32, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 6, color: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>&gt;</button>
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-
+            }
+        >
+            <div className="flex flex-col lg:flex-row gap-0 h-[calc(100vh-220px)] min-h-[600px]">
                 {/* Left side: Document Preview */}
-                <div style={{ flex: 1, background: "#060B14", borderRight: "1px solid #1A2A3A", display: "flex", flexDirection: "column" }}>
-                    <div style={{ padding: "12px 24px", display: "flex", justifyContent: "flex-end", alignItems: "center", borderBottom: "1px solid #1A2A3A" }}>
-                        <button style={{ background: "transparent", border: "1px solid #1A2A3A", color: "#8899AA", fontSize: 12, padding: "4px 12px", borderRadius: 4, cursor: "pointer" }}>Open in New Tab</button>
+                <div className="flex-1 bg-[#060B14] border-r border-[#1A2A3A] flex flex-col">
+                    <div className="px-6 py-3 flex justify-end items-center border-b border-[#1A2A3A]">
+                        <Button variant="ghost" size="sm">Open in New Tab</Button>
                     </div>
-                    <div style={{ flex: 1, padding: 32, display: "flex", justifyContent: "center", overflow: "auto" }}>
-                        <div style={{ width: 600, height: 700, background: "#FFFFFF", borderRadius: 4, padding: 48, color: "#000", fontFamily: "serif" }}>
-                            <h2 style={{ textAlign: "center", marginBottom: 32, color: "#000", fontSize: 24 }}>LIC RENEWAL PREMIUM RECEIPT</h2>
-                            <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: "16px" }}>
-                                <strong>Policy Holder:</strong> <span>Rahul Kumar Sharma</span>
-                                <strong>Premium Paid:</strong> <span style={{ background: "rgba(0,102,255,0.2)" }}>₹ 30,000.00</span>
-                                <strong>Date of Issuance:</strong> <span style={{ background: "rgba(0,102,255,0.2)" }}>15/05/2024</span>
+                    <div className="flex-1 p-8 flex justify-center overflow-auto">
+                        <div className="w-[600px] h-[700px] bg-white rounded shadow-lg p-12 text-black font-serif">
+                            <h2 className="text-center mb-8 text-2xl">LIC RENEWAL PREMIUM RECEIPT</h2>
+                            <div className="grid grid-cols-[200px_1fr] gap-4 text-sm">
+                                <strong>Policy Holder:</strong>
+                                <span className="bg-blue-100">Rahul Kumar Sharma</span>
+                                <strong>Premium Paid:</strong>
+                                <span className="bg-blue-100">₹ 30,000.00</span>
+                                <strong>Date of Issuance:</strong>
+                                <span className="bg-blue-100">15/05/2024</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Right side: Verification Controls */}
-                <div style={{ width: 400, background: "#0D1928", display: "flex", flexDirection: "column" }}>
-
-                    <div style={{ padding: 24, borderBottom: "1px solid #1A2A3A" }}>
-                        <h3 style={{ fontSize: 14, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 1, margin: 0, marginBottom: 16 }}>Verification Checklist</h3>
-
-                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div className="w-full lg:w-[400px] bg-[#0D1928] flex flex-col">
+                    <div className="p-6 border-b border-[#1A2A3A]">
+                        <h3 className="text-xs font-semibold text-[#8899AA] uppercase tracking-wider mb-4">
+                            Verification Checklist
+                        </h3>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex justify-between items-start">
                                 <div>
-                                    <div style={{ fontSize: 13, color: "#FFFFFF", marginBottom: 4 }}>Amount matches declared</div>
-                                    <div style={{ fontSize: 15, fontWeight: 600, color: "#00E5A0" }}>₹30,000</div>
+                                    <p className="text-sm text-white mb-1">Amount matches declared</p>
+                                    <p className="text-base font-semibold text-[#00E5A0]">₹30,000</p>
                                 </div>
-                                <CheckCircle2 size={20} color="#00E5A0" />
+                                <CheckCircle2 size={20} className="text-[#00E5A0]" aria-hidden="true" />
                             </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                            <div className="flex justify-between items-start">
                                 <div>
-                                    <div style={{ fontSize: 13, color: "#FFFFFF", marginBottom: 4 }}>Valid for FY 24-25</div>
-                                    <div style={{ fontSize: 15, fontWeight: 600, color: "#00E5A0" }}>15-May-2024</div>
+                                    <p className="text-sm text-white mb-1">Valid for FY 24-25</p>
+                                    <p className="text-base font-semibold text-[#00E5A0]">15-May-2024</p>
                                 </div>
-                                <CheckCircle2 size={20} color="#00E5A0" />
+                                <CheckCircle2 size={20} className="text-[#00E5A0]" aria-hidden="true" />
                             </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                            <div className="flex justify-between items-start">
                                 <div>
-                                    <div style={{ fontSize: 13, color: "#FFFFFF", marginBottom: 4 }}>Name matches employee</div>
-                                    <div style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF" }}>Rahul Kumar Sharma</div>
+                                    <p className="text-sm text-white mb-1">Name matches employee</p>
+                                    <p className="text-base font-semibold text-white">Rahul Kumar Sharma</p>
                                 </div>
-                                <div style={{ color: "#FFB800" }}><AlertTriangle size={20} /></div>
+                                <AlertTriangle size={20} className="text-[#FFB800]" aria-hidden="true" />
                             </div>
                         </div>
                     </div>
 
-                    <div style={{ padding: 24, flex: 1 }}>
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Approved Amount (₹)</label>
-                        <input type="text" value="30,000" readOnly style={{ width: "100%", height: 40, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 6, color: "#FFFFFF", fontSize: 14, padding: "0 12px", outline: "none", marginBottom: 20 }} />
+                    <div className="p-6 flex-1">
+                        <div className="mb-5">
+                            <label htmlFor="approved-amount" className="block text-sm text-[#8899AA] mb-2">
+                                Approved Amount (₹)
+                            </label>
+                            <input
+                                id="approved-amount"
+                                type="text"
+                                defaultValue="30,000"
+                                readOnly
+                                className="w-full h-10 bg-[#060B14] border border-[#1A2A3A] rounded-lg text-white text-sm px-3 outline-none"
+                            />
+                        </div>
 
-                        <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>HR Remarks (Optional/Required for rejection)</label>
-                        <textarea placeholder="Add a note to employee..." style={{ width: "100%", height: 80, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 6, color: "#FFFFFF", fontSize: 13, padding: 12, outline: "none", resize: "none" }} />
+                        <div>
+                            <label htmlFor="hr-remarks" className="block text-sm text-[#8899AA] mb-2">
+                                HR Remarks (Optional/Required for rejection)
+                            </label>
+                            <textarea
+                                id="hr-remarks"
+                                placeholder="Add a note to employee..."
+                                className="w-full h-20 bg-[#060B14] border border-[#1A2A3A] rounded-lg text-white text-sm p-3 outline-none resize-none focus:border-[#00E5A0]"
+                            />
+                        </div>
                     </div>
 
-                    <div style={{ padding: 24, borderTop: "1px solid #1A2A3A", background: "#0A1420", display: "flex", gap: 16 }}>
-                        <Link href="/tax/proof-review" style={{ flex: 1 }}>
-                            <button style={{ width: "100%", height: 44, background: "rgba(255,68,68,0.1)", border: "1px solid rgba(255,68,68,0.3)", borderRadius: 8, color: "#FF4444", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }} className="hover:bg-[#FF4444]/20">
-                                <X size={16} /> Reject
-                            </button>
-                        </Link>
-                        <Link href="/tax/proof-review" style={{ flex: 1 }}>
-                            <button style={{ width: "100%", height: 44, background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }} className="hover:opacity-90">
-                                <Check size={16} /> Approve
-                            </button>
-                        </Link>
+                    <div className="p-6 border-t border-[#1A2A3A] bg-[#0A1420] flex gap-4">
+                        <Button variant="danger" className="flex-1 w-full" icon={<X size={16} />} href="/tax/proof-review">
+                            Reject
+                        </Button>
+                        <Button className="flex-1 w-full" icon={<Check size={16} />} href="/tax/proof-review">
+                            Approve
+                        </Button>
                     </div>
-
                 </div>
-
             </div>
-
-        </div>
+        </Page>
     );
 }

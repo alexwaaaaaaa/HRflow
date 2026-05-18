@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    FileText, UploadCloud, Play, Settings, ArrowRight,
-    Users, FileStack, AlertTriangle, CheckCircle2
+    FileText, UploadCloud, Play, ArrowRight,
+    Users, FileStack, CheckCircle2
 } from 'lucide-react';
 
 export default function BulkDocumentGenerationScreen() {
@@ -188,6 +190,13 @@ function StepItem({ num, title, desc, active, done }: any) {
 
 function MapRow({ tag, dbCol }: any) {
     return (
+        <Page
+            title="Bulk Document Generation"
+            subtitle="Generate hundreds of personalized letters (appraisals, bonuses, offers) from a template and CSV data."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Bulk Generation" }]}
+            maxWidth="1100px"
+        >
+
         <div className="flex items-center gap-4 p-3 bg-[#060B14] border border-[#1A2A3A] rounded-lg">
             <div className="w-1/3 text-sm font-mono text-amber-500">{tag}</div>
             <ArrowRight size={16} className="text-[#556677] shrink-0" />
@@ -199,5 +208,7 @@ function MapRow({ tag, dbCol }: any) {
                 </select>
             </div>
         </div>
+    
+        </Page>
     );
 }

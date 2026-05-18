@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Activity, Download, Info, TrendingUp, TrendingDown, Layers, Zap
+    Activity, Download, TrendingUp, TrendingDown, Layers, Zap
 } from 'lucide-react';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, CartesianGrid, ReferenceLine } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
@@ -52,6 +54,13 @@ export default function DriverAnalysisScreen() {
     const filteredData = activeCategory === 'All' ? DRIVER_DATA : DRIVER_DATA.filter(d => d.category === activeCategory);
 
     return (
+        <Page
+            title="Driver Analysis"
+            subtitle="Discover which factors have the highest mathematical impact on overall engagement."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Analytics", href: "/engagement/surveys/analytics" }, { label: "Drivers" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -147,13 +156,17 @@ export default function DriverAnalysisScreen() {
                                         else if (entry.impact > 0.7 && entry.score >= 60) fill = '#00E5A0'; // Key Strength
 
                                         return (
+
+
                                             <Cell
                                                 key={`cell-${index}`}
                                                 fill={fill}
                                                 opacity={0.7}
                                                 className="hover:opacity-100 hover:stroke-white hover:stroke-2 transition-all cursor-pointer"
                                             />
-                                        )
+                                        
+        
+)
                                     })}
                                 </Scatter>
                             </ScatterChart>
@@ -213,5 +226,7 @@ export default function DriverAnalysisScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

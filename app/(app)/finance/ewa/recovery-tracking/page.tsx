@@ -1,137 +1,136 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import {
-    AlertTriangle, ChevronRight, Download, Filter, Search, RotateCcw
-} from "lucide-react";
+import { Download, Filter, RotateCcw } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
 
-const RECOVERY_TRACKING = [
-    { emp: "Ananya S", id: "EMP-042", month: "Sep 2025", expected: 15150, status: "Recovered", mode: "Auto Deduction" },
-    { emp: "Vikram R", id: "EMP-011", month: "Sep 2025", expected: 8080, status: "Failed", mode: "Auto Deduction", note: "LOP exceeded net pay" },
-    { emp: "Sneha R", id: "EMP-112", month: "Sep 2025", expected: 25250, status: "Recovered", mode: "Auto Deduction" },
-    { emp: "Rahul K", id: "EMP-091", month: "Aug 2025", expected: 5050, status: "Partially Recovered", mode: "Manual Adjustment", note: "Recovered 3000. Bal 2050 carry fwd" },
-    { emp: "Amit V", id: "EMP-210", month: "Jul 2025", expected: 12000, status: "Absconding - Loss", mode: "FnF", note: "Legal notice sent" },
+type RecoveryStatus = "Recovered" | "Failed" | "Partially Recovered" | "Absconding - Loss";
+
+interface RecoveryRecord {
+    id: string;
+    emp: string;
+    empId: string;
+    month: string;
+    expected: number;
+    status: RecoveryStatus;
+    mode: string;
+    note?: string;
+}
+
+const RECOVERY_TRACKING: RecoveryRecord[] = [
+    { id: "R-001", emp: "Ananya S", empId: "EMP-042", month: "Sep 2025", expected: 15150, status: "Recovered", mode: "Auto Deduction" },
+    { id: "R-002", emp: "Vikram R", empId: "EMP-011", month: "Sep 2025", expected: 8080, status: "Failed", mode: "Auto Deduction", note: "LOP exceeded net pay" },
+    { id: "R-003", emp: "Sneha R", empId: "EMP-112", month: "Sep 2025", expected: 25250, status: "Recovered", mode: "Auto Deduction" },
+    { id: "R-004", emp: "Rahul K", empId: "EMP-091", month: "Aug 2025", expected: 5050, status: "Partially Recovered", mode: "Manual Adjustment", note: "Recovered 3000. Bal 2050 carry fwd" },
+    { id: "R-005", emp: "Amit V", empId: "EMP-210", month: "Jul 2025", expected: 12000, status: "Absconding - Loss", mode: "FnF", note: "Legal notice sent" },
 ];
 
-export default function EWARecoveryTrackingScreen() {
-    return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <Link href="/finance/ewa" className="hover:text-white transition-colors">EWA</Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-white">Recovery Exceptions</span>
-            </div>
+const KPI_TILES = [
+    { label: "Total Outstanding Exceptions", value: "₹35,130", sub: "Across 8 active cases", valueColor: "text-amber-400" },
+    { label: "Written Off (YTD)", value: "₹55,000", sub: "Absconding / NPA", valueColor: "text-pink-400" },
+    { label: "Overall Collection Efficiency", value: "99.1%", sub: "YTD healthy", valueColor: "text-emerald-400" },
+] as const;
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+const COLUMNS: Column<RecoveryRecord>[] = [
+    {
+        key: "emp", label: "Employee", render: (r) => (
+            <div>
+                <div className="text-white font-medium">{r.emp}</div>
+                <div className="text-[#8899AA] text-xs mt-0.5">{r.empId}</div>
+            </div>
+        ),
+    },
+    { key: "month", label: "Target Month", render: (r) => <span className="text-[#8899AA]">{r.month}</span> },
+    {
+        key: "expected", label: "Expected Payload", align: "right", render: (r) => (
+            <div>
+                <div className="text-white font-bold">₹{r.expected.toLocaleString()}</div>
+                <div className="text-[#8899AA] text-xs">{r.mode}</div>
+            </div>
+        ),
+    },
+    {
+        key: "status", label: "Status / Note", render: (r) => {
+            if (r.status === "Recovered") return <Badge variant="success">Recovered</Badge>;
+            if (r.status === "Failed") return (
                 <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <AlertTriangle className="w-8 h-8 text-amber-500" />
-                        Recovery Exceptions Tracking
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Track and manage shortfalls, partial recoveries, and absconding debts.</p>
+                    <Badge variant="danger">Failed (Zero Pay)</Badge>
+                    {r.note && <p className="text-[#8899AA] text-xs mt-1">{r.note}</p>}
                 </div>
-                <button className="flex items-center gap-2 px-6 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-semibold rounded-lg transition-colors">
-                    <Download className="w-4 h-4" />
-                    Export Defaults List
-                </button>
-            </div>
+            );
+            if (r.status === "Partially Recovered") return (
+                <div>
+                    <Badge variant="warning">Partial Shortfall</Badge>
+                    {r.note && <p className="text-[#8899AA] text-xs mt-1">{r.note}</p>}
+                </div>
+            );
+            return (
+                <div>
+                    <Badge variant="neutral">NPA / Written Off</Badge>
+                    {r.note && <p className="text-pink-400/80 text-xs mt-1">{r.note}</p>}
+                </div>
+            );
+        },
+    },
+    {
+        key: "action", label: "Intervention", align: "center",
+        render: (r) => (
+            r.status !== "Recovered" && r.status !== "Absconding - Loss"
+                ? <Button variant="secondary" size="sm" icon={<RotateCcw size={12} />}>Roll to Next Month</Button>
+                : null
+        ),
+    },
+];
 
+export default function EWARecoveryTrackingPage() {
+    return (
+        <Page
+            title="Recovery Exceptions Tracking"
+            subtitle="Track and manage shortfalls, partial recoveries, and absconding debts."
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "EWA", href: "/finance/ewa" },
+                { label: "Recovery Exceptions" },
+            ]}
+            maxWidth="1300px"
+            actions={
+                <Button variant="secondary" icon={<Download size={14} />}>Export Defaults List</Button>
+            }
+        >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Total Outstanding Exceptions</p>
-                    <h3 className="text-2xl font-bold text-amber-400 mb-1">₹35,130</h3>
-                    <p className="text-xs text-[#8899AA]">Across 8 active cases</p>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Written Off (YTD)</p>
-                    <h3 className="text-2xl font-bold text-pink-400 mb-1">₹55,000</h3>
-                    <p className="text-xs text-[#8899AA]">Absconding / NPA</p>
-                </div>
-                <div className="bg-[#0D1928] border border-emerald-500/20 rounded-2xl p-6 bg-emerald-500/5">
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Overall Collection Efficiency</p>
-                    <h3 className="text-2xl font-bold text-emerald-400 mb-1">99.1%</h3>
-                    <p className="text-xs text-emerald-400/80">YTD healthy</p>
-                </div>
+                {KPI_TILES.map((tile) => (
+                    <Card key={tile.label} padding="lg">
+                        <p className="text-[#8899AA] text-sm font-medium mb-1">{tile.label}</p>
+                        <h3 className={`text-2xl font-bold mb-1 ${tile.valueColor}`}>{tile.value}</h3>
+                        <p className="text-xs text-[#8899AA]">{tile.sub}</p>
+                    </Card>
+                ))}
             </div>
 
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
+            <Card padding="none">
                 <div className="p-4 border-b border-[#1A2A3A] flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8899AA] w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Search exceptions..."
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-amber-400 transition-colors"
-                        />
-                    </div>
-                    <div className="flex gap-2">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-medium rounded-lg transition-colors">
-                            <Filter className="w-4 h-4" />
-                            Exceptions Only
-                        </button>
-                    </div>
+                    <input
+                        type="search"
+                        placeholder="Search exceptions..."
+                        aria-label="Search recovery exceptions"
+                        className="w-full md:w-96 bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-amber-400 transition-colors"
+                    />
+                    <Button variant="secondary" icon={<Filter size={14} />}>Exceptions Only</Button>
                 </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-[#1A2A3A]/50 text-[#8899AA] text-xs uppercase tracking-wider">
-                                <th className="p-4 font-medium">Employee</th>
-                                <th className="p-4 font-medium">Target Month</th>
-                                <th className="p-4 font-medium text-right">Expected Payload</th>
-                                <th className="p-4 font-medium">Status / Note</th>
-                                <th className="p-4 font-medium text-center">Intervention</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-sm divide-y divide-[#1A2A3A]">
-                            {RECOVERY_TRACKING.map((rec, idx) => (
-                                <tr key={idx} className={`hover:bg-[#1A2A3A]/30 transition-colors ${rec.status.includes('Failed') || rec.status.includes('Partially') ? 'bg-amber-500/5' : ''}`}>
-                                    <td className="p-4">
-                                        <div className="text-white font-medium">{rec.emp}</div>
-                                        <div className="text-[#8899AA] text-xs mt-0.5">{rec.id}</div>
-                                    </td>
-                                    <td className="p-4 text-[#8899AA]">{rec.month}</td>
-                                    <td className="p-4 text-right">
-                                        <div className="text-white font-bold">₹{rec.expected.toLocaleString()}</div>
-                                        <div className="text-[#8899AA] text-xs">{rec.mode}</div>
-                                    </td>
-                                    <td className="p-4">
-                                        {rec.status === 'Recovered' && <span className="text-emerald-400 font-medium text-xs">Recovered</span>}
-                                        {rec.status === 'Failed' && (
-                                            <div>
-                                                <span className="text-pink-400 font-medium text-xs bg-pink-500/10 px-2 py-1 rounded">Failed (Zero Pay)</span>
-                                                <p className="text-[#8899AA] text-xs mt-1">{rec.note}</p>
-                                            </div>
-                                        )}
-                                        {rec.status === 'Partially Recovered' && (
-                                            <div>
-                                                <span className="text-amber-500 font-medium text-xs bg-amber-500/10 px-2 py-1 rounded">Partial Shortfall</span>
-                                                <p className="text-[#8899AA] text-xs mt-1">{rec.note}</p>
-                                            </div>
-                                        )}
-                                        {rec.status === 'Absconding - Loss' && (
-                                            <div>
-                                                <span className="text-[#8899AA] font-medium text-xs bg-[#1A2A3A] px-2 py-1 rounded border border-[#2A3A4A]">NPA / Written Off</span>
-                                                <p className="text-pink-400/80 text-xs mt-1">{rec.note}</p>
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="p-4 text-center">
-                                        {!rec.status.includes('Recovered') && !rec.status.includes('Loss') && (
-                                            <button className="flex items-center justify-center gap-1 mx-auto px-3 py-1 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-xs font-medium rounded transition-colors">
-                                                <RotateCcw className="w-3 h-3" /> Roll to Next Month
-                                            </button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="p-4">
+                    <DataTable<RecoveryRecord>
+                        data={RECOVERY_TRACKING}
+                        columns={COLUMNS}
+                        rowKey={(r) => r.id}
+                        aria-label="EWA recovery exceptions"
+                        emptyTitle="No exceptions found"
+                        emptyDescription="All recoveries are on track."
+                    />
                 </div>
-            </div>
-        </div>
+            </Card>
+        </Page>
     );
 }

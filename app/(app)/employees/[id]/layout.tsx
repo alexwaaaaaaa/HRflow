@@ -4,126 +4,154 @@ import { use } from "react";
 import { Edit2, ChevronDown, MoreHorizontal, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 const TABS = [
-    { name: "Overview", path: "" },
-    { name: "Job & Salary", path: "/job-and-salary" },
-    { name: "Documents", path: "/documents" },
-    { name: "Attendance", path: "/attendance" },
-    { name: "Leave", path: "/leave" },
-    { name: "Payroll", path: "/payroll" },
-    { name: "Performance", path: "/performance" },
-    { name: "Timeline", path: "/timeline" },
-];
+  { name: "Overview", path: "" },
+  { name: "Job & Salary", path: "/job-and-salary" },
+  { name: "Documents", path: "/documents" },
+  { name: "Attendance", path: "/attendance" },
+  { name: "Leave", path: "/leave" },
+  { name: "Payroll", path: "/payroll" },
+  { name: "Performance", path: "/performance" },
+  { name: "Timeline", path: "/timeline" },
+] as const;
 
 const PROFILE = {
-    name: "Rahul Kumar Sharma", initials: "RK", id: "EMP001",
-    designation: "Senior Software Engineer", dept: "Engineering", status: "Active",
-    doj: "01/06/2021", manager: "Karan Mehta", location: "Bengaluru",
-    email: "rahul.sharma@techcorp.com", personal: "rahul@gmail.com",
-    mobile: "+91 98765 43210", pan: "AAACT****C", aadhaar: "--5678",
-    dob: "15/08/1996", age: 28, gender: "Male", blood: "B+",
-    empType: "Full-Time", workMode: "Hybrid", grade: "L3",
-    ctc: "₹18,00,000", joinConfirm: "01/12/2021", notice: "60 days",
+  name: "Rahul Kumar Sharma",
+  initials: "RK",
+  id: "EMP001",
+  designation: "Senior Software Engineer",
+  dept: "Engineering",
+  status: "Active",
+  doj: "01/06/2021",
+  manager: "Karan Mehta",
+  location: "Bengaluru",
+  grade: "L3",
 };
 
+interface MetaPillProps {
+  label: string;
+  value: string;
+}
+
+function MetaPill({ label, value }: MetaPillProps) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs text-[#7a8fa6]">
+      <span className="text-[#445566]">{label}:</span>
+      <span className="text-white">{value}</span>
+    </span>
+  );
+}
+
+interface TabLinkProps {
+  href: string;
+  label: string;
+  isActive: boolean;
+}
+
+function TabLink({ href, label, isActive }: TabLinkProps) {
+  return (
+    <Link
+      href={href}
+      aria-current={isActive ? "page" : undefined}
+      className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+        isActive
+          ? "border-[#00E5A0] text-white"
+          : "border-transparent text-[#7a8fa6] hover:text-white"
+      }`}
+    >
+      {label}
+    </Link>
+  );
+}
+
 export default function EmployeeProfileLayout({
-    children,
-    params,
+  children,
+  params,
 }: {
-    children: React.ReactNode;
-    params: Promise<{ id: string }>;
+  children: React.ReactNode;
+  params: Promise<{ id: string }>;
 }) {
-    const resolvedParams = use(params);
-    const pathname = usePathname();
-    const basePath = `/employees/${resolvedParams.id}`;
+  const resolvedParams = use(params);
+  const pathname = usePathname();
+  const basePath = `/employees/${resolvedParams.id}`;
 
-    return (
-        <div style={{ paddingBottom: 80 }} className="animate-fade-in">
-            {/* Profile Header */}
-            <div style={{
-                background: "linear-gradient(135deg, #060B14 0%, rgba(0,229,160,0.06) 100%)",
-                borderBottom: "1px solid #1A2A3A", padding: "24px 32px", position: "relative"
-            }}>
-                {/* Breadcrumb */}
-                <div style={{ fontSize: 12, color: "#445566", marginBottom: 16 }}>
-                    <Link href="/employees" style={{ color: "#8899AA", textDecoration: "none" }}>Employees</Link>
-                    {" / "}
-                    <span style={{ color: "#FFFFFF" }}>{PROFILE.name}</span>
-                </div>
-
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
-                    {/* Avatar */}
-                    <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(0,102,255,0.15)", border: "3px solid #00E5A0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 700, color: "#0066FF", flexShrink: 0 }}>
-                        {PROFILE.initials}
-                    </div>
-
-                    {/* Name + info */}
-                    <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
-                            <h1 style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>{PROFILE.name}</h1>
-                            <span style={{ background: "rgba(0,229,160,0.1)", color: "#00E5A0", padding: "4px 12px", borderRadius: 20, fontSize: 13, fontWeight: 600 }}>Active</span>
-                        </div>
-                        <div style={{ fontSize: 15, color: "#8899AA", marginBottom: 12 }}>
-                            {PROFILE.designation} • <span style={{ background: "#1A2A3A", color: "#8899AA", padding: "2px 8px", borderRadius: 6, fontSize: 13 }}>{PROFILE.dept}</span>
-                        </div>
-                        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-                            {[
-                                { icon: "🪪", val: PROFILE.id },
-                                { icon: "📅", val: `Joined: ${PROFILE.doj}` },
-                                { icon: "👤", val: `Reports to: ${PROFILE.manager}` },
-                                { icon: "📍", val: PROFILE.location },
-                                { icon: "💼", val: PROFILE.grade },
-                            ].map(({ icon, val }) => (
-                                <span key={val} style={{ fontSize: 13, color: "#8899AA", display: "flex", alignItems: "center", gap: 6 }}>
-                                    <span>{icon}</span> {val}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-                        <Link href={`/employees/${resolvedParams.id}/edit`}>
-                            <button style={{ height: 38, padding: "0 16px", background: "#1A2A3A", border: "1px solid #1A2A3A", borderRadius: 8, fontSize: 13, color: "#FFFFFF", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s" }} className="hover:border-[#445566]">
-                                <Edit2 size={14} /> Edit
-                            </button>
-                        </Link>
-                        <button style={{ height: 38, padding: "0 16px", background: "#1A2A3A", border: "1px solid #1A2A3A", borderRadius: 8, fontSize: 13, color: "#FFFFFF", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-                            <FileText size={14} /> Generate Documents <ChevronDown size={13} />
-                        </button>
-                        <button style={{ height: 38, padding: "0 12px", background: "#1A2A3A", border: "1px solid #1A2A3A", borderRadius: 8, cursor: "pointer" }}>
-                            <MoreHorizontal size={16} color="#8899AA" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Tab nav */}
-                <div style={{ display: "flex", gap: 0, marginTop: 24, borderBottom: "none" }}>
-                    {TABS.map((tab) => {
-                        const targetPath = `${basePath}${tab.path}`;
-                        const isActive = pathname === targetPath || (tab.path === "" && pathname === basePath);
-                        return (
-                            <Link href={targetPath} key={tab.name} style={{ textDecoration: "none" }}>
-                                <div
-                                    style={{
-                                        padding: "10px 20px", fontSize: 14, fontWeight: 500, background: "transparent",
-                                        borderBottom: `2px solid ${isActive ? "#00E5A0" : "transparent"}`,
-                                        color: isActive ? "#FFFFFF" : "#8899AA", cursor: "pointer", transition: "all 0.2s"
-                                    }}
-                                    className="hover:text-white">
-                                    {tab.name}
-                                </div>
-                            </Link>
-                        );
-                    })}
-                </div>
+  return (
+    <Page
+      title={PROFILE.name}
+      subtitle={`${PROFILE.designation} · ${PROFILE.dept}`}
+      breadcrumbs={[{ label: "Employees", href: "/employees" }, { label: PROFILE.name }]}
+      maxWidth="1400px"
+      actions={
+        <>
+          <Link href={`${basePath}/edit`}>
+            <Button variant="secondary" size="sm" icon={<Edit2 size={14} aria-hidden="true" />}>
+              Edit
+            </Button>
+          </Link>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<FileText size={14} aria-hidden="true" />}
+            iconRight={<ChevronDown size={13} aria-hidden="true" />}
+          >
+            Generate documents
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="More actions"
+            icon={<MoreHorizontal size={16} aria-hidden="true" />}
+          />
+        </>
+      }
+    >
+      <div className="animate-fade-in space-y-6">
+        {/* Profile Summary Card */}
+        <Card padding="md">
+          <div className="flex flex-wrap items-center gap-5">
+            <div
+              aria-hidden="true"
+              className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-[3px] border-[#00E5A0] bg-[rgba(0,102,255,0.15)] text-[26px] font-bold text-[#0066FF] select-none"
+            >
+              {PROFILE.initials}
             </div>
-
-            {/* Tab Content */}
-            <div style={{ padding: "28px 32px" }} className="animate-fade-in">
-                {children}
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <span className="text-base font-semibold text-white">{PROFILE.id}</span>
+                <Badge variant="success">{PROFILE.status}</Badge>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <MetaPill label="Joined" value={PROFILE.doj} />
+                <MetaPill label="Manager" value={PROFILE.manager} />
+                <MetaPill label="Location" value={PROFILE.location} />
+                <MetaPill label="Grade" value={PROFILE.grade} />
+              </div>
             </div>
-        </div>
-    );
+          </div>
+        </Card>
+
+        {/* Tab nav */}
+        <nav aria-label="Profile sections" className="overflow-x-auto border-b border-[#1A2A3A]">
+          <div className="flex min-w-max gap-1">
+            {TABS.map((tab) => {
+              const targetPath = `${basePath}${tab.path}`;
+              const isActive =
+                pathname === targetPath || (tab.path === "" && pathname === basePath);
+              return (
+                <TabLink key={tab.name} href={targetPath} label={tab.name} isActive={isActive} />
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Tab content */}
+        <div className="animate-fade-in">{children}</div>
+      </div>
+    </Page>
+  );
 }

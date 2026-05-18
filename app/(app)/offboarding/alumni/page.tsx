@@ -1,9 +1,18 @@
 "use client";
-import React, { useState } from 'react';
-import { ExternalLink, Users, Briefcase, Mail, Send, Award } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { ExternalLink, Users, Briefcase, Mail, Send } from 'lucide-react';
 
 export default function AlumniPortalScreen() {
     return (
+        <Page
+            title="Alumni Hub Administration"
+            subtitle="Maintain relationships with former employees, tap into boomerang talent, and manage access to post-employment documents."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Alumni" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -100,5 +109,7 @@ export default function AlumniPortalScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

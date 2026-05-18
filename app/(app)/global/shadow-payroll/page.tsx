@@ -1,10 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Layers, FileText, Download, Target, Users, Search } from 'lucide-react';
-import Link from 'next/link';
+import { Layers, Download, Target, Search } from 'lucide-react';
 
 export default function ShadowPayrollScreen() {
     return (
+        <Page
+            title="Shadow Payroll Processing"
+            subtitle="Manage tax equivalency and reporting for expat employees remaining on home country payroll while working in host country."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "Shadow Payroll" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -109,5 +117,7 @@ export default function ShadowPayrollScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

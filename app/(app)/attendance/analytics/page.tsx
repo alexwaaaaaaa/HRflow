@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { TrendingUp, TrendingDown, Users, Clock, Download } from "lucide-react";
 
@@ -23,6 +25,13 @@ export default function AttendanceAnalytics() {
     const maxTrend = Math.max(...MONTHLY_TREND.map(m => m.att));
 
     return (
+        <Page
+            title="Attendance Analytics"
+            subtitle="Trends, department breakdown and attendance health metrics"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Analytics" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             {/* Header */}
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
@@ -139,5 +148,7 @@ export default function AttendanceAnalytics() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

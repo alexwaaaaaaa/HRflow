@@ -1,10 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Pin, Calendar, Bell, Shield, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { Pin, Bell, Shield, ArrowRight } from 'lucide-react';
 
 export default function PinnedScreen() {
     return (
+        <Page
+            title="Pinned & Important"
+            subtitle="Must-read policies, central documentation, and long-lived corporate notices."
+            breadcrumbs={[{ label: "Notice Board", href: "/notice-board" }, { label: "Pinned" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -80,5 +88,7 @@ export default function PinnedScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

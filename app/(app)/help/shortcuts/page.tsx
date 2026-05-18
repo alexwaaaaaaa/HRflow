@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Keyboard, ArrowLeft, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -58,6 +60,14 @@ export default function KeyboardShortcutsScreen() {
     })).filter(s => s.items.length);
 
     return (
+        <Page
+            title="Keyboard Shortcuts"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Shortcuts" }]}
+            maxWidth="900px"
+        >
+
+
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div>
@@ -96,5 +106,8 @@ export default function KeyboardShortcutsScreen() {
                 ))}
             </div>
         </div>
+    
+            
+        </Page>
     );
 }

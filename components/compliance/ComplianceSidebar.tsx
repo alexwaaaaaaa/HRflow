@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
     LayoutDashboard, FileText, Calendar, FileCheck, Scale, FileSignature,
     Briefcase, Activity, ShieldCheck, PieChart, CreditCard, Building2, Ticket,
-    Settings, ShieldAlert, BookOpen, Zap, Heart, Baby, Users
+    Settings, ShieldAlert, BookOpen, Zap, Heart, Baby
 } from 'lucide-react';
 
 const COMPLIANCE_NAV = [
@@ -106,7 +106,7 @@ export default function ComplianceSidebar() {
             <div className="flex-1 overflow-y-auto scrollbar-none pb-12" style={{ padding: "12px 8px" }}>
                 {COMPLIANCE_NAV.map((group, idx) => (
                     <div key={idx} style={{ marginBottom: 20 }}>
-                        <div style={{ fontSize: 9, fontWeight: 800, color: "#334455", padding: "0 12px", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.8px" }}>
+                        <div style={{ fontSize: 9, fontWeight: 800, color: "#7a8fa6", padding: "0 12px", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.8px" }}>
                             {group.label}
                         </div>
                         <div className="flex flex-col gap-0.5">

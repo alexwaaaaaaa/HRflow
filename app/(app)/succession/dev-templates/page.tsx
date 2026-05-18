@@ -1,7 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Library, Link as LinkIcon, FileText, Download, Briefcase, Code } from 'lucide-react';
-import Link from 'next/link';
+import { Library, Code } from 'lucide-react';
 
 export default function DevTemplatesScreen() {
     const TEMPLATES = [
@@ -12,6 +13,13 @@ export default function DevTemplatesScreen() {
     ];
 
     return (
+        <Page
+            title="IDP Template Library"
+            subtitle="Standardized development roadmaps for common succession pathways (70/20/10 models)."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Dev Templates" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -67,5 +75,7 @@ export default function DevTemplatesScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

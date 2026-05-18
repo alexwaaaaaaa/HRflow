@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Search, HelpCircle, BookOpen, Video, Zap, Bug, MessageCircle, Bell, Keyboard, BarChart2, Film, Users, ArrowRight, Star, TrendingUp, Clock, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -34,6 +36,13 @@ const RECENT_TICKETS = [
 export default function HelpCenterScreen() {
     const [query, setQuery] = useState('');
     return (
+        <Page
+            title="How can we help you?"
+            subtitle="Search 400+ articles, guides, and tutorials"
+            breadcrumbs={[{ label: "Help" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-8">
             {/* Hero Search */}
             <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#0D1928] via-[#0A1420] to-[#060B14] border border-[#1A2A3A] p-10 text-center">
@@ -66,6 +75,8 @@ export default function HelpCenterScreen() {
                     {QUICK_LINKS.map(link => {
                         const Icon = link.icon;
                         return (
+
+
                             <Link key={link.href} href={link.href} className="group bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-4 flex flex-col items-center text-center hover:border-[#2A3A4A] hover:bg-[#131B2B] transition-all">
                                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${link.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                                     <Icon size={20} className="text-white" />
@@ -73,7 +84,8 @@ export default function HelpCenterScreen() {
                                 <div className="text-white text-xs font-bold mb-0.5">{link.label}</div>
                                 <div className="text-[#556677] text-[10px]">{link.desc}</div>
                             </Link>
-                        );
+                        
+            );
                     })}
                 </div>
             </div>
@@ -138,5 +150,7 @@ export default function HelpCenterScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -9,7 +9,7 @@ const inputStyle = {
     boxSizing: "border-box" as const, transition: "border-color 0.2s"
 };
 
-export default function Step5Bank({ data, onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
+export default function Step5Bank({ data: _data, onUpdate: _onUpdate }: { data: Record<string, unknown>; onUpdate: (d: Record<string, unknown>) => void }) {
     const [ifsc, setIfsc] = useState("");
     const [ifscVerified, setIfscVerified] = useState(false);
     const [pennyState, setPennyState] = useState<"idle" | "verifying" | "success" | "failed">("idle");

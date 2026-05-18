@@ -1,9 +1,12 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+
 import React from "react";
 import Link from "next/link";
 import {
-    Wallet, ChevronRight, Edit, Users, CreditCard, Activity, MoreVertical, Building2, Download
+    Wallet, ChevronRight, Edit, Users, Activity, Building2, Download
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
@@ -22,6 +25,13 @@ const BUDGET_DATA = [
 
 export default function CostCenterDetailScreen() {
     return (
+        <Page
+            title="R&D Software BLR"
+            subtitle="Core engineering development node in Bangalore."
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Cost Centers", href: "/org-chart/cost-centers" }, { label: "Id" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -97,7 +107,7 @@ export default function CostCenterDetailScreen() {
                         </h3>
                         <div className="space-y-4">
                             <div className="flex gap-4 items-center bg-[#1A2A3A]/40 p-3 rounded-xl border border-[#2A3A4A]">
-                                <img src="https://i.pravatar.cc/150?u=2" alt="Owner" className="w-10 h-10 rounded-full" />
+                                <Image src="https://i.pravatar.cc/150?u=2" alt="Owner" className="w-10 h-10 rounded-full" width={40} height={40} />
                                 <div>
                                     <p className="text-[10px] text-[#8899AA] font-medium uppercase tracking-wider mb-0.5">Budget Owner</p>
                                     <h4 className="text-white text-sm font-bold">Maya Patel</h4>
@@ -197,5 +207,7 @@ export default function CostCenterDetailScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

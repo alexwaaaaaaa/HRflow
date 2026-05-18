@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    AlertTriangle, Search, Filter, Play, RefreshCw, XCircle, CheckCircle2
+    AlertTriangle, Search, Filter, Play, RefreshCw
 } from 'lucide-react';
 
 export default function AnomalyAlerts() {
@@ -14,6 +16,13 @@ export default function AnomalyAlerts() {
     ]
 
     return (
+        <Page
+            title="Attendance Anomalies & Alerts"
+            subtitle="AI-flagged suspicious patterns, missing punches, and policy violations."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Data", href: "/attendance/data" }, { label: "Alerts" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -137,7 +146,9 @@ export default function AnomalyAlerts() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }
 
 function ShieldWarningIcon(props: any) {

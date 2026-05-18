@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { seedRandom } from '@/lib/random';
 
 export interface LoadingStateProps {
     variant?: 'spinner' | 'progress' | 'ripple' | 'skeleton' | 'metrics';
@@ -30,11 +31,12 @@ export function LoadingState({
         if (variant !== 'progress' && variant !== 'metrics') return;
         if (progress !== undefined) return;
 
+        const rng = seedRandom(Date.now() >>> 0);
         const interval = setInterval(() => {
             setSimulatedProgress(old => {
                 if (old >= 98) return old;
                 // Slower as it gets closer to 100
-                return old + (Math.random() * (100 - old) * 0.1);
+                return old + (rng() * (100 - old) * 0.1);
             });
         }, 800);
         return () => clearInterval(interval);

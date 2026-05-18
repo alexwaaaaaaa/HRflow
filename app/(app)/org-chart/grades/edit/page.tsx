@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -8,6 +10,13 @@ import {
 
 export default function AddEditGradeScreen() {
     return (
+        <Page
+            title="Create Grade Band"
+            subtitle="Hiring outside this pay band will require Level 2 approval from CFO or CHRO."
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Grades", href: "/org-chart/grades" }, { label: "Edit" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="max-w-2xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
@@ -100,5 +109,7 @@ export default function AddEditGradeScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

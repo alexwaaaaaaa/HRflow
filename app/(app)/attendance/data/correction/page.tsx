@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Search, Filter, CheckCircle2, ChevronRight, Save, X, Calendar, Edit3
+    Search, Save, Calendar
 } from 'lucide-react';
 
 export default function BulkCorrection() {
@@ -13,6 +15,13 @@ export default function BulkCorrection() {
     ];
 
     return (
+        <Page
+            title="Attendance Bulk Correction"
+            subtitle="HR Override tool to manually fix missing punches or alter status in bulk (e.g. marking all present during server downtime)."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Data", href: "/attendance/data" }, { label: "Correction" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -116,5 +125,7 @@ export default function BulkCorrection() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { ShieldCheck, BarChart3, Download, Search, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Download, CheckCircle2 } from 'lucide-react';
 
 export default function ReadinessReportScreen() {
     return (
+        <Page
+            title="Organizational Readiness Tracker"
+            subtitle="Aggregated view of bench strength across departments and critical roles."
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Readiness" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -85,5 +94,7 @@ export default function ReadinessReportScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import {
-    BarChart3, PieChart as PieChartIcon, TrendingUp, Download, ChevronRight, Filter
-} from "lucide-react";
-import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import ChartWrapper from '@/components/ui/ChartWrapper';
+import { PieChart as PieChartIcon, TrendingUp, Download, Filter } from "lucide-react";
+import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import ChartWrapper from "@/components/ui/ChartWrapper";
 
 const MONTHLY_RECOVERY = [
     { month: "Jan", recovered: 450000, defaulted: 12000 },
@@ -30,39 +29,29 @@ const PORTFOLIO_DIST = [
     { name: "Low Risk", value: 70, color: "#10B981" },
 ];
 
-export default function FinanceAnalyticsScreen() {
+const BAR_COLORS = ["#00E5FF", "#7C3AED", "#00E5FF", "#7C3AED"] as const;
+
+export default function FinanceAnalyticsPage() {
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-white">Analytics & Reports</span>
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <BarChart3 className="w-8 h-8 text-purple-400" />
-                        Finance Analytics
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Deep dive into financial wellness, adoption metrics, and recovery rates</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-medium rounded-lg transition-colors">
-                        <Filter className="w-4 h-4" />
-                        Q2 2025
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#00E5FF] hover:bg-[#00C5DD] text-[#0B1221] text-sm font-semibold rounded-lg transition-colors shadow-[0_0_15px_rgba(0,229,255,0.3)]">
-                        <Download className="w-4 h-4" />
-                        Export PDF
-                    </button>
-                </div>
-            </div>
-
+        <Page
+            title="Finance Analytics"
+            subtitle="Deep dive into financial wellness, adoption metrics, and recovery rates"
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "Analytics & Reports" },
+            ]}
+            maxWidth="1300px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Filter size={14} />}>Q2 2025</Button>
+                    <Button icon={<Download size={14} />}>Export PDF</Button>
+                </>
+            }
+        >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Recovery Trends */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h2 className="text-lg font-bold text-white mb-2">Loan & Advance Recovery Trends</h2>
+                <Card padding="lg">
+                    <h2 className="text-lg font-bold text-white mb-1">Loan &amp; Advance Recovery Trends</h2>
                     <p className="text-xs text-[#8899AA] mb-6">Monthly repayment collection vs defaults</p>
                     <div className="h-72">
                         <ChartWrapper height="h-full">
@@ -82,18 +71,18 @@ export default function FinanceAnalyticsScreen() {
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: "#8899AA", fontSize: 12 }} tickFormatter={(val) => `₹${val / 1000}k`} />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: "#1A2A3A", border: "none", borderRadius: "8px", color: "#fff" }}
-                                    formatter={(value: any) => [`₹${value.toLocaleString()}`, ""]}
+                                    formatter={(value: any) => [`₹${value?.toLocaleString?.() ?? value}`, ""]}
                                 />
                                 <Area type="monotone" dataKey="recovered" stackId="1" stroke="#10B981" fill="url(#colorRec)" />
                                 <Area type="monotone" dataKey="defaulted" stackId="2" stroke="#EC4899" fill="url(#colorDef)" />
                             </AreaChart>
                         </ChartWrapper>
                     </div>
-                </div>
+                </Card>
 
                 {/* Program Adoption */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h2 className="text-lg font-bold text-white mb-2">Benefit Adoption Rate</h2>
+                <Card padding="lg">
+                    <h2 className="text-lg font-bold text-white mb-1">Benefit Adoption Rate</h2>
                     <p className="text-xs text-[#8899AA] mb-6">Percentage of workforce utilizing financial products</p>
                     <div className="h-72">
                         <ChartWrapper height="h-full">
@@ -107,20 +96,20 @@ export default function FinanceAnalyticsScreen() {
                                     formatter={(value: any) => [`${value}% of employees`, "Active Users"]}
                                 />
                                 <Bar dataKey="usage" radius={[4, 4, 0, 0]} barSize={40}>
-                                    {PROGRAM_ADOPTION.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "#00E5FF" : "#7C3AED"} />
+                                    {PROGRAM_ADOPTION.map((_, index) => (
+                                        <Cell key={`cell-${index}`} fill={BAR_COLORS[index % BAR_COLORS.length]} />
                                     ))}
                                 </Bar>
                             </BarChart>
                         </ChartWrapper>
                     </div>
-                </div>
+                </Card>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Portfolio Risk Risk */}
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
-                    <h2 className="text-lg font-bold text-white mb-2">Loan Portfolio Risk</h2>
+                {/* Portfolio Risk */}
+                <Card padding="lg">
+                    <h2 className="text-lg font-bold text-white mb-1">Loan Portfolio Risk</h2>
                     <p className="text-xs text-[#8899AA] mb-6">Risk assessment based on employee tenure and salary</p>
                     <div className="h-60 relative">
                         <ChartWrapper height="h-full">
@@ -150,33 +139,29 @@ export default function FinanceAnalyticsScreen() {
                             <span className="text-xs text-emerald-400">Safe/Low Risk</span>
                         </div>
                     </div>
-                </div>
+                </Card>
 
-                {/* Key Insights List */}
-                <div className="lg:col-span-2 bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6">
+                {/* AI Insights */}
+                <Card padding="lg" className="lg:col-span-2">
                     <h2 className="text-lg font-bold text-white mb-6">AI-Driven Insights</h2>
                     <div className="space-y-4">
                         <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 flex gap-4">
-                            <div className="mt-1">
-                                <TrendingUp className="w-5 h-5 text-emerald-400" />
-                            </div>
+                            <TrendingUp size={20} className="text-emerald-400 mt-1 shrink-0" aria-hidden="true" />
                             <div>
                                 <h4 className="text-sm font-semibold text-white mb-1">EWA Adoption is reducing absenteeism</h4>
                                 <p className="text-xs text-[#8899AA] leading-relaxed">Employees enrolled in Earned Wage Access have shown a 14% decrease in unplanned leaves compared to last quarter. Financial stress reduction correlates strongly with attendance.</p>
                             </div>
                         </div>
                         <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 flex gap-4">
-                            <div className="mt-1">
-                                <PieChartIcon className="w-5 h-5 text-amber-400" />
-                            </div>
+                            <PieChartIcon size={20} className="text-amber-400 mt-1 shrink-0" aria-hidden="true" />
                             <div>
                                 <h4 className="text-sm font-semibold text-white mb-1">Insurance upgrade potential</h4>
                                 <p className="text-xs text-[#8899AA] leading-relaxed">35% of employees at mid-management level are accessing OPD claims externally. Consider adding an OPD rider to the base policy next renewal cycle to improve retention.</p>
                             </div>
                         </div>
                     </div>
-                </div>
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { HeartPulse, ArrowLeft, Flame, Zap, Moon, Activity } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WellnessScoreScreen() {
     return (
+        <Page
+            title="Organizational Wellness Score"
+            subtitle="Your anonymized pulse score vs org averages, powered by weekly check-ins."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Wellness" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
             <div className="flex items-center justify-between">
@@ -43,6 +52,8 @@ export default function WellnessScoreScreen() {
                     ].map((m, i) => {
                         const Icon = m.icon;
                         return (
+
+
                             <div key={i} className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-5">
                                 <div className="flex justify-between items-center mb-3">
                                     <div className="flex items-center gap-2">
@@ -55,10 +66,14 @@ export default function WellnessScoreScreen() {
                                     <div className={`h-full ${m.bg} rounded-full`} style={{ width: `${m.val}%` }} />
                                 </div>
                             </div>
-                        );
+                        
+        
+);
                     })}
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

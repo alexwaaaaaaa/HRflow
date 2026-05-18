@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+
+import React from "react";
 import { Play, FileText, Download, Info, CalendarClock } from "lucide-react";
 
 export default function LeaveEncashmentPage() {
@@ -12,6 +14,12 @@ export default function LeaveEncashmentPage() {
     ];
 
     return (
+        <Page
+            title="Leave Encashment Payroll"
+            breadcrumbs={[{ label: "Leave Encashment" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-7xl mx-auto space-y-6">
 
@@ -134,5 +142,7 @@ export default function LeaveEncashmentPage() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

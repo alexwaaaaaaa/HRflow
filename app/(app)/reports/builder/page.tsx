@@ -1,217 +1,407 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    Wrench, ChevronRight, Layers, Filter, CheckSquare, Save, Play, Columns, LayoutGrid, Plus
-} from "lucide-react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Save, Play, Plus, Trash2, Filter, Layers } from "lucide-react";
 
-export default function CustomReportBuilderScreen() {
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+
+// ─── Schema ───────────────────────────────────────────────────────────────────
+
+const FIELD_TYPES = ["text", "number", "date", "boolean"] as const;
+const AGGREGATIONS = ["none", "sum", "avg", "count", "min", "max"] as const;
+
+const columnSchema = z.object({
+    fieldName: z.string().min(1, "Field name required"),
+    label: z.string().min(1, "Label required"),
+    type: z.enum(FIELD_TYPES),
+    aggregation: z.enum(AGGREGATIONS),
+});
+
+const builderSchema = z.object({
+    dataset: z.string().min(1),
+    groupBy: z.string(),
+    sortBy: z.string(),
+    sortDir: z.enum(["ASC", "DESC"]),
+    columns: z.array(columnSchema).min(1, "Add at least one column"),
+});
+
+type BuilderForm = z.infer<typeof builderSchema>;
+
+// ─── Static preview data ──────────────────────────────────────────────────────
+
+const PREVIEW_ROWS = [
+    { id: "EMP-1001", name: "Amit Kumar", dept: "Engineering", designation: "Frontend Developer" },
+    { id: "EMP-1002", name: "Priya Singh", dept: "Engineering", designation: "Backend Developer" },
+    { id: "EMP-1003", name: "Neha Sharma", dept: "Sales", designation: "Account Executive" },
+    { id: "EMP-1004", name: "Rohan Gupta", dept: "Engineering", designation: "DevOps Engineer" },
+    { id: "EMP-1005", name: "Karan Patel", dept: "Marketing", designation: "Growth Lead" },
+];
+
+const FIELD_GROUPS = [
+    {
+        label: "Personal Info",
+        fields: ["Employee ID", "Full Name", "Gender", "Date of Birth"],
+        defaultChecked: ["Employee ID", "Full Name"],
+    },
+    {
+        label: "Work Info",
+        fields: ["Department", "Designation", "Location", "Reporting Manager", "Date of Join"],
+        defaultChecked: ["Department", "Designation"],
+    },
+    {
+        label: "Compensation",
+        fields: ["Annual CTC", "Basic Salary", "Gross Salary", "Bank Account"],
+        defaultChecked: [],
+    },
+];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function CustomReportBuilderPage() {
+    const {
+        register,
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<BuilderForm>({
+        resolver: zodResolver(builderSchema),
+        defaultValues: {
+            dataset: "Employee Master Data",
+            groupBy: "Department",
+            sortBy: "Employee ID",
+            sortDir: "ASC",
+            columns: [
+                { fieldName: "employee_id", label: "Employee ID", type: "text", aggregation: "none" },
+                { fieldName: "full_name", label: "Full Name", type: "text", aggregation: "none" },
+                { fieldName: "department", label: "Department", type: "text", aggregation: "none" },
+                { fieldName: "designation", label: "Designation", type: "text", aggregation: "none" },
+            ],
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray({ control, name: "columns" });
+
+    const onSubmit = (_data: BuilderForm) => {
+        // TODO: replace with real report generation mutation
+    };
+
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-6 font-sans flex flex-col h-screen overflow-hidden">
-
-            <div className="flex items-center justify-between mb-6 flex-shrink-0">
-                <div className="flex items-center gap-2 text-sm text-[#8899AA]">
-                    <Link href="/reports/dashboard" className="hover:text-white transition-colors">Reports</Link>
-                    <ChevronRight className="w-4 h-4" />
-                    <span className="text-white font-medium flex items-center gap-2">
-                        <Wrench className="w-4 h-4 text-indigo-400" />
-                        Custom Builder
-                    </span>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] text-white text-sm font-medium border border-[#2A3A4A] rounded-lg transition-colors flex items-center gap-2">
-                        <Save className="w-4 h-4" /> Save Configuration
-                    </button>
-                    <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-                        <Play className="w-4 h-4" /> Run Report
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-12 gap-6 flex-1 min-h-0">
-
-                {/* Left Panel: Datasets & Fields */}
-                <div className="col-span-3 bg-[#0D1928] border border-[#1A2A3A] rounded-2xl flex flex-col overflow-hidden">
-                    <div className="p-4 border-b border-[#1A2A3A]">
-                        <h2 className="text-sm font-bold text-white mb-3">1. Select Dataset</h2>
-                        <select className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
-                            <option>Employee Master Data</option>
-                            <option>Payroll Register (Monthly)</option>
-                            <option>Time & Attendance Logs</option>
-                            <option>Leave Transactions</option>
-                        </select>
-                    </div>
-
-                    <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
-                        <h2 className="text-sm font-bold text-white mb-3 flex items-center justify-between">
-                            2. Data Fields <span className="text-xs font-normal text-indigo-400 cursor-pointer">Select All</span>
-                        </h2>
-
-                        <div className="space-y-4">
-                            <div>
-                                <h3 className="text-xs font-medium text-[#8899AA] uppercase tracking-wider mb-2">Personal Info</h3>
-                                <div className="space-y-2">
-                                    {['Employee ID', 'Full Name', 'Gender', 'Date of Birth'].map(field => (
-                                        <label key={field} className="flex items-center gap-3 cursor-pointer group">
-                                            <input type="checkbox" defaultChecked={field === 'Employee ID' || field === 'Full Name'} className="bg-[#1A2A3A] border-[#2A3A4A] rounded text-indigo-500 focus:ring-0 focus:ring-offset-0" />
-                                            <span className="text-sm text-white group-hover:text-indigo-400 transition-colors">{field}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xs font-medium text-[#8899AA] uppercase tracking-wider mb-2">Work Info</h3>
-                                <div className="space-y-2">
-                                    {['Department', 'Designation', 'Location', 'Reporting Manager', 'Date of Join'].map(field => (
-                                        <label key={field} className="flex items-center gap-3 cursor-pointer group">
-                                            <input type="checkbox" defaultChecked={field === 'Department' || field === 'Designation'} className="bg-[#1A2A3A] border-[#2A3A4A] rounded text-indigo-500 focus:ring-0 focus:ring-offset-0" />
-                                            <span className="text-sm text-white group-hover:text-indigo-400 transition-colors">{field}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xs font-medium text-[#8899AA] uppercase tracking-wider mb-2">Compensation</h3>
-                                <div className="space-y-2">
-                                    {['Annual CTC', 'Basic Salary', 'Gross Salary', 'Bank Account'].map(field => (
-                                        <label key={field} className="flex items-center gap-3 cursor-pointer group">
-                                            <input type="checkbox" className="bg-[#1A2A3A] border-[#2A3A4A] rounded text-indigo-500 focus:ring-0 focus:ring-offset-0" />
-                                            <span className="text-sm text-[#8899AA] group-hover:text-indigo-400 transition-colors">{field}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Middle Panel: Filters & Grouping */}
-                <div className="col-span-3 flex flex-col gap-6 min-h-0">
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-4 flex-1 flex flex-col">
-                        <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                            <Filter className="w-4 h-4 text-emerald-400" /> Filters
-                        </h2>
-
-                        <div className="space-y-3 flex-1">
-                            <div className="p-3 bg-[#1A2A3A]/40 border border-[#2A3A4A] rounded-lg">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs font-medium text-emerald-400">Status</span>
-                                    <button className="text-[10px] text-[#8899AA] hover:text-white">Remove</button>
-                                </div>
-                                <select className="w-full bg-[#0B1221] border border-[#2A3A4A] text-white rounded text-xs px-2 py-1.5 focus:border-emerald-500 focus:outline-none">
-                                    <option>Equals: Active</option>
-                                    <option>Equals: Resigned</option>
-                                    <option>In: Notice Period</option>
+        <Page
+            title="Custom Report Builder"
+            subtitle="Select datasets, configure columns, apply filters, and preview results."
+            breadcrumbs={[
+                { label: "Reports", href: "/reports/dashboard" },
+                { label: "Custom Builder" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <>
+                    <Button
+                        variant="secondary"
+                        icon={<Save size={14} aria-hidden="true" />}
+                        type="button"
+                    >
+                        Save Configuration
+                    </Button>
+                    <Button
+                        icon={<Play size={14} aria-hidden="true" />}
+                        type="submit"
+                        form="builder-form"
+                    >
+                        Run Report
+                    </Button>
+                </>
+            }
+        >
+            <form id="builder-form" onSubmit={handleSubmit(onSubmit)}>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Left: Dataset & Fields */}
+                    <div className="lg:col-span-3">
+                        <Card padding="none" className="flex flex-col">
+                            <div className="p-4 border-b border-[#1A2A3A]">
+                                <h2 className="text-sm font-bold text-white mb-3">1. Select Dataset</h2>
+                                <label htmlFor="dataset" className="sr-only">
+                                    Dataset
+                                </label>
+                                <select
+                                    id="dataset"
+                                    {...register("dataset")}
+                                    className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:border-[#00e5a0] focus:outline-none"
+                                >
+                                    <option>Employee Master Data</option>
+                                    <option>Payroll Register (Monthly)</option>
+                                    <option>Time &amp; Attendance Logs</option>
+                                    <option>Leave Transactions</option>
                                 </select>
                             </div>
 
-                            <div className="p-3 bg-[#1A2A3A]/40 border border-[#2A3A4A] rounded-lg">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-xs font-medium text-emerald-400">Department</span>
-                                    <button className="text-[10px] text-[#8899AA] hover:text-white">Remove</button>
+                            <div className="p-4 overflow-y-auto">
+                                <h2 className="text-sm font-bold text-white mb-3">2. Data Fields</h2>
+                                <div className="space-y-4">
+                                    {FIELD_GROUPS.map((group) => (
+                                        <fieldset key={group.label}>
+                                            <legend className="text-xs font-medium text-[#8899AA] uppercase tracking-wider mb-2">
+                                                {group.label}
+                                            </legend>
+                                            <div className="space-y-2">
+                                                {group.fields.map((field) => (
+                                                    <label
+                                                        key={field}
+                                                        className="flex items-center gap-3 cursor-pointer group"
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            defaultChecked={group.defaultChecked.includes(field)}
+                                                            className="rounded text-indigo-500 focus:ring-0 focus:ring-offset-0 bg-[#1A2A3A] border-[#2A3A4A]"
+                                                            aria-label={field}
+                                                        />
+                                                        <span className="text-sm text-white group-hover:text-indigo-400 transition-colors">
+                                                            {field}
+                                                        </span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </fieldset>
+                                    ))}
                                 </div>
-                                <select className="w-full bg-[#0B1221] border border-[#2A3A4A] text-white rounded text-xs px-2 py-1.5 focus:border-emerald-500 focus:outline-none">
-                                    <option>Is Not: Contract Staff</option>
-                                    <option>In: Engineering, Sales</option>
-                                </select>
                             </div>
-
-                            <button className="w-full py-2 border border-dashed border-[#2A3A4A] text-[#8899AA] text-xs font-medium rounded-lg hover:bg-[#1A2A3A] transition-colors flex items-center justify-center gap-2">
-                                <Plus className="w-3 h-3" /> Add Filter Condition
-                            </button>
-                        </div>
+                        </Card>
                     </div>
 
-                    <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-4">
-                        <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                            <Layers className="w-4 h-4 text-amber-500" /> Grouping & Sorting
-                        </h2>
-                        <div className="space-y-3">
-                            <div>
-                                <label className="block text-xs text-[#8899AA] mb-1">Group By (Rows)</label>
-                                <select className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-amber-500 focus:outline-none">
-                                    <option>Department</option>
-                                    <option>Location</option>
-                                    <option>None</option>
-                                </select>
+                    {/* Middle: Columns + Filters */}
+                    <div className="lg:col-span-4 flex flex-col gap-6">
+                        {/* Dynamic columns (useFieldArray) */}
+                        <Card padding="lg">
+                            <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                                <Layers size={16} className="text-indigo-400" aria-hidden="true" />
+                                3. Report Columns
+                            </h2>
+
+                            {errors.columns && (
+                                <p className="text-xs text-pink-400 mb-3" role="alert">
+                                    {errors.columns.message ?? errors.columns.root?.message}
+                                </p>
+                            )}
+
+                            <div className="space-y-3" role="list" aria-label="Report columns">
+                                {fields.map((field, index) => (
+                                    <div
+                                        key={field.id}
+                                        role="listitem"
+                                        className="p-3 bg-[#1A2A3A]/40 border border-[#2A3A4A] rounded-lg space-y-2"
+                                    >
+                                        <div className="flex items-center justify-between mb-1">
+                                            <span className="text-xs font-medium text-indigo-400">
+                                                Column {index + 1}
+                                            </span>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                type="button"
+                                                aria-label={`Remove column ${index + 1}`}
+                                                onClick={() => remove(index)}
+                                            >
+                                                <Trash2 size={12} aria-hidden="true" />
+                                            </Button>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <label
+                                                    htmlFor={`col-field-${index}`}
+                                                    className="block text-[10px] text-[#8899AA] mb-1"
+                                                >
+                                                    Field name
+                                                </label>
+                                                <input
+                                                    id={`col-field-${index}`}
+                                                    {...register(`columns.${index}.fieldName`)}
+                                                    className="w-full bg-[#0B1221] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-[#00e5a0] focus:outline-none"
+                                                    aria-invalid={!!errors.columns?.[index]?.fieldName}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label
+                                                    htmlFor={`col-label-${index}`}
+                                                    className="block text-[10px] text-[#8899AA] mb-1"
+                                                >
+                                                    Label
+                                                </label>
+                                                <input
+                                                    id={`col-label-${index}`}
+                                                    {...register(`columns.${index}.label`)}
+                                                    className="w-full bg-[#0B1221] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-[#00e5a0] focus:outline-none"
+                                                    aria-invalid={!!errors.columns?.[index]?.label}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <label
+                                                    htmlFor={`col-type-${index}`}
+                                                    className="block text-[10px] text-[#8899AA] mb-1"
+                                                >
+                                                    Type
+                                                </label>
+                                                <select
+                                                    id={`col-type-${index}`}
+                                                    {...register(`columns.${index}.type`)}
+                                                    className="w-full bg-[#0B1221] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-[#00e5a0] focus:outline-none"
+                                                >
+                                                    {FIELD_TYPES.map((t) => (
+                                                        <option key={t} value={t}>
+                                                            {t}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    htmlFor={`col-agg-${index}`}
+                                                    className="block text-[10px] text-[#8899AA] mb-1"
+                                                >
+                                                    Aggregation
+                                                </label>
+                                                <select
+                                                    id={`col-agg-${index}`}
+                                                    {...register(`columns.${index}.aggregation`)}
+                                                    className="w-full bg-[#0B1221] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-[#00e5a0] focus:outline-none"
+                                                >
+                                                    {AGGREGATIONS.map((a) => (
+                                                        <option key={a} value={a}>
+                                                            {a}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div>
-                                <label className="block text-xs text-[#8899AA] mb-1">Sort By</label>
-                                <div className="flex gap-2">
-                                    <select className="flex-1 bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-amber-500 focus:outline-none">
-                                        <option>Employee ID</option>
-                                        <option>Date of Join</option>
-                                        <option>Full Name</option>
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                type="button"
+                                className="w-full mt-3"
+                                icon={<Plus size={12} aria-hidden="true" />}
+                                onClick={() =>
+                                    append({
+                                        fieldName: "",
+                                        label: "",
+                                        type: "text",
+                                        aggregation: "none",
+                                    })
+                                }
+                            >
+                                Add Column
+                            </Button>
+                        </Card>
+
+                        {/* Filters & Grouping */}
+                        <Card padding="lg">
+                            <h2 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                                <Filter size={16} className="text-emerald-400" aria-hidden="true" />
+                                4. Grouping &amp; Sorting
+                            </h2>
+                            <div className="space-y-3">
+                                <div>
+                                    <label htmlFor="groupBy" className="block text-xs text-[#8899AA] mb-1">
+                                        Group By (Rows)
+                                    </label>
+                                    <select
+                                        id="groupBy"
+                                        {...register("groupBy")}
+                                        className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-amber-500 focus:outline-none"
+                                    >
+                                        <option>Department</option>
+                                        <option>Location</option>
+                                        <option>None</option>
                                     </select>
-                                    <select className="w-20 bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-amber-500 focus:outline-none">
-                                        <option>ASC</option>
-                                        <option>DESC</option>
-                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="sortBy" className="block text-xs text-[#8899AA] mb-1">
+                                        Sort By
+                                    </label>
+                                    <div className="flex gap-2">
+                                        <select
+                                            id="sortBy"
+                                            {...register("sortBy")}
+                                            className="flex-1 bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-amber-500 focus:outline-none"
+                                        >
+                                            <option>Employee ID</option>
+                                            <option>Date of Join</option>
+                                            <option>Full Name</option>
+                                        </select>
+                                        <label htmlFor="sortDir" className="sr-only">
+                                            Sort direction
+                                        </label>
+                                        <select
+                                            id="sortDir"
+                                            {...register("sortDir")}
+                                            className="w-20 bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded px-2 py-1.5 text-xs focus:border-amber-500 focus:outline-none"
+                                        >
+                                            <option value="ASC">ASC</option>
+                                            <option value="DESC">DESC</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Card>
+                    </div>
+
+                    {/* Right: Preview */}
+                    <div className="lg:col-span-5">
+                        <Card padding="lg" className="flex flex-col h-full">
+                            <div className="flex justify-between items-center mb-4 border-b border-[#1A2A3A] pb-4">
+                                <h2 className="text-sm font-bold text-white">5. Live Data Preview</h2>
+                                <span className="text-xs font-mono text-[#8899AA] bg-[#1A2A3A] px-2 py-1 rounded">
+                                    Showing top 5 rows
+                                </span>
+                            </div>
+
+                            <div className="overflow-x-auto rounded-xl border border-[#1A2A3A] bg-[#0B1221]">
+                                <table
+                                    className="w-full text-left border-collapse whitespace-nowrap text-sm"
+                                    aria-label="Report preview"
+                                >
+                                    <thead>
+                                        <tr className="bg-[#1A2A3A] text-indigo-300 text-xs">
+                                            <th scope="col" className="p-3 font-medium border-b border-r border-[#2A3A4A]">
+                                                Employee ID
+                                            </th>
+                                            <th scope="col" className="p-3 font-medium border-b border-r border-[#2A3A4A]">
+                                                Full Name
+                                            </th>
+                                            <th scope="col" className="p-3 font-medium border-b border-r border-[#2A3A4A]">
+                                                Department
+                                            </th>
+                                            <th scope="col" className="p-3 font-medium border-b border-[#2A3A4A]">
+                                                Designation
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-[#1A2A3A] text-[#8899AA]">
+                                        {PREVIEW_ROWS.map((row) => (
+                                            <tr key={row.id}>
+                                                <td className="p-3 border-r border-[#1A2A3A]">{row.id}</td>
+                                                <td className="p-3 border-r border-[#1A2A3A]">{row.name}</td>
+                                                <td className="p-3 border-r border-[#1A2A3A]">{row.dept}</td>
+                                                <td className="p-3">{row.designation}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </Card>
                     </div>
                 </div>
-
-                {/* Right Panel: Preview */}
-                <div className="col-span-6 bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-4 flex flex-col">
-                    <div className="flex justify-between items-center mb-4 border-b border-[#1A2A3A] pb-4">
-                        <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                            <Columns className="w-4 h-4 text-pink-400" /> Live Data Preview
-                        </h2>
-                        <span className="text-xs font-mono text-[#8899AA] bg-[#1A2A3A] px-2 py-1 rounded">Showing top 5 rows</span>
-                    </div>
-
-                    <div className="flex-1 bg-[#0B1221] border border-[#1A2A3A] rounded-xl overflow-x-auto text-sm">
-                        <table className="w-full text-left border-collapse whitespace-nowrap">
-                            <thead>
-                                <tr className="bg-[#1A2A3A] text-indigo-300 text-xs">
-                                    <th className="p-3 font-medium border-b border-r border-[#2A3A4A]">Employee ID</th>
-                                    <th className="p-3 font-medium border-b border-r border-[#2A3A4A]">Full Name</th>
-                                    <th className="p-3 font-medium border-b border-r border-[#2A3A4A]">Department</th>
-                                    <th className="p-3 font-medium border-b border-[#2A3A4A]">Designation</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-[#1A2A3A] text-[#8899AA]">
-                                <tr>
-                                    <td className="p-3 border-r border-[#1A2A3A]">EMP-1001</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Amit Kumar</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Engineering</td>
-                                    <td className="p-3">Frontend Developer</td>
-                                </tr>
-                                <tr>
-                                    <td className="p-3 border-r border-[#1A2A3A]">EMP-1002</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Priya Singh</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Engineering</td>
-                                    <td className="p-3">Backend Developer</td>
-                                </tr>
-                                <tr>
-                                    <td className="p-3 border-r border-[#1A2A3A]">EMP-1003</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Neha Sharma</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Sales</td>
-                                    <td className="p-3">Account Executive</td>
-                                </tr>
-                                <tr>
-                                    <td className="p-3 border-r border-[#1A2A3A]">EMP-1004</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Rohan Gupta</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Engineering</td>
-                                    <td className="p-3">DevOps Engineer</td>
-                                </tr>
-                                <tr>
-                                    <td className="p-3 border-r border-[#1A2A3A]">EMP-1005</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Karan Patel</td>
-                                    <td className="p-3 border-r border-[#1A2A3A]">Marketing</td>
-                                    <td className="p-3">Growth Lead</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+            </form>
+        </Page>
     );
 }

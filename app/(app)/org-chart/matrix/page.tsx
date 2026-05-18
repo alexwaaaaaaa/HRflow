@@ -1,13 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+import React from "react";
 import Link from "next/link";
 import {
-    Grid3X3, ChevronRight, Search, Download, Users, Briefcase
+    Grid3X3, ChevronRight, Download, Users, Briefcase
 } from "lucide-react";
 
 export default function MatrixOrgChartScreen() {
     return (
+        <Page
+            title="Cross-Functional Matrix"
+            subtitle="Data Analyst"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Matrix" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -80,14 +89,14 @@ export default function MatrixOrgChartScreen() {
                                 <div className="w-48 flex-shrink-0 bg-[#1A2A3A]/30 border border-[#1A2A3A] rounded-xl p-3 hover:bg-[#1A2A3A]/80 transition-colors">
                                     <div className="space-y-2">
                                         <div className="bg-[#0B1221] border border-emerald-500/30 p-2 rounded-lg flex items-center gap-2 cursor-pointer shadow-[0_0_10px_rgba(16,185,129,0.05)]">
-                                            <img src="https://i.pravatar.cc/150?u=11" className="w-6 h-6 rounded-full" alt="avatar" />
+                                            <Image src="https://i.pravatar.cc/150?u=11" width={24} height={24} className="w-6 h-6 rounded-full" alt="avatar" />
                                             <div>
                                                 <p className="text-xs font-medium text-white">Rahul K.</p>
                                                 <p className="text-[9px] text-emerald-400">Tech Lead</p>
                                             </div>
                                         </div>
                                         <div className="bg-[#0B1221] border border-pink-500/30 p-2 rounded-lg flex items-center gap-2 border-dashed opacity-80 cursor-pointer hover:opacity-100">
-                                            <img src="https://i.pravatar.cc/150?u=12" className="w-6 h-6 rounded-full" alt="avatar" />
+                                            <Image src="https://i.pravatar.cc/150?u=12" width={24} height={24} className="w-6 h-6 rounded-full" alt="avatar" />
                                             <div>
                                                 <p className="text-xs font-medium text-white">Anita R.</p>
                                                 <p className="text-[9px] text-[#8899AA]">Senior Dev</p>
@@ -103,7 +112,7 @@ export default function MatrixOrgChartScreen() {
                                 <div className="w-48 flex-shrink-0 bg-[#1A2A3A]/30 border border-[#1A2A3A] rounded-xl p-3 hover:bg-[#1A2A3A]/80 transition-colors">
                                     <div className="space-y-2">
                                         <div className="bg-[#0B1221] border border-pink-500/30 p-2 rounded-lg flex items-center gap-2 border-dashed cursor-pointer">
-                                            <img src="https://i.pravatar.cc/150?u=13" className="w-6 h-6 rounded-full" alt="avatar" />
+                                            <Image src="https://i.pravatar.cc/150?u=13" width={24} height={24} className="w-6 h-6 rounded-full" alt="avatar" />
                                             <div>
                                                 <p className="text-xs font-medium text-white">John D.</p>
                                                 <p className="text-[9px] text-[#8899AA]">UI/UX Lead</p>
@@ -116,7 +125,7 @@ export default function MatrixOrgChartScreen() {
                                 <div className="w-48 flex-shrink-0 bg-[#1A2A3A]/30 border border-[#1A2A3A] rounded-xl p-3 hover:bg-[#1A2A3A]/80 transition-colors">
                                     <div className="space-y-2">
                                         <div className="bg-[#0B1221] border-2 border-amber-500/50 p-2 rounded-lg flex items-center gap-2 cursor-pointer shadow-[0_0_10px_rgba(245,158,11,0.1)]">
-                                            <img src="https://i.pravatar.cc/150?u=14" className="w-6 h-6 rounded-full" alt="avatar" />
+                                            <Image src="https://i.pravatar.cc/150?u=14" width={24} height={24} className="w-6 h-6 rounded-full" alt="avatar" />
                                             <div>
                                                 <p className="text-xs font-bold text-white">Sanjay M.</p>
                                                 <p className="text-[9px] text-amber-500 font-bold">Squad Lead (PM)</p>
@@ -156,14 +165,14 @@ export default function MatrixOrgChartScreen() {
                                 <div className="w-48 flex-shrink-0 bg-[#1A2A3A]/30 border border-[#1A2A3A] rounded-xl p-3 hover:bg-[#1A2A3A]/80 transition-colors">
                                     <div className="space-y-2">
                                         <div className="bg-[#0B1221] border border-pink-500/30 p-2 rounded-lg flex items-center gap-2 border-dashed cursor-pointer shadow-[0_0_10px_rgba(236,72,153,0.05)]">
-                                            <img src="https://i.pravatar.cc/150?u=21" className="w-6 h-6 rounded-full" alt="avatar" />
+                                            <Image src="https://i.pravatar.cc/150?u=21" className="w-6 h-6 rounded-full" alt="avatar" width={24} height={24} />
                                             <div>
                                                 <p className="text-xs font-medium text-white">Mohan K.</p>
                                                 <p className="text-[9px] text-[#8899AA]">DBA Architect</p>
                                             </div>
                                         </div>
                                         <div className="bg-[#0B1221] border border-pink-500/30 p-2 rounded-lg flex items-center gap-2 border-dashed cursor-pointer">
-                                            <img src="https://i.pravatar.cc/150?u=22" className="w-6 h-6 rounded-full" alt="avatar" />
+                                            <Image src="https://i.pravatar.cc/150?u=22" className="w-6 h-6 rounded-full" alt="avatar" width={24} height={24} />
                                             <div>
                                                 <p className="text-xs font-medium text-white">Sara V.</p>
                                                 <p className="text-[9px] text-[#8899AA]">Backend Dev</p>
@@ -204,5 +213,7 @@ export default function MatrixOrgChartScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

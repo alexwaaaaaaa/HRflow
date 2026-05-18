@@ -1,9 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
-import {
-    LineChart as ChartIcon, ChevronRight, Download, Filter, TrendingUp, Calendar
+import { ChevronRight, Download, Filter, TrendingUp, Calendar
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
@@ -21,6 +22,13 @@ const FORECAST_DATA = [
 
 export default function HeadcountForecastScreen() {
     return (
+        <Page
+            title="Headcount Forecasting"
+            subtitle="Net additions vs baseline"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Planning", href: "/org-chart/planning" }, { label: "Forecast" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans flex flex-col h-screen overflow-hidden">
             <div className="flex items-center justify-between mb-8 flex-shrink-0">
                 <div>
@@ -106,5 +114,7 @@ export default function HeadcountForecastScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

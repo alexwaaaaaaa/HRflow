@@ -1,11 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Settings, Users, Building, Terminal, ChevronRight, Calculator, CheckSquare } from 'lucide-react';
+import { Settings, ChevronRight, Calculator, CheckSquare } from 'lucide-react';
 
 export default function ProjectSetupScreen() {
     const [step, setStep] = useState(1);
 
     return (
+        <Page
+            title="Project Configuration"
+            subtitle="Initialize a new project, assign resources, and define billing structures."
+            breadcrumbs={[{ label: "Projects", href: "/projects" }, { label: "Setup" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Settings size={24} className="text-indigo-400" /> Project Configuration</h1>
@@ -148,5 +157,7 @@ export default function ProjectSetupScreen() {
                 )}
             </div>
         </div>
+    
+        </Page>
     );
 }

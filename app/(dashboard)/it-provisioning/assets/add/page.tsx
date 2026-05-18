@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, X, Image, UploadCloud } from "lucide-react";
+import { Save, X, UploadCloud } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export default function AddAssetScreen() {

@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
     Settings, Save, CheckCircle2, DollarSign, Gift, Star, Clock, AlertTriangle, Users, ToggleLeft, ToggleRight
@@ -37,6 +39,13 @@ export default function RRAdminScreen() {
     };
 
     return (
+        <Page
+            title="R&R Administration"
+            subtitle="Configure points value, budgets, and automated recognition rules."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Admin" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -77,6 +86,8 @@ export default function RRAdminScreen() {
                         ].map(tab => {
                             const Icon = tab.icon;
                             return (
+
+
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
@@ -85,7 +96,8 @@ export default function RRAdminScreen() {
                                     <Icon size={18} className={activeTab === tab.id ? 'text-[#33E6FF]' : 'text-[#445566]'} />
                                     {tab.name}
                                 </button>
-                            )
+                            
+            )
                         })}
                     </div>
                 </div>
@@ -269,5 +281,7 @@ export default function RRAdminScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

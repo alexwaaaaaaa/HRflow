@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
     Heart, Send, ShieldCheck
@@ -44,6 +46,13 @@ export default function ENPSTakeScreen() {
     }
 
     return (
+        <Page
+            title="How likely are you to recommend us as a place to work?"
+            subtitle="Your feedback is fully anonymous and helps us build a better workplace."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Enps Take" }]}
+            maxWidth="800px"
+        >
+
         <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] font-sans flex flex-col justify-center">
 
             <div className="bg-[#0A1420] border-2 border-[#1A2A3A] rounded-[2rem] p-8 md:p-12 shadow-2xl flex flex-col relative overflow-hidden">
@@ -74,6 +83,8 @@ export default function ENPSTakeScreen() {
                                 }
 
                                 return (
+
+
                                     <button
                                         key={num}
                                         type="button"
@@ -82,7 +93,8 @@ export default function ENPSTakeScreen() {
                                     >
                                         {num}
                                     </button>
-                                )
+                                
+            )
                             })}
                         </div>
                         <div className="flex justify-between text-sm font-bold text-[#445566] uppercase tracking-wider px-2">
@@ -121,5 +133,7 @@ export default function ENPSTakeScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

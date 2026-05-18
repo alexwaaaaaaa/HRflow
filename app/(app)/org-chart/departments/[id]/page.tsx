@@ -1,14 +1,23 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import {
     Building2, ChevronRight, Edit, Users, CreditCard, Crosshair, MapPin,
-    ArrowUpRight, Target, Activity, MoreVertical, LayoutGrid
+    ArrowUpRight, Activity, MoreVertical, LayoutGrid
 } from "lucide-react";
 
 export default function DepartmentDetailScreen() {
     return (
+        <Page
+            title="Engineering & Product Tech"
+            subtitle="Core technology development and infrastructure team."
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Departments", href: "/org-chart/departments" }, { label: "Id" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -53,7 +62,7 @@ export default function DepartmentDetailScreen() {
                             <Users className="w-4 h-4 text-emerald-400" /> Department Head
                         </h3>
                         <div className="flex gap-4 items-center bg-[#1A2A3A]/40 p-4 rounded-xl border border-[#2A3A4A]">
-                            <img src="https://i.pravatar.cc/150?u=2" alt="HOD" className="w-14 h-14 rounded-full border-2 border-[#2A3A4A]" />
+                            <Image src="https://i.pravatar.cc/150?u=2" alt="HOD" width={56} height={56} className="w-14 h-14 rounded-full border-2 border-[#2A3A4A]" />
                             <div>
                                 <h4 className="text-white font-bold">Maya Patel</h4>
                                 <p className="text-xs text-indigo-400 font-medium mb-1">Chief Tech Officer</p>
@@ -210,5 +219,7 @@ export default function DepartmentDetailScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

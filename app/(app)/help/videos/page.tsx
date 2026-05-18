@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Video, Search, Play, Clock, Eye, ArrowLeft, Star } from 'lucide-react';
 import Link from 'next/link';
@@ -28,6 +30,12 @@ export default function VideoTutorialScreen() {
     });
 
     return (
+        <Page
+            title="Video Tutorials"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Videos" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold transition-colors flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div>
@@ -74,5 +82,7 @@ export default function VideoTutorialScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

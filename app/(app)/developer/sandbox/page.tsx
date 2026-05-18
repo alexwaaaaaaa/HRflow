@@ -1,10 +1,19 @@
 "use client";
-import React, { useState } from 'react';
-import { BoxSelect, Play, AlertTriangle, Code, ArrowRight } from 'lucide-react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
+import { BoxSelect, Play, AlertTriangle, Code } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SandboxEnvironmentPage() {
     return (
+        <Page
+            title="Sandbox Environment"
+            subtitle="Safely build and test API integrations against an isolated copy of your data."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Sandbox" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -109,5 +118,7 @@ export default function SandboxEnvironmentPage() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

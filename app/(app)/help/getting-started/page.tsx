@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Zap, ArrowLeft, CheckCircle2, Circle, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -24,6 +26,13 @@ export default function GettingStartedScreen() {
     const pct = Math.round(completed.length / STEPS.length * 100);
 
     return (
+        <Page
+            title="Getting Started Guide"
+            subtitle="Follow these 6 steps to get HRFlow fully set up for your company"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Getting Started" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold transition-colors flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div>
@@ -48,6 +57,8 @@ export default function GettingStartedScreen() {
                 {STEPS.map((step) => {
                     const done = completed.includes(step.num);
                     return (
+
+
                         <div key={step.num} className={`bg-[#0A1420] border rounded-2xl p-5 flex items-start gap-4 transition-all ${done ? 'border-emerald-500/30 opacity-70' : 'border-[#1A2A3A] hover:border-amber-500/30'}`}>
                             <button onClick={() => setCompleted(p => done ? p.filter(x => x !== step.num) : [...p, step.num])}
                                 className="mt-0.5 shrink-0 transition-all hover:scale-110">
@@ -69,7 +80,9 @@ export default function GettingStartedScreen() {
                                 </Link>
                             )}
                         </div>
-                    );
+                    
+        
+);
                 })}
             </div>
 
@@ -86,5 +99,7 @@ export default function GettingStartedScreen() {
                 </ul>
             </div>
         </div>
+    
+        </Page>
     );
 }

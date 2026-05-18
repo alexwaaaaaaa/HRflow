@@ -1,10 +1,19 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import { Zap, GitMerge, Users, Filter, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function IncentiveSetupPage() {
     return (
+        <Page
+            title="One-Time Incentive Builder"
+            subtitle="Configure project bonuses, spot awards, or ad-hoc milestone incentives."
+            breadcrumbs={[{ label: "Incentive Setup" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1000px] mx-auto space-y-6">
 
@@ -158,5 +167,7 @@ export default function IncentiveSetupPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

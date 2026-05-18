@@ -1,12 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Laptop, Briefcase, Key, RefreshCw, CheckCircle2, ShieldAlert, CheckSquare } from 'lucide-react';
-import Link from 'next/link';
+import { Laptop, Briefcase, Key, RefreshCw, ShieldAlert, CheckSquare } from 'lucide-react';
 
 export default function AssetRecoveryScreen() {
     const [activeTab, setActiveTab] = useState('pending');
 
     return (
+        <Page
+            title="IT & Asset Recovery Dashboard"
+            subtitle="Track hardware returns, software license revocation, and physical access badge collection."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Assets" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -129,5 +137,7 @@ export default function AssetRecoveryScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,13 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Plane, UserCheck, Search, Building2, Calendar, FileText, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { Plane, Search, Building2, Calendar, ArrowRight } from 'lucide-react';
 
 export default function InternationalTransferScreen() {
     const [step, setStep] = useState(1);
     const [emp, setEmp] = useState('');
 
     return (
+        <Page
+            title="Cross-Border Employee Transfer"
+            subtitle="Move an employee between international entities, handling tax, compliance, and payroll handover."
+            breadcrumbs={[{ label: "Global", href: "/global" }, { label: "International Transfer" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -118,5 +126,7 @@ export default function InternationalTransferScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

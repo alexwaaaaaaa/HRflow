@@ -1,9 +1,10 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Gift, Search, Filter, ShoppingBag, Coffee, Plane, Monitor, Shirt, Heart, Star, Plus, CheckCircle2, X
+    Gift, Search, Filter, ShoppingBag, Plane, Monitor, Shirt, Heart, Star, Plus, CheckCircle2, X
 } from 'lucide-react';
-import Link from 'next/link';
 
 const CATEGORIES = [
     { id: 'all', name: 'All Rewards', icon: Gift },
@@ -56,6 +57,13 @@ export default function RewardCatalogScreen() {
     };
 
     return (
+        <Page
+            title="Reward Catalog"
+            subtitle="Exchange your points for gift cards, swag, and exclusive experiences."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Catalog" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans relative">
 
             {/* Header */}
@@ -82,6 +90,8 @@ export default function RewardCatalogScreen() {
                             const Icon = category.icon;
                             const isActive = activeCategory === category.id;
                             return (
+
+
                                 <button
                                     key={category.id}
                                     onClick={() => setActiveCategory(category.id)}
@@ -90,7 +100,8 @@ export default function RewardCatalogScreen() {
                                     <Icon size={18} className={isActive ? 'text-[#33E6FF]' : 'text-[#445566]'} />
                                     {category.name}
                                 </button>
-                            )
+                            
+            )
                         })}
                     </div>
 
@@ -246,5 +257,7 @@ export default function RewardCatalogScreen() {
             )}
 
         </div>
+    
+        </Page>
     );
 }

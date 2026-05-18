@@ -1,189 +1,276 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-    FolderTree, Plus, Settings, AlertCircle, Search,
-    ChevronRight, Edit2, Trash2, Users, CornerDownRight
+    FolderTree, Plus, Settings, Search,
+    ChevronRight, Edit2, Trash2, Users, CornerDownRight,
 } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-export default function HelpdeskCategorySetup() {
-    const [activeCategory, setActiveCategory] = useState("IT");
+const PARENT_CATEGORIES = ["IT Support", "HR & Payroll", "Facilities", "Legal & Compliance", "Finance"];
+
+const SUB_CATEGORIES = [
+    { name: "Hardware Issue", assignee: "IT Assets Team" },
+    { name: "Software License", assignee: "Amit Verma (Direct)" },
+    { name: "Network / VPN", assignee: "Network Admin Team" },
+];
+
+export default function HelpdeskCategorySetupPage() {
+    const [activeCategory, setActiveCategory] = useState("IT Support");
 
     return (
-        <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)]">
-
-            {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-[#1A2A3A]">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <FolderTree size={28} className="text-[#33E6FF]" />
-                        Helpdesk Categories & Routing
-                    </h1>
-                    <p className="text-[#8899AA] text-sm mt-1">Configure ticket categories, assign default agents, and set up auto-routing rules.</p>
-                </div>
-                <div className="flex gap-3 mt-4 md:mt-0">
-                    <button className="px-5 py-2 bg-[#00E5A0] text-[#0A1420] rounded-lg hover:bg-[#00c98d] transition-colors text-sm font-semibold flex items-center gap-2">
-                        <Plus size={16} /> New Category
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
+        <Page
+            title="Helpdesk Categories & Routing"
+            subtitle="Configure ticket categories, assign default agents, and set up auto-routing rules."
+            breadcrumbs={[
+                { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                { label: "Categories" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <Button icon={<Plus size={16} aria-hidden="true" />}>
+                    New Category
+                </Button>
+            }
+        >
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                 {/* Categories Sidebar */}
-                <div className="lg:col-span-1 space-y-4">
-                    <div className="relative mb-4">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#445566]" size={16} />
+                <div className="space-y-4 lg:col-span-1">
+                    <div className="relative">
+                        <Search
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#445566]"
+                            size={16}
+                            aria-hidden="true"
+                        />
                         <input
                             type="text"
                             placeholder="Search categories..."
-                            className="w-full bg-[#0F1C2E] border border-[#1A2A3A] rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-[#33E6FF] transition-colors"
+                            aria-label="Search categories"
+                            className="w-full rounded-xl border border-[#1A2A3A] bg-[#0F1C2E] py-2 pl-10 pr-4 text-sm text-white outline-none transition-colors focus:border-[#33E6FF]"
                         />
                     </div>
 
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                        <div className="p-4 bg-[#152336] border-b border-[#1A2A3A] flex justify-between items-center">
-                            <h3 className="font-bold text-white text-sm">Parent Categories</h3>
+                    <Card padding="none">
+                        <div className="border-b border-[#1A2A3A] bg-[#152336] p-4">
+                            <h3 className="text-sm font-bold text-white">Parent Categories</h3>
                         </div>
                         <div className="divide-y divide-[#1A2A3A]">
-                            {["IT Support", "HR & Payroll", "Facilities", "Legal & Compliance", "Finance"].map(cat => {
-                                const isIT = cat === "IT Support";
-                                const isActive = activeCategory === (isIT ? "IT" : cat);
+                            {PARENT_CATEGORIES.map((cat) => {
+                                const isActive = activeCategory === cat;
                                 return (
                                     <button
                                         key={cat}
-                                        onClick={() => setActiveCategory(isIT ? "IT" : cat)}
-                                        className={`w-full flex items-center justify-between p-4 transition-colors ${isActive ? 'bg-[#1A2A3A] border-l-2 border-l-[#33E6FF]' : 'hover:bg-[#1A2A3A]/50 border-l-2 border-l-transparent'
-                                            }`}
+                                        type="button"
+                                        onClick={() => setActiveCategory(cat)}
+                                        className={`flex w-full items-center justify-between border-l-2 p-4 transition-colors ${
+                                            isActive
+                                                ? "border-l-[#33E6FF] bg-[#1A2A3A]"
+                                                : "border-l-transparent hover:bg-[#1A2A3A]/50"
+                                        }`}
                                     >
-                                        <span className={`text-sm font-semibold ${isActive ? 'text-white' : 'text-[#8899AA]'}`}>{cat}</span>
-                                        <ChevronRight size={16} className={isActive ? "text-[#33E6FF]" : "text-[#445566]"} />
+                                        <span
+                                            className={`text-sm font-semibold ${
+                                                isActive ? "text-white" : "text-[#8899AA]"
+                                            }`}
+                                        >
+                                            {cat}
+                                        </span>
+                                        <ChevronRight
+                                            size={16}
+                                            className={isActive ? "text-[#33E6FF]" : "text-[#445566]"}
+                                            aria-hidden="true"
+                                        />
                                     </button>
                                 );
                             })}
                         </div>
-                    </div>
+                    </Card>
                 </div>
 
                 {/* Configuration Canvas */}
                 <div className="lg:col-span-3">
-                    {activeCategory === "IT" ? (
-                        <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-
+                    {activeCategory === "IT Support" ? (
+                        <Card padding="none">
                             {/* Category Details */}
-                            <div className="p-8 border-b border-[#1A2A3A] flex justify-between items-start">
+                            <div className="flex items-start justify-between border-b border-[#1A2A3A] p-8">
                                 <div>
-                                    <div className="flex items-center gap-3 mb-2">
+                                    <div className="mb-2 flex items-center gap-3">
                                         <h2 className="text-2xl font-bold text-white">IT Support</h2>
-                                        <span className="px-2 py-0.5 rounded bg-[#00E5A0]/10 text-[#00E5A0] text-[10px] uppercase font-bold tracking-wider border border-[#00E5A0]/20">Active</span>
+                                        <Badge variant="success">Active</Badge>
                                     </div>
-                                    <p className="text-[#8899AA] text-sm">Hardware, software access, network issues, and general tech support.</p>
+                                    <p className="text-sm text-[#8899AA]">
+                                        Hardware, software access, network issues, and general tech support.
+                                    </p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button className="p-2 border border-[#2A3A4A] text-[#8899AA] hover:text-white rounded-lg transition-colors"><Edit2 size={16} /></button>
-                                    <button className="p-2 border border-[#2A3A4A] text-[#8899AA] hover:text-[#FF4444] rounded-lg transition-colors"><Trash2 size={16} /></button>
+                                    <button
+                                        type="button"
+                                        aria-label="Edit IT Support category"
+                                        className="rounded-lg border border-[#2A3A4A] p-2 text-[#8899AA] transition-colors hover:text-white"
+                                    >
+                                        <Edit2 size={16} aria-hidden="true" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        aria-label="Delete IT Support category"
+                                        className="rounded-lg border border-[#2A3A4A] p-2 text-[#8899AA] transition-colors hover:text-[#FF4444]"
+                                    >
+                                        <Trash2 size={16} aria-hidden="true" />
+                                    </button>
                                 </div>
                             </div>
 
-                            <div className="p-8 space-y-8">
-
+                            <div className="space-y-8 p-8">
                                 {/* Default Assignments */}
-                                <div>
-                                    <h3 className="text-sm font-bold tracking-wider text-[#8899AA] uppercase mb-4 flex items-center gap-2">
-                                        <Users size={16} /> Default Assignments
+                                <section>
+                                    <h3 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                        <Users size={16} aria-hidden="true" /> Default Assignments
                                     </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="bg-[#1A2A3A] p-4 rounded-xl border border-[#2A3A4A]">
-                                            <span className="block text-xs text-[#8899AA] mb-2 font-medium">Default Assignee Group</span>
-                                            <select className="w-full bg-[#0A1420] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#33E6FF]">
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                        <div className="rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] p-4">
+                                            <label
+                                                htmlFor="assignee-group"
+                                                className="mb-2 block text-xs font-medium text-[#8899AA]"
+                                            >
+                                                Default Assignee Group
+                                            </label>
+                                            <select
+                                                id="assignee-group"
+                                                className="w-full rounded-lg border border-[#2A3A4A] bg-[#0A1420] px-3 py-2 text-sm text-white outline-none focus:border-[#33E6FF]"
+                                            >
                                                 <option>IT L1 Support Desk</option>
                                                 <option>IT L2 Advanced</option>
                                                 <option>Network Admin Team</option>
                                             </select>
                                         </div>
-                                        <div className="bg-[#1A2A3A] p-4 rounded-xl border border-[#2A3A4A]">
-                                            <span className="block text-xs text-[#8899AA] mb-2 font-medium">Auto-apply SLA Policy</span>
-                                            <select className="w-full bg-[#0A1420] border border-[#2A3A4A] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#33E6FF]">
+                                        <div className="rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] p-4">
+                                            <label
+                                                htmlFor="sla-policy"
+                                                className="mb-2 block text-xs font-medium text-[#8899AA]"
+                                            >
+                                                Auto-apply SLA Policy
+                                            </label>
+                                            <select
+                                                id="sla-policy"
+                                                className="w-full rounded-lg border border-[#2A3A4A] bg-[#0A1420] px-3 py-2 text-sm text-white outline-none focus:border-[#33E6FF]"
+                                            >
                                                 <option>Standard 8h Resolution</option>
                                                 <option>Critical 2h Resolution</option>
                                             </select>
                                         </div>
                                     </div>
-                                </div>
+                                </section>
 
                                 {/* Sub-categories */}
-                                <div>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-sm font-bold tracking-wider text-[#8899AA] uppercase flex items-center gap-2">
-                                            <FolderTree size={16} /> Sub-Categories
+                                <section>
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                            <FolderTree size={16} aria-hidden="true" /> Sub-Categories
                                         </h3>
-                                        <button className="text-sm text-[#33E6FF] hover:underline font-semibold flex items-center gap-1"><Plus size={14} /> Add Sub-category</button>
+                                        <button
+                                            type="button"
+                                            className="flex items-center gap-1 text-sm font-semibold text-[#33E6FF] hover:underline"
+                                        >
+                                            <Plus size={14} aria-hidden="true" /> Add Sub-category
+                                        </button>
                                     </div>
-
-                                    <div className="border border-[#1A2A3A] rounded-xl overflow-hidden bg-[#0A1420]">
-                                        <table className="w-full text-left border-collapse">
+                                    <div className="overflow-hidden rounded-xl border border-[#1A2A3A] bg-[#0A1420]">
+                                        <table className="w-full border-collapse text-left">
                                             <thead>
-                                                <tr className="bg-[#1A2A3A] text-[#8899AA] text-xs uppercase tracking-wider font-medium">
-                                                    <th className="p-3">Name</th>
-                                                    <th className="p-3">Specific Assignee</th>
-                                                    <th className="p-3 text-right">Actions</th>
+                                                <tr className="bg-[#1A2A3A] text-xs font-medium uppercase tracking-wider text-[#8899AA]">
+                                                    <th scope="col" className="p-3">Name</th>
+                                                    <th scope="col" className="p-3">Specific Assignee</th>
+                                                    <th scope="col" className="p-3 text-right">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-[#1A2A3A] text-sm text-white">
-                                                {[
-                                                    { name: "Hardware Issue", assignee: "IT Assets Team" },
-                                                    { name: "Software License", assignee: "Amit Verma (Direct)" },
-                                                    { name: "Network / VPN", assignee: "Network Admin Team" },
-                                                ].map((sub, i) => (
-                                                    <tr key={i} className="hover:bg-[#1A2A3A]/30 transition-colors">
-                                                        <td className="p-3 flex items-center gap-2">
-                                                            <CornerDownRight size={14} className="text-[#445566]" />
+                                                {SUB_CATEGORIES.map((sub) => (
+                                                    <tr
+                                                        key={sub.name}
+                                                        className="transition-colors hover:bg-[#1A2A3A]/30"
+                                                    >
+                                                        <td className="flex items-center gap-2 p-3">
+                                                            <CornerDownRight
+                                                                size={14}
+                                                                className="text-[#445566]"
+                                                                aria-hidden="true"
+                                                            />
                                                             <span className="font-semibold">{sub.name}</span>
                                                         </td>
                                                         <td className="p-3 text-[#8899AA]">{sub.assignee}</td>
                                                         <td className="p-3 text-right">
-                                                            <button className="text-[#445566] hover:text-white transition-colors"><Edit2 size={14} /></button>
+                                                            <button
+                                                                type="button"
+                                                                aria-label={`Edit ${sub.name}`}
+                                                                className="text-[#445566] transition-colors hover:text-white"
+                                                            >
+                                                                <Edit2 size={14} aria-hidden="true" />
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </section>
 
                                 {/* Auto-Routing Rules */}
-                                <div>
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h3 className="text-sm font-bold tracking-wider text-[#8899AA] uppercase flex items-center gap-2">
-                                            <Settings size={16} /> Keyword Auto-Routing
+                                <section>
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                            <Settings size={16} aria-hidden="true" /> Keyword Auto-Routing
                                         </h3>
-                                        <button className="text-sm text-[#00E5A0] hover:underline font-semibold flex items-center gap-1"><Plus size={14} /> Add Rule</button>
+                                        <button
+                                            type="button"
+                                            className="flex items-center gap-1 text-sm font-semibold text-[#00E5A0] hover:underline"
+                                        >
+                                            <Plus size={14} aria-hidden="true" /> Add Rule
+                                        </button>
                                     </div>
-
-                                    <div className="bg-[#1A2A3A] border border-[#2A3A4A] rounded-xl p-4 flex items-center justify-between gap-4">
+                                    <div className="flex items-center justify-between gap-4 rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] p-4">
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-2 text-sm text-white font-medium mb-1">
-                                                If description contains <span className="bg-[#33E6FF]/10 text-[#33E6FF] px-2 py-0.5 rounded border border-[#33E6FF]/20">'Jira', 'Confluence', 'Figma'</span>
+                                            <div className="mb-1 flex items-center gap-2 text-sm font-medium text-white">
+                                                If description contains{" "}
+                                                <span className="rounded border border-[#33E6FF]/20 bg-[#33E6FF]/10 px-2 py-0.5 text-[#33E6FF]">
+                                                    &apos;Jira&apos;, &apos;Confluence&apos;, &apos;Figma&apos;
+                                                </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-sm text-[#8899AA]">
-                                                Then route to <span className="text-white bg-[#0A1420] px-2 py-0.5 rounded border border-[#2A3A4A]">Software License</span> sub-category
+                                                Then route to{" "}
+                                                <span className="rounded border border-[#2A3A4A] bg-[#0A1420] px-2 py-0.5 text-white">
+                                                    Software License
+                                                </span>{" "}
+                                                sub-category
                                             </div>
                                         </div>
-                                        <button className="text-[#445566] hover:text-[#FF4444] transition-colors"><Trash2 size={16} /></button>
+                                        <button
+                                            type="button"
+                                            aria-label="Delete routing rule"
+                                            className="text-[#445566] transition-colors hover:text-[#FF4444]"
+                                        >
+                                            <Trash2 size={16} aria-hidden="true" />
+                                        </button>
                                     </div>
-                                </div>
-
+                                </section>
                             </div>
-                        </div>
+                        </Card>
                     ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center text-[#445566] h-full bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-12">
-                            <FolderTree size={64} className="mb-4 opacity-20" />
-                            <h2 className="text-xl font-medium text-white mb-2">{activeCategory} Category Selected</h2>
-                            <p className="text-sm">Mock view. Functionality mimics the IT Support configuration panel.</p>
-                        </div>
+                        <Card padding="lg">
+                            <div className="flex flex-col items-center justify-center py-12 text-center text-[#445566]">
+                                <FolderTree size={64} className="mb-4 opacity-20" aria-hidden="true" />
+                                <h2 className="mb-2 text-xl font-medium text-white">
+                                    {activeCategory} Category Selected
+                                </h2>
+                                <p className="text-sm">
+                                    Mock view. Functionality mimics the IT Support configuration panel.
+                                </p>
+                            </div>
+                        </Card>
                     )}
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

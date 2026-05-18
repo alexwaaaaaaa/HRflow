@@ -1,131 +1,344 @@
 "use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import { Settings, ChevronRight, Save, ChevronDown } from "lucide-react";
 
-const CADENCES = ["Weekly", "Bi-weekly", "Monthly"];
-const SCALES = ["0–100%", "Milestones", "Binary (Done/Not Done)"];
-const VISIBILITIES = ["Everyone", "Managers Only", "Owner Only"];
+import { Settings, Save, Check } from "lucide-react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 
-export default function OKRSettingsScreen() {
-    const [cadence, setCadence] = useState("Weekly");
-    const [scale, setScale] = useState("0–100%");
-    const [visibility, setVisibility] = useState("Everyone");
-    const [autoClose, setAutoClose] = useState(true);
-    const [reminders, setReminders] = useState(true);
-    const [cascading, setCascading] = useState(true);
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema (Tier 2 form — 4–10 fields)
+// ─────────────────────────────────────────────────────────────────────────────
 
-    const Toggle = ({ on, setOn, id, label }: { on: boolean; setOn: (v: boolean) => void; id: string; label: string }) => (
-        <div className="flex items-center justify-between py-4 border-b border-[#1A2A3A] last:border-0">
+const okrSettingsSchema = z.object({
+    checkinCadence: z.enum(["Weekly", "Bi-weekly", "Monthly"]),
+    scoringScale: z.enum(["0–100%", "Milestones", "Binary (Done/Not Done)"]),
+    defaultVisibility: z.enum(["Everyone", "Managers Only", "Owner Only"]),
+    checkinReminders: z.boolean(),
+    cascadingEnabled: z.boolean(),
+    autoClose: z.boolean(),
+    cycleStartMonth: z.string().min(1, "Cycle start month is required"),
+    maxKeyResults: z.string().min(1, "Max key results is required"),
+});
+
+type OkrSettingsValues = z.infer<typeof okrSettingsSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Static data
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CADENCES = ["Weekly", "Bi-weekly", "Monthly"] as const;
+const SCALES = ["0–100%", "Milestones", "Binary (Done/Not Done)"] as const;
+const VISIBILITIES = ["Everyone", "Managers Only", "Owner Only"] as const;
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as const;
+const MAX_KR_OPTIONS = ["3", "5", "7", "10"] as const;
+
+const PERMISSIONS: ReadonlyArray<readonly [string, boolean, boolean, boolean]> = [
+    ["Create OKRs", true, true, true],
+    ["Edit OKRs", true, true, true],
+    ["Delete OKRs", false, true, true],
+    ["Approve OKRs", false, true, true],
+    ["View All Dept OKRs", false, false, true],
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components (module scope)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ToggleRow({
+    id,
+    label,
+    checked,
+    onChange,
+}: {
+    id: string;
+    label: string;
+    checked: boolean;
+    onChange: (v: boolean) => void;
+}) {
+    return (
+        <div className="flex items-center justify-between py-3 border-b border-[#1A2A3A] last:border-b-0">
             <label htmlFor={id} className="text-sm text-white cursor-pointer">{label}</label>
             <button
-                id={id}
                 type="button"
+                id={id}
                 role="switch"
-                aria-checked={on}
-                onClick={() => setOn(!on)}
-                className={`relative w-11 h-6 rounded-full transition-colors ${on ? "bg-[#00E5A0]" : "bg-[#1A2A3A]"}`}
+                aria-checked={checked}
+                onClick={() => onChange(!checked)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00e5a0] ${
+                    checked ? "bg-[#00e5a0]" : "bg-[#1A2A3A]"
+                }`}
             >
                 <span
-                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${on ? "translate-x-5" : "translate-x-0"}`}
-                    aria-hidden="true"
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        checked ? "translate-x-6" : "translate-x-1"
+                    }`}
                 />
-                <span className="sr-only">{on ? "Enabled" : "Disabled"}</span>
             </button>
         </div>
     );
+}
 
-    const SelectField = ({ id, label, value, options, onChange }: {
-        id: string; label: string; value: string; options: string[]; onChange: (v: string) => void
-    }) => (
-        <div className="flex items-center justify-between py-4 border-b border-[#1A2A3A] last:border-0">
+function SelectRow({
+    id,
+    label,
+    value,
+    options,
+    onChange,
+}: {
+    id: string;
+    label: string;
+    value: string;
+    options: readonly string[];
+    onChange: (v: string) => void;
+}) {
+    return (
+        <div className="flex items-center justify-between py-3 border-b border-[#1A2A3A] last:border-b-0">
             <label htmlFor={id} className="text-sm text-white">{label}</label>
-            <div className="relative">
-                <select
-                    id={id}
-                    value={value}
-                    onChange={e => onChange(e.target.value)}
-                    className="bg-[#0A1420] border border-[#1A2A3A] text-white text-sm rounded-lg px-3 py-1.5 pr-7 focus:outline-none focus:border-[#00E5A0] appearance-none cursor-pointer"
-                >
-                    {options.map(o => <option key={o}>{o}</option>)}
-                </select>
-                <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#445566] pointer-events-none" aria-hidden="true" />
-            </div>
+            <select
+                id={id}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="bg-[#0A1420] border border-[#1A2A3A] text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#00e5a0] appearance-none cursor-pointer min-w-[160px]"
+            >
+                {options.map((o) => <option key={o}>{o}</option>)}
+            </select>
         </div>
     );
+}
+
+function PermissionCell({ allowed }: { allowed: boolean }) {
+    if (allowed) {
+        return (
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#00E5A0]/10" aria-label="Allowed">
+                <Check size={12} className="text-[#00E5A0]" aria-hidden="true" />
+            </span>
+        );
+    }
+    return <span className="text-[#445566] text-sm" aria-label="Not allowed">—</span>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function OKRSettingsPage() {
+    const toast = useToast();
+
+    const { control, handleSubmit, formState: { isSubmitting } } = useForm<OkrSettingsValues>({
+        resolver: zodResolver(okrSettingsSchema),
+        defaultValues: {
+            checkinCadence: "Weekly",
+            scoringScale: "0–100%",
+            defaultVisibility: "Everyone",
+            checkinReminders: true,
+            cascadingEnabled: true,
+            autoClose: true,
+            cycleStartMonth: "January",
+            maxKeyResults: "5",
+        },
+    });
+
+    const onSubmit = async (_data: OkrSettingsValues) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 1000));
+        toast.show({
+            variant: "success",
+            title: "Settings saved",
+            description: "OKR settings have been updated successfully.",
+        });
+    };
 
     return (
-        <main className="min-h-screen bg-[#060B14] text-white pb-16 font-sans">
-            <div className="sticky top-0 z-30 bg-[#060B14]/90 backdrop-blur border-b border-[#1A2A3A] px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Link href="/okr/dashboard" className="text-[#8899AA] hover:text-white" aria-label="Back to OKR Dashboard">
-                        <ChevronRight size={18} className="rotate-180" aria-hidden="true" />
-                    </Link>
-                    <span className="text-base font-semibold">OKR Settings</span>
-                </div>
-                <button type="button" className="flex items-center gap-2 bg-[#00E5A0] text-[#060B14] font-bold text-sm px-5 py-2 rounded-lg hover:bg-[#00c98d] transition-colors">
-                    <Save size={14} aria-hidden="true" /> Save Settings
-                </button>
-            </div>
+        <Page
+            title="OKR Settings"
+            subtitle="Configure OKR cycles, scoring, and permissions"
+            breadcrumbs={[
+                { label: "OKRs", href: "/okr/dashboard" },
+                { label: "Settings" },
+            ]}
+            maxWidth="800px"
+            actions={
+                <Button
+                    type="submit"
+                    form="okr-settings-form"
+                    isLoading={isSubmitting}
+                    loadingText="Saving…"
+                    icon={<Save size={14} />
 
-            <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
+
+
+
+
+}
+                >
+                    Save Settings
+                </Button>
+            }
+        >
+            <form id="okr-settings-form" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
 
                 {/* Cycle Configuration */}
-                <section className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6" aria-labelledby="cycle-config-heading">
-                    <h2 id="cycle-config-heading" className="text-base font-semibold text-white mb-1 flex items-center gap-2">
+                <Card padding="lg">
+                    <h2 className="mb-1 flex items-center gap-2 text-base font-semibold text-white" id="cycle-config-heading">
                         <Settings size={16} className="text-[#00E5A0]" aria-hidden="true" /> Cycle Configuration
                     </h2>
-                    <p className="text-xs text-[#8899AA] mb-4">Control how OKR cycles are managed across the organization.</p>
-                    <div className="divide-y divide-[#1A2A3A]">
-                        <SelectField id="checkin-cadence" label="Check-in Cadence" value={cadence} options={CADENCES} onChange={setCadence} />
-                        <SelectField id="scoring-scale" label="Scoring Scale" value={scale} options={SCALES} onChange={setScale} />
-                        <SelectField id="okr-visibility" label="Default Visibility" value={visibility} options={VISIBILITIES} onChange={setVisibility} />
-                    </div>
-                </section>
+                    <p className="mb-4 text-xs text-[#8899AA]">
+                        Control how OKR cycles are managed across the organization.
+                    </p>
+
+                    <Controller
+                        control={control}
+                        name="checkinCadence"
+                        render={({ field }) => (
+                            <SelectRow
+                                id="checkin-cadence"
+                                label="Check-in Cadence"
+                                value={field.value}
+                                options={CADENCES}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="scoringScale"
+                        render={({ field }) => (
+                            <SelectRow
+                                id="scoring-scale"
+                                label="Scoring Scale"
+                                value={field.value}
+                                options={SCALES}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="defaultVisibility"
+                        render={({ field }) => (
+                            <SelectRow
+                                id="okr-visibility"
+                                label="Default Visibility"
+                                value={field.value}
+                                options={VISIBILITIES}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="cycleStartMonth"
+                        render={({ field }) => (
+                            <SelectRow
+                                id="cycle-start-month"
+                                label="Cycle Start Month"
+                                value={field.value}
+                                options={MONTHS}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="maxKeyResults"
+                        render={({ field }) => (
+                            <SelectRow
+                                id="max-key-results"
+                                label="Max Key Results per Objective"
+                                value={field.value}
+                                options={MAX_KR_OPTIONS}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                </Card>
 
                 {/* Behavior Settings */}
-                <section className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6" aria-labelledby="behavior-heading">
-                    <h2 id="behavior-heading" className="text-base font-semibold text-white mb-1">Behavior Settings</h2>
-                    <p className="text-xs text-[#8899AA] mb-4">Automation and notification preferences.</p>
-                    <div>
-                        <Toggle on={reminders} setOn={setReminders} id="checkin-reminders" label="Send check-in reminders to OKR owners" />
-                        <Toggle on={cascading} setOn={setCascading} id="cascading-enabled" label="Enable cascading alignment from Company → Dept → Team" />
-                        <Toggle on={autoClose} setOn={setAutoClose} id="auto-close" label="Auto-close OKRs at end of cycle with final score" />
-                    </div>
-                </section>
+                <Card padding="lg">
+                    <h2 className="mb-1 text-base font-semibold text-white" id="behavior-heading">
+                        Behavior Settings
+                    </h2>
+                    <p className="mb-4 text-xs text-[#8899AA]">
+                        Automation and notification preferences.
+                    </p>
+
+                    <Controller
+                        control={control}
+                        name="checkinReminders"
+                        render={({ field }) => (
+                            <ToggleRow
+                                id="checkin-reminders"
+                                label="Send check-in reminders to OKR owners"
+                                checked={field.value}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="cascadingEnabled"
+                        render={({ field }) => (
+                            <ToggleRow
+                                id="cascading-enabled"
+                                label="Enable cascading alignment from Company → Dept → Team"
+                                checked={field.value}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                    <Controller
+                        control={control}
+                        name="autoClose"
+                        render={({ field }) => (
+                            <ToggleRow
+                                id="auto-close"
+                                label="Auto-close OKRs at end of cycle with final score"
+                                checked={field.value}
+                                onChange={field.onChange}
+                            />
+                        )}
+                    />
+                </Card>
 
                 {/* Permissions */}
-                <section className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6" aria-labelledby="permissions-heading">
-                    <h2 id="permissions-heading" className="text-base font-semibold text-white mb-4">Permissions</h2>
-                    <table className="w-full text-sm" aria-label="OKR permissions by role">
-                        <thead>
-                            <tr className="border-b border-[#1A2A3A] text-xs text-[#8899AA] uppercase tracking-wider">
-                                <th scope="col" className="py-2 text-left">Action</th>
-                                <th scope="col" className="py-2 text-center">Employee</th>
-                                <th scope="col" className="py-2 text-center">Manager</th>
-                                <th scope="col" className="py-2 text-center">HR Admin</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#1A2A3A]">
-                            {[
-                                ["Create OKRs", true, true, true],
-                                ["Edit OKRs", true, true, true],
-                                ["Delete OKRs", false, true, true],
-                                ["Approve OKRs", false, true, true],
-                                ["View All Dept OKRs", false, false, true],
-                            ].map(([action, emp, mgr, hr]) => (
-                                <tr key={String(action)} className="hover:bg-[#152336] transition-colors">
-                                    <td className="py-3 text-white">{action}</td>
-                                    <td className="py-3 text-center">{emp ? "✅" : "—"}</td>
-                                    <td className="py-3 text-center">{mgr ? "✅" : "—"}</td>
-                                    <td className="py-3 text-center">{hr ? "✅" : "—"}</td>
+                <Card padding="lg">
+                    <h2 className="mb-4 text-base font-semibold text-white" id="permissions-heading">
+                        Permissions
+                    </h2>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm" aria-label="OKR permissions by role">
+                            <thead>
+                                <tr className="border-b border-[#1A2A3A] text-xs uppercase tracking-wider text-[#8899AA]">
+                                    <th scope="col" className="py-2 text-left">Action</th>
+                                    <th scope="col" className="py-2 text-center">Employee</th>
+                                    <th scope="col" className="py-2 text-center">Manager</th>
+                                    <th scope="col" className="py-2 text-center">HR Admin</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </section>
+                            </thead>
+                            <tbody className="divide-y divide-[#1A2A3A]">
+                                {PERMISSIONS.map(([action, emp, mgr, hr]) => (
+                                    <tr key={action} className="transition-colors hover:bg-[#152336]">
+                                        <td className="py-3 text-white">{action}</td>
+                                        <td className="py-3 text-center"><PermissionCell allowed={emp} /></td>
+                                        <td className="py-3 text-center"><PermissionCell allowed={mgr} /></td>
+                                        <td className="py-3 text-center"><PermissionCell allowed={hr} /></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
+            </form>
+        
 
-            </div>
-        </main>
+        
+
+        
+
+        </Page>
     );
 }

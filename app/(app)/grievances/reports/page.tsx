@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Search, Filter, Download, FileSpreadsheet, FileIcon, ChevronDown, Calendar } from 'lucide-react';
 
 export default function GrievanceReportsScreen() {
     return (
+        <Page
+            title="Cases Report Hub"
+            subtitle="Download aggregated data dumps and custom queries for compliance reporting."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Reports" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div>
@@ -144,5 +153,7 @@ export default function GrievanceReportsScreen() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

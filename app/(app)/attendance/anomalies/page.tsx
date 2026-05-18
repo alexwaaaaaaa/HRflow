@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -28,6 +30,12 @@ export default function AnomalyAlerts() {
     const pending = anomalies.filter(a => a.status === "Pending").length;
 
     return (
+        <Page
+            title="Attendance Anomalies"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Anomalies" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -95,5 +103,7 @@ export default function AnomalyAlerts() {
                 ))}
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

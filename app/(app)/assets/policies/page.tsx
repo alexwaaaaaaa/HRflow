@@ -1,12 +1,20 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { Settings, Shield, HardDrive, Edit, Plus, FileSignature } from 'lucide-react';
-import Link from 'next/link';
 
 export default function DevicePoliciesScreen() {
     const [activeTab, setActiveTab] = useState('mdm');
 
     return (
+        <Page
+            title="Security & Device Policies"
+            subtitle="Configure compliance rules, MDM integration, and remote wipe policies."
+            breadcrumbs={[{ label: "Assets", href: "/assets" }, { label: "Policies" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -25,11 +33,14 @@ export default function DevicePoliciesScreen() {
                     ].map(t => {
                         const Icon = t.icon;
                         return (
+
+
                             <button key={t.id} onClick={() => setActiveTab(t.id)} className={`w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-colors ${activeTab === t.id ? 'bg-[#131B2B] text-white border border-[#2A3A4A]' : 'text-[#8899AA] hover:text-white hover:bg-[#131B2B]/50 border border-transparent'}`}>
                                 <Icon size={18} className={activeTab === t.id ? 'text-indigo-400' : 'text-[#556677]'} />
                                 {t.label}
                             </button>
-                        )
+                        
+            )
                     })}
                 </div>
 
@@ -125,5 +136,7 @@ export default function DevicePoliciesScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

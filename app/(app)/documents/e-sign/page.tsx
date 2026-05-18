@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
     Signature, UploadCloud, Search, CheckCircle2, AlertCircle, Clock,
     FileText, ArrowRight, UserCheck, ChevronRight, Activity
@@ -16,6 +18,13 @@ const ESIGN_REQUESTS = [
 
 export default function ESignDashboardScreen() {
     return (
+        <Page
+            title="E-Signature Gateway"
+            subtitle="Manage document signatures and acknowledgements legally and securely."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "E Sign" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1200px] mx-auto pb-12">
 
@@ -150,5 +159,7 @@ export default function ESignDashboardScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

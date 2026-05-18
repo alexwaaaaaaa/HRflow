@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
-    Fingerprint, Usb, Cpu, RefreshCw, CheckCircle2, ShieldAlert,
-    Wifi, HardDrive
+    Fingerprint, Usb, Cpu, RefreshCw, HardDrive
 } from 'lucide-react';
 
 export default function BiometricIntegration() {
@@ -14,6 +15,13 @@ export default function BiometricIntegration() {
     ];
 
     return (
+        <Page
+            title="Biometric Device Integration"
+            subtitle="Manage connected ESSl, ZKTeco, Matrix devices and sync raw attendance logs."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Biometric" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-6xl mx-auto space-y-6">
 
@@ -132,5 +140,7 @@ export default function BiometricIntegration() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

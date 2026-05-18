@@ -1,0 +1,23 @@
+# Default reviewer for everything.
+*       @hrflow/frontend-leads
+
+# Component library + design system — needs design review.
+/components/ui/                @hrflow/design-system
+/app/globals.css               @hrflow/design-system
+
+# Auth + middleware require security review.
+/app/(auth)/                   @hrflow/security
+/middleware.ts                 @hrflow/security
+/lib/auth/                     @hrflow/security
+
+# Compliance / payroll / tax modules need domain review.
+/app/(app)/compliance/         @hrflow/compliance
+/app/(app)/payroll/            @hrflow/payroll
+/app/(app)/payroll-settings/   @hrflow/payroll
+/app/(app)/payroll-reports/    @hrflow/payroll
+/app/(app)/tax/                @hrflow/payroll
+/app/(app)/fnf/                @hrflow/payroll
+
+# Database / API contracts.
+/prisma/                       @hrflow/backend
+/lib/api/                      @hrflow/backend

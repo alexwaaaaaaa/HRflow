@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Plus, Edit2, ToggleLeft, ToggleRight } from "lucide-react";
 
@@ -26,12 +28,19 @@ const DAYS_LIST = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 export default function ShiftConfig() {
     const [shifts, setShifts] = useState(SHIFTS);
     const [selected, setSelected] = useState<Shift | null>(null);
-    const [worked, setWorked] = useState(9);
+    const [worked, _setWorked] = useState(9);
     const [workDays, setWorkDays] = useState(["Mon", "Tue", "Wed", "Thu", "Fri"]);
 
     const toggleDay = (d: string) => setWorkDays(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]);
 
     return (
+        <Page
+            title="Shift Configuration"
+            subtitle="Define work schedules for your organization"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Shifts", href: "/attendance/shifts" }, { label: "Config" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">Shift Configuration</h2>
             <p className="text-sm text-[#8899AA] mb-6">Define work schedules for your organization</p>
@@ -138,5 +147,7 @@ export default function ShiftConfig() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,13 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import {
-    BookOpen, Search, Filter, Download,
-    ArrowUpRight, ArrowDownRight, ChevronRight, Calendar
-} from "lucide-react";
+import { useState } from "react";
+import { ArrowUpRight, ArrowDownRight, Calendar, Filter, Download } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
 
-const LEDGER_ENTRIES = [
+type EntryType = "Credit" | "Debit";
+type EntryStatus = "Completed" | "Pending";
+
+interface LedgerEntry {
+    id: string;
+    date: string;
+    time: string;
+    account: string;
+    type: EntryType;
+    amount: number;
+    balance: number;
+    description: string;
+    status: EntryStatus;
+}
+
+const LEDGER_ENTRIES: LedgerEntry[] = [
     { id: "TXN-849201", date: "2025-06-15", time: "14:30", account: "EWA Disbursal", type: "Debit", amount: 15000, balance: 485000, description: "EWA to Emp #142 (Ravi K)", status: "Completed" },
     { id: "TXN-849202", date: "2025-06-15", time: "16:45", account: "Loan Repayment", type: "Credit", amount: 25000, balance: 510000, description: "EMI deduction for Emp #089 (Sneha R)", status: "Completed" },
     { id: "TXN-849203", date: "2025-06-16", time: "09:15", account: "Insurance Premium", type: "Debit", amount: 450000, balance: 60000, description: "Group Health Renewal - Policy Q3", status: "Completed" },
@@ -16,148 +32,143 @@ const LEDGER_ENTRIES = [
     { id: "TXN-849206", date: "2025-06-17", time: "15:10", account: "EWA Disbursal", type: "Debit", amount: 8500, balance: 1001500, description: "EWA to Emp #112 (Priya M)", status: "Completed" },
 ];
 
-export default function DoubleEntryLedgerScreen() {
-    const [searchTerm, setSearchTerm] = useState("");
+interface KpiTile {
+    label: string;
+    value: string;
+    valueColor?: string;
+    delta?: string;
+    deltaColor?: string;
+    sub?: string;
+}
+
+const KPI_TILES: KpiTile[] = [
+    { label: "Total Debits (MTD)", value: "₹6,28,500", delta: "+12%", deltaColor: "text-emerald-400" },
+    { label: "Total Credits (MTD)", value: "₹10,25,000", delta: "-4%", deltaColor: "text-pink-400" },
+    { label: "Real-time Fund Balance", value: "₹10,01,500", sub: "Fully Reconciled as of today", valueColor: "text-[#00E5FF]" },
+];
+
+const COLUMNS: Column<LedgerEntry>[] = [
+    { key: "id", label: "Transaction ID", render: (e) => <span className="font-mono text-[#00E5FF]">{e.id}</span> },
+    {
+        key: "date", label: "Date & Time", render: (e) => (
+            <div>
+                <div className="text-white">{e.date}</div>
+                <div className="text-xs text-[#8899AA] mt-0.5">{e.time}</div>
+            </div>
+        ), sortable: true, sortValue: (e) => e.date,
+    },
+    {
+        key: "account", label: "Account / Description", render: (e) => (
+            <div>
+                <div className="text-white font-medium">{e.account}</div>
+                <div className="text-xs text-[#8899AA] mt-0.5 w-48 truncate">{e.description}</div>
+            </div>
+        ),
+    },
+    {
+        key: "type", label: "Type", render: (e) => (
+            <Badge variant={e.type === "Credit" ? "success" : "danger"}>
+                {e.type === "Credit"
+                    ? <ArrowDownRight size={12} className="inline mr-1" aria-hidden="true" />
+                    : <ArrowUpRight size={12} className="inline mr-1" aria-hidden="true" />
+                }
+                {e.type}
+            </Badge>
+        ),
+    },
+    {
+        key: "amount", label: "Amount", align: "right",
+        render: (e) => (
+            <span className={`font-medium ${e.type === "Credit" ? "text-emerald-400" : "text-pink-400"}`}>
+                {e.type === "Credit" ? "+" : "-"}₹{e.amount.toLocaleString()}
+            </span>
+        ),
+    },
+    { key: "balance", label: "Running Balance", align: "right", render: (e) => <span className="text-white font-mono">₹{e.balance.toLocaleString()}</span> },
+    {
+        key: "status", label: "Status", align: "center",
+        render: (e) => e.status === "Completed"
+            ? <Badge variant="success">Completed</Badge>
+            : <Badge variant="warning">Pending</Badge>,
+    },
+];
+
+export default function DoubleEntryLedgerPage() {
+    const [search, setSearch] = useState("");
+
+    const filtered = search
+        ? LEDGER_ENTRIES.filter((e) =>
+            e.id.toLowerCase().includes(search.toLowerCase()) ||
+            e.account.toLowerCase().includes(search.toLowerCase()) ||
+            e.description.toLowerCase().includes(search.toLowerCase())
+        )
+        : LEDGER_ENTRIES;
 
     return (
-        <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
-            <div className="flex items-center gap-2 text-sm text-[#8899AA] mb-6">
-                <Link href="/finance/dashboard" className="hover:text-white transition-colors">Finance</Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-white">General Ledger</span>
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                        <BookOpen className="w-8 h-8 text-[#00E5FF]" />
-                        Double Entry Ledger
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Real-time accounting log for all embedded finance transactions</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-medium rounded-lg transition-colors">
-                        <Calendar className="w-4 h-4" />
-                        Date Range
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#1A2A3A] hover:bg-[#2A3A4A] border border-[#2A3A4A] text-white text-sm font-medium rounded-lg transition-colors">
-                        <Filter className="w-4 h-4" />
-                        Filter
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#00E5FF] hover:bg-[#00C5DD] text-[#0B1221] text-sm font-semibold rounded-lg transition-colors shadow-[0_0_15px_rgba(0,229,255,0.3)]">
-                        <Download className="w-4 h-4" />
-                        Export CSV
-                    </button>
-                </div>
-            </div>
-
-            {/* Quick Summary Cards */}
+        <Page
+            title="Double Entry Ledger"
+            subtitle="Real-time accounting log for all embedded finance transactions"
+            breadcrumbs={[
+                { label: "Finance", href: "/finance/dashboard" },
+                { label: "General Ledger" },
+            ]}
+            maxWidth="1300px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Calendar size={14} />}>Date Range</Button>
+                    <Button variant="secondary" icon={<Filter size={14} />}>Filter</Button>
+                    <Button icon={<Download size={14} />}>Export CSV</Button>
+                </>
+            }
+        >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#00E5FF] opacity-5 rounded-full blur-3xl -mr-10 -mt-10" />
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Total Debits (MTD)</p>
-                    <h3 className="text-2xl font-bold text-white mb-2">₹6,28,500</h3>
-                    <div className="flex items-center gap-1 text-xs text-[#8899AA]">
-                        <ArrowUpRight className="w-3 h-3 text-emerald-400" />
-                        <span className="text-emerald-400">12%</span> vs last month
-                    </div>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500 opacity-5 rounded-full blur-3xl -mr-10 -mt-10" />
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Total Credits (MTD)</p>
-                    <h3 className="text-2xl font-bold text-white mb-2">₹10,25,000</h3>
-                    <div className="flex items-center gap-1 text-xs text-[#8899AA]">
-                        <ArrowDownRight className="w-3 h-3 text-pink-400" />
-                        <span className="text-pink-400">4%</span> vs last month
-                    </div>
-                </div>
-                <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500 opacity-5 rounded-full blur-3xl -mr-10 -mt-10" />
-                    <p className="text-[#8899AA] text-sm font-medium mb-1">Real-time Fund Balance</p>
-                    <h3 className="text-2xl font-bold text-[#00E5FF] mb-2">₹10,01,500</h3>
-                    <div className="flex items-center gap-1 text-xs text-[#8899AA]">
-                        Fully Reconciled as of today
-                    </div>
-                </div>
+                {KPI_TILES.map((tile) => (
+                    <Card key={tile.label} padding="lg">
+                        <p className="text-[#8899AA] text-sm font-medium mb-1">{tile.label}</p>
+                        <h3 className={`text-2xl font-bold mb-2 ${tile.valueColor ?? "text-white"}`}>{tile.value}</h3>
+                        {"delta" in tile && tile.delta && (
+                            <div className={`flex items-center gap-1 text-xs ${tile.deltaColor}`}>
+                                <ArrowUpRight size={12} aria-hidden="true" />
+                                <span>{tile.delta}</span>
+                                <span className="text-[#8899AA]">vs last month</span>
+                            </div>
+                        )}
+                        {"sub" in tile && tile.sub && <p className="text-xs text-[#8899AA]">{tile.sub}</p>}
+                    </Card>
+                ))}
             </div>
 
-            {/* Ledger Table Section */}
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-2xl overflow-hidden">
+            <Card padding="none">
                 <div className="p-4 border-b border-[#1A2A3A] flex flex-col md:flex-row justify-between gap-4">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8899AA] w-4 h-4" />
-                        <input
-                            type="text"
-                            placeholder="Search transactions, IDs, names..."
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-[#00E5FF] transition-colors"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+                    <input
+                        type="search"
+                        placeholder="Search transactions, IDs, names..."
+                        aria-label="Search ledger entries"
+                        className="w-full md:w-96 bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#00E5FF] transition-colors"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
                 </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-[#1A2A3A]/50 text-[#8899AA] text-xs uppercase tracking-wider">
-                                <th className="p-4 font-medium">Transaction ID</th>
-                                <th className="p-4 font-medium">Date & Time</th>
-                                <th className="p-4 font-medium">Account / Description</th>
-                                <th className="p-4 font-medium">Type</th>
-                                <th className="p-4 font-medium text-right">Amount</th>
-                                <th className="p-4 font-medium text-right">Running Balance</th>
-                                <th className="p-4 font-medium text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-sm divide-y divide-[#1A2A3A]/50">
-                            {LEDGER_ENTRIES.map((entry, index) => (
-                                <tr key={index} className="hover:bg-[#1A2A3A]/30 transition-colors">
-                                    <td className="p-4 font-mono text-[#00E5FF]">{entry.id}</td>
-                                    <td className="p-4">
-                                        <div className="text-white">{entry.date}</div>
-                                        <div className="text-xs text-[#8899AA] mt-0.5">{entry.time}</div>
-                                    </td>
-                                    <td className="p-4">
-                                        <div className="text-white font-medium">{entry.account}</div>
-                                        <div className="text-xs text-[#8899AA] mt-0.5 w-48 truncate">{entry.description}</div>
-                                    </td>
-                                    <td className="p-4">
-                                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold ${entry.type === 'Credit' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-pink-500/10 text-pink-400'
-                                            }`}>
-                                            {entry.type === 'Credit' ? <ArrowDownRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}
-                                            {entry.type}
-                                        </span>
-                                    </td>
-                                    <td className={`p-4 text-right font-medium ${entry.type === 'Credit' ? 'text-emerald-400' : 'text-pink-400'}`}>
-                                        {entry.type === 'Credit' ? '+' : '-'}₹{entry.amount.toLocaleString()}
-                                    </td>
-                                    <td className="p-4 text-right text-white font-mono">
-                                        ₹{entry.balance.toLocaleString()}
-                                    </td>
-                                    <td className="p-4 text-center">
-                                        {entry.status === 'Completed' ? (
-                                            <span className="inline-flex text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded text-xs font-medium">Completed</span>
-                                        ) : (
-                                            <span className="inline-flex text-amber-400 bg-amber-400/10 px-2 py-1 rounded text-xs font-medium">Pending</span>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="p-4">
+                    <DataTable<LedgerEntry>
+                        data={filtered}
+                        columns={COLUMNS}
+                        rowKey={(e) => e.id}
+                        aria-label="General ledger entries"
+                        emptyTitle="No entries found"
+                        emptyDescription="Try adjusting your search."
+                    />
                 </div>
-
-                {/* Pagination (Mock) */}
                 <div className="p-4 border-t border-[#1A2A3A] flex items-center justify-between text-sm text-[#8899AA]">
                     <div>Showing 1 to 6 of 1,204 entries</div>
                     <div className="flex gap-2">
-                        <button className="px-3 py-1.5 rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] hover:bg-[#2A3A4A] transition-colors disabled:opacity-50">Prev</button>
-                        <button className="px-3 py-1.5 rounded-lg border border-[#2A3A4A] bg-[#00E5FF]/10 text-[#00E5FF]">1</button>
-                        <button className="px-3 py-1.5 rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] hover:bg-[#2A3A4A] transition-colors">2</button>
-                        <button className="px-3 py-1.5 rounded-lg border border-[#2A3A4A] bg-[#1A2A3A] hover:bg-[#2A3A4A] transition-colors">Next</button>
+                        <Button variant="secondary" size="sm" disabled>Prev</Button>
+                        <Button variant="primary" size="sm">1</Button>
+                        <Button variant="secondary" size="sm">2</Button>
+                        <Button variant="secondary" size="sm">Next</Button>
                     </div>
                 </div>
-            </div>
-        </div>
+            </Card>
+        </Page>
     );
 }

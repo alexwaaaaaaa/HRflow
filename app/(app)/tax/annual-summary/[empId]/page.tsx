@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ChevronLeft, Download, Printer } from "lucide-react";
-import { PieChart, Pie, Cell, Tooltip } from 'recharts';
-import { ChartWrapper } from "@/components/ui/chart-wrapper";
+import { Download, Printer } from "lucide-react";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { ChartWrapper } from "@/components/ui/ChartMountGate";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 const DATA = [
     { name: "Take Home", value: 1128264, color: "#00E5A0" },
@@ -14,118 +16,100 @@ const DATA = [
 
 export default function AnnualSummary() {
     return (
-        <div style={{ padding: "24px 32px", maxWidth: 1000, margin: "0 auto", paddingBottom: 100 }}>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <Link href="/tax" style={{ color: "#8899AA", display: "flex", alignItems: "center" }}>
-                        <ChevronLeft size={20} />
-                    </Link>
-                    <div>
-                        <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", margin: 0 }}>Annual Tax Statement (FY 2024-25)</h1>
-                        <div style={{ fontSize: 13, color: "#8899AA", marginTop: 4 }}>Comprehensive overview of your earnings and taxes</div>
-                    </div>
-                </div>
-                <div style={{ display: "flex", gap: 12 }}>
-                    <button style={{ height: 36, padding: "0 16px", background: "transparent", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} className="hover:bg-[#1A2A3A]">
-                        <Printer size={14} /> Print
-                    </button>
-                    <button style={{ height: 36, padding: "0 16px", background: "#0066FF", border: "none", borderRadius: 8, color: "#FFFFFF", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }} className="hover:opacity-90">
-                        <Download size={14} /> Download PDF
-                    </button>
-                </div>
-            </div>
-
-            <div style={{ display: "flex", gap: 24, marginBottom: 24 }}>
-
+        <Page
+            title="Annual Tax Statement (FY 2024-25)"
+            subtitle="Comprehensive overview of your earnings and taxes"
+            breadcrumbs={[
+                { label: "Tax", href: "/tax" },
+                { label: "Annual Summary" },
+            ]}
+            maxWidth="1000px"
+            actions={
+                <>
+                    <Button variant="secondary" icon={<Printer size={14} />}>Print</Button>
+                    <Button icon={<Download size={14} />}>Download PDF</Button>
+                </>
+            }
+        >
+            <div className="flex flex-col lg:flex-row gap-6">
                 {/* Left side: Visualization */}
-                <div style={{ width: 340, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column" }}>
-                    <div style={{ textAlign: "center", marginBottom: 16 }}>
-                        <div style={{ fontSize: 13, color: "#8899AA", marginBottom: 4 }}>Total CTC (Gross)</div>
-                        <div style={{ fontSize: 28, fontWeight: 700, color: "#FFFFFF" }}>₹14,00,000</div>
+                <Card padding="lg" className="lg:w-[340px] shrink-0 flex flex-col">
+                    <div className="text-center mb-4">
+                        <p className="text-xs text-[#8899AA] mb-1">Total CTC (Gross)</p>
+                        <p className="text-3xl font-bold text-white">₹14,00,000</p>
                     </div>
 
-                    <div style={{ height: 200, position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <div className="h-[200px] relative flex justify-center items-center">
                         <ChartWrapper height={200} width={200}>
-                            <ChartWrapper height="h-[200px]">
-                                <PieChart>
-                                    <Pie
-                                        data={DATA}
-                                        innerRadius={70}
-                                        outerRadius={90}
-                                        paddingAngle={4}
-                                        dataKey="value"
-                                        stroke="none"
-                                    >
-                                        {DATA.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip contentStyle={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, fontSize: 13 }} itemStyle={{ color: "#FFFFFF", fontWeight: 600 }} formatter={(value: any) => `₹${value?.toLocaleString()}`} />
-                                </PieChart>
-                            </ChartWrapper>
+                            <PieChart>
+                                <Pie data={DATA} innerRadius={70} outerRadius={90} paddingAngle={4} dataKey="value" stroke="none">
+                                    {DATA.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                    ))}
+                                </Pie>
+                                <Tooltip contentStyle={{ background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, fontSize: 13 }} itemStyle={{ color: "#FFFFFF", fontWeight: 600 }} formatter={(value: unknown) => `₹${(value as number)?.toLocaleString()}`} />
+                            </PieChart>
                         </ChartWrapper>
-                        <div style={{ position: "absolute", textAlign: "center" }}>
-                            <div style={{ fontSize: 11, color: "#8899AA" }}>Effective Tax</div>
-                            <div style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF" }}>7.5%</div>
+                        <div className="absolute text-center pointer-events-none">
+                            <p className="text-xs text-[#8899AA]">Effective Tax</p>
+                            <p className="text-lg font-bold text-white">7.5%</p>
                         </div>
                     </div>
 
-                    <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 12 }}>
-                        {DATA.map(item => (
-                            <div key={item.name} style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: item.color }} />
-                                    <span style={{ color: "#8899AA" }}>{item.name}</span>
+                    <div className="mt-6 flex flex-col gap-3">
+                        {DATA.map((item) => (
+                            <div key={item.name} className="flex justify-between text-sm">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
+                                    <span className="text-[#8899AA]">{item.name}</span>
                                 </div>
-                                <span style={{ color: "#FFFFFF", fontWeight: 600 }}>₹{item.value.toLocaleString()}</span>
+                                <span className="text-white font-semibold">₹{item.value.toLocaleString()}</span>
                             </div>
                         ))}
                     </div>
-                </div>
+                </Card>
 
                 {/* Right side: Detailed Breakdown */}
-                <div style={{ flex: 1, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, padding: 32 }}>
+                <Card padding="lg" className="flex-1">
+                    <h3 className="text-base font-semibold text-white mb-6">Tax Computation Summary</h3>
 
-                    <h3 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF", margin: 0, marginBottom: 24 }}>Tax Computation Summary</h3>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px", gap: 16, borderBottom: "1px solid #1A2A3A", paddingBottom: 16 }}>
-                            <div style={{ fontSize: 14, color: "#8899AA" }}>Income under Head &apos;Salary&apos; (Gross)</div>
-                            <div style={{ fontSize: 14, color: "#FFFFFF", textAlign: "right", fontWeight: 500 }}>₹14,00,000</div>
+                    <div className="flex flex-col gap-4">
+                        <div className="grid grid-cols-[1fr_140px] gap-4 border-b border-[#1A2A3A] pb-4">
+                            <p className="text-sm text-[#8899AA]">Income under Head &apos;Salary&apos; (Gross)</p>
+                            <p className="text-sm text-white text-right font-medium">₹14,00,000</p>
                         </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px", gap: 16, borderBottom: "1px solid #1A2A3A", paddingBottom: 16 }}>
-                            <div style={{ fontSize: 14, color: "#8899AA" }}>Less: Exemptions under Section 10 <br /><span style={{ fontSize: 11, color: "#445566" }}>(HRA, LTA, etc.)</span></div>
-                            <div style={{ fontSize: 14, color: "#FF4444", textAlign: "right", fontWeight: 500 }}>(₹1,50,000)</div>
+                        <div className="grid grid-cols-[1fr_140px] gap-4 border-b border-[#1A2A3A] pb-4">
+                            <div>
+                                <p className="text-sm text-[#8899AA]">Less: Exemptions under Section 10</p>
+                                <p className="text-xs text-[#445566]">(HRA, LTA, etc.)</p>
+                            </div>
+                            <p className="text-sm text-[#FF4444] text-right font-medium">(₹1,50,000)</p>
                         </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px", gap: 16, borderBottom: "1px solid #1A2A3A", paddingBottom: 16 }}>
-                            <div style={{ fontSize: 14, color: "#8899AA" }}>Less: Deductions under Section 16 <br /><span style={{ fontSize: 11, color: "#445566" }}>(Standard Deduction, Prof Tax)</span></div>
-                            <div style={{ fontSize: 14, color: "#FF4444", textAlign: "right", fontWeight: 500 }}>(₹52,500)</div>
+                        <div className="grid grid-cols-[1fr_140px] gap-4 border-b border-[#1A2A3A] pb-4">
+                            <div>
+                                <p className="text-sm text-[#8899AA]">Less: Deductions under Section 16</p>
+                                <p className="text-xs text-[#445566]">(Standard Deduction, Prof Tax)</p>
+                            </div>
+                            <p className="text-sm text-[#FF4444] text-right font-medium">(₹52,500)</p>
                         </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px", gap: 16, borderBottom: "1px solid #1A2A3A", paddingBottom: 16 }}>
-                            <div style={{ fontSize: 14, color: "#8899AA" }}>Less: Chapter VI-A Deductions <br /><span style={{ fontSize: 11, color: "#445566" }}>(80C, 80D, 80CCD)</span></div>
-                            <div style={{ fontSize: 14, color: "#FF4444", textAlign: "right", fontWeight: 500 }}>(₹2,05,500)</div>
+                        <div className="grid grid-cols-[1fr_140px] gap-4 border-b border-[#1A2A3A] pb-4">
+                            <div>
+                                <p className="text-sm text-[#8899AA]">Less: Chapter VI-A Deductions</p>
+                                <p className="text-xs text-[#445566]">(80C, 80D, 80CCD)</p>
+                            </div>
+                            <p className="text-sm text-[#FF4444] text-right font-medium">(₹2,05,500)</p>
                         </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px", gap: 16, borderBottom: "1px dashed #445566", paddingBottom: 16 }}>
-                            <div style={{ fontSize: 15, color: "#FFFFFF", fontWeight: 600 }}>Total Taxable Income</div>
-                            <div style={{ fontSize: 15, color: "#FFFFFF", textAlign: "right", fontWeight: 600 }}>₹9,92,000</div>
+                        <div className="grid grid-cols-[1fr_140px] gap-4 border-b border-dashed border-[#445566] pb-4">
+                            <p className="text-sm font-semibold text-white">Total Taxable Income</p>
+                            <p className="text-sm font-semibold text-white text-right">₹9,92,000</p>
                         </div>
-
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 140px", gap: 16, paddingTop: 8 }}>
-                            <div style={{ fontSize: 16, color: "#FFB800", fontWeight: 700 }}>Total Tax Liability (incl. Cess)</div>
-                            <div style={{ fontSize: 16, color: "#FFB800", textAlign: "right", fontWeight: 700 }}>₹1,04,936</div>
+                        <div className="grid grid-cols-[1fr_140px] gap-4 pt-2">
+                            <p className="text-base font-bold text-[#FFB800]">Total Tax Liability (incl. Cess)</p>
+                            <p className="text-base font-bold text-[#FFB800] text-right">₹1,04,936</p>
                         </div>
-
                     </div>
-
-                </div>
-
+                </Card>
             </div>
-
-        </div>
+        </Page>
     );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Download, AlertTriangle } from "lucide-react";
 
@@ -17,6 +19,13 @@ export default function LateArrivalsReport() {
     const [period, setPeriod] = useState("Month");
 
     return (
+        <Page
+            title="Late Arrivals Report"
+            subtitle="Employees arriving after 09:30 AM"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Late Arrivals" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
                 <div>
@@ -104,5 +113,7 @@ export default function LateArrivalsReport() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

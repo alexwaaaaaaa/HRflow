@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { IndianRupee, ArrowLeft, Search, Download, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
 import Link from 'next/link';
@@ -15,6 +17,13 @@ export default function ContractorTDSScreen() {
     const [search, setSearch] = useState('');
 
     return (
+        <Page
+            title="TDS Compliance (Contractors)"
+            subtitle="Track Section 194J/194C deductions, generate challans, and prepare Q4 returns."
+            breadcrumbs={[{ label: "Contractor", href: "/contractor" }, { label: "Tds" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <Link href="/contractor/list" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2">
                 <ArrowLeft size={14} /> Contractor Payroll
@@ -108,5 +117,7 @@ export default function ContractorTDSScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

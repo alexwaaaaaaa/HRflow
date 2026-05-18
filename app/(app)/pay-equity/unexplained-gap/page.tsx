@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Network, Wand2, ShieldAlert, Users, TrendingDown, ArrowRight, Download } from 'lucide-react';
+import { Network, Wand2, ShieldAlert, ArrowRight, Download } from 'lucide-react';
 import Link from 'next/link';
 
 export default function UnexplainedGapScreen() {
     return (
+        <Page
+            title="AI Pay Gap Decomposition"
+            subtitle="Machine Learning model identifying explained vs unexplained variances in compensation."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Unexplained Gap" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -90,5 +99,7 @@ export default function UnexplainedGapScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import Page from "@/components/ui/Page";
+
+import { useState } from "react";
 import { ChevronLeft, Printer, Download } from "lucide-react";
 import Link from "next/link";
 
@@ -34,13 +36,20 @@ const ROW_BG: Record<string, string> = {
     Holiday: "bg-[#445566]/10",
 };
 
-export default function EmployeeAttendanceLog({ params }: { params: { empId: string } }) {
+export default function EmployeeAttendanceLog(_props: { params: { empId: string } }) {
     const [activeMonth, setActiveMonth] = useState("Nov 2024");
     const MONTHS = ["Sep 2024", "Oct 2024", "Nov 2024"];
 
     const summary = { present: 20, late: 3, wfh: 6, ot: 8.5 };
 
     return (
+        <Page
+            title="Rahul Kumar Sharma"
+            subtitle="EMP-0848 • Engineering •"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Employee", href: "/attendance/employee" }, { label: "Log" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             {/* BACK + HEADER */}
             <Link href="/attendance/live" className="flex items-center gap-2 text-sm text-[#8899AA] hover:text-white mb-5 w-fit">
@@ -140,5 +149,7 @@ export default function EmployeeAttendanceLog({ params }: { params: { empId: str
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

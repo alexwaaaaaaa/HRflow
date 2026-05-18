@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { clearSession } from "@/lib/auth/session";
+import CommandPalette from "@/components/ui/CommandPalette";
 
 const NOTIFICATIONS = [
   { id: 1, type: "approval", icon: CheckCircle, color: "#00e5a0", title: "Leave Approved", desc: "Priya Sharma's 3-day CL approved", time: "2m ago", unread: true, href: "/leave/approvals" },
@@ -17,19 +19,94 @@ const NOTIFICATIONS = [
 ];
 
 const ROUTE_LABELS: Record<string, string> = {
-  dashboard: "Dashboard", employees: "Employees", payroll: "Payroll",
-  attendance: "Attendance", leave: "Leave", recruitment: "Recruitment",
-  performance: "Performance", lms: "Learning", engagement: "Engagement",
-  okr: "OKRs", feedback: "360° Feedback", compliance: "Compliance",
-  finance: "Finance", tax: "Tax & TDS", fnf: "FnF Settlement",
-  reports: "Reports", settings: "Settings", notifications: "Notifications",
-  help: "Help Center", grievances: "Grievance", security: "Security",
-  reimbursements: "Reimbursements", fbp: "Flexi Benefits",
-  "pay-equity": "Pay Equity", succession: "Succession",
-  "workforce-analytics": "Workforce Analytics", projects: "Projects",
-  developer: "Developer Portal", onboarding: "Onboarding",
-  bgv: "Background Checks", documents: "Documents",
-  "it-provisioning": "IT Provisioning", "super-admin": "Super Admin",
+  // Core
+  dashboard: "Dashboard",
+  employees: "Employees",
+  "my-profile": "My Profile",
+  "my-leave": "My Leave",
+  ess: "Self-Service",
+  "self-service": "Self-Service",
+  "org-chart": "Org & Structure",
+  notifications: "Notifications",
+  "notice-board": "Notice Board",
+
+  // Time
+  attendance: "Attendance",
+  leave: "Leave",
+  "leave-encashment": "Leave Encashment",
+  hybrid: "Hybrid Work",
+
+  // Payroll
+  payroll: "Payroll",
+  "payroll-settings": "Payroll Settings",
+  "payroll-benchmarking": "Payroll Benchmarking",
+  "payroll-comparison": "Payroll Comparison",
+  "payroll-error-detail": "Payroll Error",
+  "payroll-exception": "Payroll Exception",
+  "payroll-health": "Payroll Health",
+  "payroll-reports": "Payroll Reports",
+  "payroll-rollback": "Payroll Rollback",
+  "payroll-simulation": "Payroll Simulation",
+  "payslip-customization": "Payslip Templates",
+  "off-cycle-payroll": "Off-cycle Payroll",
+  "zero-payroll": "Zero Payroll",
+  "ctc-letters": "CTC Letters",
+  "commission-setup": "Commission Setup",
+  "incentive-setup": "Incentive Setup",
+  "incentive-payment": "Incentive Payment",
+  "variable-pay-setup": "Variable Pay",
+  "multi-bank-disbursement": "Multi-bank Disbursement",
+  "negative-net-pay": "Negative Net Pay",
+  "statutory-bonus": "Statutory Bonus",
+  "gratuity-provision": "Gratuity Provision",
+
+  // Tax & Finance
+  tax: "Tax & TDS",
+  finance: "Finance",
+  reimbursements: "Reimbursements",
+  fbp: "Flexi Benefits",
+  "pay-equity": "Pay Equity",
+
+  // Talent
+  recruitment: "Recruitment",
+  candidate: "Candidate Portal",
+  performance: "Performance",
+  lms: "Learning",
+  engagement: "Engagement",
+  feedback: "360° Feedback",
+  okr: "OKRs",
+  succession: "Succession",
+  "workforce-analytics": "Workforce Analytics",
+  onboarding: "Onboarding",
+  offboarding: "Offboarding",
+  fnf: "FnF Settlement",
+
+  // Compliance & Admin
+  compliance: "Compliance",
+  bgv: "Background Checks",
+  documents: "Documents",
+  it: "IT",
+  "it-provisioning": "IT Provisioning",
+  assets: "Assets",
+  contractor: "Contractors",
+  grievances: "Grievances",
+  security: "Security",
+  helpdesk: "Helpdesk",
+
+  // Reports & AI
+  reports: "Reports",
+  ai: "AI Insights",
+
+  // Enterprise
+  "multi-entity": "Multi-Entity",
+  global: "Global Payroll",
+  projects: "Projects",
+  developer: "Developer Portal",
+  "super-admin": "Super Admin",
+
+  // Settings
+  settings: "Settings",
+  help: "Help Center",
 };
 
 function getBreadcrumb(pathname: string) {
@@ -64,7 +141,7 @@ function NotificationDropdown({ onClose }: { onClose: () => void }) {
         </div>
         <div className="flex items-center gap-3">
           <Link href="/notifications" onClick={onClose} className="text-[11px] text-[#7a8fa6] hover:text-[#00e5a0] transition-colors">View all</Link>
-          <button onClick={onClose} className="text-[#3d5166] hover:text-[#7a8fa6] transition-colors"><X size={13} /></button>
+          <button onClick={onClose} className="text-[#7a8fa6] hover:text-[#7a8fa6] transition-colors"><X size={13} /></button>
         </div>
       </div>
       <div className="divide-y divide-[#0e1a28]">
@@ -82,14 +159,14 @@ function NotificationDropdown({ onClose }: { onClose: () => void }) {
                 <p className={`text-[12px] font-600 truncate ${n.unread ? "text-[#f0f4f8]" : "text-[#7a8fa6]"}`}>{n.title}</p>
                 {n.unread && <div className="w-1.5 h-1.5 rounded-full bg-[#00e5a0] shrink-0" />}
               </div>
-              <p className="text-[11px] text-[#3d5166] truncate mt-0.5">{n.desc}</p>
-              <p className="text-[10px] text-[#2a3a4a] mt-1">{n.time}</p>
+              <p className="text-[11px] text-[#7a8fa6] truncate mt-0.5">{n.desc}</p>
+              <p className="text-[10px] text-[#556677] mt-1">{n.time}</p>
             </div>
           </button>
         ))}
       </div>
       <div className="px-4 py-2.5 border-t border-[#162030] flex items-center justify-between">
-        <Link href="/notifications/preferences" onClick={onClose} className="text-[11px] text-[#3d5166] hover:text-[#7a8fa6] transition-colors flex items-center gap-1">
+        <Link href="/notifications/preferences" onClick={onClose} className="text-[11px] text-[#7a8fa6] hover:text-[#7a8fa6] transition-colors flex items-center gap-1">
           <Settings size={10} /> Preferences
         </Link>
         <Link href="/notifications" onClick={onClose} className="text-[11px] text-[#00e5a0] hover:underline">
@@ -128,13 +205,13 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
             </div>
             <div>
               <p className="text-[12px] font-500 text-[#c8d8e8]">{item.label}</p>
-              <p className="text-[10px] text-[#3d5166]">{item.desc}</p>
+              <p className="text-[10px] text-[#7a8fa6]">{item.desc}</p>
             </div>
           </button>
         ))}
       </div>
       <div className="p-1.5 border-t border-[#162030]">
-        <button onClick={() => { router.push("/login"); onClose(); }}
+        <button onClick={() => { clearSession(); router.push("/login"); onClose(); }}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[8px] hover:bg-[rgba(239,68,68,0.08)] transition-colors text-left group">
           <div className="w-7 h-7 rounded-[8px] bg-[#0f1c2e] group-hover:bg-[rgba(239,68,68,0.12)] flex items-center justify-center transition-colors">
             <LogOut size={13} className="text-[#7a8fa6] group-hover:text-[#ef4444] transition-colors" />
@@ -148,14 +225,13 @@ function ProfileDropdown({ onClose }: { onClose: () => void }) {
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
+  const _router = useRouter();
   const breadcrumbs = getBreadcrumb(pathname);
   const unreadCount = NOTIFICATIONS.filter(n => n.unread).length;
 
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchFocused, setSearchFocused] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -169,13 +245,23 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  useEffect(() => { setNotifOpen(false); setProfileOpen(false); }, [pathname]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- close popovers when the user navigates
+    setNotifOpen(false);
+    setProfileOpen(false);
+  }, [pathname]);
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchQuery.trim()) {
-      router.push(`/reports/builder?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
+  // Global Cmd+K / Ctrl+K shortcut
+  useEffect(() => {
+    const handler = (e: globalThis.KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCmdOpen(o => !o);
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
 
   return (
     <header
@@ -193,43 +279,37 @@ export default function Header() {
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 min-w-0">
         {breadcrumbs.map((crumb, i) => (
           <span key={`${crumb.href}-${i}`} className="flex items-center gap-1.5 min-w-0">
-            {i > 0 && <ChevronRight size={11} className="text-[#2a3a4a] shrink-0" />}
+            {i > 0 && <ChevronRight size={11} className="text-[#556677] shrink-0" />}
             {i === breadcrumbs.length - 1 ? (
               <span className="text-[13px] font-600 text-[#f0f4f8] truncate max-w-[200px]">{crumb.label}</span>
             ) : (
-              <Link href={crumb.href} className="text-[13px] text-[#3d5166] hover:text-[#7a8fa6] transition-colors truncate max-w-[120px]">{crumb.label}</Link>
+              <Link href={crumb.href} className="text-[13px] text-[#7a8fa6] hover:text-[#7a8fa6] transition-colors truncate max-w-[120px]">{crumb.label}</Link>
             )}
           </span>
         ))}
       </nav>
 
-      {/* Search */}
-      <div className="relative" style={{ width: 360 }}>
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3d5166] pointer-events-none" />
-        <input
-          type="search"
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          onKeyDown={handleSearch}
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setSearchFocused(false)}
-          placeholder="Search employees, payroll, reports..."
-          className="w-full h-9 bg-[#04080f] text-[#f0f4f8] text-[13px] rounded-[10px] pl-9 pr-12 outline-none placeholder:text-[#2a3a4a] transition-all duration-150"
-          style={{
-            border: `1px solid ${searchFocused ? "#00e5a0" : "#162030"}`,
-            boxShadow: searchFocused ? "0 0 0 3px rgba(0,229,160,0.1)" : "none",
-          }}
-        />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
-          <Command size={10} className="text-[#2a3a4a]" />
-          <span className="text-[10px] text-[#2a3a4a]">K</span>
+      {/* Search trigger — opens command palette */}
+      <button
+        type="button"
+        aria-label="Open command palette (Cmd+K)"
+        onClick={() => setCmdOpen(true)}
+        className="relative flex h-9 w-[280px] items-center gap-2 rounded-[10px] border border-[#162030] bg-[#04080f] px-3 text-left text-[13px] text-[#7a8fa6] transition-all hover:border-[#1e3048] hover:text-[#c8d8e8] sm:w-[360px]"
+      >
+        <Search size={14} className="shrink-0" aria-hidden="true" />
+        <span className="flex-1">Search employees, payroll, reports…</span>
+        <div className="flex items-center gap-0.5">
+          <Command size={10} aria-hidden="true" />
+          <span className="text-[10px]">K</span>
         </div>
-      </div>
+      </button>
+
+      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
 
       {/* Right actions */}
       <div className="flex items-center gap-0.5">
         <Link href="/help" aria-label="Help Center"
-          className="w-8 h-8 rounded-[8px] flex items-center justify-center text-[#3d5166] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#7a8fa6] transition-all">
+          className="w-8 h-8 rounded-[8px] flex items-center justify-center text-[#7a8fa6] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#7a8fa6] transition-all">
           <HelpCircle size={16} />
         </Link>
 
@@ -238,7 +318,7 @@ export default function Header() {
             onClick={() => { setNotifOpen(o => !o); setProfileOpen(false); }}
             aria-label={`Notifications (${unreadCount} unread)`}
             aria-expanded={notifOpen}
-            className="relative w-8 h-8 rounded-[8px] flex items-center justify-center text-[#3d5166] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#7a8fa6] transition-all"
+            className="relative w-8 h-8 rounded-[8px] flex items-center justify-center text-[#7a8fa6] hover:bg-[rgba(255,255,255,0.05)] hover:text-[#7a8fa6] transition-all"
           >
             <Bell size={16} />
             {unreadCount > 0 && (
@@ -263,7 +343,7 @@ export default function Header() {
               PM
             </div>
             <span className="text-[12px] font-500 text-[#c8d8e8] hidden sm:block">Priya</span>
-            <ChevronDown size={11} className={`text-[#3d5166] transition-transform duration-150 ${profileOpen ? "rotate-180" : ""}`} />
+            <ChevronDown size={11} className={`text-[#7a8fa6] transition-transform duration-150 ${profileOpen ? "rotate-180" : ""}`} />
           </button>
           {profileOpen && <ProfileDropdown onClose={() => setProfileOpen(false)} />}
         </div>

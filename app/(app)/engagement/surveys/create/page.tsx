@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from 'react';
+
+import Page from "@/components/ui/Page";
+import React, { useState, useRef } from 'react';
 import {
-    FileEdit, Settings, Users, Calendar, Plus, Trash2, GripVertical, CheckCircle2, ChevronRight, CheckSquare, AlignLeft, ChevronDown, Clock
+    FileEdit, Users, Calendar, Plus, Trash2, GripVertical, CheckCircle2, ChevronRight, CheckSquare, AlignLeft, ChevronDown, Clock
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -27,9 +29,20 @@ export default function CreateSurveyScreen() {
     const [audience, setAudience] = useState('All Employees');
     const [isAnonymous, setIsAnonymous] = useState(true);
     const [isPublishing, setIsPublishing] = useState(false);
+    const nextIdRef = useRef(1000);
 
     const handleAddQuestion = (typeId: string) => {
-        const newQ = { id: Date.now(), type: typeId, text: '', required: false, options: typeId === 'choice' ? ['Option 1'] : [] };
+        // Use a monotonically-increasing ref instead of `Date.now()` —
+        // pure under React 19 strict mode and immune to clock skew /
+        // duplicate IDs when two questions are added in the same ms.
+        nextIdRef.current += 1;
+        const newQ = {
+            id: nextIdRef.current,
+            type: typeId,
+            text: '',
+            required: false,
+            options: typeId === 'choice' ? ['Option 1'] : [],
+        };
         setQuestions([...questions, newQ]);
     };
 
@@ -47,6 +60,13 @@ export default function CreateSurveyScreen() {
     };
 
     return (
+        <Page
+            title="Target Audience"
+            subtitle="Who should receive this survey?"
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Create" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -209,6 +229,8 @@ export default function CreateSurveyScreen() {
                                     {QUESTION_TYPES.map(qt => {
                                         const Icon = qt.icon;
                                         return (
+
+
                                             <button
                                                 key={qt.id}
                                                 onClick={() => handleAddQuestion(qt.id)}
@@ -216,7 +238,9 @@ export default function CreateSurveyScreen() {
                                             >
                                                 <Icon size={16} /> {qt.name}
                                             </button>
-                                        )
+                                        
+        
+)
                                     })}
                                 </div>
                             </div>
@@ -325,6 +349,8 @@ export default function CreateSurveyScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }
 

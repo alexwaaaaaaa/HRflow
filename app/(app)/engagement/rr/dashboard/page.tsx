@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import {
-    Award, Gift, Star, TrendingUp, Users, Heart, ThumbsUp, Medal, Plus, ArrowRight, ChevronRight, Zap
+    Award, Gift, Star, TrendingUp, Users, Heart, Medal, Plus, ArrowRight, ChevronRight, Zap
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -21,6 +23,13 @@ export default function RRDashboardScreen() {
     ];
 
     return (
+        <Page
+            title="Recognition & Rewards"
+            subtitle="Celebrate wins, appreciate peers, and redeem your hard-earned points."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Dashboard" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -175,6 +184,8 @@ export default function RRDashboardScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }
 

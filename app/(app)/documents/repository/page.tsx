@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from 'react';
 import {
-    Folder, FileText, Search, Filter, MoreVertical, UploadCloud,
-    FolderPlus, Lock, Clock, Users, Star, LayoutGrid, List
+    Folder, Search, Filter, MoreVertical, UploadCloud,
+    FolderPlus, Lock, Users, Star, LayoutGrid, List
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,6 +28,13 @@ export default function DocumentRepositoryScreen() {
     const [view, setView] = useState('grid');
 
     return (
+        <Page
+            title="Company Documents"
+            subtitle="Secure, centralized repository for all HR and company files."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Repository" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200 flex flex-col">
             <div className="max-w-[1400px] mx-auto w-full flex-1 flex flex-col">
 
@@ -149,5 +158,7 @@ export default function DocumentRepositoryScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

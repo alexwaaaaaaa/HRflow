@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Users, Scale, FileBarChart, CheckCircle } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 export default function GenderPayGapScreen() {
     return (
+        <Page
+            title="Gender Pay Gap Reporting"
+            subtitle="Detailed demographic analysis and regulatory metric calculation for gender-based compensation discrepancies."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Gender" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -84,5 +93,7 @@ export default function GenderPayGapScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

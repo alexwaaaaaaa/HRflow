@@ -1,4 +1,6 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import { BookOpen, Search, ChevronRight, ArrowLeft, Clock, Eye, ThumbsUp, Tag } from 'lucide-react';
 import Link from 'next/link';
@@ -39,6 +41,12 @@ export default function KnowledgeBaseScreen() {
     });
 
     return (
+        <Page
+            title="Knowledge Base"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Knowledge Base" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center gap-3 mb-2">
                 <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold transition-colors flex items-center gap-1"><ArrowLeft size={14} /> Help Center</Link>
@@ -97,5 +105,7 @@ export default function KnowledgeBaseScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

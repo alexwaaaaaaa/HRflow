@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import Page from "@/components/ui/Page";
+
+import React from 'react';
 import {
     Clock, Search, Filter, Download, ArrowUpRight, AlertCircle
 } from 'lucide-react';
@@ -13,6 +15,13 @@ export default function LateComingReport() {
     ];
 
     return (
+        <Page
+            title="Late Coming Analysis"
+            subtitle="Track recurring tardiness, total delay duration, and associated payroll penalties."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Reports", href: "/attendance/reports" }, { label: "Late Coming" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-[1400px] mx-auto space-y-6">
 
@@ -135,5 +144,7 @@ export default function LateComingReport() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,131 +1,204 @@
 "use client";
-import React, { useState } from "react";
-import {
-    Server, Lightbulb, PenTool, Paperclip, Send, X
-} from "lucide-react";
 
-export default function RaiseTicket() {
-    const [category, setCategory] = useState("IT");
+import { useState, type FormEvent } from "react";
+import { Server, Lightbulb, PenTool, Paperclip, Send } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
+
+type Category = "IT" | "HR" | "Facilities";
+
+const CATEGORY_OPTIONS: Array<{ id: Category; label: string; icon: typeof Server; color: string }> = [
+    { id: "IT", label: "IT Support", icon: Server, color: "#33E6FF" },
+    { id: "HR", label: "HR & Benefits", icon: Lightbulb, color: "#9D00FF" },
+    { id: "Facilities", label: "Facilities", icon: PenTool, color: "#FFB020" },
+];
+
+const ISSUE_TYPES: Record<Category, string[]> = {
+    IT: [
+        "Hardware Issue / Need Replacement",
+        "Software Access / License Request",
+        "Network / VPN Connectivity",
+        "Other IT Issue",
+    ],
+    HR: ["Payroll / Salary Inquiry", "Leave Management Query", "Benefits & Insurance"],
+    Facilities: ["Desk Setup / Ergonomics", "Office Maintenance", "ID Card Issue"],
+};
+
+export default function RaiseTicketPage() {
+    const toast = useToast();
+    const [category, setCategory] = useState<Category>("IT");
+    const [issueType, setIssueType] = useState(ISSUE_TYPES.IT[0]);
+    const [subject, setSubject] = useState("");
+    const [description, setDescription] = useState("");
+    const [highPriority, setHighPriority] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    const isValid = subject.trim().length >= 5 && description.trim().length >= 10;
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (!isValid) return;
+        setSubmitting(true);
+        try {
+            await new Promise((r) => setTimeout(r, 600));
+            toast.show({
+                variant: "success",
+                title: "Ticket raised",
+                description: `Your ${category} request has been logged. SLA: 24 hours.`,
+            });
+            setSubject("");
+            setDescription("");
+            setHighPriority(false);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] border-t border-[#1A2A3A] mt-6">
+        <Page
+            title="Raise a new request"
+            subtitle="Provide details so the right helpdesk agents can assist you faster"
+            breadcrumbs={[
+                { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                { label: "Raise" },
+            ]}
+            maxWidth="900px"
+        >
+            <Card padding="lg">
+                <form onSubmit={handleSubmit} className="space-y-8" aria-label="Raise ticket">
+                    {/* Step 1: Category */}
+                    <fieldset>
+                        <legend className="mb-3 block text-sm font-semibold text-[#8899AA]">
+                            1. Select request category
+                        </legend>
+                        <div className="grid gap-4 sm:grid-cols-3">
+                            {CATEGORY_OPTIONS.map((opt) => {
+                                const active = category === opt.id;
+                                const Icon = opt.icon;
+                                return (
+                                    <button
+                                        key={opt.id}
+                                        type="button"
+                                        role="radio"
+                                        aria-checked={active}
+                                        onClick={() => {
+                                            setCategory(opt.id);
+                                            setIssueType(ISSUE_TYPES[opt.id][0]);
+                                        }}
+                                        className="flex flex-col items-center justify-center gap-2 rounded-xl border p-4 transition-all"
+                                        style={{
+                                            background: active ? `${opt.color}1A` : "#1A2A3A",
+                                            borderColor: active ? opt.color : "#2A3A4A",
+                                            color: active ? opt.color : "#8899AA",
+                                        }}
+                                    >
+                                        <Icon size={22} aria-hidden="true" />
+                                        <span className="font-semibold">{opt.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </fieldset>
 
-            <div className="mb-8 font-jakarta">
-                <h1 className="text-3xl font-bold text-white mb-2">Raise a new request</h1>
-                <p className="text-[#8899AA]">Provide details so our specific helpdesk agents can assist you faster.</p>
-            </div>
-
-            <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-8 shadow-xl">
-
-                {/* Step 1: Category */}
-                <div className="mb-8">
-                    <label className="text-sm font-semibold text-[#8899AA] mb-3 block">1. Select Request Category</label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <button
-                            onClick={() => setCategory("IT")}
-                            className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${category === 'IT' ? 'bg-[#33E6FF]/10 border-[#33E6FF] text-[#33E6FF]' : 'bg-[#1A2A3A] border-[#2A3A4A] text-[#8899AA] hover:border-[#445566]'}`}
-                        >
-                            <Server size={24} />
-                            <span className="font-semibold">IT Support</span>
-                        </button>
-                        <button
-                            onClick={() => setCategory("HR")}
-                            className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${category === 'HR' ? 'bg-[#9D00FF]/10 border-[#9D00FF] text-[#9D00FF]' : 'bg-[#1A2A3A] border-[#2A3A4A] text-[#8899AA] hover:border-[#445566]'}`}
-                        >
-                            <Lightbulb size={24} />
-                            <span className="font-semibold">HR & Benefits</span>
-                        </button>
-                        <button
-                            onClick={() => setCategory("Facilities")}
-                            className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${category === 'Facilities' ? 'bg-[#FFB020]/10 border-[#FFB020] text-[#FFB020]' : 'bg-[#1A2A3A] border-[#2A3A4A] text-[#8899AA] hover:border-[#445566]'}`}
-                        >
-                            <PenTool size={24} />
-                            <span className="font-semibold">Facilities</span>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Step 2: Request Type Dropdown (Dynamically changes based on category) */}
-                <div className="mb-6">
-                    <label className="text-sm font-semibold text-[#8899AA] mb-2 block">2. Issue Type</label>
-                    <select className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00E5A0] transition-colors appearance-none">
-                        {category === 'IT' && (
-                            <>
-                                <option>Hardware Issue / Need Replacement</option>
-                                <option>Software Access / License Request</option>
-                                <option>Network / VPN Connectivity</option>
-                                <option>Other IT Issue</option>
-                            </>
-                        )}
-                        {category === 'HR' && (
-                            <>
-                                <option>Payroll / Salary Inquiry</option>
-                                <option>Leave Management Query</option>
-                                <option>Benefits & Insurance</option>
-                            </>
-                        )}
-                        {category === 'Facilities' && (
-                            <>
-                                <option>Desk Setup / Ergonomics</option>
-                                <option>Office Maintenance</option>
-                                <option>ID Card Issue</option>
-                            </>
-                        )}
-                    </select>
-                </div>
-
-                {/* Step 3: Subject & Description */}
-                <div className="space-y-6 mb-8">
+                    {/* Step 2: Issue type */}
                     <div>
-                        <label className="text-sm font-semibold text-[#8899AA] mb-2 block">3. Subject / Summary <span className="text-[#FF4444]">*</span></label>
+                        <label htmlFor="issue-type" className="mb-2 block text-sm font-semibold text-[#8899AA]">
+                            2. Issue type
+                        </label>
+                        <select
+                            id="issue-type"
+                            value={issueType}
+                            onChange={(e) => setIssueType(e.target.value)}
+                            className="w-full rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] px-4 py-3 text-white outline-none transition-colors focus:border-[#00e5a0]"
+                        >
+                            {ISSUE_TYPES[category].map((t) => (
+                                <option key={t}>{t}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Step 3: Subject */}
+                    <div>
+                        <label htmlFor="subject" className="mb-2 block text-sm font-semibold text-[#8899AA]">
+                            3. Subject / summary <span className="text-[#FF4444]">*</span>
+                        </label>
                         <input
+                            id="subject"
                             type="text"
-                            placeholder="Briefly state your issue..."
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-[#00E5A0] transition-colors"
+                            value={subject}
+                            onChange={(e) => setSubject(e.target.value)}
+                            placeholder="Briefly state your issue…"
+                            required
+                            minLength={5}
+                            className="w-full rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] px-4 py-3 text-white outline-none transition-colors focus:border-[#00e5a0]"
                         />
                     </div>
 
+                    {/* Step 4: Description */}
                     <div>
-                        <label className="text-sm font-semibold text-[#8899AA] mb-2 block text-white-500">4. Detailed Description <span className="text-[#FF4444]">*</span></label>
-                        <div className="border border-[#2A3A4A] rounded-xl overflow-hidden focus-within:border-[#00E5A0] transition-colors bg-[#1A2A3A]">
+                        <label htmlFor="description" className="mb-2 block text-sm font-semibold text-[#8899AA]">
+                            4. Detailed description <span className="text-[#FF4444]">*</span>
+                        </label>
+                        <div className="overflow-hidden rounded-xl border border-[#2A3A4A] bg-[#1A2A3A] transition-colors focus-within:border-[#00e5a0]">
                             <textarea
+                                id="description"
                                 rows={6}
-                                className="w-full bg-transparent text-white p-4 focus:outline-none resize-y min-h-[120px]"
-                                placeholder="Please provide as much context as possible. Steps to reproduce if it's a bug."
-                            ></textarea>
-
-                            {/* Attachments Footer */}
-                            <div className="bg-[#0A1420] border-t border-[#2A3A4A] p-3 flex items-center justify-between">
-                                <button className="flex items-center gap-2 text-sm text-[#8899AA] hover:text-[#00E5A0] transition-colors px-2 py-1 bg-[#1A2A3A] rounded border border-[#2A3A4A]">
-                                    <Paperclip size={16} /> Attach Files or Screenshots
+                                minLength={10}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Provide as much context as possible. Steps to reproduce if it's a bug."
+                                required
+                                className="min-h-[120px] w-full resize-y bg-transparent p-4 text-white outline-none"
+                            />
+                            <div className="flex items-center justify-between border-t border-[#2A3A4A] bg-[#0A1420] p-3">
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center gap-2 rounded border border-[#2A3A4A] bg-[#1A2A3A] px-2 py-1 text-sm text-[#8899AA] transition-colors hover:text-[#00e5a0]"
+                                >
+                                    <Paperclip size={14} aria-hidden="true" /> Attach files
                                 </button>
-                                <span className="text-xs text-[#445566]">Max total size: 10MB</span>
+                                <span className="text-xs text-[#445566]">Max total: 10 MB</span>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Priority Override & Submit */}
-                <div className="flex flex-col md:flex-row items-center justify-between pt-6 border-t border-[#1A2A3A] gap-4">
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" className="w-5 h-5 bg-[#1A2A3A] border-[#2A3A4A] rounded text-[#FF4444] focus:ring-[#FF4444] accent-[#FF4444]" />
-                        <div className="flex flex-col">
-                            <span className="text-sm font-semibold text-white group-hover:text-[#FF4444] transition-colors">Mark as High Priority</span>
-                            <span className="text-xs text-[#8899AA]">Use only if work is completely blocked.</span>
+                    {/* Priority + actions */}
+                    <div className="flex flex-col gap-4 border-t border-[#1A2A3A] pt-6 md:flex-row md:items-center md:justify-between">
+                        <label className="group flex cursor-pointer items-center gap-3">
+                            <input
+                                type="checkbox"
+                                checked={highPriority}
+                                onChange={(e) => setHighPriority(e.target.checked)}
+                                className="h-5 w-5 cursor-pointer rounded accent-[#FF4444]"
+                            />
+                            <span>
+                                <span className="block text-sm font-semibold text-white transition-colors group-hover:text-[#FF4444]">
+                                    Mark as high priority
+                                </span>
+                                <span className="block text-xs text-[#8899AA]">
+                                    Use only if work is completely blocked.
+                                </span>
+                            </span>
+                        </label>
+                        <div className="flex gap-3">
+                            <Button type="button" variant="secondary">
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                isLoading={submitting}
+                                loadingText="Submitting…"
+                                disabled={!isValid}
+                                icon={<Send size={14} />}
+                            >
+                                Submit request
+                            </Button>
                         </div>
-                    </label>
-
-                    <div className="flex gap-4 w-full md:w-auto">
-                        <button className="flex-1 md:flex-none px-6 py-3 text-[#8899AA] font-semibold hover:text-white transition-colors bg-[#1A2A3A] rounded-xl border border-[#2A3A4A]">
-                            Cancel
-                        </button>
-                        <button className="flex-1 md:flex-none px-8 py-3 bg-[#00E5A0] text-[#0A1420] font-bold rounded-xl hover:bg-[#00c98d] transition-all shadow-[0_10px_20px_rgba(0,229,160,0.2)] flex items-center justify-center gap-2">
-                            <Send size={18} /> Submit Request
-                        </button>
                     </div>
-                </div>
-
-            </div>
-        </div>
+                </form>
+            </Card>
+        </Page>
     );
 }

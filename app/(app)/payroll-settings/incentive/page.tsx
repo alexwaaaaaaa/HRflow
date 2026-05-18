@@ -1,137 +1,172 @@
 "use client";
 
-import React from "react";
-import { ArrowLeft, Gift, Plus, Calendar, Settings, PlayCircle, Star, Zap } from "lucide-react";
-import Link from "next/link";
+import { Plus, Calendar, Gift, Settings, PlayCircle, Star, Zap, Save } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// migrated: immersive-ui
+
+interface IncentivePlan {
+    name: string;
+    type: string;
+    amount: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    color: string;
+    status: boolean;
+    auto: boolean;
+}
+
+const PLANS: IncentivePlan[] = [
+    { name: "Perfect Attendance Incentive", type: "Monthly", amount: "₹2,500 fixed", icon: Calendar, color: "#00E5A0", status: true, auto: true },
+    { name: "Employee Referral Bonus", type: "On Event", amount: "₹15,000 fixed", icon: Gift, color: "#FFB800", status: true, auto: false },
+    { name: "Productivity Bonus Q1", type: "Quarterly", amount: "10% of Basic", icon: Zap, color: "#44AAFF", status: true, auto: false },
+];
 
 export default function IncentiveSetupPage() {
     return (
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 24px", display: "flex", gap: 32, flexDirection: "row", color: "#FFFFFF" }}>
-
-            {/* LEFT PANEL - PLANS LIST */}
-            <div style={{ flex: "0 0 720px", display: "flex", flexDirection: "column", gap: 24 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 8 }}>
-                    <div>
-                        <Link href="/payroll-settings" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#8899AA", textDecoration: "none", fontSize: 14, marginBottom: 16 }}>
-                            <ArrowLeft size={16} /> Back to Settings
-                        </Link>
-                        <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Incentive Plans</h2>
-                        <p style={{ color: "#8899AA", fontSize: 14, marginTop: 4 }}>Manage non-sales incentives like attendance, referrals, and spot awards.</p>
-                    </div>
-                    <button style={{ height: 40, padding: "0 20px", background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                        <Plus size={16} /> Add New Plan
-                    </button>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                    {/* Active Plans */}
-                    {[
-                        { name: "Perfect Attendance Incentive", type: "Monthly", amount: "₹2,500 fixed", icon: <Calendar size={20} />, color: "#00E5A0", status: true, auto: true },
-                        { name: "Employee Referral Bonus", type: "On Event", amount: "₹15,000 fixed", icon: <Gift size={20} />, color: "#FFB800", status: true, auto: false },
-                        { name: "Productivity Bonus Q1", type: "Quarterly", amount: "10% of Basic", icon: <Zap size={20} />, color: "#44AAFF", status: true, auto: false },
-                    ].map((plan, i) => (
-                        <div key={i} style={{ background: "#0A1420", border: "1px solid #1A2A3A", borderRadius: 12, padding: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                                <div style={{ width: 44, height: 44, borderRadius: 12, background: `${plan.color}20`, display: "flex", alignItems: "center", justifyContent: "center", color: plan.color }}>
-                                    {plan.icon}
-                                </div>
-                                <div>
-                                    <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 4 }}>{plan.name}</div>
-                                    <div style={{ fontSize: 13, color: "#8899AA", display: "flex", alignItems: "center", gap: 12 }}>
-                                        <span>{plan.type}</span>
-                                        <span style={{ width: 4, height: 4, background: "#3A4A5A", borderRadius: 2 }}></span>
-                                        <span style={{ color: "#FFF" }}>{plan.amount}</span>
+        <Page
+            title="Incentive Plans"
+            subtitle="Manage non-sales incentives like attendance, referrals, and spot awards."
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll/dashboard" },
+                { label: "Settings", href: "/payroll-settings" },
+                { label: "Incentive Plans" },
+            ]}
+            maxWidth="1200px"
+            actions={
+                <Button icon={<Plus size={14} aria-hidden="true" />}>Add New Plan</Button>
+            }
+        >
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                {/* Plans List */}
+                <div className="xl:col-span-2 space-y-4">
+                    {PLANS.map((plan) => (
+                        <Card key={plan.name} padding="md">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div
+                                        className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                                        style={{ background: `${plan.color}20`, color: plan.color }}
+                                        aria-hidden="true"
+                                    >
+                                        <plan.icon size={18} />
+                                    </div>
+                                    <div>
+                                        <div className="text-base font-medium text-white mb-1">{plan.name}</div>
+                                        <div className="flex items-center gap-3 text-xs text-[#8899AA]">
+                                            <span>{plan.type}</span>
+                                            <span className="w-1 h-1 bg-[#3A4A5A] rounded-full" aria-hidden="true" />
+                                            <span className="text-white">{plan.amount}</span>
+                                        </div>
                                     </div>
                                 </div>
+                                <div className="flex items-center gap-4 shrink-0">
+                                    {plan.auto ? (
+                                        <Badge variant="success">
+                                            <PlayCircle size={11} className="mr-1" aria-hidden="true" /> Auto-Trigger
+                                        </Badge>
+                                    ) : (
+                                        <Badge variant="neutral">Manual Appr.</Badge>
+                                    )}
+                                    <div
+                                        className={`w-10 h-6 rounded-full flex items-center p-0.5 ${plan.status ? "bg-[#00E5A0]" : "bg-[#2A3A4A]"}`}
+                                        role="switch"
+                                        aria-checked={plan.status}
+                                        aria-label={`${plan.name} enabled`}
+                                    >
+                                        <div className={`w-5 h-5 rounded-full transition-transform ${plan.status ? "bg-[#060B14] translate-x-4" : "bg-white"}`} />
+                                    </div>
+                                    <Button variant="ghost" size="sm" aria-label={`Configure ${plan.name}`}>
+                                        <Settings size={16} aria-hidden="true" />
+                                    </Button>
+                                </div>
                             </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                                {plan.auto ? (
-                                    <span style={{ fontSize: 12, color: "#00E5A0", background: "#00E5A015", padding: "4px 8px", borderRadius: 4, display: "flex", alignItems: "center", gap: 4 }}><PlayCircle size={14} /> Auto-Trigger</span>
-                                ) : (
-                                    <span style={{ fontSize: 12, color: "#8899AA", background: "#1A2A3A", padding: "4px 8px", borderRadius: 4 }}>Manual Appr.</span>
-                                )}
-
-                                <label style={{ position: "relative", display: "inline-block", width: 40, height: 24 }}>
-                                    <input type="checkbox" defaultChecked={plan.status} style={{ opacity: 0, width: 0, height: 0 }} />
-                                    <span style={{ position: "absolute", cursor: "pointer", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: plan.status ? "#00E5A0" : "#2A3A4A", transition: ".4s", borderRadius: 24 }}>
-                                        <span style={{ position: "absolute", content: '""', height: 16, width: 16, left: plan.status ? 20 : 4, bottom: 4, backgroundColor: plan.status ? "#060B14" : "#FFF", transition: ".4s", borderRadius: "50%" }}></span>
-                                    </span>
-                                </label>
-
-                                <button style={{ background: "transparent", border: "none", color: "#8899AA", cursor: "pointer" }}>
-                                    <Settings size={18} />
-                                </button>
-                            </div>
-                        </div>
+                        </Card>
                     ))}
                 </div>
-            </div>
 
-            {/* RIGHT PANEL - PLAN BUILDER */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 24 }}>
-                <div style={{ background: "#0A1420", border: "1px solid #1A2A3A", borderRadius: 16, padding: 24, position: "sticky", top: 24 }}>
-                    <h3 style={{ fontSize: 16, fontWeight: 600, margin: "0 0 20px 0" }}>Create / Edit Plan</h3>
+                {/* Plan Builder */}
+                <div>
+                    <Card padding="lg" className="sticky top-6">
+                        <h3 className="text-base font-semibold text-white mb-5">Create / Edit Plan</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="plan-name" className="block text-xs text-[#8899AA] mb-2">Plan Name</label>
+                                <input
+                                    id="plan-name"
+                                    type="text"
+                                    defaultValue="Perfect Attendance Incentive"
+                                    className="w-full h-9 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-3 text-sm outline-none focus:border-[#00E5A0]"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label htmlFor="plan-type" className="block text-xs text-[#8899AA] mb-2">Type</label>
+                                    <select
+                                        id="plan-type"
+                                        className="w-full h-9 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-3 text-sm outline-none focus:border-[#00E5A0]"
+                                    >
+                                        <option>Attendance</option>
+                                        <option>Referral</option>
+                                        <option>Productivity</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="plan-freq" className="block text-xs text-[#8899AA] mb-2">Frequency</label>
+                                    <select
+                                        id="plan-freq"
+                                        className="w-full h-9 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-3 text-sm outline-none focus:border-[#00E5A0]"
+                                    >
+                                        <option>Monthly</option>
+                                        <option>On Event</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="text-xs text-[#8899AA] mb-2">Payout Rule / Trigger</p>
+                                <div className="bg-[#1A2A3A] rounded-lg p-3 text-xs border border-[#2A3A4A]">
+                                    When <span className="text-[#00E5A0]">[Loss of Pay Days]</span> equals <span className="text-[#00E5A0]">0</span> for entire month.
+                                </div>
+                            </div>
+                            <div>
+                                <p className="text-xs text-[#8899AA] mb-2">Amount Calculation</p>
+                                <div className="flex items-center gap-2">
+                                    <select
+                                        aria-label="Amount type"
+                                        className="w-32 h-9 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-2 text-xs outline-none focus:border-[#00E5A0]"
+                                    >
+                                        <option>Fixed Amount</option>
+                                        <option>% of Basic</option>
+                                    </select>
+                                    <span className="text-[#8899AA] text-sm" aria-hidden="true">₹</span>
+                                    <input
+                                        type="text"
+                                        defaultValue="2500"
+                                        aria-label="Amount value"
+                                        className="flex-1 h-9 bg-[#0D1928] border border-[#1A2A3A] rounded-lg text-white px-3 text-sm outline-none focus:border-[#00E5A0]"
+                                    />
+                                </div>
+                            </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Plan Name</label>
-                            <input type="text" defaultValue="Perfect Attendance Incentive" style={{ width: "100%", height: 36, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }} />
+                            {/* Portal Preview */}
+                            <div className="mt-3 bg-gradient-to-br from-[#0A1A2A] to-[#002233] border border-[#00E5A0]/30 rounded-xl p-4">
+                                <div className="flex items-center gap-2 mb-2 text-[#00E5A0] text-[10px] font-semibold uppercase tracking-wider">
+                                    <Star size={12} className="fill-[#00E5A0]" aria-hidden="true" /> Employee Portal Preview
+                                </div>
+                                <p className="text-sm font-medium leading-relaxed text-white">
+                                    🎉 Congratulations! You earned a ₹2,500 <span className="text-[#00E5A0]">Attendance Bonus</span> this month! Keep up the great streak.
+                                </p>
+                            </div>
+
+                            <Button variant="secondary" className="w-full mt-2" icon={<Save size={14} aria-hidden="true" />}>
+                                Save Plan Configurations
+                            </Button>
                         </div>
-
-                        <div style={{ display: "flex", gap: 16 }}>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Type</label>
-                                <select style={{ width: "100%", height: 36, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }}>
-                                    <option>Attendance</option>
-                                    <option>Referral</option>
-                                    <option>Productivity</option>
-                                </select>
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Frequency</label>
-                                <select style={{ width: "100%", height: 36, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }}>
-                                    <option>Monthly</option>
-                                    <option>On Event</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Payout Rule / Trigger</label>
-                            <div style={{ background: "#1A2A3A", borderRadius: 8, padding: 12, fontSize: 13, border: "1px solid #2A3A4A" }}>
-                                When <span style={{ color: "#00E5A0" }}>[Loss of Pay Days]</span> equals <span style={{ color: "#00E5A0" }}>0</span> for entire month.
-                            </div>
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", fontSize: 13, color: "#8899AA", marginBottom: 8 }}>Amount Calculation</label>
-                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                                <select style={{ width: 120, height: 36, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }}>
-                                    <option>Fixed Amount</option>
-                                    <option>% of Basic</option>
-                                </select>
-                                <span style={{ color: "#8899AA" }}>₹</span>
-                                <input type="text" defaultValue="2500" style={{ flex: 1, height: 36, background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 8, color: "#FFFFFF", padding: "0 12px", outline: "none" }} />
-                            </div>
-                        </div>
-
-                        {/* Gamification Preview */}
-                        <div style={{ marginTop: 12, background: "linear-gradient(135deg, #0A1A2A 0%, #002233 100%)", border: "1px solid #00E5A030", borderRadius: 12, padding: 20 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, color: "#00E5A0", fontSize: 12, fontWeight: 600, textTransform: "uppercase" }}>
-                                <Star size={14} fill="#00E5A0" /> Employee Portal Preview
-                            </div>
-                            <div style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.4, margin: 0 }}>
-                                🎉 Congratulations! You earned a ₹2,500 <span style={{ color: "#00E5A0" }}>Attendance Bonus</span> this month! Keep up the great streak.
-                            </div>
-                        </div>
-
-                        <button style={{ height: 44, width: "100%", background: "#1A2A3A", border: "none", borderRadius: 8, color: "#FFF", fontSize: 14, fontWeight: 500, cursor: "pointer", marginTop: 8 }}>
-                            Save Plan Configurations
-                        </button>
-                    </div>
+                    </Card>
                 </div>
             </div>
-
-        </div>
+        </Page>
     );
 }

@@ -1,6 +1,8 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { BarChart2, ArrowLeft, Download, Eye, FileText, TrendingUp } from 'lucide-react';
+import { BarChart2, ArrowLeft, Download, Eye, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 const REPORTS = [
@@ -26,6 +28,13 @@ const FMT_COLOR: Record<string, string> = {
 
 export default function SampleReportsScreen() {
     return (
+        <Page
+            title="Sample Reports"
+            subtitle="Download sample outputs for all 25 HRFlow report formats"
+            breadcrumbs={[{ label: "Help", href: "/help" }, { label: "Sample Reports" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <Link href="/help" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Help Center</Link>
             <div>
@@ -57,5 +66,7 @@ export default function SampleReportsScreen() {
                 ))}
             </div>
         </div>
+    
+        </Page>
     );
 }

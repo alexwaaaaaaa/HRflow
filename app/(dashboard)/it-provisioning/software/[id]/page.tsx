@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Key, Settings, ExternalLink, Calendar, Plus, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Settings, ExternalLink, Calendar, Plus, AlertTriangle, ShieldCheck } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 

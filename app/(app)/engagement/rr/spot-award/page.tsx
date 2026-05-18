@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Zap, Search, Filter, CheckCircle2, XCircle, Clock, Gift, Medal, User, Plus
+    Zap, Search, Filter, CheckCircle2, XCircle, Clock, Gift
 } from 'lucide-react';
 
 const TEAM_MEMBERS = [
@@ -40,6 +42,13 @@ export default function SpotAwardManagerScreen() {
     };
 
     return (
+        <Page
+            title="Spot Award Manager"
+            subtitle="Instantly recognize exceptional performance within your team."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Spot Award" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -241,5 +250,7 @@ export default function SpotAwardManagerScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

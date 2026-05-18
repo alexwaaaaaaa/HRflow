@@ -1,10 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Target, AlertTriangle, Users, ChevronRight, CheckCircle2, MoreHorizontal } from 'lucide-react';
-import Link from 'next/link';
+import { Target, AlertTriangle, Users, ChevronRight } from 'lucide-react';
 
 export default function SuccessionPlanScreen() {
     return (
+        <Page
+            title="Chief Technology Officer (CTO)"
+            subtitle="Current Incumbent: Sarah Jenkins • Level: L1 Executive"
+            breadcrumbs={[{ label: "Succession", href: "/succession" }, { label: "Plan" }]}
+            maxWidth="1100px"
+        >
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -111,5 +119,7 @@ export default function SuccessionPlanScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

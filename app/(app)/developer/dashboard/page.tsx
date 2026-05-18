@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Terminal, Copy, ArrowUpRight, Activity, BookOpen, KeySquare } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DeveloperDashboardPage() {
     return (
+        <Page
+            title="Developer Portal"
+            subtitle="Manage API keys, monitor usage, and integrate Kaarya into your internal tools."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Dashboard" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -115,5 +124,7 @@ export default function DeveloperDashboardPage() {
                 </table>
             </div>
         </div>
+    
+        </Page>
     );
 }

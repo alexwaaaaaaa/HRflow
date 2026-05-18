@@ -1,9 +1,11 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    BarChart2, Filter, Download, Zap, Heart, Users, Target, MoveUpRight, MoveDownRight, ArrowRight
+    BarChart2, Download, Target, MoveUpRight, MoveDownRight
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
 
 const BENCHMARK_DATA = [
@@ -20,6 +22,13 @@ export default function BenchmarkComparisonScreen() {
     const [size, setSize] = useState('500-1000 Employees');
 
     return (
+        <Page
+            title="Industry Benchmarks"
+            subtitle="Compare your engagement scores against industry standards and peers."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Analytics", href: "/engagement/surveys/analytics" }, { label: "Benchmarks" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -178,5 +187,7 @@ export default function BenchmarkComparisonScreen() {
             </div>
 
         </div>
+    
+        </Page>
     );
 }

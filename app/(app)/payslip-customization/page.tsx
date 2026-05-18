@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Check, Settings2, LayoutTemplate, Palette, Eye, Upload } from "lucide-react";
 
@@ -24,6 +26,13 @@ export default function PayslipCustomizationPage() {
     ];
 
     return (
+        <Page
+            title="HRFlow Technologies Pvt. Ltd."
+            subtitle="Design your company's payslip format, branding, and visible sections."
+            breadcrumbs={[{ label: "Payslip Customization" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-[1500px] mx-auto space-y-6">
 
@@ -352,5 +361,7 @@ export default function PayslipCustomizationPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

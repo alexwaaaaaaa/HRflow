@@ -1,7 +1,10 @@
 "use client";
 import React from 'react';
-import { Target, Calendar, CheckCircle2, Clock, XCircle, ChevronRight } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, XCircle, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import Page from '@/components/ui/Page';
+import Card from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 
 type TimelineStep = { label: string; done: boolean; date?: string; active?: boolean; rejected?: boolean; };
 
@@ -30,18 +33,18 @@ export default function CandidateStatusScreen() {
     ];
 
     return (
-        <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Target size={24} className="text-indigo-400" /> Track Applications</h1>
-                    <p className="text-[#8899AA] text-sm mt-1">Real-time status updates on all your job applications.</p>
-                </div>
-            </div>
-
+        <Page
+            title="Track Applications"
+            subtitle="Real-time status updates on all your job applications"
+            breadcrumbs={[
+                { label: 'Home', href: '/' },
+                { label: 'Careers', href: '/candidate/jobs' },
+                { label: 'My Applications', href: '/candidate/status' },
+            ]}
+        >
             <div className="space-y-6">
                 {APPS.map((app, i) => (
-                    <div key={i} className="bg-[#0A1420] border border-[#1A2A3A] rounded-xl overflow-hidden shadow-lg">
-
+                    <Card key={i} padding="none" className="overflow-hidden">
                         <div className="p-6 pb-0 flex items-start justify-between">
                             <div>
                                 <h2 className="text-xl font-bold text-white mb-2">{app.role}</h2>
@@ -51,24 +54,35 @@ export default function CandidateStatusScreen() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase ${app.active ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
-                                    {app.active ? <Clock size={12} /> : <XCircle size={12} />}
-                                    {app.status}
-                                </span>
+                                {app.active ? (
+                                    <Badge variant="info">
+                                        <Clock size={12} aria-hidden="true" />
+                                        {app.status}
+                                    </Badge>
+                                ) : (
+                                    <Badge variant="danger">
+                                        <XCircle size={12} aria-hidden="true" />
+                                        {app.status}
+                                    </Badge>
+                                )}
                             </div>
                         </div>
 
                         <div className="p-8 pb-10">
                             <div className="relative">
                                 {/* Progress Line */}
-                                <div className="absolute top-[15px] left-0 w-full h-[2px] bg-[#1A2A3A]"></div>
-                                <div className="absolute top-[15px] left-0 h-[2px] bg-indigo-500 transition-all" style={{ width: `${((app.step - 1) / (app.timeline.length - 1)) * 100}%` }}></div>
+                                <div className="absolute top-[15px] left-0 w-full h-[2px] bg-[#1A2A3A]" aria-hidden="true"></div>
+                                <div
+                                    className="absolute top-[15px] left-0 h-[2px] bg-indigo-500 transition-all"
+                                    style={{ width: `${((app.step - 1) / (app.timeline.length - 1)) * 100}%` }}
+                                    aria-hidden="true"
+                                ></div>
 
                                 <div className="flex justify-between relative z-10">
                                     {app.timeline.map((step, idx) => (
                                         <div key={idx} className="flex flex-col items-center w-32 -ml-16 first:ml-0 last:-mr-16 first:w-auto last:w-auto">
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-3 transition-colors
-                           ${step.done ? (step.rejected ? 'bg-red-500 text-white' : 'bg-indigo-500 text-white') :
+                                                ${step.done ? (step.rejected ? 'bg-red-500 text-white' : 'bg-indigo-500 text-white') :
                                                     step.active ? 'bg-indigo-500/20 border-2 border-indigo-400 text-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.4)]' :
                                                         'bg-[#131B2B] border-2 border-[#2A3A4A] text-[#556677]'}`}>
                                                 {step.rejected ? <XCircle size={16} /> : step.done ? <CheckCircle2 size={16} /> : <div className="w-2 h-2 rounded-full bg-current"></div>}
@@ -84,11 +98,11 @@ export default function CandidateStatusScreen() {
                         {app.active && (
                             <div className="bg-[#131B2B] border-t border-[#1A2A3A] p-4 px-6 flex items-center justify-between">
                                 <div className="flex items-center gap-3 text-sm text-[#AABBCC]">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/10 text-amber-400"><Calendar size={16} /></span>
+                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/10 text-amber-400"><Calendar size={16} aria-hidden="true" /></span>
                                     You have an action required: Please schedule your Onsite Loop.
                                 </div>
                                 <Link href="/candidate/interview" className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-5 py-2 rounded-lg text-sm transition-colors flex items-center gap-2">
-                                    Schedule Now <ChevronRight size={16} />
+                                    Schedule Now <ChevronRight size={16} aria-hidden="true" />
                                 </Link>
                             </div>
                         )}
@@ -98,10 +112,9 @@ export default function CandidateStatusScreen() {
                                 We decided to move forward with other candidates. Click <Link href="/candidate/jobs" className="text-white underline">here</Link> to explore other roles.
                             </div>
                         )}
-
-                    </div>
+                    </Card>
                 ))}
             </div>
-        </div>
+        </Page>
     );
 }

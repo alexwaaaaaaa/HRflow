@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
-import {
-    Calendar, Plus, ChevronLeft, ChevronRight, Edit3, Trash2
+import Page from "@/components/ui/Page";
+
+import React from 'react';
+import { Plus, ChevronLeft, ChevronRight, Edit3, Trash2
 } from 'lucide-react';
 
 export default function HolidayCalendar() {
@@ -16,6 +17,13 @@ export default function HolidayCalendar() {
     ];
 
     return (
+        <Page
+            title="Holiday Calendar 2024"
+            subtitle="Define public and restricted holidays. These days are automatically marked as paid off-days."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Holidays" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-5xl mx-auto space-y-6">
 
@@ -93,5 +101,7 @@ export default function HolidayCalendar() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

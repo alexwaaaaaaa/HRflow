@@ -1,11 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
 import {
-    FileText, Download, PieChart as PieChartIcon,
-    BarChart2, Activity, UserCheck, ChevronRight
+    FileText, Download, ChevronRight
 } from 'lucide-react';
-import Link from 'next/link';
 import ChartWrapper from '@/components/ui/ChartWrapper';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
@@ -95,6 +95,13 @@ function MetricCard({ title, value, sub, color, text }: any) {
 
 function ExportOption({ title, desc, color, bg }: any) {
     return (
+        <Page
+            title="Document Reports & Analytics"
+            subtitle="Track storage usage, document distribution, and system-wide file access."
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "Reports" }]}
+            maxWidth="1200px"
+        >
+
         <div className="group border border-[#1A2A3A] rounded-xl p-4 bg-[#060B14] hover:border-[#2A3A4A] cursor-pointer transition-colors">
             <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg ${bg} ${color} shrink-0`}><Download size={18} /></div>
@@ -107,5 +114,7 @@ function ExportOption({ title, desc, color, bg }: any) {
                 Generate <ChevronRight size={14} />
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,11 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { FileText, Download, Send, CheckCircle2, History } from 'lucide-react';
+import Image from "next/image";
+import { FileText, Download, Send, CheckCircle2 } from 'lucide-react';
 
 export default function ExperienceLetterScreen() {
     const [generated, setGenerated] = useState(false);
 
     return (
+        <Page
+            title="Relieving & Experience Letter"
+            subtitle="Generate legally compliant relieving documents after successful Full & Final settlement."
+            breadcrumbs={[{ label: "Offboarding", href: "/offboarding" }, { label: "Documents" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -112,7 +122,7 @@ export default function ExperienceLetterScreen() {
 
                                 <p className="text-gray-800">Sincerely,</p>
                                 <div className="mt-4 mb-2">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Signature_of_John_Hancock.svg" alt="signature" className="h-10 opacity-70 filter invert-[0.3]" />
+                                    <Image src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Signature_of_John_Hancock.svg" alt="signature" width={120} height={40} className="h-10 opacity-70 filter invert-[0.3]" />
                                 </div>
                                 <p className="text-gray-900 font-bold">Alexander Wright</p>
                                 <p className="text-gray-600 text-xs mt-1">VP, Human Resources</p>
@@ -124,5 +134,7 @@ export default function ExperienceLetterScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,103 +1,219 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-    CheckCircle2, AlertTriangle, ChevronLeft, ChevronRight, X,
-    Maximize2, FileText, Check, ShieldCheck, UploadCloud, RefreshCw
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+    CheckCircle2,
+    ChevronLeft,
+    ChevronRight,
+    Maximize2,
+    FileText,
+    Check,
+    ShieldCheck,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ─── Sub-components (module-scope) ────────────────────────────────────────────
+
+interface FieldRowProps {
+    label: string;
+    value: string;
+    status: "high" | "medium";
+    matchMsg?: string;
+}
+
+function FieldRow({ label, value, status, matchMsg }: FieldRowProps) {
+    return (
+        <div>
+            <div className="mb-1 flex justify-between">
+                <label className="block text-xs text-[#8899AA]">{label}</label>
+                {matchMsg && (
+                    <span className="flex items-center text-[10px] text-[#00E5A0]">
+                        <CheckCircle2 size={10} className="mr-1" aria-hidden="true" />
+                        {matchMsg}
+                    </span>
+                )}
+            </div>
+            <div className="relative">
+                <input
+                    type="text"
+                    defaultValue={value}
+                    aria-label={label}
+                    className={`w-full bg-transparent border-b py-2 pr-8 text-sm font-medium focus:outline-none transition-colors ${
+                        status === "high"
+                            ? "border-[#2A3A4A] text-white focus:border-[#00E5A0]"
+                            : "border-[#FFB800] border-dashed text-white"
+                    }`}
+                />
+                {status === "high" && (
+                    <div
+                        className="absolute right-0 top-3"
+                        title="High confidence extraction"
+                        aria-label="High confidence"
+                    >
+                        <div className="h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function ChevronDownIcon() {
+    return (
+        <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-[#8899AA]"
+            aria-hidden="true"
+        >
+            <polyline points="6 9 12 15 18 9" />
+        </svg>
+    );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function OCRPreviewPage() {
     const router = useRouter();
     const [submitting, setSubmitting] = useState(false);
 
-    // Mock document data
     const documentData = {
         type: "PPF Statement",
         fileName: "PPF_Statement_SBI_2024.pdf",
         confidence: 94,
         timeTaken: "2.3 seconds",
         extracted: {
-            name: { value: "Arjun Mehta", confidence: 'high', match: true },
-            accountNo: { value: "SBPPF00001234", confidence: 'high', match: null },
-            bankBranch: { value: "SBI Bhopal Main", confidence: 'medium', match: null },
-            amount: { value: "50000", confidence: 'high', match: true },
-            fy: { value: "2024-25", confidence: 'high', match: true },
-            section: { value: "80C - PPF", confidence: 'high', match: null }
-        }
+            name: { value: "Arjun Mehta", confidence: "high" as const, match: true },
+            accountNo: { value: "SBPPF00001234", confidence: "high" as const, match: null },
+            bankBranch: { value: "SBI Bhopal Main", confidence: "medium" as const, match: null },
+            amount: { value: "50000", confidence: "high" as const, match: true },
+            fy: { value: "2024-25", confidence: "high" as const, match: true },
+            section: { value: "80C - PPF", confidence: "high" as const, match: null },
+        },
     };
 
     const handleConfirm = () => {
         setSubmitting(true);
         setTimeout(() => {
-            router.push('/tax/proofs/upload');
+            router.push("/tax/proofs/upload");
         }, 1000);
     };
 
     return (
-        <div className="min-h-screen bg-[#060B14] p-6 text-slate-200 font-sans flex flex-col h-screen">
-
-            {/* Header */}
-            <div className="flex flex-col space-y-1 mb-4 flex-shrink-0">
-                <div className="flex items-center space-x-2 text-xs text-[#8899AA]">
-                    <span className="cursor-pointer hover:text-white" onClick={() => router.push('/tax/proofs/upload')}>Proof Upload</span>
-                    <ChevronRight size={14} />
-                    <span className="text-[#00E5A0]">OCR Review</span>
+        <Page
+            title="OCR data extraction — review"
+            subtitle="AI has extracted data from your document. Review and confirm."
+            breadcrumbs={[
+                { label: "Home", href: "/" },
+                { label: "Tax", href: "/tax/dashboard" },
+                { label: "Proof upload", href: "/tax/proofs/upload" },
+                { label: "OCR review" },
+            ]}
+            maxWidth="1400px"
+            actions={
+                <div className="flex items-center gap-3">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        icon={<ChevronLeft size={16} aria-hidden="true" />}
+                        onClick={() => router.push("/tax/proofs/upload")}
+                    >
+                        Back
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        iconRight={<ChevronRight size={16} aria-hidden="true" />}
+                        aria-disabled="true"
+                        className="cursor-not-allowed opacity-60"
+                    >
+                        Next document
+                    </Button>
                 </div>
-                <h1 className="text-2xl font-bold text-white">OCR Data Extraction — Review</h1>
-                <p className="text-sm text-[#8899AA]">AI has extracted data from your document. Review and confirm.</p>
-            </div>
-
+            }
+        >
             {/* OCR Status Bar */}
-            <div className="bg-[#0D1928] border border-[#1A2A3A] rounded-xl p-3 flex justify-between items-center mb-6 flex-shrink-0">
-                <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-2">
-                        <FileText size={18} className="text-[#8899AA]" />
-                        <span className="text-sm font-medium text-white">{documentData.fileName}</span>
-                        <span className="text-xs text-[#8899AA]">(1 page)</span>
-                    </div>
-                    <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-[#00E5A0]/10 border border-[#00E5A0]/20">
-                        <ShieldCheck size={14} className="text-[#00E5A0]" />
-                        <span className="text-xs font-bold text-[#00E5A0]">OCR Confidence: {documentData.confidence}%</span>
-                    </div>
-                    <span className="text-xs text-[#445566]">Time taken: {documentData.timeTaken}</span>
-                </div>
-                <div className="flex space-x-2">
-                    <button onClick={() => router.push('/tax/proofs/upload')} className="px-3 py-1.5 border border-[#1A2A3A] text-xs font-semibold rounded-lg hover:bg-[#1A2A3A] transition-colors flex items-center">
-                        <ChevronLeft size={16} className="mr-1" /> Back
-                    </button>
-                    <button className="px-3 py-1.5 border border-[#1A2A3A] text-xs font-semibold rounded-lg hover:bg-[#1A2A3A] transition-colors flex items-center text-[#8899AA] cursor-not-allowed">
-                        Next Document <ChevronRight size={16} className="ml-1" />
-                    </button>
-                </div>
-            </div>
-
-            {/* Main Area */}
-            <div className="flex-1 flex space-x-6 overflow-hidden min-h-0">
-
-                {/* Left Panel - Document Viewer */}
-                <div className="w-[600px] flex-shrink-0 bg-[#0D1928] border border-[#1A2A3A] rounded-xl flex flex-col overflow-hidden relative">
-                    {/* Toolbar */}
-                    <div className="h-12 border-b border-[#1A2A3A] flex justify-between items-center px-4 bg-[#0A1420]">
-                        <div className="flex items-center space-x-3 text-xs text-[#8899AA]">
-                            <button className="hover:text-white transition-colors">-</button>
-                            <span>100%</span>
-                            <button className="hover:text-white transition-colors">+</button>
-                            <button className="hover:text-white transition-colors ml-2" title="Fit to width"><Maximize2 size={14} /></button>
+            <Card padding="sm" className="mb-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-6">
+                        <div className="flex items-center gap-2">
+                            <FileText size={18} className="text-[#8899AA]" aria-hidden="true" />
+                            <span className="text-sm font-medium text-white">
+                                {documentData.fileName}
+                            </span>
+                            <span className="text-xs text-[#8899AA]">(1 page)</span>
                         </div>
-                        <div className="text-xs font-medium text-white bg-[#1A2A3A] px-3 py-1 rounded-md">
+                        <div className="flex items-center gap-2 rounded-full border border-[#00E5A0]/20 bg-[#00E5A0]/10 px-3 py-1">
+                            <ShieldCheck size={14} className="text-[#00E5A0]" aria-hidden="true" />
+                            <span className="text-xs font-bold text-[#00E5A0]">
+                                OCR Confidence: {documentData.confidence}%
+                            </span>
+                        </div>
+                        <span className="text-xs text-[#445566]">
+                            Time taken: {documentData.timeTaken}
+                        </span>
+                    </div>
+                    <Badge variant="success">High accuracy</Badge>
+                </div>
+            </Card>
+
+            {/* Main two-panel layout */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[600px_1fr]">
+
+                {/* Left Panel — Document Viewer */}
+                <Card padding="none" className="flex flex-col overflow-hidden">
+                    {/* Toolbar */}
+                    <div className="flex h-12 items-center justify-between border-b border-[#1A2A3A] bg-[#0A1420] px-4">
+                        <div className="flex items-center gap-3 text-xs text-[#8899AA]">
+                            <button
+                                type="button"
+                                className="hover:text-white transition-colors"
+                                aria-label="Zoom out"
+                            >
+                                −
+                            </button>
+                            <span>100%</span>
+                            <button
+                                type="button"
+                                className="hover:text-white transition-colors"
+                                aria-label="Zoom in"
+                            >
+                                +
+                            </button>
+                            <button
+                                type="button"
+                                className="ml-2 hover:text-white transition-colors"
+                                aria-label="Fit to width"
+                            >
+                                <Maximize2 size={14} aria-hidden="true" />
+                            </button>
+                        </div>
+                        <div className="rounded-md bg-[#1A2A3A] px-3 py-1 text-xs font-medium text-white">
                             Page 1 of 1
                         </div>
                     </div>
 
-                    {/* Document Area Mock */}
-                    <div className="flex-1 overflow-auto p-8 flex justify-center bg-[#060B14]">
-                        <div className="w-[500px] h-[700px] bg-white relative shadow-lg">
-                            {/* Watermark/fake content */}
-                            <div className="absolute inset-0 p-8 flex flex-col space-y-6 opacity-80 pointer-events-none">
-                                <div className="border-b-2 border-slate-300 pb-4 flex justify-between items-end">
-                                    <h2 className="text-2xl font-serif text-slate-800 font-bold tracking-tight">State Bank of India</h2>
-                                    <span className="text-slate-500 font-sans text-sm">PPF Account Statement</span>
+                    {/* Document mock */}
+                    <div className="flex flex-1 justify-center overflow-auto bg-[#060B14] p-8">
+                        <div className="relative h-[700px] w-[500px] bg-white shadow-lg">
+                            <div className="pointer-events-none absolute inset-0 flex flex-col space-y-6 p-8 opacity-80">
+                                <div className="flex items-end justify-between border-b-2 border-slate-300 pb-4">
+                                    <h2 className="font-serif text-2xl font-bold tracking-tight text-slate-800">
+                                        State Bank of India
+                                    </h2>
+                                    <span className="font-sans text-sm text-slate-500">
+                                        PPF Account Statement
+                                    </span>
                                 </div>
 
                                 <div className="space-y-4 font-mono text-xs text-slate-700">
@@ -105,44 +221,40 @@ export default function OCRPreviewPage() {
                                         <span className="w-40 font-bold">Account Holder:</span>
                                         <span className="relative">
                                             Arjun Mehta
-                                            {/* OCR Highlight Box - Name */}
-                                            <div className="absolute -inset-1 border-2 border-[#00E5A0] bg-[#00E5A0]/10 rounded z-10"></div>
+                                            <div className="absolute -inset-1 z-10 rounded border-2 border-[#00E5A0] bg-[#00E5A0]/10" />
                                         </span>
                                     </div>
                                     <div className="flex">
                                         <span className="w-40 font-bold">Account Number:</span>
                                         <span className="relative">
                                             SBPPF00001234
-                                            {/* OCR Highlight Box - Acct */}
-                                            <div className="absolute -inset-1 border-2 border-[#00E5A0] bg-[#00E5A0]/10 rounded z-10"></div>
+                                            <div className="absolute -inset-1 z-10 rounded border-2 border-[#00E5A0] bg-[#00E5A0]/10" />
                                         </span>
                                     </div>
                                     <div className="flex">
                                         <span className="w-40 font-bold">Branch:</span>
                                         <span className="relative">
                                             SBI Bhopal Main
-                                            {/* OCR Highlight Box - Branch */}
-                                            <div className="absolute -inset-1 border-2 border-[#FFB800] bg-[#FFB800]/10 rounded z-10"></div>
+                                            <div className="absolute -inset-1 z-10 rounded border-2 border-[#FFB800] bg-[#FFB800]/10" />
                                         </span>
                                     </div>
                                     <div className="flex">
                                         <span className="w-40 font-bold">Financial Year:</span>
                                         <span className="relative">
                                             2024-25
-                                            {/* OCR Highlight Box - FY */}
-                                            <div className="absolute -inset-1 border-2 border-[#00E5A0] bg-[#00E5A0]/10 rounded z-10"></div>
+                                            <div className="absolute -inset-1 z-10 rounded border-2 border-[#00E5A0] bg-[#00E5A0]/10" />
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="mt-8 border border-slate-300">
-                                    <div className="bg-slate-100 flex p-2 font-bold text-xs text-slate-700 border-b border-slate-300">
+                                    <div className="flex border-b border-slate-300 bg-slate-100 p-2 text-xs font-bold text-slate-700">
                                         <div className="w-24">Date</div>
                                         <div className="flex-1">Particulars</div>
                                         <div className="w-32 text-right">Deposit</div>
                                         <div className="w-32 text-right">Balance</div>
                                     </div>
-                                    <div className="p-2 text-xs font-mono text-slate-600 space-y-2">
+                                    <div className="space-y-2 p-2 font-mono text-xs text-slate-600">
                                         <div className="flex border-b border-slate-100 pb-2">
                                             <div className="w-24">05/04/2024</div>
                                             <div className="flex-1">UPI/TRANSFER</div>
@@ -162,203 +274,238 @@ export default function OCRPreviewPage() {
                                             <div className="w-32 text-right">50,000.00</div>
                                         </div>
                                     </div>
-                                    <div className="bg-slate-50 flex p-3 font-bold text-sm text-slate-800 border-t border-slate-300">
-                                        <div className="flex-1 text-right">TOTAL DEPOSITS (FY 24-25):</div>
-                                        <div className="w-40 text-right relative">
+                                    <div className="flex border-t border-slate-300 bg-slate-50 p-3 text-sm font-bold text-slate-800">
+                                        <div className="flex-1 text-right">
+                                            TOTAL DEPOSITS (FY 24-25):
+                                        </div>
+                                        <div className="relative w-40 text-right">
                                             ₹50,000.00
-                                            {/* OCR Highlight Box - Amount */}
-                                            <div className="absolute -inset-1 border-2 border-[#00E5A0] bg-[#00E5A0]/10 rounded z-10"></div>
+                                            <div className="absolute -inset-1 z-10 rounded border-2 border-[#00E5A0] bg-[#00E5A0]/10" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="mt-12 opacity-50 relative w-32 h-32 ml-auto">
-                                    <div className="w-24 h-24 rounded-full border-4 border-blue-800 flex items-center justify-center text-blue-800 font-bold text-xl rotate-[-15deg]">
+                                <div className="relative ml-auto mt-12 h-32 w-32 opacity-50">
+                                    <div className="flex h-24 w-24 rotate-[-15deg] items-center justify-center rounded-full border-4 border-blue-800 text-xl font-bold text-blue-800">
                                         SBI
                                     </div>
-                                    {/* OCR Highlight Box - Red/Unreadable */}
-                                    <div className="absolute inset-0 border-2 border-[#FF4444] bg-[#FF4444]/10 rounded z-10 border-dashed"></div>
+                                    <div className="absolute inset-0 z-10 rounded border-2 border-dashed border-[#FF4444] bg-[#FF4444]/10" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Legend */}
-                    <div className="h-10 border-t border-[#1A2A3A] bg-[#0A1420] flex items-center px-4 space-x-6 text-xs text-[#8899AA]">
-                        <div className="flex items-center"><span className="w-3 h-3 bg-[#00E5A0]/20 border border-[#00E5A0] mr-2"></span> High Confidence</div>
-                        <div className="flex items-center"><span className="w-3 h-3 bg-[#FFB800]/20 border border-[#FFB800] mr-2"></span> Review Needed</div>
-                        <div className="flex items-center"><span className="w-3 h-3 bg-[#FF4444]/20 border border-dashed border-[#FF4444] mr-2"></span> Unreadable/Ignored</div>
-                    </div>
-                </div>
-
-                {/* Right Panel - Extracted Data */}
-                <div className="flex-1 bg-[#0D1928] border border-[#1A2A3A] rounded-xl flex flex-col overflow-hidden relative">
-                    <div className="px-6 py-4 border-b border-[#1A2A3A] bg-[#0A1420]">
-                        <h3 className="text-lg font-bold text-white">Extracted Information</h3>
-                        <p className="text-xs text-[#8899AA] mt-1 text-justify">Verify the extracted fields below before confirming.</p>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
-
-                        <div className="p-4 bg-[#1A2A3A]/40 border border-[#2A3A4A] rounded-lg mb-2">
-                            <label className="text-xs text-[#8899AA] uppercase tracking-wider font-semibold block mb-2">Document Type Mapping</label>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Detected Type</label>
-                                    <div className="w-full bg-[#060B14] border border-[#1A2A3A] px-3 py-2 rounded-lg text-sm text-white focus:outline-none flex justify-between items-center">
-                                        <span>PPF Statement</span>
-                                        <ChevronDownIcon />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Tax Section</label>
-                                    <div className="w-full bg-[#060B14] border border-[#1A2A3A] px-3 py-2 rounded-lg text-sm text-white focus:outline-none flex justify-between items-center">
-                                        <span>80C — PPF</span>
-                                        <ChevronDownIcon />
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="flex h-10 items-center gap-6 border-t border-[#1A2A3A] bg-[#0A1420] px-4 text-xs text-[#8899AA]">
+                        <div className="flex items-center gap-2">
+                            <span className="h-3 w-3 border border-[#00E5A0] bg-[#00E5A0]/20" aria-hidden="true" />
+                            High confidence
                         </div>
+                        <div className="flex items-center gap-2">
+                            <span className="h-3 w-3 border border-[#FFB800] bg-[#FFB800]/20" aria-hidden="true" />
+                            Review needed
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="h-3 w-3 border border-dashed border-[#FF4444] bg-[#FF4444]/20" aria-hidden="true" />
+                            Unreadable / ignored
+                        </div>
+                    </div>
+                </Card>
 
-                        {/* Editable Form */}
-                        <div className="space-y-4">
+                {/* Right Panel — Extracted Data */}
+                <Card padding="none" className="flex flex-col overflow-hidden">
+                    <div className="border-b border-[#1A2A3A] bg-[#0A1420] px-6 py-4">
+                        <h3 className="text-lg font-bold text-white">Extracted information</h3>
+                        <p className="mt-1 text-xs text-[#8899AA]">
+                            Verify the extracted fields below before confirming.
+                        </p>
+                    </div>
 
-                            <FieldRow
-                                label="Account Holder Name"
-                                value={documentData.extracted.name.value}
-                                status={documentData.extracted.name.confidence}
-                                matchMsg="Matches employee record"
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Account Number</label>
-                                    <input
-                                        type="text"
-                                        defaultValue={documentData.extracted.accountNo.value}
-                                        className="w-full bg-transparent border-b border-[#2A3A4A] py-2 text-sm text-white focus:outline-none focus:border-[#00E5A0] transition-colors"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Bank / Branch ⚠️</label>
-                                    <input
-                                        type="text"
-                                        defaultValue={documentData.extracted.bankBranch.value}
-                                        className="w-full bg-transparent border-b border-[#FFB800] py-2 text-sm text-white focus:outline-none transition-colors"
-                                    />
+                    <div className="flex-1 overflow-y-auto p-6">
+                        <div className="space-y-6">
+                            {/* Document type mapping */}
+                            <div className="rounded-lg border border-[#2A3A4A] bg-[#1A2A3A]/40 p-4">
+                                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[#8899AA]">
+                                    Document type mapping
+                                </label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            htmlFor="detected-type"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Detected type
+                                        </label>
+                                        <div
+                                            id="detected-type"
+                                            className="flex w-full items-center justify-between rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3 py-2 text-sm text-white"
+                                        >
+                                            <span>PPF Statement</span>
+                                            <ChevronDownIcon />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="tax-section"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Tax section
+                                        </label>
+                                        <div
+                                            id="tax-section"
+                                            className="flex w-full items-center justify-between rounded-lg border border-[#1A2A3A] bg-[#060B14] px-3 py-2 text-sm text-white"
+                                        >
+                                            <span>80C — PPF</span>
+                                            <ChevronDownIcon />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Financial Year</label>
-                                    <input
-                                        type="text"
-                                        defaultValue={documentData.extracted.fy.value}
-                                        className="w-full bg-transparent border-b border-[#2A3A4A] py-2 text-sm text-[#00E5A0] font-bold focus:outline-none focus:border-[#00E5A0] transition-colors"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Amount Invested</label>
-                                    <div className="relative">
-                                        <span className="absolute left-0 top-2 text-[#8899AA] text-sm font-bold">₹</span>
+                            {/* Editable fields */}
+                            <div className="space-y-4">
+                                <FieldRow
+                                    label="Account holder name"
+                                    value={documentData.extracted.name.value}
+                                    status={documentData.extracted.name.confidence}
+                                    matchMsg="Matches employee record"
+                                />
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            htmlFor="input-account-no"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Account number
+                                        </label>
                                         <input
+                                            id="input-account-no"
                                             type="text"
-                                            defaultValue={Number(documentData.extracted.amount.value).toLocaleString('en-IN')}
-                                            className="w-full bg-transparent border-b border-[#00E5A0] py-2 pl-4 text-sm text-white font-bold focus:outline-none transition-colors"
+                                            defaultValue={documentData.extracted.accountNo.value}
+                                            className="w-full border-b border-[#2A3A4A] bg-transparent py-2 text-sm text-white transition-colors focus:border-[#00E5A0] focus:outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="input-bank-branch"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Bank / Branch ⚠
+                                        </label>
+                                        <input
+                                            id="input-bank-branch"
+                                            type="text"
+                                            defaultValue={documentData.extracted.bankBranch.value}
+                                            className="w-full border-b border-[#FFB800] bg-transparent py-2 text-sm text-white transition-colors focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            htmlFor="input-fy"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Financial year
+                                        </label>
+                                        <input
+                                            id="input-fy"
+                                            type="text"
+                                            defaultValue={documentData.extracted.fy.value}
+                                            className="w-full border-b border-[#2A3A4A] bg-transparent py-2 text-sm font-bold text-[#00E5A0] transition-colors focus:border-[#00E5A0] focus:outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            htmlFor="input-amount"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Amount invested
+                                        </label>
+                                        <div className="relative">
+                                            <span className="absolute left-0 top-2 text-sm font-bold text-[#8899AA]">
+                                                ₹
+                                            </span>
+                                            <input
+                                                id="input-amount"
+                                                type="text"
+                                                defaultValue={Number(
+                                                    documentData.extracted.amount.value,
+                                                ).toLocaleString("en-IN")}
+                                                className="w-full border-b border-[#00E5A0] bg-transparent py-2 pl-4 text-sm font-bold text-white transition-colors focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Match confirmation */}
+                            <div className="flex items-start gap-3 rounded-lg border border-[#00E5A0]/20 bg-[#00E5A0]/5 p-4">
+                                <CheckCircle2
+                                    size={18}
+                                    className="mt-0.5 shrink-0 text-[#00E5A0]"
+                                    aria-hidden="true"
+                                />
+                                <div>
+                                    <h4 className="text-sm font-bold text-[#00E5A0]">
+                                        Declared amount matches
+                                    </h4>
+                                    <p className="mt-1 text-xs text-[#8899AA]">
+                                        You previously declared ₹50,000 for PPF under 80C. Extracted
+                                        amount perfectly matches the declared value.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Additional details */}
+                            <div className="rounded-lg border border-dashed border-[#2A3A4A] bg-[#1A2A3A] p-4">
+                                <h4 className="mb-3 text-sm font-bold text-white">
+                                    Additional details needed
+                                </h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            htmlFor="input-deposit-date"
+                                            className="mb-1 block text-xs text-[#8899AA]"
+                                        >
+                                            Date of latest deposit
+                                        </label>
+                                        <input
+                                            id="input-deposit-date"
+                                            type="date"
+                                            className="w-full rounded border border-[#2A3A4A] bg-[#0D1928] px-3 py-2 text-sm text-[#8899AA] focus:border-[#00E5A0] focus:outline-none"
                                         />
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
-                        {/* Mismatch/Warnings */}
-                        <div className="mt-8 bg-[#00E5A0]/5 border border-[#00E5A0]/20 rounded-lg p-4 flex items-start space-x-3">
-                            <CheckCircle2 size={18} className="text-[#00E5A0] mt-0.5 flex-shrink-0" />
-                            <div>
-                                <h4 className="text-sm font-bold text-[#00E5A0]">Declared Amount Matches</h4>
-                                <p className="text-xs text-[#8899AA] mt-1">You previously declared ₹50,000 for PPF under 80C. Extracted amount perfectly matches the declared value.</p>
-                            </div>
-                        </div>
-
-                        {/* Missing Manual Info */}
-                        <div className="p-4 bg-[#1A2A3A] rounded-lg mt-4 border border-[#2A3A4A] border-dashed">
-                            <h4 className="text-sm font-bold text-white mb-3">Additional Details Needed</h4>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-xs text-[#8899AA] block mb-1">Date of latest deposit</label>
-                                    <input
-                                        type="date"
-                                        className="w-full bg-[#0D1928] border border-[#2A3A4A] rounded py-2 px-3 text-sm text-[#8899AA] focus:outline-none focus:border-[#00E5A0]"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
-                    {/* Action Bar Bottom */}
-                    <div className="p-4 border-t border-[#1A2A3A] bg-[#0A1420] flex items-center justify-between">
-                        <button className="px-4 py-2 text-sm font-semibold text-[#8899AA] hover:text-[#FF4444] transition-colors">
-                            Reject OCR — Manual Entry
-                        </button>
-                        <div className="flex space-x-3">
-                            <button className="px-4 py-2 border border-[#2A3A4A] text-white text-sm font-bold rounded-lg hover:bg-[#1A2A3A] transition-colors">
-                                Edit & Confirm
-                            </button>
-                            <button
+                    {/* Action bar */}
+                    <div className="flex items-center justify-between border-t border-[#1A2A3A] bg-[#0A1420] p-4">
+                        <Button variant="ghost" size="sm" className="text-[#8899AA] hover:text-[#FF4444]">
+                            Reject OCR — manual entry
+                        </Button>
+                        <div className="flex gap-3">
+                            <Button variant="outline" size="sm">
+                                Edit &amp; confirm
+                            </Button>
+                            <Button
+                                variant="primary"
+                                size="sm"
                                 onClick={handleConfirm}
-                                disabled={submitting}
-                                className="px-6 py-2 bg-[#00E5A0] text-[#060B14] text-sm font-bold rounded-lg hover:bg-[#00c98d] transition-colors flex items-center disabled:opacity-50"
+                                isLoading={submitting}
+                                loadingText="Saving…"
+                                icon={<Check size={16} aria-hidden="true" />}
                             >
-                                {submitting ? (
-                                    <><RefreshCw size={16} className="mr-2 animate-spin" /> Saving...</>
-                                ) : (
-                                    <><Check className="mr-2" size={16} /> Confirm Auto-fill</>
-                                )}
-                            </button>
+                                Confirm auto-fill
+                            </Button>
                         </div>
                     </div>
-                </div>
-
+                </Card>
             </div>
-        </div>
+        </Page>
     );
-}
-
-function FieldRow({ label, value, status, matchMsg }: any) {
-    return (
-        <div>
-            <div className="flex justify-between mb-1">
-                <label className="text-xs text-[#8899AA] block">{label}</label>
-                {matchMsg && (
-                    <span className="text-[10px] text-[#00E5A0] flex items-center">
-                        <CheckCircle2 size={10} className="mr-1" /> {matchMsg}
-                    </span>
-                )}
-            </div>
-            <div className="relative">
-                <input
-                    type="text"
-                    defaultValue={value}
-                    className={`w-full bg-transparent border-b py-2 text-sm font-medium focus:outline-none transition-colors pr-8 ${status === 'high' ? 'border-[#2A3A4A] text-white focus:border-[#00E5A0]' : 'border-[#FFB800] text-white border-dashed'
-                        }`}
-                />
-                {status === 'high' && (
-                    <div className="absolute right-0 top-3" title="High confidence extraction">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#00E5A0]"></div>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
-
-function ChevronDownIcon() {
-    return (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#8899AA]">
-            <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-    )
 }

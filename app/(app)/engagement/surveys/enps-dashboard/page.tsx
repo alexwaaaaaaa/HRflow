@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Heart, Download, TrendingUp, TrendingDown, Users, Calendar, Filter, MessageSquare, AlertTriangle
+    Heart, Download, TrendingUp, Calendar, Filter, MessageSquare, AlertTriangle
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, ReferenceLine, Cell } from 'recharts';
 import ChartWrapper from '@/components/ui/ChartWrapper';
@@ -30,9 +32,16 @@ const RECENT_FEEDBACK = [
 ];
 
 export default function ENPSDashboardScreen() {
-    const [dateRange, setDateRange] = useState('Last 6 Months');
+    const [dateRange, _setDateRange] = useState('Last 6 Months');
 
     return (
+        <Page
+            title="eNPS Tracker"
+            subtitle="Monitor Employee Net Promoter Score and company sentiment over time."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Enps Dashboard" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 max-w-[1400px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -192,5 +201,7 @@ export default function ENPSDashboardScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

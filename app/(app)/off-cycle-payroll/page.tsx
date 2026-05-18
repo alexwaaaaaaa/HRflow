@@ -1,15 +1,24 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Calculator, Calendar, Plus, Info } from "lucide-react";
 
 export default function OffCyclePayrollPage() {
-    const [selectedEmployees, setSelectedEmployees] = useState([
+    const [selectedEmployees, _setSelectedEmployees] = useState([
         { id: 'EMP347', name: 'Ravi Chandran', type: 'Joining Bonus', amount: '₹50,000', tds: '₹10,000', net: '₹40,000', notes: 'As per offer' },
         { id: 'EMP348', name: 'Anitha Kumar', type: 'Relocation', amount: '₹30,000', tds: '₹0', net: '₹30,000', notes: 'Tax exempt (sec 17)' }
     ]);
 
     return (
+        <Page
+            title="Off-Cycle Payroll"
+            subtitle="Process special payments outside regular payroll cycle"
+            breadcrumbs={[{ label: "Off Cycle Payroll" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen bg-[#060B14] text-white p-6 font-sans">
             <div className="max-w-7xl mx-auto space-y-6">
 
@@ -176,5 +185,7 @@ export default function OffCyclePayrollPage() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,10 +1,19 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Target, ArrowLeft, MoveUpRight, Trophy, Star, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CareerPathScreen() {
     return (
+        <Page
+            title="My Career Path"
+            subtitle="Visualize your growth trajectory, skill gaps, and next promotion readiness."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Career" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2"><ArrowLeft size={14} /> Back to Dashboard</Link>
             <div className="flex items-center justify-between">
@@ -96,5 +105,7 @@ export default function CareerPathScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

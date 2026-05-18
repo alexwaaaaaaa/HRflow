@@ -1,77 +1,122 @@
 "use client";
-import React from 'react';
-import { Search, Calendar, Filter, Archive } from 'lucide-react';
+
+import { Archive, Calendar, Filter } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+interface LogEntry {
+    id: number;
+    timestamp: string;
+    channel: string;
+    category: string;
+    subject: string;
+    status: "Delivered" | "Failed" | "Pending";
+}
+
+const LOG_DATA: LogEntry[] = [
+    { id: 1, timestamp: "Oct 24, 2024 · 14:32", channel: "Email", category: "System Update", subject: "Maintenance window scheduled for...", status: "Delivered" },
+    { id: 2, timestamp: "Oct 24, 2024 · 13:15", channel: "Push", category: "Payroll", subject: "Your October payslip is ready", status: "Delivered" },
+    { id: 3, timestamp: "Oct 24, 2024 · 11:00", channel: "Email", category: "Leave", subject: "Leave request approved by manager", status: "Delivered" },
+    { id: 4, timestamp: "Oct 23, 2024 · 16:45", channel: "SMS", category: "Security", subject: "New login detected from Bengaluru", status: "Delivered" },
+    { id: 5, timestamp: "Oct 23, 2024 · 09:30", channel: "Email", category: "Compliance", subject: "Policy acknowledgement required", status: "Failed" },
+    { id: 6, timestamp: "Oct 22, 2024 · 17:00", channel: "Push", category: "Engagement", subject: "Pulse survey: share your feedback", status: "Delivered" },
+];
+
+const STATUS_VARIANT = {
+    Delivered: "success",
+    Failed: "danger",
+    Pending: "warning",
+} as const;
+
+const COLUMNS: Column<LogEntry>[] = [
+    {
+        key: "timestamp",
+        label: "Timestamp",
+        render: (r) => <span className="whitespace-nowrap text-[#8899AA]">{r.timestamp}</span>,
+    },
+    {
+        key: "channel",
+        label: "Channel",
+        render: (r) => <Badge variant="neutral">{r.channel}</Badge>,
+    },
+    {
+        key: "category",
+        label: "Category",
+        render: (r) => <span className="text-[#CCDDEE]">{r.category}</span>,
+    },
+    {
+        key: "subject",
+        label: "Subject / Title",
+        render: (r) => <span className="text-white">{r.subject}</span>,
+    },
+    {
+        key: "status",
+        label: "Status",
+        align: "right",
+        render: (r) => (
+            <Badge variant={STATUS_VARIANT[r.status]}>{r.status}</Badge>
+        ),
+    },
+];
 
 export default function NotificationHistoryPage() {
     return (
-        <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <Archive className="text-indigo-500" />
-                        Notification Log & History
-                    </h1>
-                    <p className="text-sm text-[#8899AA] mt-1">Audit trail of all communication sent to your account.</p>
-                </div>
-            </div>
-
-            {/* Toolbar */}
-            <div className="flex flex-col md:flex-row gap-4 justify-between bg-[#0A1420] p-4 rounded-xl border border-[#1A2A3A]">
-                <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556677]" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search logs by keyword..."
-                        className="w-full pl-10 pr-4 py-2 bg-[#060D1A] border border-[#1A2A3A] rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                </div>
+        <Page
+            title="Notification Log & History"
+            subtitle="Audit trail of all communication sent to your account"
+            breadcrumbs={[
+                { label: "Notifications", href: "/notifications" },
+                { label: "History" },
+            ]}
+            maxWidth="1100px"
+            actions={
                 <div className="flex gap-2">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#060D1A] border border-[#1A2A3A] rounded-lg text-sm text-[#CCDDEE] hover:bg-[#131B2B]">
-                        <Calendar size={16} /> Last 30 Days
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-[#060D1A] border border-[#1A2A3A] rounded-lg text-sm text-[#CCDDEE] hover:bg-[#131B2B]">
-                        <Filter size={16} /> Event Type
-                    </button>
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        icon={<Calendar size={14} aria-hidden="true" />}
+                    >
+                        Last 30 Days
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        icon={<Filter size={14} aria-hidden="true" />}
+                    >
+                        Event Type
+                    </Button>
+                </div>
+            }
+        >
+            <div className="space-y-4">
+                <Card padding="none">
+                    <div className="flex items-center gap-3 p-4">
+                        <Archive size={18} className="text-indigo-400" aria-hidden="true" />
+                        <span className="text-sm font-semibold text-white">
+                            Showing 1–6 of 1,204 logs
+                        </span>
+                    </div>
+                    <DataTable
+                        data={LOG_DATA}
+                        columns={COLUMNS}
+                        rowKey={(r) => r.id}
+                        aria-label="Notification history log"
+                        emptyTitle="No logs found"
+                        emptyDescription="Try adjusting your filters."
+                    />
+                </Card>
+
+                <div className="flex items-center justify-between text-sm text-[#556677]">
+                    <span>Showing 1 to 6 of 1,204 logs</span>
+                    <div className="flex gap-1">
+                        <Button variant="secondary" size="sm">Prev</Button>
+                        <Button variant="secondary" size="sm">Next</Button>
+                    </div>
                 </div>
             </div>
-
-            {/* Table layout for history logs */}
-            <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-xl overflow-hidden">
-                <table className="w-full text-left text-sm text-[#8899AA]">
-                    <thead className="bg-[#060D1A] border-b border-[#1A2A3A] text-xs uppercase tracking-wider">
-                        <tr>
-                            <th className="px-6 py-4 font-medium">Timestamp</th>
-                            <th className="px-6 py-4 font-medium">Channel</th>
-                            <th className="px-6 py-4 font-medium">Category</th>
-                            <th className="px-6 py-4 font-medium">Subject / Title</th>
-                            <th className="px-6 py-4 font-medium text-right">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#1A2A3A]">
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <tr key={i} className="hover:bg-[#131B2B] transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap">Oct 24, 2024 • 14:32:00</td>
-                                <td className="px-6 py-4">
-                                    <span className="bg-[#1A2A3A] text-white px-2 py-1 rounded text-xs">Email</span>
-                                </td>
-                                <td className="px-6 py-4 text-[#CCDDEE]">System Update</td>
-                                <td className="px-6 py-4 text-white">Maintenance window scheduled for...</td>
-                                <td className="px-6 py-4 text-right">
-                                    <span className="text-emerald-400 font-medium">Delivered</span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="flex justify-between items-center text-sm text-[#556677]">
-                <span>Showing 1 to 6 of 1,204 logs</span>
-                <div className="flex gap-1">
-                    <button className="px-3 py-1 bg-[#1A2A3A] rounded hover:text-white">Prev</button>
-                    <button className="px-3 py-1 bg-[#1A2A3A] rounded hover:text-white">Next</button>
-                </div>
-            </div>
-        </div>
+        </Page>
     );
 }

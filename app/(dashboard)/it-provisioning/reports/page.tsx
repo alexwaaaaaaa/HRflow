@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Download, BarChart2, Briefcase, FileSpreadsheet, HardDrive, ShieldCheck } from "lucide-react";
+import { FileText, Download, FileSpreadsheet, HardDrive, ShieldCheck } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 // --- Mock Data ---

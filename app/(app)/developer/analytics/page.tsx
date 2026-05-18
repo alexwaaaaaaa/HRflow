@@ -1,9 +1,31 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
 import { Activity, Zap, TrendingUp, AlertTriangle } from 'lucide-react';
+import { seededFloats } from '@/lib/random';
+
+// Stable, deterministic bar heights for the decorative traffic chart.
+// Real implementation should fetch this series from the analytics API.
+const TRAFFIC_BAR_HEIGHTS = seededFloats(42, 24).map((r) => Math.max(10, r * 100));
 
 export default function ApiUsageAnalyticsPage() {
     return (
+        <Page
+            title="API Traffic & Analytics"
+            subtitle="Monitor throughput, error rates, and endpoint utilization in real-time."
+            breadcrumbs={[{ label: "Developer", href: "/developer" }, { label: "Analytics" }]}
+            maxWidth="1100px"
+        >
+
+
+
+
+
+
+
+
+
         <div className="min-h-screen p-6 max-w-5xl mx-auto space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -58,10 +80,10 @@ export default function ApiUsageAnalyticsPage() {
                         <div className="absolute inset-x-0 bottom-1/2 border-t border-[#1A2A3A] border-dashed" />
                         <div className="absolute inset-x-0 bottom-3/4 border-t border-[#1A2A3A] border-dashed" />
 
-                        {/* Fake bars */}
-                        {Array.from({ length: 24 }).map((_, i) => (
+                        {/* Decorative bars — heights are deterministic per render */}
+                        {TRAFFIC_BAR_HEIGHTS.map((h, i) => (
                             <div key={i} className="w-full flex justify-center group relative z-10">
-                                <div className="w-full max-w-[12px] bg-indigo-500/80 hover:bg-indigo-400 rounded-t-sm transition-all" style={{ height: `${Math.max(10, Math.random() * 100)}%` }} />
+                                <div className="w-full max-w-[12px] bg-indigo-500/80 hover:bg-indigo-400 rounded-t-sm transition-all" style={{ height: `${h}%` }} />
                             </div>
                         ))}
                     </div>
@@ -102,5 +124,14 @@ export default function ApiUsageAnalyticsPage() {
                 </div>
             </div>
         </div>
+    
+        
+
+        
+
+        
+
+            
+        </Page>
     );
 }

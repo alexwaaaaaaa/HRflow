@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+import Image from "next/image";
+
 import React, { useState } from 'react';
-import {
-    Signature, ArrowRight, ArrowLeft, PenTool, CheckCircle2,
-    UploadCloud, UserPlus, AlignLeft, Calendar, User
+import { ArrowRight, ArrowLeft, PenTool, CheckCircle2,
+    UploadCloud, AlignLeft, Calendar, User
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -65,7 +67,7 @@ export default function ESignWorkflowScreen() {
                         {/* Document Viewport */}
                         <div className="flex-1 bg-[#060B14] overflow-auto relative p-8 flex justify-center items-start custom-scrollbar">
                             <div className="w-full max-w-2xl bg-white shadow-2xl origin-top relative select-none">
-                                <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=2500&auto=format&fit=crop" className="w-full h-auto opacity-50 grayscale" alt="Document Background" />
+                                <Image src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=2500&auto=format&fit=crop" className="w-full h-auto opacity-50 grayscale" alt="Document Background" width={500} height={300} />
 
                                 <div className="absolute top-[75%] left-[60%] w-48 h-12 border-2 border-[#00E5A0] bg-[#00E5A0]/20 rounded flex items-center justify-center cursor-move">
                                     <span className="text-[#00E5A0] font-bold text-sm tracking-wider flex items-center gap-1">
@@ -132,9 +134,17 @@ function StepIndicator({ num, title, active, done }: any) {
 
 function FieldItem({ icon, label, color, bg, border }: any) {
     return (
+        <Page
+            title="Simulated Step"
+            breadcrumbs={[{ label: "Documents", href: "/documents" }, { label: "E Sign", href: "/documents/e-sign" }, { label: "Workflow" }]}
+            maxWidth="1100px"
+        >
+
         <div className={`flex items-center gap-3 p-2 border rounded cursor-grab active:cursor-grabbing hover:opacity-80 transition-opacity ${bg} ${border} ${color}`}>
             <div className="shrink-0">{icon}</div>
             <div className="text-xs font-bold tracking-wider uppercase">{label}</div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, Plus, Monitor, Laptop, Smartphone, Download, AlertTriangle, CheckCircle2, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, Plus, Monitor, Laptop, Smartphone, Download, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 // --- Types & Interfaces ---

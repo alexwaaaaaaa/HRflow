@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { CheckCircle2, XOctagon } from "lucide-react";
 
@@ -16,6 +18,12 @@ export default function WFHApproval() {
     const reject = (id: number) => setRequests(r => r.filter(x => x.id !== id));
 
     return (
+        <Page
+            title="WFH Approvals"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Wfh", href: "/attendance/wfh" }, { label: "Approve" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1000px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -81,5 +89,7 @@ export default function WFHApproval() {
                 )}
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

@@ -1,156 +1,212 @@
 "use client";
-import React, { useState } from 'react';
-import {
-    ArrowLeft, Search, User, Laptop, Calendar, MessageSquare, CheckCircle2
-} from 'lucide-react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 
-export default function AssetAssignmentScreen() {
-    const [assetId, setAssetId] = useState('');
-    const [employee, setEmployee] = useState('');
-    const [date, setDate] = useState('');
-    const [condition, setCondition] = useState('Excellent');
-    const [notes, setNotes] = useState('');
-    const [isTemporary, setIsTemporary] = useState(false);
-    const [returnDate, setReturnDate] = useState('');
+import { Laptop, User, Calendar, MessageSquare, CheckCircle2, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import FormField from "@/components/ui/FormField";
+import { useToast } from "@/components/ui/Toast";
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Assigning asset:', { assetId, employee, date, condition, notes, isTemporary, returnDate });
+// ─── Schema ──────────────────────────────────────────────────────────────────
+
+const assignAssetSchema = z.object({
+    assetId: z.string().min(1, "Please select an asset"),
+    employee: z.string().min(2, "Please select an employee"),
+    date: z.string().min(1, "Assignment date is required"),
+    condition: z.enum(["Excellent (New)", "Good (Slight Wear)", "Fair (Visible Wear)"]),
+    isTemporary: z.boolean(),
+    returnDate: z.string().optional(),
+    notes: z.string().optional(),
+}).refine(
+    (d) => !d.isTemporary || (d.returnDate && d.returnDate.length > 0),
+    { message: "Return date is required for temporary assignments", path: ["returnDate"] }
+);
+
+type AssignAssetForm = z.infer<typeof assignAssetSchema>;
+
+const CONDITIONS = ["Excellent (New)", "Good (Slight Wear)", "Fair (Visible Wear)"] as const;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function AssetAssignPage() {
+    const toast = useToast();
+    const { control, handleSubmit, watch, formState: { isSubmitting } } = useForm<AssignAssetForm>({
+        resolver: zodResolver(assignAssetSchema),
+        defaultValues: {
+            assetId: "",
+            employee: "",
+            date: "",
+            condition: "Excellent (New)",
+            isTemporary: false,
+            returnDate: "",
+            notes: "",
+        },
+    });
+
+    // eslint-disable-next-line react-hooks/incompatible-library -- RHF watch() is intentional; isTemporary drives conditional return-date field
+    const isTemporary = watch("isTemporary");
+
+    const onSubmit = async (_data: AssignAssetForm) => {
+        // TODO: replace with real mutation
+        await new Promise((r) => setTimeout(r, 700));
+        toast.show({ variant: "success", title: "Asset assigned", description: "The asset has been allocated to the employee." });
     };
 
     return (
-        <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] font-sans">
-
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/it/assets" className="p-2 border border-[#2A3A4A] bg-[#1A2A3A] text-[#8899AA] rounded-xl hover:bg-[#2A3A4A] hover:text-white transition-colors">
-                    <ArrowLeft size={20} />
+        <Page
+            title="Assign Asset"
+            subtitle="Allocate hardware to an employee and record its condition"
+            breadcrumbs={[
+                { label: "IT", href: "/it/dashboard" },
+                { label: "Assets", href: "/it/assets" },
+                { label: "Assign" },
+            ]}
+            maxWidth="900px"
+            actions={
+                <Link href="/it/assets">
+                    <Button variant="outline" icon={<ArrowLeft size={14} aria-hidden="true" />}>
+                        Back to Assets
+                    </Button>
                 </Link>
-                <div>
-                    <h1 className="text-3xl font-extrabold text-white mb-2">Assign Asset</h1>
-                    <p className="text-[#8899AA]">Allocate hardware to an employee and record its condition.</p>
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-
-                <div className="bg-[#0F1C2E] border border-[#2A3A4A] rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
-
-                    {/* Asset Selection */}
-                    <div>
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><Laptop size={14} /> Select Asset</label>
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8899AA]" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search by Asset ID, Name, or Serial..."
-                                value={assetId}
-                                onChange={e => setAssetId(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl pl-12 pr-4 py-3.5 focus:outline-none focus:border-[#33E6FF] transition-colors"
-                                required
+            }
+        >
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" aria-label="Assign asset form">
+                <Card padding="lg">
+                    <div className="space-y-6">
+                        {/* Asset search */}
+                        <div className="space-y-1.5">
+                            <label htmlFor="assign-asset-id" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                <Laptop size={14} aria-hidden="true" /> Select Asset
+                            </label>
+                            <FormField
+                                control={control}
+                                name="assetId"
+                                inputProps={{
+                                    id: "assign-asset-id",
+                                    placeholder: "Search by Asset ID, Name, or Serial…",
+                                }}
                             />
+                            <p className="text-xs text-[#8899AA]">Only displaying 'Available' assets in the unassigned pool.</p>
                         </div>
-                        <p className="text-xs text-[#8899AA] mt-2">Only displaying 'Available' assets in the unassigned pool.</p>
-                    </div>
 
-                    {/* Employee Selection */}
-                    <div>
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><User size={14} /> Assign To Employee</label>
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8899AA]" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search by Employee Name or Email..."
-                                value={employee}
-                                onChange={e => setEmployee(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl pl-12 pr-4 py-3.5 focus:outline-none focus:border-[#33E6FF] transition-colors"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Date */}
-                        <div>
-                            <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><Calendar size={14} /> Assignment Date</label>
-                            <input
-                                type="date"
-                                value={date}
-                                onChange={e => setDate(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#33E6FF] transition-colors"
-                                required
+                        {/* Employee search */}
+                        <div className="space-y-1.5">
+                            <label htmlFor="assign-employee" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                <User size={14} aria-hidden="true" /> Assign To Employee
+                            </label>
+                            <FormField
+                                control={control}
+                                name="employee"
+                                inputProps={{
+                                    id: "assign-employee",
+                                    placeholder: "Search by Employee Name or Email…",
+                                }}
                             />
                         </div>
 
-                        {/* Condition */}
-                        <div>
-                            <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><CheckCircle2 size={14} /> Asset Condition</label>
-                            <select
-                                value={condition}
-                                onChange={e => setCondition(e.target.value)}
-                                className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#33E6FF] transition-colors appearance-none cursor-pointer"
-                            >
-                                <option>Excellent (New)</option>
-                                <option>Good (Slight Wear)</option>
-                                <option>Fair (Visible Wear)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Temporary Assignment Toggle */}
-                    <div className="pt-4 border-t border-[#1A2A3A]">
-                        <label className="flex items-center gap-3 cursor-pointer mb-4">
-                            <input
-                                type="checkbox"
-                                checked={isTemporary}
-                                onChange={e => setIsTemporary(e.target.checked)}
-                                className="w-5 h-5 rounded bg-[#1A2A3A] border border-[#2A3A4A] text-[#33E6FF] focus:ring-[#33E6FF] focus:ring-offset-[#1A2A3A] focus:ring-1"
-                            />
-                            <span className="text-white font-bold text-sm">This is a temporary assignment / Loaner</span>
-                        </label>
-
-                        {isTemporary && (
-                            <div className="pl-8 animate-in slide-in-from-top-2">
-                                <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2">Expected Return Date</label>
-                                <input
-                                    type="date"
-                                    value={returnDate}
-                                    onChange={e => setReturnDate(e.target.value)}
-                                    className="w-full md:w-1/2 bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3 focus:outline-none focus:border-[#33E6FF] transition-colors"
-                                    required={isTemporary}
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            {/* Date */}
+                            <div className="space-y-1.5">
+                                <label htmlFor="assign-date" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                    <Calendar size={14} aria-hidden="true" /> Assignment Date
+                                </label>
+                                <FormField
+                                    control={control}
+                                    name="date"
+                                    inputProps={{ id: "assign-date", type: "date" }}
                                 />
-                                <p className="text-xs text-[#FFB020] mt-2">Employee will receive an automated reminder 3 days before this date.</p>
                             </div>
-                        )}
+
+                            {/* Condition */}
+                            <Controller
+                                control={control}
+                                name="condition"
+                                render={({ field }) => (
+                                    <div className="space-y-1.5">
+                                        <label htmlFor="assign-condition" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                            <CheckCircle2 size={14} aria-hidden="true" /> Asset Condition
+                                        </label>
+                                        <select
+                                            id="assign-condition"
+                                            {...field}
+                                            className="w-full rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none transition-colors focus:border-[#00e5a0]"
+                                        >
+                                            {CONDITIONS.map((c) => (
+                                                <option key={c} value={c}>{c}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
+                            />
+                        </div>
+
+                        {/* Temporary assignment toggle */}
+                        <div className="border-t border-[#1A2A3A] pt-4">
+                            <Controller
+                                control={control}
+                                name="isTemporary"
+                                render={({ field }) => (
+                                    <label htmlFor="assign-temporary" className="mb-4 flex cursor-pointer items-center gap-3">
+                                        <input
+                                            id="assign-temporary"
+                                            type="checkbox"
+                                            checked={field.value}
+                                            onChange={field.onChange}
+                                            className="h-5 w-5 rounded border border-[#1A2A3A] bg-[#060B14] accent-[#33E6FF]"
+                                        />
+                                        <span className="text-sm font-bold text-white">This is a temporary assignment / Loaner</span>
+                                    </label>
+                                )}
+                            />
+
+                            {isTemporary && (
+                                <div className="pl-8">
+                                    <FormField
+                                        control={control}
+                                        name="returnDate"
+                                        label="Expected Return Date"
+                                        inputProps={{ type: "date" }}
+                                    />
+                                    <p className="mt-2 text-xs text-[#f59e0b]">
+                                        Employee will receive an automated reminder 3 days before this date.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Notes */}
+                        <div className="border-t border-[#1A2A3A] pt-4">
+                            <label htmlFor="assign-notes" className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#7a8fa6]">
+                                <MessageSquare size={14} aria-hidden="true" /> Additional Notes
+                            </label>
+                            <Controller
+                                control={control}
+                                name="notes"
+                                render={({ field }) => (
+                                    <textarea
+                                        id="assign-notes"
+                                        {...field}
+                                        rows={4}
+                                        placeholder="Any scratches, missing accessories, or special instructions…"
+                                        className="w-full resize-none rounded-lg border border-[#1A2A3A] bg-[#060B14] p-3 text-sm text-white outline-none transition-colors focus:border-[#00e5a0]"
+                                    />
+                                )}
+                            />
+                        </div>
                     </div>
+                </Card>
 
-                    {/* Notes */}
-                    <div className="pt-4 border-t border-[#1A2A3A]">
-                        <label className="block text-xs font-bold text-[#8899AA] uppercase tracking-wider mb-2 flex items-center gap-2"><MessageSquare size={14} /> Additional Notes</label>
-                        <textarea
-                            rows={4}
-                            placeholder="Any scratches, missing accessories, or special instructions..."
-                            value={notes}
-                            onChange={e => setNotes(e.target.value)}
-                            className="w-full bg-[#1A2A3A] border border-[#2A3A4A] text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#33E6FF] transition-colors resize-none"
-                        ></textarea>
-                    </div>
-
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-4 mt-8 pt-4">
-                    <Link href="/it/assets" className="px-6 py-3 font-bold text-[#8899AA] hover:text-white transition-colors">
-                        Cancel
-                    </Link>
-                    <button type="submit" className="px-8 py-3 bg-[#33E6FF] text-[#0A1420] font-bold rounded-xl hover:bg-[#29b8cc] transition-colors shadow-[0_5px_15px_rgba(51,230,255,0.2)]">
+                <div className="flex items-center justify-end gap-4">
+                    <Button variant="outline" href="/it/assets">Cancel</Button>
+                    <Button type="submit" isLoading={isSubmitting} loadingText="Assigning…">
                         Assign to Employee
-                    </button>
+                    </Button>
                 </div>
-
             </form>
-        </div>
+        </Page>
     );
 }

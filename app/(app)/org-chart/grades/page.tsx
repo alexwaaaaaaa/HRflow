@@ -1,13 +1,21 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
-    BarChart, ChevronRight, Search, Plus, MoreVertical, Edit, ShieldAlert
+    BarChart, ChevronRight, Search, Plus, MoreVertical, Edit
 } from "lucide-react";
 
 export default function GradeBandListScreen() {
     return (
+        <Page
+            title="Grades & Bands"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Grades" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -100,5 +108,7 @@ export default function GradeBandListScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

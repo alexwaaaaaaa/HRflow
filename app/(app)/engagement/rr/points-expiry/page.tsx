@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from 'react';
+
+import Page from "@/components/ui/Page";
+import React from 'react';
 import {
-    Hourglass, AlertTriangle, ArrowRight, Settings, Banknote, UserX, Download, RefreshCw
+    Hourglass, AlertTriangle, ArrowRight, Settings, Banknote, Download, RefreshCw
 } from 'lucide-react';
 
 const EXPIRING_POINTS = [
@@ -12,6 +14,13 @@ const EXPIRING_POINTS = [
 
 export default function PointsExpiryScreen() {
     return (
+        <Page
+            title="Expiry Management"
+            subtitle="Monitor point balances nearing expiration and manage retrieval rules."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Points Expiry" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -154,5 +163,7 @@ export default function PointsExpiryScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

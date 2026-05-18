@@ -1,96 +1,212 @@
 "use client";
-import React, { useState } from 'react';
-import { Building2, Plus, Search, Filter, MoreVertical, Building, Users, MapPin } from 'lucide-react';
-import Link from 'next/link';
 
-const ENTITIES = [
-    { id: 'ENT-001', name: 'Acme Technologies Pvt Ltd', type: 'Parent Company', loc: 'Bengaluru, KA', emp: 342, status: 'Active', color: 'indigo' },
-    { id: 'ENT-002', name: 'Acme Retail Solutions', type: 'Subsidiary', loc: 'Mumbai, MH', emp: 128, status: 'Active', color: 'blue' },
-    { id: 'ENT-003', name: 'Acme Logistics India', type: 'Subsidiary', loc: 'Delhi, DL', emp: 85, status: 'Active', color: 'emerald' },
-    { id: 'ENT-004', name: 'Acme Global Ventures LLC', type: 'Foreign Sub', loc: 'Delaware, US', emp: 12, status: 'Active', color: 'purple' },
-    { id: 'ENT-005', name: 'Acme Innovations Labs', type: 'Joint Venture', loc: 'Pune, MH', emp: 0, status: 'Draft', color: 'slate' },
+import { useState } from "react";
+import Link from "next/link";
+import { Plus, Building, Users, MapPin, MoreVertical } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+// ─── Types & static data ──────────────────────────────────────────────────────
+
+type EntityStatus = "Active" | "Draft";
+
+interface Entity {
+    id: string;
+    name: string;
+    type: string;
+    loc: string;
+    emp: number;
+    status: EntityStatus;
+    dotCls: string;
+    iconCls: string;
+}
+
+const ENTITIES: Entity[] = [
+    {
+        id: "ENT-001",
+        name: "Acme Technologies Pvt Ltd",
+        type: "Parent Company",
+        loc: "Bengaluru, KA",
+        emp: 342,
+        status: "Active",
+        dotCls: "bg-[#4f46e5]/10 text-[#818cf8]",
+        iconCls: "text-[#818cf8]",
+    },
+    {
+        id: "ENT-002",
+        name: "Acme Retail Solutions",
+        type: "Subsidiary",
+        loc: "Mumbai, MH",
+        emp: 128,
+        status: "Active",
+        dotCls: "bg-blue-500/10 text-blue-400",
+        iconCls: "text-blue-400",
+    },
+    {
+        id: "ENT-003",
+        name: "Acme Logistics India",
+        type: "Subsidiary",
+        loc: "Delhi, DL",
+        emp: 85,
+        status: "Active",
+        dotCls: "bg-emerald-500/10 text-emerald-400",
+        iconCls: "text-emerald-400",
+    },
+    {
+        id: "ENT-004",
+        name: "Acme Global Ventures LLC",
+        type: "Foreign Sub",
+        loc: "Delaware, US",
+        emp: 12,
+        status: "Active",
+        dotCls: "bg-purple-500/10 text-purple-400",
+        iconCls: "text-purple-400",
+    },
+    {
+        id: "ENT-005",
+        name: "Acme Innovations Labs",
+        type: "Joint Venture",
+        loc: "Pune, MH",
+        emp: 0,
+        status: "Draft",
+        dotCls: "bg-[#1A2A3A] text-[#8899AA]",
+        iconCls: "text-[#8899AA]",
+    },
 ];
 
-export default function EntityListScreen() {
-    const [search, setSearch] = useState('');
+const STATUS_VARIANT: Record<EntityStatus, "success" | "neutral"> = {
+    Active: "success",
+    Draft: "neutral",
+};
 
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function EntityCard({ entity }: { entity: Entity }) {
     return (
-        <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Building2 size={24} className="text-indigo-400" /> Group Entities</h1>
-                    <p className="text-[#8899AA] text-sm mt-1">Manage multiple companies, subsidiaries, and joint ventures under one roof.</p>
+        <article className="relative flex h-full flex-col rounded-2xl border border-[#2A3A4A] bg-[#0D1928] p-6 transition-colors hover:border-[#4f46e5]/50">
+            <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-4 top-4"
+                aria-label={`More actions for ${entity.name}`}
+                icon={<MoreVertical size={16} />}
+            />
+
+            <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${entity.dotCls}`}>
+                <Building size={24} aria-hidden="true" />
+            </div>
+
+            <Link
+                href={`/multi-entity/settings?id=${entity.id}`}
+                className={`mb-1 block text-lg font-bold text-white transition-colors hover:text-[#818cf8] ${entity.iconCls}`}
+            >
+                {entity.name}
+            </Link>
+            <div className="mb-6 flex items-center gap-2 text-xs text-[#8899AA]">
+                <span className="rounded bg-[#1A2A3A] px-2 py-0.5 font-mono">{entity.id}</span>
+                <span>•</span>
+                <span>{entity.type}</span>
+            </div>
+
+            <dl className="mt-auto w-full space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                    <dt className="flex items-center gap-2 text-[#556677]">
+                        <MapPin size={14} aria-hidden="true" /> Location
+                    </dt>
+                    <dd className="font-medium text-white">{entity.loc}</dd>
                 </div>
-                <Link href="/multi-entity/add" className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors">
-                    <Plus size={16} /> Add New Entity
+                <div className="flex items-center justify-between text-sm">
+                    <dt className="flex items-center gap-2 text-[#556677]">
+                        <Users size={14} aria-hidden="true" /> Headcount
+                    </dt>
+                    <dd className="font-medium text-white">{entity.emp} Active</dd>
+                </div>
+            </dl>
+
+            <div className="mt-6 flex items-center justify-between border-t border-[#2A3A4A] pt-4">
+                <Badge variant={STATUS_VARIANT[entity.status]}>{entity.status}</Badge>
+                <Link
+                    href={`/multi-entity/dashboard?id=${entity.id}`}
+                    className="flex items-center gap-1 text-xs font-bold text-[#AABBCC] transition-colors hover:text-white"
+                >
+                    View Dash →
                 </Link>
             </div>
+        </article>
+    );
+}
 
-            <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl overflow-hidden flex flex-col">
-                <div className="p-4 border-b border-[#1A2A3A] flex items-center justify-between bg-[#060D1A]">
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function EntityListPage() {
+    const [search, setSearch] = useState("");
+
+    const filtered = search
+        ? ENTITIES.filter((e) => e.name.toLowerCase().includes(search.toLowerCase()))
+        : ENTITIES;
+
+    return (
+        <Page
+            title="Group Entities"
+            subtitle="Manage multiple companies, subsidiaries, and joint ventures under one roof"
+            breadcrumbs={[{ label: "Multi-Entity" }]}
+            maxWidth="1400px"
+            actions={
+                <Button icon={<Plus size={14} />} href="/multi-entity/add">Add New Entity</Button>
+            }
+        >
+            <Card padding="none">
+                {/* Table header */}
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1A2A3A] bg-[#060D1A] px-4 py-3">
                     <div className="flex items-center gap-4">
-                        <span className="text-white font-bold text-sm">All Entities (5)</span>
-                        <div className="h-4 w-px bg-[#2A3A4A]"></div>
-                        <span className="text-[#8899AA] text-sm">Total Group Headcount: <strong className="text-white">567</strong></span>
+                        <span className="text-sm font-bold text-white">All Entities ({ENTITIES.length})</span>
+                        <span className="h-4 w-px bg-[#2A3A4A]" aria-hidden="true" />
+                        <span className="text-sm text-[#8899AA]">
+                            Total Group Headcount:{" "}
+                            <strong className="text-white">
+                                {ENTITIES.reduce((s, e) => s + e.emp, 0)}
+                            </strong>
+                        </span>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button className="text-[#8899AA] hover:text-white transition-colors"><Filter size={16} /></button>
-                        <div className="relative w-64">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556677]" />
-                            <input type="text" placeholder="Search entity..." value={search} onChange={e => setSearch(e.target.value)}
-                                className="w-full bg-[#131B2B] border border-[#2A3A4A] rounded-lg pl-9 pr-3 py-1.5 text-white text-xs focus:border-indigo-500 outline-none" />
-                        </div>
+                    <div className="relative w-64">
+                        <label htmlFor="entity-search" className="sr-only">
+                            Search entities
+                        </label>
+                        <input
+                            id="entity-search"
+                            type="search"
+                            placeholder="Search entity…"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="h-9 w-full rounded-lg border border-[#1A2A3A] bg-[#0D1928] pl-3 pr-3 text-xs text-white outline-none placeholder:text-[#7a8fa6] focus:border-[#00e5a0]"
+                        />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 xlg:grid-cols-3 gap-6 p-6">
-                    {ENTITIES.filter(e => !search || e.name.toLowerCase().includes(search.toLowerCase())).map((e, i) => (
-                        <div key={i} className="bg-[#131B2B] border border-[#2A3A4A] rounded-2xl p-6 hover:border-indigo-500/50 transition-colors group relative flex flex-col items-start h-full">
-                            <button className="absolute top-4 right-4 text-[#556677] hover:text-white"><MoreVertical size={18} /></button>
-
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-${e.color}-500/10 text-${e.color}-400`}>
-                                <Building size={24} />
-                            </div>
-
-                            <Link href={`/multi-entity/settings?id=${e.id}`} className="text-white font-bold text-lg mb-1 group-hover:text-indigo-400 transition-colors block">
-                                {e.name}
-                            </Link>
-                            <div className="text-[#8899AA] text-xs flex items-center gap-2 mb-6">
-                                <span className="bg-[#1A2A3A] px-2 py-0.5 rounded font-mono">{e.id}</span>
-                                • {e.type}
-                            </div>
-
-                            <div className="w-full space-y-3 mt-auto">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-[#556677] flex items-center gap-2"><MapPin size={14} /> Location</span>
-                                    <span className="text-white font-medium">{e.loc}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-[#556677] flex items-center gap-2"><Users size={14} /> Headcount</span>
-                                    <span className="text-white font-medium">{e.emp} Active</span>
-                                </div>
-                            </div>
-
-                            <div className="w-full mt-6 pt-4 border-t border-[#2A3A4A] flex justify-between items-center">
-                                <span className={`px-2 py-1 rounded-md text-[10px] uppercase font-bold tracking-wider ${e.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-400'}`}>
-                                    {e.status}
-                                </span>
-                                <Link href={`/multi-entity/dashboard?id=${e.id}`} className="text-[#AABBCC] text-xs font-bold hover:text-white flex items-center gap-1 transition-colors">
-                                    View Dash &rarr;
-                                </Link>
-                            </div>
-                        </div>
+                {/* Entity grid */}
+                <div className="grid grid-cols-1 gap-6 p-6 lg:grid-cols-2 xl:grid-cols-3">
+                    {filtered.map((entity) => (
+                        <EntityCard key={entity.id} entity={entity} />
                     ))}
 
-                    <Link href="/multi-entity/add" className="border-2 border-dashed border-[#2A3A4A] rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-indigo-500/50 hover:bg-[#131B2B] transition-colors min-h-[280px]">
-                        <div className="w-12 h-12 rounded-full border-2 border-[#556677] flex items-center justify-center text-[#556677] mb-4">
-                            <Plus size={24} />
+                    {/* Add entity card */}
+                    <Link
+                        href="/multi-entity/add"
+                        className="flex min-h-[280px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#2A3A4A] p-6 text-center transition-colors hover:border-[#4f46e5]/50 hover:bg-[#0D1928]"
+                        aria-label="Add a new sub-entity"
+                    >
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#556677] text-[#556677]">
+                            <Plus size={24} aria-hidden="true" />
                         </div>
-                        <h3 className="text-white font-bold text-lg">Add Sub-Entity</h3>
-                        <p className="text-[#8899AA] text-sm mt-2 max-w-[200px]">Create an independent org structure that rolls up to the parent.</p>
+                        <h3 className="text-lg font-bold text-white">Add Sub-Entity</h3>
+                        <p className="mt-2 max-w-[200px] text-sm text-[#8899AA]">
+                            Create an independent org structure that rolls up to the parent.
+                        </p>
                     </Link>
                 </div>
-            </div>
-        </div>
+            </Card>
+        </Page>
     );
 }

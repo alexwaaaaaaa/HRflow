@@ -1,9 +1,18 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Crown, PieChart, Info, Download, Maximize2 } from 'lucide-react';
+import { Crown, PieChart, Download } from 'lucide-react';
 
 export default function ExecutiveCompScreen() {
     return (
+        <Page
+            title="Executive Compensation & Ratio"
+            subtitle="Track CEO Pay Ratio and Executive compensation mix for proxy reporting."
+            breadcrumbs={[{ label: "Pay Equity", href: "/pay-equity" }, { label: "Executive Comp" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -100,5 +109,7 @@ export default function ExecutiveCompScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Download, Search, ChevronDown } from "lucide-react";
 
@@ -31,6 +33,13 @@ export default function AttendanceSummary() {
     };
 
     return (
+        <Page
+            title="Attendance Summary"
+            subtitle="Monthly employee-wise attendance overview"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Summary" }]}
+            maxWidth="1400px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1400px] mx-auto text-white">
             {/* Header */}
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
@@ -142,5 +151,7 @@ export default function AttendanceSummary() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

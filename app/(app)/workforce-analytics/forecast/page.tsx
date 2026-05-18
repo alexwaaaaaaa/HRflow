@@ -1,13 +1,63 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Users, Filter, Download, ArrowUpRight, Plus, Activity } from 'lucide-react';
+import { Users, Download, ArrowUpRight, Activity } from 'lucide-react';
 import Link from 'next/link';
+
+type DeptColor = "indigo" | "blue" | "emerald" | "purple";
+
+const DEPT_TEXT_CLASSES: Record<DeptColor, string> = {
+    indigo: "text-indigo-400 flex items-center gap-1",
+    blue: "text-blue-400 flex items-center gap-1",
+    emerald: "text-emerald-400 flex items-center gap-1",
+    purple: "text-purple-400 flex items-center gap-1",
+} as const;
+
+const DEPT_BAR_BASE_CLASSES: Record<DeptColor, string> = {
+    indigo: "absolute top-0 left-0 bottom-0 bg-indigo-600",
+    blue: "absolute top-0 left-0 bottom-0 bg-blue-600",
+    emerald: "absolute top-0 left-0 bottom-0 bg-emerald-600",
+    purple: "absolute top-0 left-0 bottom-0 bg-purple-600",
+} as const;
+
+const DEPT_BAR_FORECAST_CLASSES: Record<DeptColor, string> = {
+    indigo: "absolute top-0 bottom-0 bg-indigo-400/50",
+    blue: "absolute top-0 bottom-0 bg-blue-400/50",
+    emerald: "absolute top-0 bottom-0 bg-emerald-400/50",
+    purple: "absolute top-0 bottom-0 bg-purple-400/50",
+} as const;
+
+const DEPT_DATA: { n: string; curr: number; fcast: number; color: DeptColor }[] = [
+    { n: 'Engineering', curr: 180, fcast: 240, color: 'indigo' },
+    { n: 'Sales & Marketing', curr: 85, fcast: 120, color: 'blue' },
+    { n: 'Operations', curr: 60, fcast: 75, color: 'emerald' },
+    { n: 'G&A', curr: 25, fcast: 30, color: 'purple' },
+];
+
+const BAR_DATA = [
+    { m: 'Nov', ext: 350, new: 15 },
+    { m: 'Dec', ext: 360, new: 10 },
+    { m: 'Jan', ext: 365, new: 25 },
+    { m: 'Feb', ext: 385, new: 30 },
+    { m: 'Mar', ext: 410, new: 15 },
+    { m: 'Apr', ext: 420, new: 20 },
+    { m: 'May', ext: 435, new: 25 },
+    { m: 'Jun', ext: 455, new: 10 },
+    { m: 'Jul', ext: 460, new: 15 },
+];
 
 export default function HeadcountForecastScreen() {
     const [view, setView] = useState('dept');
 
     return (
-        <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
+        <Page
+            title="Headcount Forecasting"
+            subtitle="Predictive models showing expected organizational size based on hiring and attrition trends."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Forecast" }]}
+            maxWidth="1400px"
+        >
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Users size={24} className="text-indigo-400" /> Headcount Forecasting</h1>
@@ -29,9 +79,7 @@ export default function HeadcountForecastScreen() {
                     </div>
                 </div>
 
-                {/* Placeholder for complex chart (using grid/flex as mock) */}
                 <div className="h-72 w-full flex items-end justify-between gap-1 pt-10 relative">
-                    {/* Grid lines */}
                     <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
                         {[500, 400, 300, 200, 100, 0].map(val => (
                             <div key={val} className="w-full h-px bg-[#1A2A3A] relative">
@@ -40,18 +88,7 @@ export default function HeadcountForecastScreen() {
                         ))}
                     </div>
 
-                    {/* Bars */}
-                    {[
-                        { m: 'Nov', ext: 350, new: 15 },
-                        { m: 'Dec', ext: 360, new: 10 },
-                        { m: 'Jan', ext: 365, new: 25 },
-                        { m: 'Feb', ext: 385, new: 30 },
-                        { m: 'Mar', ext: 410, new: 15 },
-                        { m: 'Apr', ext: 420, new: 20 },
-                        { m: 'May', ext: 435, new: 25 },
-                        { m: 'Jun', ext: 455, new: 10 },
-                        { m: 'Jul', ext: 460, new: 15 },
-                    ].map((d, i) => {
+                    {BAR_DATA.map((d, i) => {
                         const total = d.ext + d.new;
                         const hPct = (total / 500) * 100;
                         const extPct = (d.ext / total) * 100;
@@ -63,12 +100,13 @@ export default function HeadcountForecastScreen() {
                                     {total} Total
                                 </div>
                                 <div className="w-full flex flex-col justify-end overflow-hidden rounded-t group-hover:opacity-80 transition-opacity" style={{ height: `${hPct}%` }}>
+                                    {/* inline-style: data-driven percentage height cannot be expressed as static Tailwind */}
                                     <div className="w-full bg-indigo-400" style={{ height: `${newPct}%` }}></div>
                                     <div className="w-full bg-indigo-600" style={{ height: `${extPct}%` }}></div>
                                 </div>
                                 <div className="text-[10px] text-[#8899AA] mt-2 font-bold uppercase">{d.m}</div>
                             </div>
-                        )
+                        );
                     })}
                 </div>
 
@@ -82,22 +120,16 @@ export default function HeadcountForecastScreen() {
                 <div className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6">
                     <h3 className="text-white font-bold border-b border-[#1A2A3A] pb-3 mb-4">Department Level Breakdown (Month 12)</h3>
                     <div className="space-y-4 pt-2">
-                        {[
-                            { n: 'Engineering', curr: 180, fcast: 240, color: 'indigo' },
-                            { n: 'Sales & Marketing', curr: 85, fcast: 120, color: 'blue' },
-                            { n: 'Operations', curr: 60, fcast: 75, color: 'emerald' },
-                            { n: 'G&A', curr: 25, fcast: 30, color: 'purple' },
-                        ].map((d, i) => (
+                        {DEPT_DATA.map((d, i) => (
                             <div key={i}>
                                 <div className="flex justify-between text-sm mb-1.5 font-bold">
                                     <span className="text-white">{d.n}</span>
-                                    <span className={`text-${d.color}-400 flex items-center gap-1`}><ArrowUpRight size={14} /> {d.fcast} (+{d.fcast - d.curr})</span>
+                                    <span className={DEPT_TEXT_CLASSES[d.color]}><ArrowUpRight size={14} /> {d.fcast} (+{d.fcast - d.curr})</span>
                                 </div>
                                 <div className="w-full h-2 bg-[#131B2B] rounded-full overflow-hidden relative">
-                                    {/* Current base */}
-                                    <div className={`absolute top-0 left-0 bottom-0 bg-${d.color}-600`} style={{ width: `${(d.curr / 300) * 100}%` }}></div>
-                                    {/* Forecasted addition */}
-                                    <div className={`absolute top-0 bottom-0 bg-${d.color}-400/50`} style={{ left: `${(d.curr / 300) * 100}%`, width: `${((d.fcast - d.curr) / 300) * 100}%` }}></div>
+                                    {/* inline-style: data-driven percentage width cannot be expressed as static Tailwind */}
+                                    <div className={DEPT_BAR_BASE_CLASSES[d.color]} style={{ width: `${(d.curr / 300) * 100}%` }}></div>
+                                    <div className={DEPT_BAR_FORECAST_CLASSES[d.color]} style={{ left: `${(d.curr / 300) * 100}%`, width: `${((d.fcast - d.curr) / 300) * 100}%` }}></div>
                                 </div>
                             </div>
                         ))}
@@ -138,5 +170,6 @@ export default function HeadcountForecastScreen() {
                 </div>
             </div>
         </div>
+        </Page>
     );
 }

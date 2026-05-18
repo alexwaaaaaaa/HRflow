@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    BarChart2, Search, Filter, Plus, Clock, CheckCircle2, AlertCircle, Users, Send, FileText, ChevronRight
+    BarChart2, Search, Plus, Clock, CheckCircle2, AlertCircle, Users, Send, FileText, ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,6 +21,13 @@ export default function SurveyDashboardHRScreen() {
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
+        <Page
+            title="Pulse Surveys"
+            subtitle="Measure engagement, gather feedback, and track company sentiment."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Dashboard" }]}
+            maxWidth="1200px"
+        >
+
         <main className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -226,5 +235,7 @@ export default function SurveyDashboardHRScreen() {
 
             </div>
         </main>
+    
+        </Page>
     );
 }

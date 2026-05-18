@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -8,6 +10,13 @@ import {
 
 export default function CostCenterListScreen() {
     return (
+        <Page
+            title="Cost Centers"
+            subtitle="Across 5 entity codes"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Cost Centers" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="flex items-center justify-between mb-8">
                 <div>
@@ -121,5 +130,7 @@ export default function CostCenterListScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

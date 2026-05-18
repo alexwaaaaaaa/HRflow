@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -8,6 +10,13 @@ import {
 
 export default function AddEditDepartmentScreen() {
     return (
+        <Page
+            title="Create New Department"
+            subtitle="Auto-generated alphanumeric code."
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Departments", href: "/org-chart/departments" }, { label: "Edit" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="max-w-4xl mx-auto">
 
@@ -136,5 +145,7 @@ export default function AddEditDepartmentScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

@@ -1,115 +1,176 @@
 "use client";
 
 import Link from "next/link";
-import { UserMinus, Calculator, CheckCircle2, Search, ArrowRight, HandCoins } from "lucide-react";
+import { UserMinus, Calculator, CheckCircle2, ArrowRight, HandCoins } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+
+interface FnfRow {
+    emp: string;
+    id: string;
+    exitDate: string;
+    exitType: "Resignation" | "Termination" | "End of Contract";
+    clearance: number;
+    status: string;
+}
+
+const FNF_ROWS: FnfRow[] = [
+    { emp: "Neha Gupta", id: "EMP-410", exitDate: "30 Oct 2024", exitType: "Resignation", clearance: 100, status: "Ready" },
+    { emp: "Rajeev Singh", id: "EMP-502", exitDate: "15 Oct 2024", exitType: "Termination", clearance: 100, status: "Ready" },
+    { emp: "Anita Desai", id: "EMP-315", exitDate: "10 Nov 2024", exitType: "Resignation", clearance: 75, status: "Pending IT Clearance" },
+    { emp: "Suresh Pillai", id: "EMP-288", exitDate: "05 Nov 2024", exitType: "End of Contract", clearance: 50, status: "Pending Manager Clearance" },
+];
+
+const EXIT_TYPE_VARIANT = {
+    Resignation: "neutral",
+    Termination: "danger",
+    "End of Contract": "info",
+} as const;
+
+const COLUMNS: Column<FnfRow>[] = [
+    {
+        key: "employee",
+        label: "Employee",
+        render: (r) => (
+            <div>
+                <p className="font-semibold text-white">{r.emp}</p>
+                <p className="text-xs text-[#8899AA]">{r.id}</p>
+            </div>
+        ),
+        sortable: true,
+        sortValue: (r) => r.emp,
+    },
+    {
+        key: "exit",
+        label: "Exit Date & Type",
+        render: (r) => (
+            <div>
+                <p className="text-sm text-white">{r.exitDate}</p>
+                <Badge variant={EXIT_TYPE_VARIANT[r.exitType]}>{r.exitType}</Badge>
+            </div>
+        ),
+    },
+    {
+        key: "clearance",
+        label: "Clearance Status",
+        render: (r) => (
+            <div>
+                <div className="mb-1.5 flex items-center gap-2">
+                    <div className="h-1.5 flex-1 rounded-full bg-[#1A2A3A]">
+                        <div
+                            className="h-1.5 rounded-full transition-all"
+                            style={{
+                                width: `${r.clearance}%`,
+                                background: r.clearance === 100 ? "#00E5A0" : "#FFB800",
+                            }}
+                        />
+                    </div>
+                    <span className={`text-xs font-semibold ${r.clearance === 100 ? "text-[#00E5A0]" : "text-[#FFB800]"}`}>
+                        {r.clearance}%
+                    </span>
+                </div>
+                <p className="text-xs text-[#8899AA]">{r.status}</p>
+            </div>
+        ),
+    },
+    {
+        key: "action",
+        label: "Action",
+        render: (r) => (
+            r.clearance === 100 ? (
+                <Link href="/payroll/fnf/process">
+                    <Button variant="outline" size="sm" iconRight={<ArrowRight size={12} aria-hidden="true" />}>
+                        Process F&amp;F
+                    </Button>
+                </Link>
+            ) : (
+                <Button size="sm" disabled>
+                    Awaiting Clearance
+                </Button>
+            )
+        ),
+    },
+];
 
 export default function FnfSettlement() {
     return (
-        <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px", paddingBottom: 80 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
-                <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 8 }}>Full & Final (F&F) Settlement</h1>
-                    <div style={{ fontSize: 14, color: "#8899AA" }}>Initiate and manage terminal payouts for exited employees.</div>
-                </div>
-                <Link href="/payroll/fnf/process">
-                    <button style={{ height: 40, padding: "0 20px", background: "#00E5A0", border: "none", borderRadius: 8, color: "#060B14", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                        <UserMinus size={18} /> Initiate New F&F
-                    </button>
-                </Link>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 24, display: "flex", alignItems: "center", gap: 20 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,184,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <Calculator size={24} color="#FFB800" />
-                    </div>
-                    <div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 4 }}>4</div>
-                        <div style={{ fontSize: 13, color: "#8899AA" }}>Pending F&F Processing</div>
-                    </div>
-                </div>
-                <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 12, padding: 24, display: "flex", alignItems: "center", gap: 20 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(0,229,160,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <CheckCircle2 size={24} color="#00E5A0" />
-                    </div>
-                    <div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF", marginBottom: 4 }}>12</div>
-                        <div style={{ fontSize: 13, color: "#8899AA" }}>F&F Processed This Fiscal Year</div>
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ background: "#0D1928", border: "1px solid #1A2A3A", borderRadius: 16, overflow: "hidden" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px", borderBottom: "1px solid #1A2A3A" }}>
-                    <h2 style={{ fontSize: 16, fontWeight: 600, color: "#FFFFFF" }}>Pending Settlements</h2>
-                    <div style={{ position: "relative" }}>
-                        <Search size={16} color="#8899AA" style={{ position: "absolute", left: 12, top: 10 }} />
-                        <input type="text" placeholder="Search exited employee..." style={{ width: 260, height: 36, background: "#060B14", border: "1px solid #1A2A3A", borderRadius: 8, padding: "0 14px 0 36px", color: "#FFFFFF", fontSize: 13, outline: "none" }} />
-                    </div>
+        <Page
+            title="Full & Final (F&F) Settlement"
+            subtitle="Initiate and manage terminal payouts for exited employees."
+            breadcrumbs={[
+                { label: "Payroll", href: "/payroll" },
+                { label: "F&F Settlement" },
+            ]}
+            maxWidth="1000px"
+            actions={
+                <Button icon={<UserMinus size={16} aria-hidden="true" />} href="/payroll/fnf/process">Initiate New F&amp;F</Button>
+            }
+        >
+            <div className="space-y-6">
+                {/* KPI Cards */}
+                <div className="grid gap-6 sm:grid-cols-2">
+                    <Card>
+                        <div className="flex items-center gap-5">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[rgba(255,184,0,0.1)]">
+                                <Calculator size={24} className="text-[#FFB800]" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-bold text-white">4</p>
+                                <p className="text-sm text-[#8899AA]">Pending F&amp;F Processing</p>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card>
+                        <div className="flex items-center gap-5">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[rgba(0,229,160,0.1)]">
+                                <CheckCircle2 size={24} className="text-[#00E5A0]" aria-hidden="true" />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-bold text-white">12</p>
+                                <p className="text-sm text-[#8899AA]">F&amp;F Processed This Fiscal Year</p>
+                            </div>
+                        </div>
+                    </Card>
                 </div>
 
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                        <tr style={{ background: "#0A1420", borderBottom: "1px solid #1A2A3A", textAlign: "left" }}>
-                            <th style={{ padding: "16px 24px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Employee</th>
-                            <th style={{ padding: "16px 24px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Exit Date & Type</th>
-                            <th style={{ padding: "16px 24px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Clearance Status</th>
-                            <th style={{ padding: "16px 24px", fontSize: 12, fontWeight: 600, color: "#8899AA", textTransform: "uppercase", letterSpacing: 0.5 }}>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {[
-                            { emp: "Neha Gupta", id: "EMP-410", exitDate: "30 Oct 2024", exitType: "Resignation", clearance: "100", status: "Ready" },
-                            { emp: "Rajeev Singh", id: "EMP-502", exitDate: "15 Oct 2024", exitType: "Termination", clearance: "100", status: "Ready" },
-                            { emp: "Anita Desai", id: "EMP-315", exitDate: "10 Nov 2024", exitType: "Resignation", clearance: "75", status: "Pending IT Clearance" },
-                            { emp: "Suresh Pillai", id: "EMP-288", exitDate: "05 Nov 2024", exitType: "End of Contract", clearance: "50", status: "Pending Manager Clearance" },
-                        ].map((ex, i) => (
-                            <tr key={i} style={{ borderBottom: i < 3 ? "1px solid #1A2A3A" : "none" }}>
-                                <td style={{ padding: "16px 24px" }}>
-                                    <div style={{ fontSize: 14, fontWeight: 600, color: "#FFFFFF", marginBottom: 4 }}>{ex.emp}</div>
-                                    <div style={{ fontSize: 12, color: "#8899AA" }}>{ex.id}</div>
-                                </td>
-                                <td style={{ padding: "16px 24px" }}>
-                                    <div style={{ fontSize: 14, color: "#FFFFFF", marginBottom: 4 }}>{ex.exitDate}</div>
-                                    <div style={{ fontSize: 12, color: ex.exitType === "Termination" ? "#FF4444" : "#8899AA" }}>{ex.exitType}</div>
-                                </td>
-                                <td style={{ padding: "16px 24px" }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                                        <div style={{ flex: 1, height: 6, background: "#1A2A3A", borderRadius: 3 }}>
-                                            <div style={{ width: `${ex.clearance}%`, height: "100%", background: ex.clearance === "100" ? "#00E5A0" : "#FFB800", borderRadius: 3 }} />
-                                        </div>
-                                        <span style={{ fontSize: 12, fontWeight: 600, color: ex.clearance === "100" ? "#00E5A0" : "#FFB800" }}>{ex.clearance}%</span>
-                                    </div>
-                                    <div style={{ fontSize: 12, color: "#8899AA" }}>{ex.status}</div>
-                                </td>
-                                <td style={{ padding: "16px 24px" }}>
-                                    {ex.clearance === "100" ? (
-                                        <Link href="/payroll/fnf/process" style={{ textDecoration: "none" }}>
-                                            <button style={{ height: 32, padding: "0 16px", background: "transparent", border: "1px solid #00E5A0", borderRadius: 6, color: "#00E5A0", fontSize: 12, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-                                                Process F&F <ArrowRight size={14} />
-                                            </button>
-                                        </Link>
-                                    ) : (
-                                        <button disabled style={{ height: 32, padding: "0 16px", background: "#1A2A3A", border: "none", borderRadius: 6, color: "#445566", fontSize: 12, fontWeight: 600, cursor: "not-allowed", display: "flex", alignItems: "center", gap: 6 }}>
-                                            Awaiting Clearance
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            <div style={{ marginTop: 24, padding: "20px 24px", background: "rgba(0,102,255,0.05)", border: "1px dashed rgba(0,102,255,0.3)", borderRadius: 16, display: "flex", gap: 16, alignItems: "center" }}>
-                <HandCoins size={24} color="#0066FF" />
-                <div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#FFFFFF", marginBottom: 4 }}>Standard F&F Inclusions</div>
-                    <div style={{ fontSize: 13, color: "#8899AA", lineHeight: 1.5 }}>
-                        The system automatically calculates Gratuity (if tenure &gt; 5 years), Leave Encashment balance, Notice Pay recovery/payout, and pending variables. Make sure Exit Clearances from Admin and IT are completed.
+                {/* Pending Settlements Table */}
+                <Card padding="none" aria-labelledby="pending-fnf-heading">
+                    <div className="border-b border-[#1A2A3A] px-6 py-4">
+                        <h2 id="pending-fnf-heading" className="text-base font-semibold text-white">
+                            Pending Settlements
+                        </h2>
                     </div>
-                </div>
+                    <DataTable<FnfRow>
+                        data={FNF_ROWS}
+                        columns={COLUMNS}
+                        rowKey={(r) => r.id}
+                        searchable
+                        searchPlaceholder="Search exited employee…"
+                        aria-label="Pending F&F settlements"
+                        emptyTitle="No pending settlements"
+                        emptyDescription="All F&F settlements have been processed."
+                    />
+                </Card>
+
+                {/* Info Banner */}
+                <Card
+                    variant="bare"
+                    className="rounded-2xl border border-dashed border-[rgba(0,102,255,0.3)] bg-[rgba(0,102,255,0.05)] p-6"
+                >
+                    <div className="flex items-start gap-4">
+                        <HandCoins size={24} className="shrink-0 text-[#0066FF]" aria-hidden="true" />
+                        <div>
+                            <p className="mb-1 text-sm font-semibold text-white">Standard F&amp;F Inclusions</p>
+                            <p className="text-sm leading-relaxed text-[#8899AA]">
+                                The system automatically calculates Gratuity (if tenure &gt; 5 years), Leave Encashment balance, Notice Pay recovery/payout, and pending variables. Make sure Exit Clearances from Admin and IT are completed.
+                            </p>
+                        </div>
+                    </div>
+                </Card>
             </div>
-        </div>
+        </Page>
     );
 }

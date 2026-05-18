@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Download, FileText, Users, Clock, TrendingDown, BarChart3, ChevronRight } from "lucide-react";
 
@@ -29,6 +31,13 @@ export default function AttendanceReports() {
     const shown = REPORTS.filter(r => cat === "All" || r.category === cat);
 
     return (
+        <Page
+            title="Attendance Reports"
+            subtitle="Generate, schedule, and download attendance reports"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Reports" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             {/* Header */}
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
@@ -128,5 +137,7 @@ export default function AttendanceReports() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

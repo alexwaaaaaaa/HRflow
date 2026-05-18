@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Upload, CheckCircle2, Download } from "lucide-react";
 
@@ -17,6 +19,13 @@ export default function BulkImport() {
     ];
 
     return (
+        <Page
+            title="Bulk Attendance Import"
+            subtitle="Import attendance data from external sources or biometric exports"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Bulk Import" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             <h2 className="text-2xl font-bold mb-1">Bulk Attendance Import</h2>
             <p className="text-sm text-[#8899AA] mb-6">Import attendance data from external sources or biometric exports</p>
@@ -135,5 +144,7 @@ export default function BulkImport() {
                 </div>
             )}
         </div>
-    );
+    
+        </Page>
+        );
 }

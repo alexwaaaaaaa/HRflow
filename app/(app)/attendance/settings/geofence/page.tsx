@@ -1,8 +1,10 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from 'react';
 import {
-    MapPin, Search, Plus, Map as MapIcon, MoreVertical,
+    MapPin, Search, Plus, Map as MapIcon,
     Wifi, Users, Edit3, Trash2
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -18,6 +20,13 @@ export default function GeofenceLocations() {
     ];
 
     return (
+        <Page
+            title="Geofenced Locations"
+            subtitle="Manage permitted physical perimeters for mobile attendance check-ins."
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Geofence" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen bg-[#060B14] p-6 font-sans text-slate-200">
             <div className="max-w-6xl mx-auto space-y-6">
 
@@ -121,5 +130,7 @@ export default function GeofenceLocations() {
 
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

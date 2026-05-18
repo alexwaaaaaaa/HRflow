@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -8,6 +10,12 @@ import {
 
 export default function AddEditDesignationScreen() {
     return (
+        <Page
+            title="Create Designation"
+            breadcrumbs={[{ label: "Org Chart", href: "/org-chart" }, { label: "Designations", href: "/org-chart/designations" }, { label: "Edit" }]}
+            maxWidth="1200px"
+        >
+
         <div className="min-h-screen bg-[#0B1221] text-white p-8 font-sans">
             <div className="max-w-2xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
@@ -109,5 +117,7 @@ export default function AddEditDesignationScreen() {
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

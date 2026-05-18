@@ -1,11 +1,35 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React from 'react';
-import { Target, Users, TrendingUp, Presentation, ArrowRight, Download, Filter } from 'lucide-react';
+import { Target, Users, TrendingUp, Presentation, ArrowRight, Filter } from 'lucide-react';
 import Link from 'next/link';
+
+type KpiColor = "blue" | "emerald" | "amber" | "purple";
+
+const KPI_ICON_CLASSES: Record<KpiColor, string> = {
+    blue: "p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400",
+    emerald: "p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400",
+    amber: "p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400",
+    purple: "p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400",
+} as const;
+
+const KPI_DATA: { icon: React.ElementType; label: string; value: string; diff: string; color: KpiColor }[] = [
+    { icon: Users, label: 'Current Headcount', value: '482', diff: '+12 this QTR', color: 'blue' },
+    { icon: Target, label: 'Approved Budget (FY26)', value: '550', diff: '68 open roles', color: 'emerald' },
+    { icon: TrendingUp, label: 'Capacity Utilization', value: '88%', diff: 'Optimal range', color: 'amber' },
+    { icon: Presentation, label: 'Cost per Hire', value: '₹42,000', diff: '-5% vs FY25', color: 'purple' },
+];
 
 export default function WorkforcePlanningScreen() {
     return (
-        <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
+        <Page
+            title="Strategic Workforce Planning"
+            subtitle="Design organizational structure and align headcount with business goals."
+            breadcrumbs={[{ label: "Workforce Analytics", href: "/workforce-analytics" }, { label: "Planning" }]}
+            maxWidth="1400px"
+        >
+        <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-white flex items-center gap-3"><Target size={24} className="text-blue-400" /> Strategic Workforce Planning</h1>
@@ -22,17 +46,12 @@ export default function WorkforcePlanningScreen() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                    { icon: Users, label: 'Current Headcount', value: '482', diff: '+12 this QTR', color: 'blue' },
-                    { icon: Target, label: 'Approved Budget (FY26)', value: '550', diff: '68 open roles', color: 'emerald' },
-                    { icon: TrendingUp, label: 'Capacity Utilization', value: '88%', diff: 'Optimal range', color: 'amber' },
-                    { icon: Presentation, label: 'Cost per Hire', value: '₹42,000', diff: '-5% vs FY25', color: 'purple' },
-                ].map((kpi, i) => {
+                {KPI_DATA.map((kpi, i) => {
                     const Icon = kpi.icon;
                     return (
                         <div key={i} className="bg-[#0A1420] border border-[#1A2A3A] rounded-2xl p-6 relative overflow-hidden group">
                             <div className="flex justify-between items-start mb-4 relative z-10">
-                                <div className={`p-3 rounded-xl bg-${kpi.color}-500/10 border border-${kpi.color}-500/20 text-${kpi.color}-400`}>
+                                <div className={KPI_ICON_CLASSES[kpi.color]}>
                                     <Icon size={20} />
                                 </div>
                             </div>
@@ -42,7 +61,7 @@ export default function WorkforcePlanningScreen() {
                                 <div className="text-[#556677] text-xs font-medium">{kpi.diff}</div>
                             </div>
                         </div>
-                    )
+                    );
                 })}
             </div>
 
@@ -110,5 +129,6 @@ export default function WorkforcePlanningScreen() {
                 </div>
             </div>
         </div>
+        </Page>
     );
 }

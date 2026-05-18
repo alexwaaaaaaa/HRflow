@@ -1,9 +1,11 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import {
     MapPin, Plus, Trash2, Edit2, Wifi, Navigation,
-    CheckCircle2, AlertCircle, ChevronRight, Users, Search
+    CheckCircle2, AlertCircle, Users, Search
 } from "lucide-react";
 
 interface Location {
@@ -72,6 +74,13 @@ export default function GeofenceSetup() {
     const totalEmployees = locations.filter(l => l.active).reduce((s, l) => s + l.employees, 0);
 
     return (
+        <Page
+            title="Geofence Setup"
+            subtitle="Define location boundaries for mobile attendance check-in"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Geofence", href: "/attendance/geofence" }, { label: "Setup" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 md:p-8 max-w-[1200px] mx-auto text-white">
             {/* Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
@@ -287,5 +296,7 @@ export default function GeofenceSetup() {
                 </div>
             </div>
         </div>
-    );
+    
+        </Page>
+        );
 }

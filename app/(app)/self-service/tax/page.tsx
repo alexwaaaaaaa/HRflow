@@ -1,12 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Calculator, ArrowLeft, Download, FileText, CheckCircle2 } from 'lucide-react';
+import { Calculator, ArrowLeft, Download, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyTaxSummaryScreen() {
     const [activeTab, setActiveTab] = useState<'computation' | 'declaration'>('computation');
 
     return (
+        <Page
+            title="My Tax Summary"
+            subtitle="Review your income tax projections and submit investment declarations (FY 2025-26)."
+            breadcrumbs={[{ label: "Self Service", href: "/self-service" }, { label: "Tax" }]}
+            maxWidth="1300px"
+        >
+
         <div className="min-h-screen p-6 max-w-6xl mx-auto space-y-6">
             <Link href="/ess/dashboard" className="text-[#556677] hover:text-white text-sm font-bold flex items-center gap-1 mb-2">
                 <ArrowLeft size={14} /> Back to Dashboard
@@ -98,5 +107,7 @@ export default function MyTaxSummaryScreen() {
                 </div>
             )}
         </div>
+    
+        </Page>
     );
 }

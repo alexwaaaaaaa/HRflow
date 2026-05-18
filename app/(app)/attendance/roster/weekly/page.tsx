@@ -1,7 +1,9 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Download, Plus, User, RefreshCw, Search, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Plus, User, RefreshCw, Search } from "lucide-react";
 import Link from "next/link";
 
 type ShiftType = "Gen" | "Morning" | "Evening" | "Night" | "WFH" | "Off" | "Holiday";
@@ -75,6 +77,19 @@ export default function ShiftRosterWeekly() {
     const totalOff = filtered.flatMap(r => r.schedule).filter(s => s === "Off").length;
 
     return (
+        <Page
+            title="Shift Roster"
+            subtitle="Week of 10–16 March 2025 •"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Roster", href: "/attendance/roster" }, { label: "Weekly" }]}
+            maxWidth="1400px"
+        >
+
+
+
+
+
+
+
         <div className="p-6 md:p-8 max-w-[1400px] mx-auto text-white">
 
             {/* Header */}
@@ -216,5 +231,13 @@ export default function ShiftRosterWeekly() {
                 <div className="text-center py-12 text-[#445566]">No employees found</div>
             )}
         </div>
+    
+        
+
+        
+
+        
+
+        </Page>
     );
 }

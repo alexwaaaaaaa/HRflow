@@ -1,13 +1,21 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { FileCheck, ShieldAlert, FileText, ArrowRight, UploadCloud, AlertCircle } from 'lucide-react';
+import { FileCheck, ShieldAlert, FileText, UploadCloud, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
-export default function GrievanceResolutionScreen({ params }: { params: { id: string } }) {
+export default function GrievanceResolutionScreen({ params: _params }: { params: { id: string } }) {
     const defaultId = "GRV-2026-142";
     const [action, setAction] = useState('warning');
 
     return (
+        <Page
+            title="Draft Resolution Order"
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Id" }, { label: "Resolution" }]}
+            maxWidth="900px"
+        >
+
         <div className="min-h-screen p-6 max-w-4xl mx-auto space-y-6">
             <div className="mb-6">
                 <Link href={`/grievances/${defaultId}/investigation`} className="text-[#556677] hover:text-white text-sm font-bold transition-colors">← Back to Investigation</Link>
@@ -103,5 +111,7 @@ export default function GrievanceResolutionScreen({ params }: { params: { id: st
                 </div>
             </div>
         </div>
+    
+        </Page>
     );
 }

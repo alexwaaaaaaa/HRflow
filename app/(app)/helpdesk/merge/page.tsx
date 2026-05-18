@@ -1,19 +1,27 @@
 "use client";
-import React, { useState } from "react";
-import {
-    GitMerge, Search, AlertCircle, ArrowRight, CheckCircle2,
-    X
-} from "lucide-react";
-import Link from "next/link";
+import { useState } from "react";
+import { GitMerge, Search, AlertCircle, ArrowRight, CheckCircle2, X } from "lucide-react";
+import Page from "@/components/ui/Page";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
-const TICKETS = [
+interface TicketItem {
+    id: string;
+    title: string;
+    user: string;
+    time: string;
+    status: string;
+}
+
+const TICKETS: TicketItem[] = [
     { id: "TKT-4470", title: "Office wifi down in sector 4", user: "Priya Singh", time: "2d ago", status: "Open" },
     { id: "TKT-4475", title: "Cannot connect to WiFi", user: "Rahul Sharma", time: "1d ago", status: "Open" },
     { id: "TKT-4481", title: "Internet is not working on 4th floor", user: "Sneha Rao", time: "12h ago", status: "Open" },
     { id: "TKT-4490", title: "Wifi disconnected", user: "Kabir Das", time: "2h ago", status: "Open" },
 ];
 
-export default function TicketMerge() {
+export default function TicketMergePage() {
     const [primaryTicket, setPrimaryTicket] = useState("TKT-4470");
     const [selectedTickets, setSelectedTickets] = useState<string[]>(["TKT-4475", "TKT-4481"]);
     const [merged, setMerged] = useState(false);
@@ -21,7 +29,7 @@ export default function TicketMerge() {
     const toggleSelect = (id: string) => {
         if (id === primaryTicket) return;
         if (selectedTickets.includes(id)) {
-            setSelectedTickets(selectedTickets.filter(t => t !== id));
+            setSelectedTickets(selectedTickets.filter((t) => t !== id));
         } else {
             setSelectedTickets([...selectedTickets, id]);
         }
@@ -29,166 +37,237 @@ export default function TicketMerge() {
 
     if (merged) {
         return (
-            <div className="p-6 max-w-[800px] mx-auto min-h-[calc(100vh-80px)] flex items-center justify-center">
-                <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl p-10 text-center w-full">
-                    <div className="w-20 h-20 bg-[#00E5A0]/10 rounded-full flex items-center justify-center mx-auto mb-6 text-[#00E5A0]">
-                        <GitMerge size={40} />
+            <Page
+                title="Merge Duplicate Tickets"
+                breadcrumbs={[
+                    { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                    { label: "Merge" },
+                ]}
+                maxWidth="800px"
+            >
+                <Card padding="lg">
+                    <div className="flex flex-col items-center py-8 text-center">
+                        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#00E5A0]/10 text-[#00E5A0]">
+                            <GitMerge size={40} aria-hidden="true" />
+                        </div>
+                        <h2 className="mb-2 text-2xl font-bold text-white">Tickets Merged Successfully</h2>
+                        <p className="mb-8 text-[#8899AA]">
+                            Selected tickets have been closed and linked to the primary ticket{" "}
+                            {primaryTicket}.
+                        </p>
+                        <Button variant="secondary" href="/helpdesk/management">Return to Queue</Button>
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Tickets Merged Successfully</h2>
-                    <p className="text-[#8899AA] mb-8">Selected tickets have been closed and linked to the primary ticket {primaryTicket}.</p>
-                    <Link href="/helpdesk/management" className="px-6 py-3 bg-[#1A2A3A] text-white rounded-xl hover:bg-[#2A3A4A] transition-colors font-semibold">
-                        Return to Queue
-                    </Link>
-                </div>
-            </div>
+                </Card>
+            </Page>
         );
     }
 
+    const primaryData = TICKETS.find((t) => t.id === primaryTicket);
+
     return (
-        <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)]">
-
-            {/* Header */}
-            <div className="mb-8 pb-6 border-b border-[#1A2A3A]">
-                <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                    <GitMerge size={28} className="text-[#FFB020]" />
-                    Merge Duplicate Tickets
-                </h1>
-                <p className="text-[#8899AA] text-sm mt-1">Combine redundant requests into a single primary ticket. All communications will be consolidated.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-
-                {/* Left Side: Search & Select */}
+        <Page
+            title="Merge Duplicate Tickets"
+            subtitle="Combine redundant requests into a single primary ticket. All communications will be consolidated."
+            breadcrumbs={[
+                { label: "Helpdesk", href: "/helpdesk/dashboard" },
+                { label: "Merge" },
+            ]}
+            maxWidth="1200px"
+        >
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+                {/* Left: Search & Select */}
                 <div className="space-y-6">
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#445566]" size={18} />
+                        <Search
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-[#445566]"
+                            size={18}
+                            aria-hidden="true"
+                        />
                         <input
-                            type="text"
+                            type="search"
                             placeholder="Search tickets by keyword to find duplicates..."
                             defaultValue="wifi"
-                            className="w-full bg-[#0F1C2E] border border-[#1A2A3A] rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#FFB020] transition-colors"
+                            aria-label="Search for duplicate tickets"
+                            className="w-full rounded-xl border border-[#1A2A3A] bg-[#0F1C2E] py-3 pl-12 pr-4 text-white outline-none transition-colors focus:border-[#FFB020]"
                         />
                     </div>
 
-                    <div className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl overflow-hidden">
-                        <div className="p-4 bg-[#152336] border-b border-[#1A2A3A] flex justify-between items-center">
-                            <h3 className="font-bold text-white text-sm">Search Results (4)</h3>
+                    <Card padding="none">
+                        <div className="flex items-center justify-between border-b border-[#1A2A3A] bg-[#152336] p-4">
+                            <h3 className="text-sm font-bold text-white">Search Results (4)</h3>
                         </div>
                         <div className="divide-y divide-[#1A2A3A]">
-                            {TICKETS.map(ticket => {
+                            {TICKETS.map((ticket) => {
                                 const isPrimary = ticket.id === primaryTicket;
                                 const isSelected = selectedTickets.includes(ticket.id);
-
                                 return (
                                     <div
                                         key={ticket.id}
                                         onClick={() => toggleSelect(ticket.id)}
-                                        className={`p-4 flex items-start gap-4 cursor-pointer transition-colors ${isPrimary ? 'bg-[#FFB020]/10 border-l-2 border-l-[#FFB020]' :
-                                                isSelected ? 'bg-[#1A2A3A] border-l-2 border-l-[#33E6FF]' :
-                                                    'hover:bg-[#1A2A3A]/50 border-l-2 border-l-transparent'
-                                            }`}
+                                        className={`flex cursor-pointer items-start gap-4 border-l-2 p-4 transition-colors ${
+                                            isPrimary
+                                                ? "border-l-[#FFB020] bg-[#FFB020]/10"
+                                                : isSelected
+                                                ? "border-l-[#33E6FF] bg-[#1A2A3A]"
+                                                : "border-l-transparent hover:bg-[#1A2A3A]/50"
+                                        }`}
                                     >
                                         <div className="mt-1">
                                             {isPrimary ? (
-                                                <div className="w-5 h-5 rounded-full bg-[#FFB020] flex items-center justify-center text-[#0A1420]"><CheckCircle2 size={12} /></div>
+                                                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FFB020] text-[#0A1420]">
+                                                    <CheckCircle2 size={12} aria-hidden="true" />
+                                                </div>
                                             ) : (
                                                 <input
                                                     type="checkbox"
                                                     readOnly
                                                     checked={isSelected}
-                                                    className="w-5 h-5 rounded border-[#2A3A4A] bg-[#0A1420] text-[#33E6FF] focus:ring-0 cursor-pointer"
+                                                    aria-label={`Select ${ticket.id}`}
+                                                    className="h-5 w-5 cursor-pointer rounded border-[#2A3A4A] bg-[#0A1420] text-[#33E6FF] focus:ring-0"
                                                 />
                                             )}
                                         </div>
                                         <div className="flex-1">
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="font-mono text-xs font-semibold text-[#8899AA]">{ticket.id}</span>
-                                                {isPrimary && <span className="text-[10px] bg-[#FFB020]/20 text-[#FFB020] px-2 py-0.5 rounded uppercase font-bold tracking-wider">Primary</span>}
+                                            <div className="mb-1 flex items-center justify-between">
+                                                <span className="font-mono text-xs font-semibold text-[#8899AA]">
+                                                    {ticket.id}
+                                                </span>
+                                                {isPrimary && (
+                                                    <Badge variant="warning">Primary</Badge>
+                                                )}
                                             </div>
-                                            <h4 className={`text-sm font-semibold mb-1 ${isPrimary || isSelected ? 'text-white' : 'text-[#8899AA]'}`}>{ticket.title}</h4>
-                                            <p className="text-xs text-[#445566]">Requester: {ticket.user} • Created: {ticket.time}</p>
+                                            <h4
+                                                className={`mb-1 text-sm font-semibold ${
+                                                    isPrimary || isSelected ? "text-white" : "text-[#8899AA]"
+                                                }`}
+                                            >
+                                                {ticket.title}
+                                            </h4>
+                                            <p className="text-xs text-[#445566]">
+                                                Requester: {ticket.user} • Created: {ticket.time}
+                                            </p>
                                         </div>
                                         {!isPrimary && (
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); setPrimaryTicket(ticket.id); setSelectedTickets(selectedTickets.filter(id => id !== ticket.id)); }}
-                                                className="text-[10px] text-[#8899AA] hover:text-[#FFB020] uppercase font-bold tracking-wider py-1 px-2 border border-[#2A3A4A] hover:border-[#FFB020] rounded transition-colors"
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setPrimaryTicket(ticket.id);
+                                                    setSelectedTickets(
+                                                        selectedTickets.filter((id) => id !== ticket.id)
+                                                    );
+                                                }}
+                                                className="rounded border border-[#2A3A4A] px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#8899AA] transition-colors hover:border-[#FFB020] hover:text-[#FFB020]"
                                             >
                                                 Make Primary
                                             </button>
                                         )}
                                     </div>
-                                )
+                                );
                             })}
                         </div>
-                    </div>
+                    </Card>
                 </div>
 
-                {/* Right Side: Merge Preview */}
+                {/* Right: Merge Preview */}
                 <div>
-                    <div className="bg-[#1A2A3A] border border-[#2A3A4A] rounded-2xl p-6 relative">
-                        <h3 className="font-bold text-white mb-6 flex items-center gap-2">
-                            <GitMerge size={20} className="text-[#33E6FF]" /> Merge Plan
+                    <Card padding="lg">
+                        <h3 className="mb-6 flex items-center gap-2 font-bold text-white">
+                            <GitMerge size={20} className="text-[#33E6FF]" aria-hidden="true" />
+                            Merge Plan
                         </h3>
 
-                        {/* Target Primary */}
-                        <div className="mb-8 relative z-10">
-                            <span className="text-xs font-bold tracking-wider text-[#FFB020] uppercase mb-2 block">Will Merge Into (Primary)</span>
-                            <div className="bg-[#0F1C2E] border border-[#FFB020]/50 shadow-[0_0_15px_rgba(255,176,32,0.1)] p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <span className="text-xs text-[#8899AA] font-mono block mb-1">{TICKETS.find(t => t.id === primaryTicket)?.id}</span>
-                                    <h4 className="text-white font-semibold">{TICKETS.find(t => t.id === primaryTicket)?.title}</h4>
-                                </div>
+                        {/* Primary Target */}
+                        <div className="mb-8">
+                            <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#FFB020]">
+                                Will Merge Into (Primary)
+                            </span>
+                            <div className="rounded-xl border border-[#FFB020]/50 bg-[#0F1C2E] p-4">
+                                <span className="mb-1 block font-mono text-xs text-[#8899AA]">
+                                    {primaryData?.id}
+                                </span>
+                                <h4 className="font-semibold text-white">{primaryData?.title}</h4>
                             </div>
                         </div>
 
                         {/* Source Duplicates */}
-                        <div className="relative z-10">
-                            <span className="text-xs font-bold tracking-wider text-[#8899AA] uppercase mb-2 block">Tickets to be closed as 'Duplicate'</span>
+                        <div>
+                            <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#8899AA]">
+                                Tickets to be closed as &apos;Duplicate&apos;
+                            </span>
                             {selectedTickets.length === 0 ? (
-                                <div className="text-sm text-[#445566] italic bg-[#0A1420] p-4 rounded-xl border border-[#1A2A3A] border-dashed text-center">
+                                <div className="rounded-xl border border-dashed border-[#1A2A3A] bg-[#0A1420] p-4 text-center text-sm italic text-[#445566]">
                                     Select tickets from the left to merge.
                                 </div>
                             ) : (
                                 <div className="space-y-3">
-                                    {selectedTickets.map(id => (
-                                        <div key={id} className="bg-[#0A1420] border border-[#2A3A4A] p-4 rounded-xl flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <ArrowRight size={16} className="text-[#33E6FF]" />
-                                                <div>
-                                                    <span className="text-xs text-[#8899AA] font-mono block mb-0.5">{id}</span>
-                                                    <h4 className="text-[#8899AA] text-sm font-medium line-through decoration-[#445566]">{TICKETS.find(t => t.id === id)?.title}</h4>
+                                    {selectedTickets.map((id) => {
+                                        const t = TICKETS.find((tk) => tk.id === id);
+                                        return (
+                                            <div
+                                                key={id}
+                                                className="flex items-center justify-between rounded-xl border border-[#2A3A4A] bg-[#0A1420] p-4"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <ArrowRight
+                                                        size={16}
+                                                        className="text-[#33E6FF]"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <div>
+                                                        <span className="mb-0.5 block font-mono text-xs text-[#8899AA]">
+                                                            {id}
+                                                        </span>
+                                                        <h4 className="text-sm font-medium text-[#8899AA] line-through decoration-[#445566]">
+                                                            {t?.title}
+                                                        </h4>
+                                                    </div>
                                                 </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleSelect(id)}
+                                                    aria-label={`Remove ${id} from merge`}
+                                                    className="text-[#445566] transition-colors hover:text-[#FF4444]"
+                                                >
+                                                    <X size={16} aria-hidden="true" />
+                                                </button>
                                             </div>
-                                            <button onClick={() => toggleSelect(id)} className="text-[#445566] hover:text-[#FF4444] transition-colors"><X size={16} /></button>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
 
-                        {/* Connector Line Logic (visual only) */}
-                        <div className="absolute left-10 top-24 bottom-24 w-px bg-[#2A3A4A] -z-0 hidden md:block"></div>
-
-                        <div className="mt-10 pt-6 border-t border-[#2A3A4A]">
-                            <div className="flex items-start gap-3 mb-6 bg-[#FFB020]/10 border border-[#FFB020]/20 p-4 rounded-xl">
-                                <AlertCircle size={20} className="text-[#FFB020] shrink-0 mt-0.5" />
+                        {/* Confirm */}
+                        <div className="mt-10 border-t border-[#2A3A4A] pt-6">
+                            <div className="mb-6 flex items-start gap-3 rounded-xl border border-[#FFB020]/20 bg-[#FFB020]/10 p-4">
+                                <AlertCircle
+                                    size={20}
+                                    className="mt-0.5 shrink-0 text-[#FFB020]"
+                                    aria-hidden="true"
+                                />
                                 <div>
-                                    <h4 className="text-sm font-bold text-[#FFB020] mb-1">Confirm Merge Action</h4>
-                                    <p className="text-xs text-[#8899AA]">Requesters of duplicate tickets will receive an automated email notifying them that their ticket was merged. This action cannot be undone easily.</p>
+                                    <h4 className="mb-1 text-sm font-bold text-[#FFB020]">
+                                        Confirm Merge Action
+                                    </h4>
+                                    <p className="text-xs text-[#8899AA]">
+                                        Requesters of duplicate tickets will receive an automated email
+                                        notifying them that their ticket was merged. This action cannot be
+                                        undone easily.
+                                    </p>
                                 </div>
                             </div>
-                            <button
+                            <Button
                                 disabled={selectedTickets.length === 0}
                                 onClick={() => setMerged(true)}
-                                className="w-full py-3 bg-[#00E5A0] text-[#0A1420] font-bold rounded-xl hover:bg-[#00c98d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="w-full"
                             >
                                 Merge {selectedTickets.length} Tickets
-                            </button>
+                            </Button>
                         </div>
-                    </div>
+                    </Card>
                 </div>
-
             </div>
-        </div>
+        </Page>
     );
 }

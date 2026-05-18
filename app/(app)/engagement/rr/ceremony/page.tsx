@@ -1,9 +1,10 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    Trophy, Search, Calendar, Users, MapPin, Plus, Share2, Video, CheckCircle2, ChevronRight, Download
+    Trophy, Search, Calendar, Users, MapPin, Plus, Share2, Video, ChevronRight, Download
 } from 'lucide-react';
-import Link from 'next/link';
 
 const UPCOMING_EVENTS = [
     { id: 1, title: "Annual Excellence Awards 2023", date: "Dec 15, 2023 • 6:00 PM", location: "Grand Hyatt, San Francisco", type: "In-Person", attendees: 450, status: "Planning" },
@@ -19,6 +20,13 @@ export default function AwardCeremonyScreen() {
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
+        <Page
+            title="Award Ceremonies"
+            subtitle="Manage company-wide award events, townhalls, and recognition ceremonies."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Rr", href: "/engagement/rr" }, { label: "Ceremony" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -167,5 +175,7 @@ export default function AwardCeremonyScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }

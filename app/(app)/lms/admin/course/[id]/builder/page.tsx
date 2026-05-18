@@ -1,3 +1,4 @@
+// migrated: immersive-ui — full-screen course builder; Page shell intentionally omitted
 "use client";
 import React, { useState } from "react";
 import {
@@ -28,7 +29,7 @@ const INITIAL_MODULES = [
 export default function CourseBuilderScreen() {
     const params = useParams();
     const router = useRouter();
-    const [modules, setModules] = useState(INITIAL_MODULES);
+    const [modules, _setModules] = useState(INITIAL_MODULES);
 
     const getIconForType = (type: string) => {
         switch (type) {
@@ -101,7 +102,7 @@ export default function CourseBuilderScreen() {
                     </div>
 
                     <div className="space-y-6">
-                        {modules.map((mod, modIdx) => (
+                        {modules.map((mod, _modIdx) => (
                             <div key={mod.id} className="bg-[#0F1C2E] border border-[#1A2A3A] rounded-2xl overflow-hidden shadow-xl">
                                 {/* Module Header */}
                                 <div className="px-4 py-3 bg-[#152336] border-b border-[#1A2A3A] flex items-center justify-between group">
@@ -120,7 +121,7 @@ export default function CourseBuilderScreen() {
 
                                 {/* Lessons List */}
                                 <div className="p-4 space-y-3">
-                                    {mod.lessons.map((lesson, lessIdx) => (
+                                    {mod.lessons.map((lesson, _lessIdx) => (
                                         <div key={lesson.id} className="flex items-center justify-between p-3 bg-[#0A1420] border border-[#2A3A4A] rounded-xl group hover:border-[#3A4A5A] transition-colors">
                                             <div className="flex items-center gap-4">
                                                 <div className="cursor-grab text-[#445566] hover:text-white"><GripVertical size={16} /></div>

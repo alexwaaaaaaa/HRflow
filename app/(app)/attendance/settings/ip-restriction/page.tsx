@@ -1,5 +1,7 @@
 "use client";
 
+import Page from "@/components/ui/Page";
+
 import React, { useState } from "react";
 import { Save, Shield, Plus, Trash2, CheckCircle2, XCircle } from "lucide-react";
 
@@ -36,6 +38,12 @@ export default function IPRestriction() {
     const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
 
     return (
+        <Page
+            title="Ip Restriction"
+            breadcrumbs={[{ label: "Attendance", href: "/attendance/dashboard" }, { label: "Settings", href: "/attendance/settings" }, { label: "Ip Restriction" }]}
+            maxWidth="900px"
+        >
+
         <div className="p-6 md:p-8 max-w-[900px] mx-auto text-white">
             <div className="flex justify-between items-center mb-6">
                 <div>
@@ -128,5 +136,7 @@ export default function IPRestriction() {
 
             <p className="text-xs text-[#445566]">💡 WFH and mobile attendance will bypass IP restriction when WFH mode is active for an employee.</p>
         </div>
-    );
+    
+        </Page>
+        );
 }

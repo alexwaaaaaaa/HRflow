@@ -40,16 +40,56 @@ function GlitchGrid({ colorClass }: { colorClass: string }) {
     );
 }
 
+// ─── Static color palette map — avoids template-literal Tailwind classes (Tailwind v4 JIT trap)
+const COLOR_PALETTE = {
+    red: {
+        glow: 'bg-red-600/5',
+        iconBg: 'bg-red-500/10',
+        iconBorder: 'border-2 border-red-500/30',
+        iconPing: 'border border-red-500/20',
+        iconText: 'text-red-400',
+        codeBorder1: 'border-2 border-red-500/20',
+        codeBorder2: 'border-2 border-red-500/20',
+        primaryBtn: 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/20 hover:-translate-y-0.5',
+    },
+    amber: {
+        glow: 'bg-amber-600/5',
+        iconBg: 'bg-amber-500/10',
+        iconBorder: 'border-2 border-amber-500/30',
+        iconPing: 'border border-amber-500/20',
+        iconText: 'text-amber-400',
+        codeBorder1: 'border-2 border-amber-500/20',
+        codeBorder2: 'border-2 border-amber-500/20',
+        primaryBtn: 'bg-amber-600 hover:bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/20 hover:-translate-y-0.5',
+    },
+    orange: {
+        glow: 'bg-orange-600/5',
+        iconBg: 'bg-orange-500/10',
+        iconBorder: 'border-2 border-orange-500/30',
+        iconPing: 'border border-orange-500/20',
+        iconText: 'text-orange-400',
+        codeBorder1: 'border-2 border-orange-500/20',
+        codeBorder2: 'border-2 border-orange-500/20',
+        primaryBtn: 'bg-orange-600 hover:bg-orange-500 text-white shadow-lg shadow-orange-500/20 hover:-translate-y-0.5',
+    },
+    rose: {
+        glow: 'bg-rose-600/5',
+        iconBg: 'bg-rose-500/10',
+        iconBorder: 'border-2 border-rose-500/30',
+        iconPing: 'border border-rose-500/20',
+        iconText: 'text-rose-400',
+        codeBorder1: 'border-2 border-rose-500/20',
+        codeBorder2: 'border-2 border-rose-500/20',
+        primaryBtn: 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-500/20 hover:-translate-y-0.5',
+    },
+} as const;
+
 // ─── Action Button ─────────────────────────────────────────────────────────────
-function ActionButton({ action, colorScheme }: { action: ErrorAction, colorScheme: string }) {
+function ActionButton({ action, colorScheme }: { action: ErrorAction, colorScheme: keyof typeof COLOR_PALETTE }) {
     const base = 'inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 select-none';
 
-    // Default to a danger-oriented primary
-    let primaryClasses = `bg-${colorScheme}-600 hover:bg-${colorScheme}-500 text-white shadow-lg shadow-${colorScheme}-500/20 hover:-translate-y-0.5`;
-    if (colorScheme === 'amber') primaryClasses = `bg-amber-600 hover:bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/20 hover:-translate-y-0.5`;
-
     const variants = {
-        primary: primaryClasses,
+        primary: COLOR_PALETTE[colorScheme].primaryBtn,
         secondary: `bg-[#131B2B] hover:bg-[#1A2A3A] text-white border border-[#2A3A4A] hover:border-[#3A4A5A] hover:-translate-y-0.5`,
         ghost: `text-[#8899AA] hover:text-white hover:bg-[#131B2B] hover:-translate-y-0.5`,
     };
@@ -83,38 +123,39 @@ export function ErrorState({
     colorScheme = 'red'
 }: ErrorStateProps) {
     const [showDetails, setShowDetails] = useState(false);
+    const palette = COLOR_PALETTE[colorScheme];
 
     return (
         <div className="relative min-h-[calc(100vh-88px)] flex items-center justify-center bg-[#060D1A] overflow-hidden">
             {/* Ambient Danger Glow */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-${colorScheme}-600/5 blur-[120px]`} />
+                <div className={`absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full ${palette.glow} blur-[120px]`} />
             </div>
 
             {/* Grid */}
-            <GlitchGrid colorClass={`text-${colorScheme}-500`} />
+            <GlitchGrid colorClass={palette.iconText} />
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center text-center max-w-2xl w-full px-6 py-8 animate-fade-in">
 
                 {/* Visual / Error Code */}
                 <div className="mb-8 relative flex items-center justify-center">
-                    <div className={`absolute inset-0 bg-${colorScheme}-500/10 rounded-full blur-2xl scale-150 -z-10`} />
+                    <div className={`absolute inset-0 ${palette.iconBg} rounded-full blur-2xl scale-150 -z-10`} />
                     {illustration ? (
                         illustration
                     ) : (
                         errorCode ? (
                             <div className="relative">
-                                <h1 className={`text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-${colorScheme}-500/20 drop-shadow-2xl opacity-90 tracking-tighter`}>
+                                <h1 className="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-red-500/20 drop-shadow-2xl opacity-90 tracking-tighter">
                                     {errorCode}
                                 </h1>
-                                <div className={`absolute -inset-4 border-2 border-${colorScheme}-500/20 rounded-[3rem] rotate-3 animate-pulse -z-10`} />
-                                <div className={`absolute -inset-4 border-2 border-${colorScheme}-500/20 rounded-[3rem] -rotate-6 animate-pulse -z-10`} style={{ animationDelay: '1s' }} />
+                                <div className={`absolute -inset-4 ${palette.codeBorder1} rounded-[3rem] rotate-3 animate-pulse -z-10`} />
+                                <div className={`absolute -inset-4 ${palette.codeBorder2} rounded-[3rem] -rotate-6 animate-pulse -z-10`} style={{ animationDelay: '1s' }} />
                             </div>
                         ) : (
-                            <div className={`w-32 h-32 rounded-full bg-${colorScheme}-500/10 border-2 border-${colorScheme}-500/30 flex items-center justify-center relative`}>
-                                <div className={`absolute inset-0 rounded-full border border-${colorScheme}-500/20 animate-ping`} />
-                                <AlertOctagon size={64} className={`text-${colorScheme}-400`} />
+                            <div className={`w-32 h-32 rounded-full ${palette.iconBg} ${palette.iconBorder} flex items-center justify-center relative`}>
+                                <div className={`absolute inset-0 rounded-full ${palette.iconPing} animate-ping`} />
+                                <AlertOctagon size={64} className={palette.iconText} />
                             </div>
                         )
                     )}

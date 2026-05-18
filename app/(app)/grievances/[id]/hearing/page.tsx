@@ -1,13 +1,22 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
-import { Video, Calendar as CalendarIcon, Clock, Users, FileSignature, Settings, Shield, Plus, MoreVertical, CheckCircle2 } from 'lucide-react';
+import { Video, Calendar as CalendarIcon, Clock, Users, FileSignature, Settings, Shield, Plus, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function GrievanceHearingScreen({ params }: { params: { id: string } }) {
+export default function GrievanceHearingScreen({ params: _params }: { params: { id: string } }) {
     const defaultId = "GRV-2026-142";
     const [isLive, setIsLive] = useState(false);
 
     return (
+        <Page
+            title="Committee Hearings"
+            subtitle="As per Section 11 of the POSH Act, during the inquiry, a minimum of three Members of the Internal Committee including the Presiding Officer shall be present."
+            breadcrumbs={[{ label: "Grievances", href: "/grievances" }, { label: "Id" }, { label: "Hearing" }]}
+            maxWidth="1400px"
+        >
+
         <div className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
             <div className="flex items-center justify-between border-b border-[#1A2A3A] pb-4 mb-4">
                 <div>
@@ -170,5 +179,7 @@ export default function GrievanceHearingScreen({ params }: { params: { id: strin
                 </div>
             )}
         </div>
+    
+        </Page>
     );
 }

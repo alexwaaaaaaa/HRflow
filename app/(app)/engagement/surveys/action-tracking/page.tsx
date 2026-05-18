@@ -1,7 +1,9 @@
 "use client";
+
+import Page from "@/components/ui/Page";
 import React, { useState } from 'react';
 import {
-    CheckSquare, Activity, Calendar, Users, Target, Circle, CheckCircle2, MoreHorizontal, MessageSquare, ArrowRight, AlertCircle
+    CheckSquare, Activity, Calendar, Users, CheckCircle2, MoreHorizontal, MessageSquare, ArrowRight, AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -45,6 +47,13 @@ export default function ActionTrackingScreen() {
     };
 
     return (
+        <Page
+            title="Action Tracking"
+            subtitle="Monitor the progress of specific tasks within your action plans."
+            breadcrumbs={[{ label: "Engagement", href: "/engagement" }, { label: "Surveys", href: "/engagement/surveys" }, { label: "Action Tracking" }]}
+            maxWidth="1200px"
+        >
+
         <div className="p-6 max-w-[1200px] mx-auto min-h-[calc(100vh-80px)] font-sans">
 
             {/* Header */}
@@ -194,5 +203,7 @@ export default function ActionTrackingScreen() {
 
             </div>
         </div>
+    
+        </Page>
     );
 }
